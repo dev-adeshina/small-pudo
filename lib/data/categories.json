@@ -1,0 +1,90 @@
+[
+  {
+    "id": "cat_food",
+    "slug": "food",
+    "name": "Food",
+    "description": "Food and grocery products",
+    "image": "/images/categories/food.jpg",
+    "isActive": true
+  },
+  {
+    "id": "cat_fashion",
+    "slug": "fashion",
+    "name": "Fashion",
+    "description": "Clothing and fashion products",
+    "image": "/images/categories/fashion.jpg",
+    "isActive": true
+  },
+  {
+    "id": "cat_sanitary",
+    "slug": "sanitary",
+    "name": "Sanitary",
+    "description": "Personal and household sanitary products",
+    "image": "/images/categories/sanitary.jpg",
+    "isActive": true
+  },
+  {
+    "id": "cat_home_wares",
+    "slug": "home-wares",
+    "name": "Home Wares",
+    "description": "Everyday products for your home",
+    "image": "/images/categories/home-wares.jpg",
+    "isActive": true
+  },
+  {
+    "id": "cat_stationeries",
+    "slug": "stationeries",
+    "name": "Stationeries",
+    "description": "Office and school stationery",
+    "image": "/images/categories/stationeries.jpg",
+    "isActive": true
+  },
+  {
+    "id": "cat_utilities",
+    "slug": "utilities",
+    "name": "Utilities",
+    "description": "Useful everyday utility products",
+    "image": "/images/categories/utilities.jpg",
+    "isActive": true
+  },
+  {
+    "id": "cat_automobile",
+    "slug": "automobile",
+    "name": "Automobile",
+    "description": "Automobile products and accessories",
+    "image": "/images/categories/automobile.jpg",
+    "isActive": true
+  },
+  {
+    "id": "cat_furniture",
+    "slug": "furniture",
+    "name": "Furniture",
+    "description": "Furniture for homes and offices",
+    "image": "/images/categories/furniture.jpg",
+    "isActive": true
+  },
+  {
+    "id": "cat_lighting",
+    "slug": "lighting",
+    "name": "Lighting",
+    "description": "Lighting products for home and office",
+    "image": "/images/categories/lighting.jpg",
+    "isActive": true
+  },
+  {
+    "id": "cat_cosmetics",
+    "slug": "cosmetics",
+    "name": "Cosmetics",
+    "description": "Beauty and cosmetic products",
+    "image": "/images/categories/cosmetics.jpg",
+    "isActive": true
+  },
+  {
+    "id": "cat_electronics",
+    "slug": "electronics",
+    "name": "Electronics",
+    "description": "Electronic devices and accessories",
+    "image": "/images/categories/electronics.jpg",
+    "isActive": true
+  }
+]
