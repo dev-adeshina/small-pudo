@@ -113,7 +113,6 @@ import ProductGallery from "./product-gallery";
 import ProductActions from "./product-actions";
 
 
-
 interface ProductDetailsPageProps {
   params: Promise<{
     category: string;

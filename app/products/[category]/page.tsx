@@ -5,6 +5,9 @@ import { notFound } from "next/navigation"
 import { getCategoryBySlug } from "@/lib/repositories/categoryRepository"
 import { getProductsByCategory } from "@/lib/repositories/productRepository"
 
+const defaultPlaceholderImage = "https://images.unsplash.com/photo-1574484284002-952d92456975?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+
+
 type Props = {
     params: Promise<{
         category: string
@@ -59,7 +62,8 @@ export default async function ProductPage({ params }: Props) {
                             <Image
                                 width={300}
                                 height={250}
-                                src={product.images[0]}
+                                src={defaultPlaceholderImage}
+                                // src={product.images[0]}
                                 alt={product.name}
                             />
 

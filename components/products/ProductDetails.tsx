@@ -166,7 +166,6 @@ import { useState } from "react";
 import Image from "next/image";
 import { Product } from "@/lib/types/product";
 import { useCart } from "@/context/cart-context";
-// import { useCart } from "@/components/providers/CartProvider";
 import { formatPrice } from "@/lib/utils/format";
 
 export default function ProductDetails({
