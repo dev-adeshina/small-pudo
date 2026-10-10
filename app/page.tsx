@@ -60,15 +60,11 @@ const services = [
 const industries = ['Commerce', 'Delivery', 'Ride', 'Escrow', 'Item Quality Verification', 'Secure Errand', 'Qaulified Artisan'];
 
 export default function App() {
-
-
-
   const [menuOpen, setMenuOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const { getItemCount } = useCart();
+  const { itemCount } = useCart();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -199,14 +195,14 @@ export default function App() {
             <Link
               href="/cart"
               className="cart-link"
-              aria-label={`Shopping cart with ${getItemCount()} items`}
+              aria-label={`Shopping cart with ${itemCount} items`}
             >
               <ShoppingCart size={20} />
               <span>Cart</span>
 
-              {getItemCount() > 0 && (
+              {itemCount > 0 && (
                 <span className="cart-count">
-                  {getItemCount()}
+                  {itemCount}
                 </span>
               )}
             </Link>
@@ -279,7 +275,6 @@ export default function App() {
         <div className="section-heading">
           <div><span className="section-label">02 / WHAT WE DO</span><h2>Connecting logistics and <em> COMMERCE.</em></h2></div>
           <p>
-            {/* A seamless B2B supply chain connecting manufacturers, sub-dealers, wholesalers, and retail shelves on one shared logistics rail */}
             We are building Africa’s ultimate logistics and commerce infrastructure—connecting every buyer, seller, and manufacturer through a seamless, five-part ecosystem.
           </p>
         </div>

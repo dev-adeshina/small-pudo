@@ -17,31 +17,11 @@ interface CartState {
   items: CartItem[];
 }
 
-type CartAction =
-  | {
-      type: "ADD_ITEM";
-      item: CartItem;
-    }
-  | {
-      type: "REMOVE_ITEM";
-      productId: string;
-    }
-  | {
-      type: "UPDATE_QUANTITY";
-      productId: string;
-      quantity: number;
-    }
-  | {
-      type: "CLEAR_CART";
-    }
-  | {
-      type: "LOAD_CART";
-      items: CartItem[];
-    };
 
 interface CartContextValue {
   items: CartItem[];
   isReady: boolean;
+  itemCount: number;
 
   addToCart: (item: CartItem) => void;
   removeFromCart: (productId: string) => void;
@@ -53,6 +33,29 @@ interface CartContextValue {
   getItemCount: () => number;
   getSubtotal: () => number;
 }
+
+
+type CartAction =
+  | {
+    type: "ADD_ITEM";
+    item: CartItem;
+  }
+  | {
+    type: "REMOVE_ITEM";
+    productId: string;
+  }
+  | {
+    type: "UPDATE_QUANTITY";
+    productId: string;
+    quantity: number;
+  }
+  | {
+    type: "CLEAR_CART";
+  }
+  | {
+    type: "LOAD_CART";
+    items: CartItem[];
+  };
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
@@ -85,18 +88,18 @@ function cartReducer(
 
       const newQuantity = Math.min(
         existingItem.quantity + action.item.quantity,
-        existingItem.stock
+        action.item.stock
+        // existingItem.stock
       );
 
       return {
         items: state.items.map((item) =>
           item.productId === action.item.productId
             ? {
-                ...item,
-                quantity: newQuantity,
-                stock: action.item.stock,
-                price: action.item.price,
-              }
+              ...item,
+              ...action.item,
+              quantity: newQuantity,
+            }
             : item
         ),
       };
@@ -265,10 +268,20 @@ export function CartProvider({
     );
   }, [state.items]);
 
+  const itemCount = useMemo(
+    () =>
+      state.items.reduce(
+        (total, item) => total + item.quantity,
+        0
+      ),
+    [state.items]
+  );
+
   const value = useMemo(
     () => ({
       items: state.items,
       isReady,
+      itemCount,
 
       addToCart,
       removeFromCart,
@@ -283,6 +296,7 @@ export function CartProvider({
     [
       state.items,
       isReady,
+      itemCount,
       addToCart,
       removeFromCart,
       updateQuantity,
