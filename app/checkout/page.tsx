@@ -31,6 +31,9 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [orderId, setOrderId] = useState("");
 
+  const [isStartingPayment, setIsStartingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
+
 
   const [isCancelling, setIsCancelling] = useState(false);
   const [isCancelled, setIsCancelled] = useState(false);
@@ -53,7 +56,56 @@ export default function CheckoutPage() {
     }));
   }
 
+  async function startPaystackPayment(
+    currentOrderId: string,
+    orderAccessToken: string
+  ) {
+    setPaymentError("");
+    setIsStartingPayment(true);
 
+    try {
+      const response = await fetch("/api/payments/initialize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId: currentOrderId,
+          orderAccessToken,
+        }),
+      });
+
+      const data: {
+        success?: boolean;
+        authorizationUrl?: string;
+        reference?: string;
+        error?: string;
+      } = await response.json().catch(() => ({}));
+
+      if (
+        !response.ok ||
+        !data.success ||
+        !data.authorizationUrl
+      ) {
+        throw new Error(
+          data.error || "Unable to initialize payment. Please try again."
+        );
+      }
+
+      // Redirect the customer to Paystack's hosted checkout.
+      window.location.assign(data.authorizationUrl);
+    } catch (error) {
+      console.error("Failed to initialize payment:", error);
+
+      setPaymentError(
+        error instanceof Error
+          ? error.message
+          : "Unable to start payment. Please try again."
+      );
+    } finally {
+      setIsStartingPayment(false);
+    }
+  }
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
@@ -143,6 +195,11 @@ export default function CheckoutPage() {
 
       clearCart();
       setOrderId(data.orderId);
+
+      await startPaystackPayment(
+        data.orderId,
+        data.orderAccessToken
+      );
     } catch (error) {
       console.error(
         "Failed to create order:",
@@ -264,14 +321,55 @@ export default function CheckoutPage() {
             </h1>
 
             <p>
+              {/* {isCancelled
+                ? "Your order has been cancelled successfully. The reserved product stock has been restored."
+                : "Your order has been created successfully and is currently awaiting payment."} */}
+
               {isCancelled
                 ? "Your order has been cancelled successfully. The reserved product stock has been restored."
-                : "Your order has been created successfully and is currently awaiting payment."}
+                : paymentError
+                  ? "Your order has been created, but payment could not be started. You can retry payment or cancel your order."
+                  : "Your order has been created. Complete payment on Paystack to proceed with your order."}
             </p>
 
             <p>
               Order ID: <strong>{orderId}</strong>
             </p>
+
+            {paymentError && (
+              <div className="checkout-error" role="alert">
+                <p>{paymentError}</p>
+
+                {!isCancelled && (
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => {
+                      const orderAccessToken = sessionStorage.getItem(
+                        `order-access:${orderId}`
+                      );
+
+                      if (!orderAccessToken) {
+                        setPaymentError(
+                          "The order access token could not be found. Please use the browser tab where you placed the order."
+                        );
+                        return;
+                      }
+
+                      void startPaystackPayment(
+                        orderId,
+                        orderAccessToken
+                      );
+                    }}
+                    disabled={isStartingPayment || isCancelling}
+                  >
+                    {isStartingPayment
+                      ? "Connecting to Paystack..."
+                      : "Retry Payment"}
+                  </button>
+                )}
+              </div>
+            )}
 
             {cancellationError && (
               <div className="checkout-error" role="alert">

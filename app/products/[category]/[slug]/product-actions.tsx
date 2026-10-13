@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
-
 
 interface ProductActionsProps {
   productId: string;
@@ -25,70 +25,92 @@ export default function ProductActions({
   images,
   stock,
 }: ProductActionsProps) {
-  const [added, setAdded] = useState(false);
+  const router = useRouter();
+
+  const {
+    items,
+    isReady,
+    addToCart,
+    updateQuantity,
+  } = useCart();
+
   const [quantity, setQuantity] = useState(1);
-  const { addToCart } = useCart();
+
+  const [added, setAdded] = useState(false);
 
   const isOutOfStock = stock <= 0;
 
-  const decreaseQuantity = () => {
-    setQuantity((current) => Math.max(1, current - 1));
-  };
+  // Check whether this product is already in the cart.
+  const cartItem = items.find(
+    (item) => item.productId === productId
+  );
 
-  const increaseQuantity = () => {
-    setQuantity((current) =>
-      Math.min(stock, current + 1)
+  // Keep the quantity selector synchronized with the cart.
+  useEffect(() => {
+    if (!isReady) return;
+
+    if (cartItem) {
+      setQuantity(Math.min(stock, cartItem.quantity));
+    } else {
+      setQuantity(1);
+    }
+  }, [isReady, cartItem?.quantity, productId, stock]);
+
+  // Synchronize the requested quantity with the cart.
+  const syncCartQuantity = (nextQuantity: number) => {
+    if (stock <= 0) return;
+
+    const safeQuantity = Math.max(
+      1,
+      Math.min(nextQuantity, stock)
     );
-  };
 
-  // const handleAddToCart = () => {
-  //   if (stock <= 0) {
-  //     return;
-  //   }
-
-  //   if (quantity > stock) {
-  //     return;
-  //   }
-
-  //   addToCart({
-  //     productId,
-  //     name,
-  //     slug,
-  //     categoryId,
-  //     price,
-  //     currency,
-  //     image: images[0] ?? "",
-  //     quantity,
-  //     stock,
-  //   });
-  // };
-
-  const handleAddToCart = () => {
-    if (stock <= 0) {
-      return;
+    if (cartItem) {
+      updateQuantity(productId, safeQuantity);
+    } else {
+      addToCart({
+        productId,
+        name,
+        slug,
+        categoryId,
+        price,
+        currency,
+        image: images?.[0] ?? "",
+        quantity: safeQuantity,
+        stock,
+      });
     }
-
-    if (quantity > stock) {
-      return;
-    }
-
-    addToCart({
-      productId,
-      name,
-      slug,
-      categoryId,
-      price,
-      currency,
-      image: images[0] ?? "",
-      quantity,
-      stock,
-    });
 
     setAdded(true);
+  };
 
-    window.setTimeout(() => {
-      setAdded(false);
-    }, 2000);
+  // Increase quantity and update the cart immediately.
+  const increaseQuantity = () => {
+    if (isOutOfStock || quantity >= stock) return;
+
+    const nextQuantity = quantity + 1;
+
+    setQuantity(nextQuantity);
+    syncCartQuantity(nextQuantity);
+  };
+
+  // Decrease quantity and update the cart immediately.
+  const decreaseQuantity = () => {
+    if (isOutOfStock || quantity <= 1) return;
+
+    const nextQuantity = quantity - 1;
+
+    setQuantity(nextQuantity);
+    syncCartQuantity(nextQuantity);
+  };
+
+  // Add or synchronize the selected quantity, then open the cart.
+  const handleAddToCart = () => {
+    if (isOutOfStock || !isReady) return;
+
+    syncCartQuantity(quantity);
+
+    router.push("/cart");
   };
 
   return (
@@ -110,20 +132,27 @@ export default function ProductActions({
           <button
             type="button"
             onClick={decreaseQuantity}
-            disabled={isOutOfStock || quantity <= 1}
+            disabled={
+              isOutOfStock ||
+              quantity <= 1 ||
+              !isReady
+            }
             aria-label="Decrease quantity"
           >
             −
           </button>
 
-          <span>{quantity}</span>
+          <span aria-live="polite">
+            {quantity}
+          </span>
 
           <button
             type="button"
             onClick={increaseQuantity}
             disabled={
               isOutOfStock ||
-              quantity >= stock
+              quantity >= stock ||
+              !isReady
             }
             aria-label="Increase quantity"
           >
@@ -136,15 +165,16 @@ export default function ProductActions({
         type="button"
         className="product-add-to-cart"
         onClick={handleAddToCart}
-        disabled={isOutOfStock}
+        disabled={isOutOfStock || !isReady}
       >
         {isOutOfStock
           ? "Out of Stock"
-          : added
-            ? "Added to Cart ✓"
-            : "Add to Cart"}
+          : !isReady
+            ? "Loading Cart..."
+            : added
+              ? "Proceed to Cart →"
+              : "Add to Cart"}
       </button>
     </div>
   );
 }
-

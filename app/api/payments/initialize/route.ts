@@ -205,6 +205,17 @@ export async function POST(request: Request) {
     const reference =
       `ord_${orderId}_${randomBytes(12).toString("hex")}`;
 
+    // if (returnedReference !== reference) {
+    //   console.error(
+    //     "Paystack returned an unexpected transaction reference."
+    //   );
+
+    //   return NextResponse.json(
+    //     { error: "Unable to validate payment reference." },
+    //     { status: 502 }
+    //   );
+    // }
+
     const baseUrl = appUrl.replace(/\/+$/, "");
 
     // Initialize the transaction using the secret key
@@ -246,7 +257,7 @@ export async function POST(request: Request) {
       !paystackResponse.ok ||
       paystackData.status !== true ||
       typeof paystackData.data?.authorization_url !==
-        "string" ||
+      "string" ||
       typeof paystackData.data?.reference !== "string"
     ) {
       console.error(
@@ -268,6 +279,17 @@ export async function POST(request: Request) {
 
     const returnedReference =
       paystackData.data.reference;
+
+    if (returnedReference !== reference) {
+      console.error(
+        "Paystack returned an unexpected transaction reference."
+      );
+
+      return NextResponse.json(
+        { error: "Unable to validate payment reference." },
+        { status: 502 }
+      );
+    }
 
     // Do not accept an unexpected checkout URL.
     const checkoutUrl = new URL(authorizationUrl);
@@ -310,14 +332,14 @@ export async function POST(request: Request) {
         // Another request may have initialized payment.
         if (
           typeof latestOrder.paymentReference ===
-            "string" &&
+          "string" &&
           latestOrder.paymentReference
         ) {
           return (
             latestOrder.paymentReference ===
-              returnedReference &&
+            returnedReference &&
             latestOrder.paymentAuthorizationUrl ===
-              authorizationUrl
+            authorizationUrl
           );
         }
 
