@@ -377,3 +377,25 @@ export async function getCategoryProductCounts(
 
   return counts
 }
+
+export async function getCategoryBySlug(
+  slug: string
+): Promise<Category | undefined> {
+  const q = query(
+    collection(db, COLLECTION_NAME),
+    where("slug", "==", slug)
+  );
+
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    return undefined;
+  }
+
+  const document = snapshot.docs[0];
+
+  return {
+    id: document.id,
+    ...document.data(),
+  } as Category;
+}

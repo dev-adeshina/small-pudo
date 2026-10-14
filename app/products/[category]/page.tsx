@@ -2,8 +2,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
-import { getCategoryBySlug } from "@/lib/repositories/categoryRepository"
-import { getProductsByCategory } from "@/lib/repositories/productRepository"
+// import { getCategoryBySlug } from "@/lib/repositories/categoryRepository"
+// import { getProductsByCategory } from "@/lib/repositories/productRepository"
+// import { getCategory } from "@/lib/firebase/categories"
+import { getProductsByCategory } from "@/lib/firebase/products"
+import { getCategoryBySlug } from "@/lib/firebase/categories"
 
 const defaultPlaceholderImage = "https://images.unsplash.com/photo-1574484284002-952d92456975?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
 

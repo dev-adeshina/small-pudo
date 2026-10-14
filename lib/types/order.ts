@@ -4,7 +4,12 @@ export type PaymentStatus =
   | "pending"
   | "successful"
   | "failed"
-  | "refunded";
+  | "refunded"
+  | "cancelled"
+  | "chargeback"
+  | "disputed"
+  | "paid"
+  | "processing";
 
 export type OrderStatus =
   | "pending"
