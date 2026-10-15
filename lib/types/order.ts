@@ -34,6 +34,15 @@ export interface OrderDelivery {
   instructions: string;
 }
 
+export interface OrderShipping {
+  provider: string | null;
+  trackingNumber: string | null;
+  shippedAt: Timestamp | null;
+  estimatedDeliveryAt: Timestamp | null;
+  deliveredAt: Timestamp | null;
+  notes: string | null;
+}
+
 export interface OrderItem {
   productId: string;
   name: string;
@@ -64,6 +73,9 @@ export interface Order {
 
   orderStatus: OrderStatus;
 
+  /** Optional for compatibility with orders created before shipping fields existed. */
+  shipping?: OrderShipping;
+
   createdAt: Timestamp | null;
   updatedAt: Timestamp | null;
 }
@@ -86,4 +98,6 @@ export interface CreateOrderData {
   paymentReference?: string | null;
 
   orderStatus?: OrderStatus;
+
+  shipping?: Partial<OrderShipping>;
 }

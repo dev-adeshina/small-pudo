@@ -45,6 +45,14 @@ type OrderRecord = {
   orderStatus: OrderStatus;
   createdAt: string | null;
   updatedAt: string | null;
+  shipping?: {
+    provider: string | null;
+    trackingNumber: string | null;
+    shippedAt: string | null;
+    estimatedDeliveryAt: string | null;
+    deliveredAt: string | null;
+    notes: string | null;
+  };
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -113,6 +121,7 @@ export default function AdminOrdersPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
+  const [savingShipping, setSavingShipping] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -193,6 +202,83 @@ export default function AdminOrdersPage() {
       setError(updateError instanceof Error ? updateError.message : "Unable to update this order.");
     } finally {
       setUpdatingOrder(null);
+    }
+  }
+
+  function updateShippingDraft(orderId: string, field: "provider" | "trackingNumber" | "estimatedDeliveryAt" | "notes", value: string) {
+    setOrders((current) => current.map((order) => {
+      if (order.id !== orderId) return order;
+      return {
+        ...order,
+        shipping: {
+          provider: order.shipping?.provider ?? null,
+          trackingNumber: order.shipping?.trackingNumber ?? null,
+          shippedAt: order.shipping?.shippedAt ?? null,
+          estimatedDeliveryAt: order.shipping?.estimatedDeliveryAt ?? null,
+          deliveredAt: order.shipping?.deliveredAt ?? null,
+          notes: order.shipping?.notes ?? null,
+          [field]: value || null,
+        },
+      };
+    }));
+  }
+
+  function toDateTimeLocal(value: string | null | undefined) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+    return local.toISOString().slice(0, 16);
+  }
+
+  async function saveShipping(order: OrderRecord) {
+    if (order.paymentStatus !== "paid" || order.orderStatus === "cancelled") {
+      setError("Shipping details can only be changed for paid, non-cancelled orders.");
+      return;
+    }
+
+    setSavingShipping(order.id);
+    setError("");
+    setNotice("");
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("Your session has expired. Please sign in again.");
+      const token = await user.getIdToken();
+      const shipping = order.shipping ?? {
+        provider: null,
+        trackingNumber: null,
+        shippedAt: null,
+        estimatedDeliveryAt: null,
+        deliveredAt: null,
+        notes: null,
+      };
+      const estimated = shipping.estimatedDeliveryAt;
+      const estimatedDeliveryAt = estimated
+        ? (Number.isNaN(new Date(estimated).getTime()) ? null : new Date(estimated).toISOString())
+        : null;
+      const response = await fetch(`/api/admin/orders/${encodeURIComponent(order.id)}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          shipping: {
+            provider: shipping.provider ?? "",
+            trackingNumber: shipping.trackingNumber ?? "",
+            estimatedDeliveryAt,
+            notes: shipping.notes ?? "",
+          },
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Unable to save shipping details.");
+      setNotice(`Shipping details saved for order ${order.id}.`);
+      await loadOrders(true);
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : "Unable to save shipping details.");
+    } finally {
+      setSavingShipping(null);
     }
   }
 
@@ -302,6 +388,30 @@ export default function AdminOrdersPage() {
                               <section><h3>Delivery address</h3><p>{order.delivery?.address || "—"}</p><p>{[order.delivery?.city, order.delivery?.state, order.delivery?.country].filter(Boolean).join(", ") || "—"}</p>{order.delivery?.instructions && <p>Instructions: {order.delivery.instructions}</p>}</section>
                               <section><h3>Payment &amp; totals</h3><p>Reference: {order.paymentReference || "Not recorded"}</p><p>Subtotal: {formatMoney(order.subtotal, order.currency)}</p><p>Delivery: {formatMoney(order.deliveryFee, order.currency)}</p><p><strong>Total: {formatMoney(order.total, order.currency)}</strong></p></section>
                               <section className="orders-detail-items"><h3>Items</h3>{order.items.map((item, index) => <p key={`${item.productId ?? item.name ?? "item"}-${index}`}>{item.name || "Product"} × {Number(item.quantity) || 0} — {formatMoney(Number(item.subtotal ?? (Number(item.price) || 0) * (Number(item.quantity) || 0)), order.currency)}</p>)}</section>
+                              <section className="orders-shipping-editor" style={{ gridColumn: "1 / -1" }}>
+                                <h3>Shipping &amp; delivery</h3>
+                                <div className="orders-shipping-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px", marginTop: "12px" }}>
+                                  <label className="orders-shipping-field">Courier / provider
+                                    <input style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717" }} value={order.shipping?.provider ?? ""} onChange={(event) => updateShippingDraft(order.id, "provider", event.target.value)} maxLength={120} placeholder="e.g. GIG Logistics" disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
+                                  </label>
+                                  <label className="orders-shipping-field">Tracking number
+                                    <input style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717" }} value={order.shipping?.trackingNumber ?? ""} onChange={(event) => updateShippingDraft(order.id, "trackingNumber", event.target.value)} maxLength={160} placeholder="Enter tracking reference" disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
+                                  </label>
+                                  <label className="orders-shipping-field">Estimated delivery
+                                    <input style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717" }} type="datetime-local" value={toDateTimeLocal(order.shipping?.estimatedDeliveryAt)} onChange={(event) => updateShippingDraft(order.id, "estimatedDeliveryAt", event.target.value ? new Date(event.target.value).toISOString() : "")} disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
+                                  </label>
+                                  <label className="orders-shipping-field" style={{ gridColumn: "1 / -1" }}>Shipping notes
+                                    <textarea style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717", resize: "vertical" }} value={order.shipping?.notes ?? ""} onChange={(event) => updateShippingDraft(order.id, "notes", event.target.value)} maxLength={1000} rows={3} placeholder="Add delivery instructions or internal fulfilment notes" disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
+                                  </label>
+                                </div>
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center", marginTop: "14px" }}>
+                                  <button type="button" className="orders-advance-button" onClick={() => void saveShipping(order)} disabled={savingShipping === order.id || order.paymentStatus !== "paid" || order.orderStatus === "cancelled"}>
+                                    {savingShipping === order.id ? <Loader2 size={14} className="orders-spin" /> : null}Save shipping details
+                                  </button>
+                                  <span className="orders-created-meta">Shipped: {formatDate(order.shipping?.shippedAt ?? null)} · Delivered: {formatDate(order.shipping?.deliveredAt ?? null)}</span>
+                                </div>
+                                {(order.paymentStatus !== "paid" || order.orderStatus === "cancelled") && <p className="orders-created-meta">Shipping edits are available for paid, non-cancelled orders only.</p>}
+                              </section>
                             </div>
                             <p className="orders-created-meta"><Clock3 size={14} /> Created {formatDate(order.createdAt)} · Last updated {formatDate(order.updatedAt)}</p>
                           </td>

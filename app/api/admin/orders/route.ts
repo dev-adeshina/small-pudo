@@ -65,6 +65,11 @@ export async function GET(request: Request) {
       const data = document.data();
       const createdAt = data.createdAt?.toDate?.();
       const updatedAt = data.updatedAt?.toDate?.();
+      const shipping = data.shipping && typeof data.shipping === "object" ? data.shipping : {};
+      const shippingDateToIso = (value: unknown) => {
+        const date = (value as { toDate?: () => Date } | null)?.toDate?.();
+        return date instanceof Date ? date.toISOString() : null;
+      };
 
       return {
         id: document.id,
@@ -78,6 +83,14 @@ export async function GET(request: Request) {
         paymentStatus: typeof data.paymentStatus === "string" ? data.paymentStatus : "unknown",
         paymentReference: typeof data.paymentReference === "string" ? data.paymentReference : null,
         orderStatus: typeof data.orderStatus === "string" ? data.orderStatus : "pending",
+        shipping: {
+          provider: typeof shipping.provider === "string" ? shipping.provider : null,
+          trackingNumber: typeof shipping.trackingNumber === "string" ? shipping.trackingNumber : null,
+          shippedAt: shippingDateToIso(shipping.shippedAt),
+          estimatedDeliveryAt: shippingDateToIso(shipping.estimatedDeliveryAt),
+          deliveredAt: shippingDateToIso(shipping.deliveredAt),
+          notes: typeof shipping.notes === "string" ? shipping.notes : null,
+        },
         createdAt: createdAt instanceof Date ? createdAt.toISOString() : null,
         updatedAt: updatedAt instanceof Date ? updatedAt.toISOString() : null,
       };
