@@ -33,13 +33,13 @@ export default function ContactPage() {
           <div>
             <span className="eyebrow">Email</span>
 
-            <h3>hello@example.com</h3>
+            <h3>hello@verilyft.com</h3>
           </div>
 
           <div>
             <span className="eyebrow">Phone</span>
 
-            <h3>+234 800 000 0000</h3>
+            <h3>08100000011</h3>
           </div>
 
           <div>
@@ -52,8 +52,7 @@ export default function ContactPage() {
             <strong>Need help quickly?</strong>
 
             <p>
-              Send us your order number when contacting
-              support so we can assist you faster.
+              Send us your open ticket number for faster help delivery.
             </p>
           </div>
         </div>
