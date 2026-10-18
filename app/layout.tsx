@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { CartProvider } from "@/context/cart-context";
 import "./globals.css";
@@ -14,24 +15,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Verilyft — Beyond Borders',
-  description: 'logistics market shaped by scale, powered by precision.',
+  title: "Verilyft — Beyond Borders",
+  description: "logistics market shaped by scale, powered by precision.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <CartProvider>
-          {children}
-        </CartProvider>
-        
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );
 }
-
 
