@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { createHash, randomBytes } from "node:crypto";
 import { FieldValue, type DocumentReference } from "firebase-admin/firestore";
 
-import { adminDb } from "@/lib/firebase-admin";
+// import { adminDb } from "@/lib/firebase-admin";
+import { adminAuth, adminDb } from "@/lib/firebase-admin";
 
 export const runtime = "nodejs";
 
@@ -55,6 +56,52 @@ function requiredString(
 
 export async function POST(request: Request) {
   try {
+
+
+    // Guest checkout remains available when no token is supplied.
+    let customerUid: string | null = null;
+
+    const authorization = request.headers.get("authorization");
+
+    if (authorization !== null) {
+      if (!authorization.startsWith("Bearer ")) {
+        return NextResponse.json(
+          { error: "Invalid authorization header." },
+          { status: 401 }
+        );
+      }
+
+      const idToken = authorization.slice("Bearer ".length).trim();
+
+      if (!idToken) {
+        return NextResponse.json(
+          { error: "Missing authentication token." },
+          { status: 401 }
+        );
+      }
+
+      try {
+        const decodedToken = await adminAuth.verifyIdToken(idToken);
+
+        if (decodedToken.email_verified !== true) {
+          return NextResponse.json(
+            { error: "Please verify your email before placing an account order." },
+            { status: 403 }
+          );
+        }
+
+        customerUid = decodedToken.uid;
+      } catch {
+        return NextResponse.json(
+          { error: "Your session is invalid or expired. Please sign in again." },
+          { status: 401 }
+        );
+      }
+    }
+
+    const userId = customerUid
+      ? adminDb.collection("users").doc(customerUid)
+      : null;
     let body: unknown;
 
     try {
@@ -385,7 +432,7 @@ export async function POST(request: Request) {
          * Either all these writes succeed or none do.
          */
         transaction.create(orderRef, {
-          userId: null,
+          userId,
           orderAccessTokenHash,
           customer,
           delivery,
@@ -399,7 +446,7 @@ export async function POST(request: Request) {
           paymentStatus: "pending",
           paymentReference: "",
           orderStatus: "pending",
-          
+
           createdAt:
             FieldValue.serverTimestamp(),
           updatedAt:

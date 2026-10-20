@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
+import { auth } from "@/lib/firebase";
 // import { createOrder } from "@/lib/firebase/orders";
 
 export default function CheckoutPage() {
@@ -116,11 +117,18 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
+      const currentUser = auth.currentUser;
+      const idToken = currentUser
+        ? await currentUser.getIdToken()
+        : null;
       const response = await fetch("/api/orders", {
         method: "POST",
 
         headers: {
           "Content-Type": "application/json",
+          ...(idToken
+            ? { Authorization: `Bearer ${idToken}` }
+            : {}),
         },
 
         body: JSON.stringify({
