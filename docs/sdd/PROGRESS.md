@@ -1,12 +1,10 @@
 # VeriLyft Progress Tracker
 
-**Last updated:** 17 October 2026\
+**Last updated:** 20 October 2026\
 **Baseline:** `pudo(5).zip` plus user-reported project history\
 **Current phase:** Phase 1 --- focused audit / prepare for customer
 accounts\
-**Next implementation target:** Customer registration and
-authentication, after checking the complete working repository and
-resolving any blocking audit findings.
+**Next customer-account roadmap target:** Customer order history: safely associate authenticated orders with the verified Firebase UID on the server, then implement customer-scoped order-list and order-detail retrieval. Customer profile is complete; remaining focused audit items and other unfinished account requirements remain open.
 
 > Keep this file current. A new session should use this as the first
 > checkpoint, but verify important details against the live repository.
@@ -26,10 +24,7 @@ includes storefront, catalogue, cart, checkout, order/payment APIs,
 admin catalogue management, admin order management, initial shipping
 fields, and a guest order tracking endpoint.
 
-**Current priority is the customer side:** customer authentication,
-dashboard, and customer order history. The remaining customer-facing
-delivery experience and Telegram integration are intentionally later
-phases.
+**Current priority is the customer account experience.** The separate customer profile page and dashboard Quick actions link are complete and user-tested. Customer order history and ownership-safe order retrieval remain unfinished. The customer-facing delivery experience and Telegram integration are intentionally later phases.
 
 ## 2. Feature tracker
 
@@ -88,22 +83,44 @@ phases.
   Guest order tracking    \[x\]                   `app/api/orders/[orderId]/track/route.ts`
   API                                             
 
-  Customer                \[ \]                   Not present in supplied archive
-  registration/sign-in                            
+  Customer                \\[\\~\\]                  Customer auth is present; full registration,
+  registration/sign-in                            sign-in, sign-out, and recovery acceptance
+                                                  remains to be confirmed
 
-  Customer dashboard      \[ \]                   Not present in supplied archive
+  Customer dashboard      \\[\\~\\]                  Dashboard is present; Quick actions includes
+                                                  `My profile` linking to `/account/profile`
 
-  Customer order          \[ \]                   Not present in supplied archive
+  Customer profile        \\[x\\]                   `app/account/profile/page.tsx`; separate
+  page                                            page, persistence after refresh/re-login,
+                                                  and signed-out access checks passed
+                                                  (user-reported functional tests)
+
+  Customer order          \\[ \\]                   Customer order list/history remains unfinished
   list/history                                    
 
-  Customer-owned order    \[\~\]                  Current order creation uses `userId: null`;
+  Customer-owned order    \\[\\~\\]                  Current order creation uses `userId: null`;
   association                                     must extend safely
 
-  Customer order details  \[ \]                   Not present in supplied archive
+  Customer order details  \\[ \\]                   Customer order-detail page remains unfinished
   page                                            
 
-  Secure guest-order      \[?\]                   Token exists; recovery product flow not
+  Secure guest-order      \\[?\\]                   Token exists; recovery product flow not
   recovery/claiming                               defined
+
+  Firebase Storage image  \\[x\\]                   `lib/firebase/storage.ts`
+  uploads                                        
+
+  Cloudinary              \\[ \\]                   Optional future decision; not implemented in
+                                                  archive
+
+  Customer-facing         \\[ \\]                   Tracking API exists; customer UI not found
+  delivery tracking UI
+
+  Courier/provider API    \\[ \\]                   Manual shipping data only in supplied source
+  integration
+
+  Telegram bot/group      \\[ \\]                   Not present in supplied source
+  integration
 
   Firebase Storage image  \[x\]                   `lib/firebase/storage.ts`
   uploads                                         
@@ -165,26 +182,15 @@ phases.
 
 ### Phase 2 --- Customer authentication
 
-**Status: \[ \] Not started.** - \[ \] Agree the minimum authentication
-methods based on existing Firebase patterns. - \[ \] Implement customer
-sign-up/sign-in/sign-out/account recovery. - \[ \] Keep customer auth
-separate from admin authorization. - \[ \] Test protected customer
-routes.
+**Status: \\[\\~\\] In progress; do not treat the full authentication checklist as complete until all flows are confirmed.** - \\[ \\] Confirm customer sign-up/sign-in/sign-out/account-recovery flows. - \\[ \\] Keep customer auth separate from admin authorization. - \\[x\\] Signed-out users cannot access `/account/profile` directly (user-reported test).
 
 ### Phase 3 --- Customer dashboard
 
-**Status: \[ \] Not started.** - \[ \] Account overview. - \[ \] Account
-navigation and responsive layout. - \[ \] Loading, empty, success, and
-error states. - \[ \] Reuse current global CSS/Tailwind patterns.
+**Status: \\[\\~\\] In progress; profile entry point is complete.** - \\[ \\] Confirm account overview and remaining dashboard states. - \\[x\\] Add `My profile` to dashboard Quick actions. - \\[x\\] Provide a separate `/account/profile` page. - \\[ \\] Verify remaining loading, empty, success, error, and responsive states.
 
 ### Phase 4 --- Customer order history
 
-**Status: \[ \] Not started.** - \[ \] Associate authenticated orders
-with verified Firebase UID server-side. - \[ \] Add customer-scoped
-order-list retrieval. - \[ \] Add customer-scoped order-detail
-retrieval. - \[ \] Ensure customers cannot access another customer's
-orders. - \[ \] Decide secure guest-order recovery/claiming behaviour. -
-\[ \] Keep guest checkout if still required.
+**Status: \\[ \\] Not started; this is the next customer-account roadmap item.** - \\[ \\] Associate authenticated orders with the verified Firebase UID server-side. - \\[ \\] Add customer-scoped order-list retrieval. - \\[ \\] Add customer-scoped order-detail retrieval. - \\[ \\] Ensure customers cannot access another customer's orders. - \\[ \\] Decide secure guest-order recovery/claiming behaviour. - \\[x\\] Preserve guest checkout.
 
 ### Phase 5 --- Finish account experience / image-hosting decision
 
@@ -218,6 +224,16 @@ Add retry/error logging and duplicate-notification protection. - \[ \]
 Keep Telegram separate from customer-facing order management.
 
 ## 5. Session log
+
+### 20 October 2026 --- Customer profile completion
+
+-   Added the separate customer profile page at `/account/profile`.
+-   Added the `My profile` link to the customer dashboard's Quick actions.
+-   Preserved the existing profile API, validation, authentication, and save functionality.
+-   User confirmed profile changes persist after refreshing and after signing out and back in.
+-   User confirmed signed-out visitors cannot access the profile page directly.
+-   User confirmed TypeScript checks and the relevant functional tests pass; these checks were not independently rerun in this documentation-only update.
+-   Customer profile is complete. Next customer-account roadmap item: customer order history, beginning with server-side association to the verified Firebase UID and customer-scoped retrieval. Customer order details, ownership checks, and guest-order recovery decisions remain unfinished.
 
 ### 17 October 2026 --- Source audit and SDD baseline
 
