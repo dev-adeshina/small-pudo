@@ -1,260 +1,254 @@
 # VeriLyft Progress Tracker
 
-**Last updated:** 20 October 2026\
-**Baseline:** `pudo(5).zip` plus user-reported project history\
-**Current phase:** Phase 1 --- focused audit / prepare for customer
-accounts\
-**Next customer-account roadmap target:** Customer order history: safely associate authenticated orders with the verified Firebase UID on the server, then implement customer-scoped order-list and order-detail retrieval. Customer profile is complete; remaining focused audit items and other unfinished account requirements remain open.
+**Last updated:** 22 October 2026
+**Repository:** `dev-adeshina/small-pudo`
+**Branch:** `main`
+**Last committed baseline:** `bccda2f` — `feat: complete customer profile and authentication`
+**Current phase:** Storefront refinement and authentication/image-upload verification
 
-> Keep this file current. A new session should use this as the first
-> checkpoint, but verify important details against the live repository.
+> This tracker records the current working state, including uncommitted changes.
+> Verify the live repository and test results before treating any item as complete.
 
 ## Status legend
 
--   `[x]` Completed in supplied source or previously reported as tested
-    (evidence noted)
--   `[~]` Partially implemented / needs further work
--   `[ ]` Not implemented or not yet verified
--   `[?]` Needs inspection or a decision
+- [x] Implemented and supported by reported or recorded evidence.
+- [~] Partially implemented, under review, or requiring additional verification.
+- [ ] Not implemented or not yet verified.
+- [?] Requires inspection or a decision.
 
 ## 1. Current position
 
-The project is beyond the initial cart stage. The supplied source
-includes storefront, catalogue, cart, checkout, order/payment APIs,
-admin catalogue management, admin order management, initial shipping
-fields, and a guest order tracking endpoint.
+VeriLyft is an existing Next.js App Router ecommerce application using
+TypeScript, Firebase Authentication, Firestore, Paystack, and a shared
+cart context. The current work extends the existing application; it is
+not a rebuild.
 
-**Current priority is the customer account experience.** The separate customer profile page and dashboard Quick actions link are complete and user-tested. Customer order history and ownership-safe order retrieval remain unfinished. The customer-facing delivery experience and Telegram integration are intentionally later phases.
+The customer authentication and profile chapter has been implemented.
+The current working tree contains changes related to Cloudinary image
+uploads, admin authentication, admin catalogue/order screens, and the
+storefront.
+
+The immediate task is to finish reviewing and verifying the landing
+page, category pages, and product presentation using actual Firestore
+data. Before further storefront changes, preserve the current work and
+save an accurate progress checkpoint.
 
 ## 2. Feature tracker
 
-  --------------------------------------------------------------------------------------------
-  Area                    Status                  Evidence / notes
-  ----------------------- ----------------------- --------------------------------------------
-  Homepage/storefront     \[x\]                   `app/page.tsx` present
+| Area | Status | Evidence / notes |
+|---|---|---|
+| Homepage/storefront | [~] | `app/page.tsx`; landing-page navigation and category dropdown have been updated. Further storefront review is in progress. |
+| Product catalogue | [~] | `app/products/page.tsx`; verify real product data, active-product visibility, image handling, and links. |
+| Category product pages | [~] | `app/products/[category]/page.tsx`; connected to Firestore. Active-category/product filtering and missing-image handling need review. |
+| Product detail pages | [~] | `app/products/[category]/[slug]/page.tsx`; product gallery has been modified and needs regression verification. |
+| Shared cart context | [x] | `context/cart-context.tsx`; local browser persistence is intentional for now. |
+| Cart page | [x] | `app/cart/page.tsx` exists; previous checkout flow testing reported. |
+| Checkout | [x] | `app/checkout/page.tsx`; previous order lifecycle tests reported. |
+| Server-side order creation / stock reservation | [x] | `app/api/orders/route.ts`; prior successful lifecycle testing reported. |
+| Order cancellation | [x] | `app/api/orders/[orderId]/cancel/route.ts`; prior tests reported. |
+| Paystack initialization | [x] | `app/api/payments/initialize/route.ts`. |
+| Paystack verification | [x] | `app/api/payments/verify/route.ts`. |
+| Paystack webhook | [x] | `app/api/payments/webhook/route.ts`; previous webhook success reported. |
+| Payment callback UI | [~] | Implemented; include in regression testing. |
+| Admin authentication | [~] | `lib/auth.ts`, `lib/admin-auth.ts`, and admin API routes have changed. Verify that ordinary customer accounts cannot access admin functionality and that session persistence behaves correctly. |
+| Admin category management | [~] | `app/admin/categories/page.tsx`; Cloudinary image upload integration and category code have changed. |
+| Admin product management | [~] | `app/admin/products/page.tsx`; image upload integration and product UI have changed. |
+| Admin order management | [~] | `app/admin/orders/page.tsx` has changed; rerun regression checks before declaring the current version verified. |
+| Admin image-upload API | [~] | `app/api/admin/uploads/images/route.ts`; server-side authorization and Cloudinary upload behaviour require verification. |
+| Cloudinary image hosting | [~] | `lib/cloudinary.ts`; Firebase Storage helper was removed. Verify upload, validation, authorization, and persisted image URLs. |
+| Customer registration | [x] | Customer registration flow implemented; user previously reported successful account testing. |
+| Customer sign-in / sign-out | [x] | Implemented and previously tested. Keep customer authentication separate from admin authorization. |
+| Customer account recovery | [x] | Recovery flow implemented; retain in regression tests. |
+| Customer dashboard | [x] | Account dashboard and Quick actions implemented. |
+| Customer profile | [x] | `app/account/profile/page.tsx`; user reported persistence after refresh and re-login, and signed-out access checks passing. |
+| Customer order history | [~] | Customer-scoped order retrieval and ownership checks remain to be confirmed. |
+| Customer-owned order association | [ ] | Verify server-side association with the authenticated Firebase UID. Existing guest checkout must continue to work. |
+| Customer order-detail page | [ ] | Customer-specific order detail and ownership checks remain outstanding. |
+| Secure guest-order recovery/claiming | [?] | Decide whether and how guest orders can be claimed by an authenticated customer. |
+| Admin manual shipping updates | [~] | Shipping fields and admin order operations exist; regression-test current transitions. |
+| Guest order tracking API | [x] | `app/api/orders/[orderId]/track/route.ts` exists. |
+| Customer-facing delivery tracking UI | [ ] | Deferred until the account and storefront work is ready. |
+| Courier/provider integration | [ ] | Deferred. |
+| Telegram delivery notifications | [ ] | Deferred. Paid orders should initially be dispatched only after an administrator approves delivery assignment. |
+| TypeScript check | [x] | `npx tsc --noEmit` passed after the recent Next.js upgrade, according to the session record. Rerun after subsequent edits. |
+| Production build | [x] | `npm run build` passed after the recent Next.js upgrade, according to the session record. Rerun after subsequent edits. |
+| Production dependency audit | [x] | `npm audit --omit=dev` reported zero vulnerabilities. |
+| Development dependency audit | [~] | A `braces` advisory remains in the development tooling dependency tree. Do not force a breaking downgrade; reassess when a compatible upstream fix is available. |
+| Full end-to-end regression | [ ] | Run after the current authentication, image-upload, and storefront changes are verified. |
 
-  Product catalogue       \[x\]                   `app/products/page.tsx` present
+## 3. Current work — preserve and verify
 
-  Category product pages  \[x\]                   `app/products/[category]/page.tsx` present
+### A. Working-tree checkpoint
 
-  Product detail pages    \[x\]                   `app/products/[category]/[slug]/page.tsx`
-                                                  present
+- [~] Review all existing modified and untracked files before committing.
+- [ ] Update and inspect this progress tracker.
+- [ ] Review the staged diff and exclude secrets, local environment files, and unrelated files.
+- [ ] Run TypeScript and production build checks against the final checkpoint.
+- [ ] Commit the intended, verified work.
 
-  Shared cart context     \[x\]                   `context/cart-context.tsx` present; browser
-                                                  persistence
+### B. Admin authentication and Cloudinary
 
-  Cart page               \[x\]                   `app/cart/page.tsx` present
+- [~] Cloudinary integration has replaced the previous Firebase Storage helper.
+- [~] Verify that upload requests obtain and send a valid Firebase ID token.
+- [~] Verify server-side admin authorization, including verified email and the configured admin allowlist.
+- [ ] Confirm an ordinary customer cannot enter admin functionality by navigating directly to an admin URL or reusing a browser session.
+- [ ] Confirm a legitimate administrator can sign in, refresh, navigate, and upload images successfully.
+- [ ] Confirm an unauthorized request is rejected without exposing credentials or allowing an upload.
+- [ ] Verify image type, file-size validation, and stored Cloudinary URLs.
 
-  Checkout                \[x\]                   `app/checkout/page.tsx` present
+### C. Storefront refinement
 
-  Server-side order       \[x\]                   `app/api/orders/route.ts`; prior successful
-  creation / stock                                lifecycle testing reported
-  reservation                                     
+- [x] Add customer account navigation to the landing page: Create Account is the prominent action and Sign In is secondary when signed out; My Account appears for a signed-in customer.
+- [x] Connect the landing-page category dropdown to Firestore categories.
+- [~] Verify that inactive categories are not publicly browsable.
+- [~] Verify that inactive products are not shown in public category listings.
+- [~] Handle products with no image without passing an undefined value to Next.js Image.
+- [~] Use the product's stored currency when displaying its price.
+- [~] Avoid displaying an empty features section.
+- [~] Verify product links, actual category names, prices, and responsive layout.
+- [ ] Test category/product pages against real Firestore records after the changes.
+- [ ] Run TypeScript and production build checks after the storefront work.
 
-  Order cancellation      \[x\]                   `app/api/orders/[orderId]/cancel/route.ts`
+### D. Known category-data issue to investigate
 
-  Paystack initialization \[x\]                   `app/api/payments/initialize/route.ts`
+`lib/firebase/categories.ts` currently contains a product-count helper that
+queries products using `where("category", "==", slug)`. The product schema
+used by `lib/firebase/products.ts` instead associates products through
+`categoryId`, and category documents have IDs such as `cat_food`.
 
-  Paystack verification   \[x\]                   `app/api/payments/verify/route.ts`
+This mismatch may cause category product counts and the category-slug
+change check to return incorrect results. Inspect the full helper and its
+call sites before correcting it. Preserve existing Firestore records and
+avoid changing category IDs or product data unnecessarily.
 
-  Paystack webhook        \[x\]                   `app/api/payments/webhook/route.ts`; prior
-                                                  webhook success reported
+## 4. Roadmap
 
-  Payment callback UI     \[\~\]                  Files present; production build not verified
-                                                  from archive
+### Phase 1 — Core ecommerce and audit
 
-  Admin authentication    \[x\]                   Admin sign-in/sign-up/verification/reset
-                                                  pages and `lib/auth.ts` present
+**Status: [~] Existing functionality is implemented; regression checks remain.**
 
-  Admin category          \[x\]                   Page and supporting components present
-  management                                      
+- [x] Storefront, catalogue, cart, and checkout foundations.
+- [x] Order creation and stock reservation.
+- [x] Paystack initialization, verification, and webhook routes.
+- [~] Recheck payment failure, retry, cancellation, expiry, and duplicate webhook handling.
+- [~] Recheck stock restoration and duplicate-event behaviour.
+- [~] Recheck authorization boundaries and production configuration.
 
-  Admin product           \[x\]                   Page and supporting components present
-  management                                      
+### Phase 2 — Customer authentication and profile
 
-  Admin order management  \[x\]                   Page and admin APIs present; user previously
-                                                  reported working
+**Status: [x] Implemented; user-reported tests passed.**
 
-  Shipping data model     \[x\]                   `OrderShipping` in `lib/types/order.ts`
+- [x] Customer registration and sign-in.
+- [x] Customer sign-out and account recovery.
+- [x] Customer dashboard.
+- [x] Separate customer profile page.
+- [x] Profile changes persist after refresh and re-login.
+- [x] Signed-out profile access checks reported passing.
 
-  Admin manual shipping   \[\~\]                  Present; test transitions and edge cases in
-  updates                                         full repository
+### Phase 3 — Customer order history
 
-  Guest order tracking    \[x\]                   `app/api/orders/[orderId]/track/route.ts`
-  API                                             
+**Status: [~] Outstanding account work.**
 
-  Customer                \\[\\~\\]                  Customer auth is present; full registration,
-  registration/sign-in                            sign-in, sign-out, and recovery acceptance
-                                                  remains to be confirmed
+- [ ] Associate authenticated orders with the verified Firebase UID on the server.
+- [ ] Implement customer-scoped order-list retrieval.
+- [ ] Implement customer-scoped order-detail retrieval.
+- [ ] Ensure one customer cannot access another customer's orders.
+- [ ] Decide secure guest-order recovery/claiming behaviour.
+- [x] Preserve guest checkout.
 
-  Customer dashboard      \\[\\~\\]                  Dashboard is present; Quick actions includes
-                                                  `My profile` linking to `/account/profile`
+### Phase 4 — Admin authentication and image hosting
 
-  Customer profile        \\[x\\]                   `app/account/profile/page.tsx`; separate
-  page                                            page, persistence after refresh/re-login,
-                                                  and signed-out access checks passed
-                                                  (user-reported functional tests)
+**Status: [~] Implemented but requires current regression verification.**
 
-  Customer order          \\[ \\]                   Customer order list/history remains unfinished
-  list/history                                    
+- [~] Maintain the existing admin authentication architecture.
+- [~] Verify role/allowlist enforcement on admin pages and APIs.
+- [~] Complete Cloudinary integration and remove obsolete Firebase Storage usage.
+- [ ] Confirm authorized and unauthorized upload behaviour.
+- [ ] Verify image URLs in category, product, and storefront views.
 
-  Customer-owned order    \\[\\~\\]                  Current order creation uses `userId: null`;
-  association                                     must extend safely
+### Phase 5 — Storefront refinement
 
-  Customer order details  \\[ \\]                   Customer order-detail page remains unfinished
-  page                                            
+**Status: [~] Active.**
 
-  Secure guest-order      \\[?\\]                   Token exists; recovery product flow not
-  recovery/claiming                               defined
+- [x] Add customer account actions to the landing-page header.
+- [x] Populate category navigation from Firestore.
+- [~] Refine category and product listing behaviour using actual records.
+- [~] Handle inactive records and missing product images.
+- [~] Verify product prices, currency, features, and category associations.
+- [ ] Complete responsive and visual regression checks.
 
-  Firebase Storage image  \\[x\\]                   `lib/firebase/storage.ts`
-  uploads                                        
+### Phase 6 — End-to-end regression
 
-  Cloudinary              \\[ \\]                   Optional future decision; not implemented in
-                                                  archive
+**Status: [ ] Pending completion of the active work.**
 
-  Customer-facing         \\[ \\]                   Tracking API exists; customer UI not found
-  delivery tracking UI
+- [ ] Guest browse/cart/checkout/payment flow.
+- [ ] Registered customer sign-in and checkout.
+- [ ] Customer order ownership and order-history checks.
+- [ ] Payment failure/retry/cancel/late webhook cases.
+- [ ] Admin authentication, catalogue operations, and order operations.
+- [ ] Cloudinary authorized/unauthorized upload tests.
+- [ ] TypeScript and production build.
+- [ ] Desktop and mobile responsive review.
 
-  Courier/provider API    \\[ \\]                   Manual shipping data only in supplied source
-  integration
+### Phase 7 — Customer-facing delivery
 
-  Telegram bot/group      \\[ \\]                   Not present in supplied source
-  integration
+**Status: [ ] Deferred intentionally.**
 
-  Firebase Storage image  \[x\]                   `lib/firebase/storage.ts`
-  uploads                                         
+- [ ] Display fulfilment status on customer order details.
+- [ ] Display tracking information when available.
+- [ ] Reuse existing tracking logic where appropriate.
+- [ ] Evaluate manual tracking versus a courier/provider integration.
 
-  Cloudinary              \[ \]                   Optional future decision; not implemented in
-                                                  archive
+### Phase 8 — Telegram delivery integration
 
-  Customer-facing         \[ \]                   Tracking API exists; customer UI not found
-  delivery tracking UI                            
+**Status: [ ] Deferred intentionally.**
 
-  Courier/provider API    \[ \]                   Manual shipping data only in supplied source
-  integration                                     
-
-  Telegram bot/group      \[ \]                   Not present in supplied source
-  integration                                     
-
-  Complete production     \[?\]                   Cannot verify from archive because root
-  build                                           configuration files were omitted
-
-  Firebase Security Rules \[?\]                   Full project rules were not available in the
-  review                                          archive
-
-  End-to-end regression   \[ \]                   Future milestone
-  test after customer                             
-  accounts                                        
-  --------------------------------------------------------------------------------------------
-
-## 3. Active phase --- Phase 1: focused audit
-
-### Checklist
-
--   [ ] Inspect the complete local repository, including `package.json`,
-    lockfile, `tsconfig.json`, `next.config.*`, environment variable
-    *names* (never expose values), and Firebase Security Rules.
--   [ ] Run the existing project's TypeScript/build checks in its real
-    environment.
--   [ ] Review payment retry, cancellation, expiry, and late webhook
-    behaviour.
--   [ ] Confirm stock reservation/release behaviour for failure,
-    cancellation, expiry, and duplicate events.
--   [ ] Confirm admin API authorization and customer/order data access
-    boundaries.
--   [ ] Record only confirmed defects in `ISSUES.md`.
--   [ ] Avoid rewriting parts that are already working.
-
-### Exit criteria
-
--   [ ] Blocking audit findings are fixed or explicitly
-    accepted/deferred.
--   [ ] Current build/test state is recorded accurately.
--   [ ] Customer-auth implementation can begin without unresolved design
-    assumptions.
-
-## 4. Roadmap tracker
-
-### Phase 1 --- Focused audit
-
-**Status: \[\~\] Active / next action.**
-
-### Phase 2 --- Customer authentication
-
-**Status: \\[\\~\\] In progress; do not treat the full authentication checklist as complete until all flows are confirmed.** - \\[ \\] Confirm customer sign-up/sign-in/sign-out/account-recovery flows. - \\[ \\] Keep customer auth separate from admin authorization. - \\[x\\] Signed-out users cannot access `/account/profile` directly (user-reported test).
-
-### Phase 3 --- Customer dashboard
-
-**Status: \\[\\~\\] In progress; profile entry point is complete.** - \\[ \\] Confirm account overview and remaining dashboard states. - \\[x\\] Add `My profile` to dashboard Quick actions. - \\[x\\] Provide a separate `/account/profile` page. - \\[ \\] Verify remaining loading, empty, success, error, and responsive states.
-
-### Phase 4 --- Customer order history
-
-**Status: \\[ \\] Not started; this is the next customer-account roadmap item.** - \\[ \\] Associate authenticated orders with the verified Firebase UID server-side. - \\[ \\] Add customer-scoped order-list retrieval. - \\[ \\] Add customer-scoped order-detail retrieval. - \\[ \\] Ensure customers cannot access another customer's orders. - \\[ \\] Decide secure guest-order recovery/claiming behaviour. - \\[x\\] Preserve guest checkout.
-
-### Phase 5 --- Finish account experience / image-hosting decision
-
-**Status: \[ \] Not started.** - \[ \] Complete essential account and
-order screens. - \[ \] Decide whether Cloudinary solves a concrete
-requirement. - \[ \] If approved, plan migration without breaking
-existing image URLs.
-
-### Phase 6 --- End-to-end regression
-
-**Status: \[ \] Not started.** - \[ \] Guest
-browse/cart/checkout/payment path. - \[ \] Registered customer checkout
-and order history. - \[ \] Payment failure/retry/cancel/late webhook
-cases. - \[ \] Admin catalogue and order operations. - \[ \]
-TypeScript/build checks. - \[ \] Mobile/responsive review.
-
-### Phase 7 --- Customer-facing delivery experience
-
-**Status: \[ \] Deferred intentionally.** - \[ \] Customer order details
-display fulfilment status. - \[ \] Display courier/tracking information
-when present. - \[ \] Connect to existing tracking logic without
-duplicate APIs. - \[ \] Decide manual courier tracking versus provider
-integration.
-
-### Phase 8 --- Telegram integration
-
-**Status: \[ \] Deferred intentionally.** - \[ \] Agree notification
-trigger(s) and exact fields. - \[ \] Configure server-side bot token and
-group/chat ID. - \[ \] Send minimum necessary order information. - \[ \]
-Add retry/error logging and duplicate-notification protection. - \[ \]
-Keep Telegram separate from customer-facing order management.
+- [ ] Define notification triggers and minimum necessary order fields.
+- [ ] Configure bot credentials and destination server-side.
+- [ ] Begin with administrator-approved delivery assignment.
+- [ ] Add retry/error logging and duplicate-notification protection.
+- [ ] Keep Telegram separate from customer-facing order management.
 
 ## 5. Session log
 
-### 20 October 2026 --- Customer profile completion
+### 22 October 2026 — Storefront, admin authentication, and image hosting checkpoint
 
--   Added the separate customer profile page at `/account/profile`.
--   Added the `My profile` link to the customer dashboard's Quick actions.
--   Preserved the existing profile API, validation, authentication, and save functionality.
--   User confirmed profile changes persist after refreshing and after signing out and back in.
--   User confirmed signed-out visitors cannot access the profile page directly.
--   User confirmed TypeScript checks and the relevant functional tests pass; these checks were not independently rerun in this documentation-only update.
--   Customer profile is complete. Next customer-account roadmap item: customer order history, beginning with server-side association to the verified Firebase UID and customer-scoped retrieval. Customer order details, ownership checks, and guest-order recovery decisions remain unfinished.
+- Reviewed the working-tree status and change summary before further storefront work.
+- Confirmed that the working tree contains changes to admin authentication, admin catalogue/order screens, Cloudinary uploads, Firebase category helpers, product presentation, and the landing page.
+- Confirmed the landing-page account navigation design: Create Account is primary, Sign In is secondary, and signed-in customers see My Account.
+- Confirmed that the storefront category dropdown is connected to Firestore categories.
+- Identified a possible mismatch between the category product-count query (`category`) and the product schema (`categoryId`).
+- Identified the need to verify inactive category/product visibility and missing product-image handling.
+- Recorded the latest reported TypeScript/build success and production dependency audit result. These checks must be rerun after further code changes.
+- Next: inspect and commit the intended verified changes, then continue with category/product storefront refinement.
 
-### 17 October 2026 --- Source audit and SDD baseline
+### 20 October 2026 — Customer profile completion
 
--   Reviewed the supplied archive structure and relevant source paths.
--   Identified that admin shipping management and a guest tracking API
-    already exist.
--   Identified customer registration, dashboard, customer order history,
-    and customer tracking UI as absent from the supplied archive.
--   Noted that new order creation currently uses `userId: null`.
--   Confirmed Firebase Storage is present; Cloudinary is not implemented
-    in the supplied source.
--   Build could not be independently verified because root project
-    configuration was not included in the ZIP.
--   Next task: inspect complete working repository and perform focused
-    audit, then begin customer authentication.
+- Added the separate customer profile page at `/account/profile`.
+- Added the `My profile` link to the customer dashboard's Quick actions.
+- Preserved the existing profile API, validation, authentication, and save functionality.
+- User confirmed profile changes persist after refreshing and after signing out and back in.
+- User confirmed signed-out visitors cannot access the profile page directly.
+- User reported that TypeScript checks and relevant functional tests passed.
+- Customer profile work was completed; customer order history and ownership-safe order retrieval remain outstanding.
 
-## 6. How to update this tracker
+### 17 October 2026 — Source audit and SDD baseline
 
-At the end of every meaningful session: 1. Update the current phase and
-next implementation target. 2. Mark tasks complete only when code and/or
-test evidence supports that status. 3. Add a dated session-log entry. 4.
-Add confirmed bugs or unresolved risks to `ISSUES.md`. 5. Record
-material architecture decisions in `DECISIONS.md`. 6. State which tests
-were actually run and which were not.
+- Reviewed the supplied archive structure and relevant source paths.
+- Identified existing admin shipping management and a guest tracking API.
+- Identified customer registration, dashboard, and customer order history as unfinished in the supplied archive.
+- Noted that order creation used `userId: null`.
+- The supplied archive did not include enough root configuration to independently verify a production build.
+- Established the initial focused-audit and customer-account roadmap.
+
+## 6. Tracker maintenance rules
+
+At the end of each meaningful session:
+
+1. Update the current phase and next implementation target.
+2. Mark tasks complete only when supported by code or test evidence.
+3. Record the date and outcome in the session log.
+4. Record confirmed defects and unresolved risks in `ISSUES.md`.
+5. Record material architecture decisions in `DECISIONS.md`.
+6. State which tests were actually run and which remain outstanding.
+7. Inspect the Git diff before committing and never include secrets or local environment files.
