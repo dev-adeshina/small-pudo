@@ -9,12 +9,12 @@ interface ProductGalleryProps {
 }
 
 
-const defaultPlaceholderImage = "https://images.unsplash.com/photo-1574484284002-952d92456975?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+
 export default function ProductGallery({
   images,
   productName,
 }: ProductGalleryProps) {
-  const productImages = images?.length ? images : [defaultPlaceholderImage];
+  const productImages = images?.length ? images : [];
 
   const [selectedImage, setSelectedImage] = useState(productImages[0]);
 
@@ -22,8 +22,7 @@ export default function ProductGallery({
     <div className="product-gallery">
       <div className="product-gallery-main">
         <Image
-          // src={selectedImage}
-          src={defaultPlaceholderImage}
+          src={productImages[0]}
           alt={productName}
           fill
           priority

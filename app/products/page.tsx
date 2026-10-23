@@ -3,8 +3,6 @@ import Link from "next/link";
 import { getCategories } from "@/lib/firebase/categories";
 import { getProducts } from "@/lib/firebase/products";
 
-const fallbackImage =
-  "https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&w=800&q=80";
 
 const formatPrice = (price: number, currency: string) =>
   new Intl.NumberFormat("en-NG", {
@@ -165,7 +163,7 @@ export default async function ProductsPage() {
                     item.startsWith("https://") ||
                     item.startsWith("http://") ||
                     item.startsWith("/")
-                ) || fallbackImage;
+                ) || null;
 
               return (
                 <article
@@ -178,13 +176,16 @@ export default async function ProductsPage() {
                   >
                     <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={image}
-                        alt={product.name}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                      />
 
+
+                      {image && (
+                        <img
+                          src={image}
+                          alt={product.name}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        />
+                      )}
                       {product.featured && (
                         <span className="absolute left-3 top-3 rounded-full bg-yellow-400 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-neutral-900">
                           Featured

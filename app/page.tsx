@@ -27,7 +27,14 @@ import {
   Car
 } from 'lucide-react';
 
-import { FormEvent, useState } from 'react';
+// import { FormEvent, useState } from 'react';
+
+import { FormEvent, useEffect, useState } from 'react';
+import type { User } from 'firebase/auth';
+
+import { auth } from '@/lib/firebase';
+import { getCategories } from '@/lib/firebase/categories';
+import type { Category } from '@/lib/types/category';
 import { useCart } from "@/context/cart-context";
 
 const services = [
@@ -60,11 +67,57 @@ const services = [
 const industries = ['Commerce', 'Delivery', 'Ride', 'Escrow', 'Item Quality Verification', 'Secure Errand', 'Qaulified Artisan'];
 
 export default function App() {
+
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [customer, setCustomer] = useState<User | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+
+
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { itemCount } = useCart();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setCustomer(
+        currentUser?.emailVerified ? currentUser : null
+      );
+      setAuthChecked(true);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadCategories() {
+      try {
+        const result = await getCategories();
+
+        if (!cancelled) {
+          setCategories(
+            result.filter((category) => category.isActive)
+          );
+        }
+      } catch {
+        if (!cancelled) {
+          setCategories([]);
+        }
+      }
+    }
+
+    void loadCategories();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -104,91 +157,39 @@ export default function App() {
             <Link href="/about" onClick={() => setMenuOpen(false)}><b> Buy an Item </b> <ChevronDown size={15} /></Link>
             <Link href="/about" onClick={() => setMenuOpen(false)}><b> Verify an Item  </b><ChevronDown size={15} /></Link>
             <Link href="/contact" onClick={() => setMenuOpen(false)}><b> Contact Agent </b> <ChevronDown size={15} /></Link>
-            
+
             <div className="dropdown">
               <button className="dropdown-trigger" onClick={() => setDropdownOpen(!dropdownOpen)} aria-expanded={dropdownOpen}>
                 <b>Browse Products</b>
                 <ChevronDown size={15} className={dropdownOpen ? "rotate" : ""} />
               </button>
 
+
+
               {dropdownOpen && (
                 <div className="dropdown-menu">
                   <Link
-                    href="/products/food"
-                    onClick={() => { setDropdownOpen(false), setMenuOpen(false) }}
+                    href="/products"
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      setMenuOpen(false);
+                    }}
                   >
-                    Food
+                    All Products
                   </Link>
 
-                  <Link
-                    href="/products/fashion"
-                    onClick={() => { setDropdownOpen(false), setMenuOpen(false) }}
-                  >
-                    Fashion
-                  </Link>
-
-                  <Link
-                    href="/products/sanitary"
-                    onClick={() => { setDropdownOpen(false), setMenuOpen(false) }}
-                  >
-                    Sanitary
-                  </Link>
-
-                  <Link
-                    href="/products/home-wares"
-                    onClick={() => { setDropdownOpen(false), setMenuOpen(false) }}
-                  >
-                    Home Wares
-                  </Link>
-
-                  <Link
-                    href="/products/stationeries"
-                    onClick={() => { setDropdownOpen(false), setMenuOpen(false) }}
-                  >
-                    Stationeries
-                  </Link>
-
-                  <Link
-                    href="/products/utilities"
-                    onClick={() => { setDropdownOpen(false), setMenuOpen(false) }}
-                  >
-                    Utilities
-                  </Link>
-
-                  <Link
-                    href="/products/automobile"
-                    onClick={() => { setDropdownOpen(false), setMenuOpen(false) }}
-                  >
-                    Automobile
-                  </Link>
-
-                  <Link
-                    href="/products/furniture"
-                    onClick={() => { setDropdownOpen(false), setMenuOpen(false) }}
-                  >
-                    Furniture
-                  </Link>
-
-                  <Link
-                    href="/products/lighting"
-                    onClick={() => { setDropdownOpen(false), setMenuOpen(false) }}
-                  >
-                    Lighting
-                  </Link>
-
-                  <Link
-                    href="/products/cosmetics"
-                    onClick={() => { setDropdownOpen(false), setMenuOpen(false) }}
-                  >
-                    Cosmetics
-                  </Link>
-
-                  <Link
-                    href="/products/electronics"
-                    onClick={() => { setDropdownOpen(false), setMenuOpen(false) }}
-                  >
-                    Electronics
-                  </Link>
+                  {categories.map((category) => (
+                    <Link
+                      key={category.id}
+                      href={`/products/${category.slug}`}
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        setMenuOpen(false);
+                      }}
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
                 </div>
               )}
             </div>
@@ -206,6 +207,63 @@ export default function App() {
                 </span>
               )}
             </Link>
+            {/* {authChecked && (
+              customer ? (
+                <Link
+                  href="/account"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <b>My Account</b>
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/account/sign-in"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <b>Sign In</b>
+                  </Link>
+
+                  <Link
+                    href="/account/register"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <b>Create Account</b>
+                  </Link>
+                </>
+              )
+            )} */}
+
+            {authChecked && (
+              customer ? (
+                <Link
+                  href="/account"
+                  className="account-nav-link"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <b>My Account</b>
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/account/sign-in"
+                    className="account-sign-in"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <b>Sign In</b>
+                  </Link>
+
+                  <Link
+                    href="/account/register"
+                    className="account-register"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <b>Create Account</b>
+                    <ArrowUpRight size={16} />
+                  </Link>
+                </>
+              )
+            )}
           </nav>
 
           <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle navigation">

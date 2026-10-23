@@ -8,7 +8,7 @@ import {
   X,
 } from "lucide-react"
 
-import { uploadCategoryImage } from "@/lib/firebase/storage"
+import { uploadCategoryImage } from "@/lib/cloudinary"
 
 type Props = {
   value: string

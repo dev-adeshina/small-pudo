@@ -5,6 +5,9 @@ import Link from "next/link";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+
+import { verifyAdminAccess } from "@/lib/admin-auth";
+
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -123,20 +126,77 @@ export default function AdminOrdersPage() {
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const [savingShipping, setSavingShipping] = useState<string | null>(null);
 
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (!user) {
+  //       router.replace("/admin/sign-in");
+  //       return;
+  //     }
+  //     if (!user.emailVerified) {
+  //       router.replace(`/admin/verify-email?email=${encodeURIComponent(user.email ?? "")}`);
+  //       return;
+  //     }
+  //     setAdminEmail(user.email ?? "");
+  //     setCheckingAuth(false);
+  //   });
+  //   return () => unsubscribe();
+  // }, [router]);
+
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    let active = true;
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!active) return;
+
       if (!user) {
         router.replace("/admin/sign-in");
         return;
       }
+
       if (!user.emailVerified) {
-        router.replace(`/admin/verify-email?email=${encodeURIComponent(user.email ?? "")}`);
+        router.replace(
+          `/admin/verify-email?email=${encodeURIComponent(
+            user.email ?? ""
+          )}`
+        );
         return;
       }
-      setAdminEmail(user.email ?? "");
-      setCheckingAuth(false);
+
+      try {
+        const email = await verifyAdminAccess(user);
+
+        if (!active) return;
+
+        setAdminEmail(email);
+        setCheckingAuth(false);
+      } catch (error) {
+        if (!active) return;
+
+        if (error instanceof Error && error.name === "NotAdmin") {
+          // Do not sign the customer out of Firebase.
+          router.replace("/account");
+          return;
+        }
+
+        if (
+          error instanceof Error &&
+          error.name === "AdminAuthUnavailable"
+        ) {
+          // Avoid displaying the admin workspace when its authorization
+          // configuration cannot be verified.
+          router.replace("/admin/sign-in");
+          return;
+        }
+
+        router.replace("/admin/sign-in");
+      }
     });
-    return () => unsubscribe();
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, [router]);
 
   const loadOrders = useCallback(async (quiet = false) => {
@@ -371,52 +431,52 @@ export default function AdminOrdersPage() {
                     const isExpanded = expandedOrder === order.id;
                     return (
                       <Fragment key={order.id}>
-                      <tr key={order.id} className={isExpanded ? "orders-row-expanded" : ""}>
-                        <td data-label="Order"><button type="button" className="orders-id-button" onClick={() => setExpandedOrder(isExpanded ? null : order.id)}>{order.id.slice(0, 10)}<ArrowUpRight size={13} /></button><span className="orders-mobile-date">{formatDate(order.createdAt)}</span></td>
-                        <td data-label="Customer"><div className="orders-customer-cell"><strong>{order.customer?.name || "Customer"}</strong><span>{order.customer?.email || "No email"}</span></div></td>
-                        <td data-label="Date">{formatDate(order.createdAt)}</td>
-                        <td data-label="Total"><strong>{formatMoney(order.total, order.currency)}</strong><span className="orders-item-count">{order.items.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0)} item(s)</span></td>
-                        <td data-label="Payment"><span className={statusClass(order.paymentStatus)}>{PAYMENT_LABELS[order.paymentStatus] ?? order.paymentStatus}</span></td>
-                        <td data-label="Fulfilment"><span className={statusClass(order.orderStatus)}>{STATUS_LABELS[order.orderStatus] ?? order.orderStatus}</span></td>
-                        <td data-label="Actions"><div className="orders-row-actions"><button type="button" className="orders-details-button" onClick={() => setExpandedOrder(isExpanded ? null : order.id)}>{isExpanded ? "Close" : "Details"}</button>{next && order.paymentStatus === "paid" && <button type="button" className="orders-advance-button" onClick={() => void advanceOrder(order)} disabled={updatingOrder === order.id}>{updatingOrder === order.id ? <Loader2 size={14} className="orders-spin" /> : null}{STATUS_LABELS[next]}</button>}</div></td>
-                      </tr>
-                      {isExpanded && (
-                        <tr key={`${order.id}-details`}>
-                          <td className="orders-expanded-cell" colSpan={7}>
-                            <div className="orders-detail-grid">
-                              <section><h3>Customer</h3><p>{order.customer?.name || "—"}</p><p>{order.customer?.email || "—"}</p><p>{order.customer?.phone || "—"}</p></section>
-                              <section><h3>Delivery address</h3><p>{order.delivery?.address || "—"}</p><p>{[order.delivery?.city, order.delivery?.state, order.delivery?.country].filter(Boolean).join(", ") || "—"}</p>{order.delivery?.instructions && <p>Instructions: {order.delivery.instructions}</p>}</section>
-                              <section><h3>Payment &amp; totals</h3><p>Reference: {order.paymentReference || "Not recorded"}</p><p>Subtotal: {formatMoney(order.subtotal, order.currency)}</p><p>Delivery: {formatMoney(order.deliveryFee, order.currency)}</p><p><strong>Total: {formatMoney(order.total, order.currency)}</strong></p></section>
-                              <section className="orders-detail-items"><h3>Items</h3>{order.items.map((item, index) => <p key={`${item.productId ?? item.name ?? "item"}-${index}`}>{item.name || "Product"} × {Number(item.quantity) || 0} — {formatMoney(Number(item.subtotal ?? (Number(item.price) || 0) * (Number(item.quantity) || 0)), order.currency)}</p>)}</section>
-                              <section className="orders-shipping-editor" style={{ gridColumn: "1 / -1" }}>
-                                <h3>Shipping &amp; delivery</h3>
-                                <div className="orders-shipping-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px", marginTop: "12px" }}>
-                                  <label className="orders-shipping-field">Courier / provider
-                                    <input style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717" }} value={order.shipping?.provider ?? ""} onChange={(event) => updateShippingDraft(order.id, "provider", event.target.value)} maxLength={120} placeholder="e.g. GIG Logistics" disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
-                                  </label>
-                                  <label className="orders-shipping-field">Tracking number
-                                    <input style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717" }} value={order.shipping?.trackingNumber ?? ""} onChange={(event) => updateShippingDraft(order.id, "trackingNumber", event.target.value)} maxLength={160} placeholder="Enter tracking reference" disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
-                                  </label>
-                                  <label className="orders-shipping-field">Estimated delivery
-                                    <input style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717" }} type="datetime-local" value={toDateTimeLocal(order.shipping?.estimatedDeliveryAt)} onChange={(event) => updateShippingDraft(order.id, "estimatedDeliveryAt", event.target.value ? new Date(event.target.value).toISOString() : "")} disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
-                                  </label>
-                                  <label className="orders-shipping-field" style={{ gridColumn: "1 / -1" }}>Shipping notes
-                                    <textarea style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717", resize: "vertical" }} value={order.shipping?.notes ?? ""} onChange={(event) => updateShippingDraft(order.id, "notes", event.target.value)} maxLength={1000} rows={3} placeholder="Add delivery instructions or internal fulfilment notes" disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
-                                  </label>
-                                </div>
-                                <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center", marginTop: "14px" }}>
-                                  <button type="button" className="orders-advance-button" onClick={() => void saveShipping(order)} disabled={savingShipping === order.id || order.paymentStatus !== "paid" || order.orderStatus === "cancelled"}>
-                                    {savingShipping === order.id ? <Loader2 size={14} className="orders-spin" /> : null}Save shipping details
-                                  </button>
-                                  <span className="orders-created-meta">Shipped: {formatDate(order.shipping?.shippedAt ?? null)} · Delivered: {formatDate(order.shipping?.deliveredAt ?? null)}</span>
-                                </div>
-                                {(order.paymentStatus !== "paid" || order.orderStatus === "cancelled") && <p className="orders-created-meta">Shipping edits are available for paid, non-cancelled orders only.</p>}
-                              </section>
-                            </div>
-                            <p className="orders-created-meta"><Clock3 size={14} /> Created {formatDate(order.createdAt)} · Last updated {formatDate(order.updatedAt)}</p>
-                          </td>
+                        <tr key={order.id} className={isExpanded ? "orders-row-expanded" : ""}>
+                          <td data-label="Order"><button type="button" className="orders-id-button" onClick={() => setExpandedOrder(isExpanded ? null : order.id)}>{order.id.slice(0, 10)}<ArrowUpRight size={13} /></button><span className="orders-mobile-date">{formatDate(order.createdAt)}</span></td>
+                          <td data-label="Customer"><div className="orders-customer-cell"><strong>{order.customer?.name || "Customer"}</strong><span>{order.customer?.email || "No email"}</span></div></td>
+                          <td data-label="Date">{formatDate(order.createdAt)}</td>
+                          <td data-label="Total"><strong>{formatMoney(order.total, order.currency)}</strong><span className="orders-item-count">{order.items.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0)} item(s)</span></td>
+                          <td data-label="Payment"><span className={statusClass(order.paymentStatus)}>{PAYMENT_LABELS[order.paymentStatus] ?? order.paymentStatus}</span></td>
+                          <td data-label="Fulfilment"><span className={statusClass(order.orderStatus)}>{STATUS_LABELS[order.orderStatus] ?? order.orderStatus}</span></td>
+                          <td data-label="Actions"><div className="orders-row-actions"><button type="button" className="orders-details-button" onClick={() => setExpandedOrder(isExpanded ? null : order.id)}>{isExpanded ? "Close" : "Details"}</button>{next && order.paymentStatus === "paid" && <button type="button" className="orders-advance-button" onClick={() => void advanceOrder(order)} disabled={updatingOrder === order.id}>{updatingOrder === order.id ? <Loader2 size={14} className="orders-spin" /> : null}{STATUS_LABELS[next]}</button>}</div></td>
                         </tr>
-                      )}
+                        {isExpanded && (
+                          <tr key={`${order.id}-details`}>
+                            <td className="orders-expanded-cell" colSpan={7}>
+                              <div className="orders-detail-grid">
+                                <section><h3>Customer</h3><p>{order.customer?.name || "—"}</p><p>{order.customer?.email || "—"}</p><p>{order.customer?.phone || "—"}</p></section>
+                                <section><h3>Delivery address</h3><p>{order.delivery?.address || "—"}</p><p>{[order.delivery?.city, order.delivery?.state, order.delivery?.country].filter(Boolean).join(", ") || "—"}</p>{order.delivery?.instructions && <p>Instructions: {order.delivery.instructions}</p>}</section>
+                                <section><h3>Payment &amp; totals</h3><p>Reference: {order.paymentReference || "Not recorded"}</p><p>Subtotal: {formatMoney(order.subtotal, order.currency)}</p><p>Delivery: {formatMoney(order.deliveryFee, order.currency)}</p><p><strong>Total: {formatMoney(order.total, order.currency)}</strong></p></section>
+                                <section className="orders-detail-items"><h3>Items</h3>{order.items.map((item, index) => <p key={`${item.productId ?? item.name ?? "item"}-${index}`}>{item.name || "Product"} × {Number(item.quantity) || 0} — {formatMoney(Number(item.subtotal ?? (Number(item.price) || 0) * (Number(item.quantity) || 0)), order.currency)}</p>)}</section>
+                                <section className="orders-shipping-editor" style={{ gridColumn: "1 / -1" }}>
+                                  <h3>Shipping &amp; delivery</h3>
+                                  <div className="orders-shipping-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px", marginTop: "12px" }}>
+                                    <label className="orders-shipping-field">Courier / provider
+                                      <input style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717" }} value={order.shipping?.provider ?? ""} onChange={(event) => updateShippingDraft(order.id, "provider", event.target.value)} maxLength={120} placeholder="e.g. GIG Logistics" disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
+                                    </label>
+                                    <label className="orders-shipping-field">Tracking number
+                                      <input style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717" }} value={order.shipping?.trackingNumber ?? ""} onChange={(event) => updateShippingDraft(order.id, "trackingNumber", event.target.value)} maxLength={160} placeholder="Enter tracking reference" disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
+                                    </label>
+                                    <label className="orders-shipping-field">Estimated delivery
+                                      <input style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717" }} type="datetime-local" value={toDateTimeLocal(order.shipping?.estimatedDeliveryAt)} onChange={(event) => updateShippingDraft(order.id, "estimatedDeliveryAt", event.target.value ? new Date(event.target.value).toISOString() : "")} disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
+                                    </label>
+                                    <label className="orders-shipping-field" style={{ gridColumn: "1 / -1" }}>Shipping notes
+                                      <textarea style={{ display: "block", width: "100%", marginTop: "6px", padding: "10px 12px", border: "1px solid #d8d8d8", borderRadius: "8px", background: "white", color: "#171717", resize: "vertical" }} value={order.shipping?.notes ?? ""} onChange={(event) => updateShippingDraft(order.id, "notes", event.target.value)} maxLength={1000} rows={3} placeholder="Add delivery instructions or internal fulfilment notes" disabled={order.paymentStatus !== "paid" || order.orderStatus === "cancelled"} />
+                                    </label>
+                                  </div>
+                                  <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center", marginTop: "14px" }}>
+                                    <button type="button" className="orders-advance-button" onClick={() => void saveShipping(order)} disabled={savingShipping === order.id || order.paymentStatus !== "paid" || order.orderStatus === "cancelled"}>
+                                      {savingShipping === order.id ? <Loader2 size={14} className="orders-spin" /> : null}Save shipping details
+                                    </button>
+                                    <span className="orders-created-meta">Shipped: {formatDate(order.shipping?.shippedAt ?? null)} · Delivered: {formatDate(order.shipping?.deliveredAt ?? null)}</span>
+                                  </div>
+                                  {(order.paymentStatus !== "paid" || order.orderStatus === "cancelled") && <p className="orders-created-meta">Shipping edits are available for paid, non-cancelled orders only.</p>}
+                                </section>
+                              </div>
+                              <p className="orders-created-meta"><Clock3 size={14} /> Created {formatDate(order.createdAt)} · Last updated {formatDate(order.updatedAt)}</p>
+                            </td>
+                          </tr>
+                        )}
                       </Fragment>
                     );
                   })}

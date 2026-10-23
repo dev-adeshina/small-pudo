@@ -9,12 +9,15 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: [
     "sharper-moonlit-concept.ngrok-free.dev",
   ],
-
   images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
       },
     ],
   },

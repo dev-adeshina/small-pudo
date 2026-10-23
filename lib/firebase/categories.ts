@@ -134,165 +134,94 @@ export async function createCategory(
 }
 
 /**
- * Update a category without changing its document ID.
+ * Update a category.
+ *
+ * Keeps the existing document ID when the slug is unchanged.
+ * When the slug changes, creates the new document and removes the
+ * old one, provided no products depend on the current category slug.
  */
 export async function updateCategory(
   id: string,
   data: CategoryFormData
 ): Promise<Category> {
-  const errors = validateCategory(data)
+  const errors = validateCategory(data);
 
   if (Object.keys(errors).length > 0) {
-    throw new Error(Object.values(errors)[0])
+    throw new Error(Object.values(errors)[0]);
   }
 
-  const categoryRef = doc(
-    db,
-    COLLECTION_NAME,
-    id
-  )
+  const categoryRef = doc(db, COLLECTION_NAME, id);
 
-  const existing = await getDoc(categoryRef)
+  const existing = await getDoc(categoryRef);
 
   if (!existing.exists()) {
-    throw new Error("Category does not exist.")
+    throw new Error("Category does not exist.");
   }
 
-  const current = mapCategory(existing)
+  const current = mapCategory(existing);
+  const newSlug = data.slug.trim().toLowerCase();
 
-  const newSlug = data.slug.trim().toLowerCase()
+  const updatedData = {
+    description: data.description.trim(),
+    image: data.image.trim(),
+    isActive: data.isActive,
+    name: data.name.trim(),
+    slug: newSlug,
+  };
 
-  /*
-   * No slug change.
-   *
-   * This is the normal update path.
-   */
-  // if (newSlug === current.slug) {
-  //   await updateDoc(categoryRef, {
-  //     description: data.description.trim(),
-  //     image: data.image.trim(),
-  //     isActive: data.isActive,
-  //     name: data.name.trim(),
-  //     slug: newSlug,
-  //   })
+  // Normal update: preserve the existing document ID.
+  if (newSlug === current.slug) {
+    await updateDoc(categoryRef, updatedData);
 
-  //   const updated = await getDoc(categoryRef)
-
-  //   if (!updated.exists()) {
-  //     throw new Error("Category could not be loaded after update.")
-  //   }
-
-  //   return mapCategory(updated)
-  // }
-
-  if (newSlug !== current.slug) {
-    const productCount =
-      await getCategoryProductCount(current.slug)
-
-    if (productCount > 0) {
-      throw new Error(
-        `This category has ${productCount} product${productCount === 1 ? "" : "s"
-        }. Move those products to another category before changing the slug.`
-      )
-    }
-
-    const newId = generateCategoryId(newSlug)
-
-    const newCategoryRef = doc(
-      db,
-      COLLECTION_NAME,
-      newId
-    )
-
-    await runTransaction(db, async (transaction) => {
-      const [oldSnapshot, newSnapshot] =
-        await Promise.all([
-          transaction.get(categoryRef),
-          transaction.get(newCategoryRef),
-        ])
-
-      if (!oldSnapshot.exists()) {
-        throw new Error(
-          "Category does not exist."
-        )
-      }
-
-      if (newSnapshot.exists()) {
-        throw new Error(
-          `A category with the slug "${newSlug}" already exists.`
-        )
-      }
-
-      transaction.set(newCategoryRef, {
-        description: data.description.trim(),
-        image: data.image.trim(),
-        isActive: data.isActive,
-        name: data.name.trim(),
-        slug: newSlug,
-      })
-
-      transaction.delete(categoryRef)
-    })
-
-    const updated =
-      await getDoc(newCategoryRef)
+    const updated = await getDoc(categoryRef);
 
     if (!updated.exists()) {
-      throw new Error(
-        "Category could not be loaded after update."
-      )
+      throw new Error("Category could not be loaded after update.");
     }
 
-    return mapCategory(updated)
+    return mapCategory(updated);
   }
 
-  /*
-   * Slug changed.
-   *
-   * The caller should check products before allowing this.
-   */
-  const newId = generateCategoryId(newSlug)
+  // Changing the slug changes the category's document ID.
+  const productCount = await getCategoryProductCount(current.slug);
 
-  const newCategoryRef = doc(
-    db,
-    COLLECTION_NAME,
-    newId
-  )
+  if (productCount > 0) {
+    throw new Error(
+      `This category has ${productCount} product${productCount === 1 ? "" : "s"
+      }. Move those products to another category before changing the slug.`
+    );
+  }
+
+  const newId = generateCategoryId(newSlug);
+  const newCategoryRef = doc(db, COLLECTION_NAME, newId);
 
   await runTransaction(db, async (transaction) => {
     const [oldSnapshot, newSnapshot] = await Promise.all([
       transaction.get(categoryRef),
       transaction.get(newCategoryRef),
-    ])
+    ]);
 
     if (!oldSnapshot.exists()) {
-      throw new Error("Category does not exist.")
+      throw new Error("Category does not exist.");
     }
 
     if (newSnapshot.exists()) {
       throw new Error(
         `A category with the slug "${newSlug}" already exists.`
-      )
+      );
     }
 
-    transaction.set(newCategoryRef, {
-      description: data.description.trim(),
-      image: data.image.trim(),
-      isActive: data.isActive,
-      name: data.name.trim(),
-      slug: newSlug,
-    })
+    transaction.set(newCategoryRef, updatedData);
+    transaction.delete(categoryRef);
+  });
 
-    transaction.delete(categoryRef)
-  })
-
-  const updated = await getDoc(newCategoryRef)
+  const updated = await getDoc(newCategoryRef);
 
   if (!updated.exists()) {
-    throw new Error("Category could not be loaded after update.")
+    throw new Error("Category could not be loaded after update.");
   }
 
-  return mapCategory(updated)
+  return mapCategory(updated);
 }
 
 /**

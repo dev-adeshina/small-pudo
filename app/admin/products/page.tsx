@@ -43,6 +43,9 @@ import { ProductForm } from "@/components/admin/products/product-form"
 import { ProductTable } from "@/components/admin/products/product-table"
 import { DeleteProductDialog } from "@/components/admin/products/delete-product-dialog"
 
+
+import { verifyAdminAccess } from "@/lib/admin-auth";
+
 export default function ProductsPage() {
   const router = useRouter()
 
@@ -85,37 +88,94 @@ export default function ProductsPage() {
   const [deletingProduct, setDeletingProduct] =
     useState<Product | null>(null)
 
+  // useEffect(() => {
+  //   const unsubscribe =
+  //     onAuthStateChanged(
+  //       auth,
+  //       (user) => {
+  //         if (!user) {
+  //           router.replace(
+  //             "/admin/sign-in"
+  //           )
+  //           return
+  //         }
+
+  //         if (!user.emailVerified) {
+  //           router.replace(
+  //             `/admin/verify-email?email=${encodeURIComponent(
+  //               user.email ?? ""
+  //             )}`
+  //           )
+  //           return
+  //         }
+
+  //         setAdminEmail(
+  //           user.email ?? ""
+  //         )
+
+  //         setCheckingAuth(false)
+  //       }
+  //     )
+
+  //   return () => unsubscribe()
+  // }, [router])
+
+
   useEffect(() => {
-    const unsubscribe =
-      onAuthStateChanged(
-        auth,
-        (user) => {
-          if (!user) {
-            router.replace(
-              "/admin/sign-in"
-            )
-            return
-          }
+    let active = true;
 
-          if (!user.emailVerified) {
-            router.replace(
-              `/admin/verify-email?email=${encodeURIComponent(
-                user.email ?? ""
-              )}`
-            )
-            return
-          }
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!active) return;
 
-          setAdminEmail(
+      if (!user) {
+        router.replace("/admin/sign-in");
+        return;
+      }
+
+      if (!user.emailVerified) {
+        router.replace(
+          `/admin/verify-email?email=${encodeURIComponent(
             user.email ?? ""
-          )
+          )}`
+        );
+        return;
+      }
 
-          setCheckingAuth(false)
+      try {
+        const email = await verifyAdminAccess(user);
+
+        if (!active) return;
+
+        setAdminEmail(email);
+        setCheckingAuth(false);
+      } catch (error) {
+        if (!active) return;
+
+        if (error instanceof Error && error.name === "NotAdmin") {
+          // Do not sign the customer out of Firebase.
+          router.replace("/account");
+          return;
         }
-      )
 
-    return () => unsubscribe()
-  }, [router])
+        if (
+          error instanceof Error &&
+          error.name === "AdminAuthUnavailable"
+        ) {
+          // Avoid displaying the admin workspace when its authorization
+          // configuration cannot be verified.
+          router.replace("/admin/sign-in");
+          return;
+        }
+
+        router.replace("/admin/sign-in");
+      }
+    });
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, [router]);
 
   useEffect(() => {
     if (!checkingAuth) {
@@ -170,7 +230,7 @@ export default function ProductsPage() {
           const matchesCategory =
             !categoryFilter ||
             product.categoryId ===
-              categoryFilter
+            categoryFilter
 
           const matchesStatus =
             statusFilter === "all" ||

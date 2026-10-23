@@ -76,7 +76,7 @@ export function ProductTable({
                 <td>
                   <div className="product-table-identity">
                     <div className="product-table-image">
-                      {/* {product.images[0] ? (
+                      {product.images[0] ? (
                         <Image
                           src={
                             product.images[0]
@@ -90,7 +90,7 @@ export function ProductTable({
                         />
                       ) : (
                         <span>—</span>
-                      )} */}
+                      )}
                     </div>
 
                     <div>

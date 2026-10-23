@@ -20,6 +20,8 @@ import {
 import { auth } from "@/lib/firebase";
 import { logoutAdmin } from "@/lib/auth";
 
+import { verifyAdminAccess } from "@/lib/admin-auth";
+
 const stats = [
   {
     label: "TOTAL ORDERS",
@@ -84,8 +86,35 @@ export default function AdminDashboard() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [adminEmail, setAdminEmail] = useState("");
 
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+
+  //     if (!user) {
+  //       router.replace("/admin/sign-in");
+  //       return;
+  //     }
+
+  //     if (!user.emailVerified) {
+  //       router.replace(
+  //         `/admin/verify-email?email=${encodeURIComponent(
+  //           user.email ?? ""
+  //         )}`
+  //       );
+  //       return;
+  //     }
+
+  //     setAdminEmail(user.email ?? "");
+  //     setCheckingAuth(false);
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [router]);
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    let active = true;
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!active) return;
 
       if (!user) {
         router.replace("/admin/sign-in");
@@ -101,11 +130,40 @@ export default function AdminDashboard() {
         return;
       }
 
-      setAdminEmail(user.email ?? "");
-      setCheckingAuth(false);
+      try {
+        const email = await verifyAdminAccess(user);
+
+        if (!active) return;
+
+        setAdminEmail(email);
+        setCheckingAuth(false);
+      } catch (error) {
+        if (!active) return;
+
+        if (error instanceof Error && error.name === "NotAdmin") {
+          // Do not sign the customer out of Firebase.
+          router.replace("/account");
+          return;
+        }
+
+        if (
+          error instanceof Error &&
+          error.name === "AdminAuthUnavailable"
+        ) {
+          // Avoid displaying the admin workspace when its authorization
+          // configuration cannot be verified.
+          router.replace("/admin/sign-in");
+          return;
+        }
+
+        router.replace("/admin/sign-in");
+      }
     });
 
-    return () => unsubscribe();
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, [router]);
 
   async function handleLogout() {
