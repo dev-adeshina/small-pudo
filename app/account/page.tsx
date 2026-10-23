@@ -476,7 +476,7 @@ export default function CustomerAccountPage() {
           </article>
         </section>
 
-        
+
 
 
         <section className="customer-content-grid">
@@ -616,7 +616,14 @@ export default function CustomerAccountPage() {
                         <p className="customer-shipping-notes">
                           {order.shipping.notes}
                         </p>
+
                       )}
+                      <Link
+                        href={`/account/orders/${encodeURIComponent(order.id)}`}
+                        className="customer-order-view-link"
+                      >
+                        View order details <ArrowRight size={15} />
+                      </Link>
                     </div>
                   </article>
                 ))}

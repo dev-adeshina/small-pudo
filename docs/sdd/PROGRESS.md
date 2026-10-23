@@ -1,10 +1,10 @@
 # VeriLyft Progress Tracker
 
-**Last updated:** 22 October 2026
+**Last updated:** 23 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Branch:** `main`
 **Last committed baseline:** `bccda2f` — `feat: complete customer profile and authentication`
-**Current phase:** Storefront refinement and authentication/image-upload verification
+**Current phase:** Customer order history completed; storefront refinement and authentication/image-upload verification remain
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -23,15 +23,20 @@ TypeScript, Firebase Authentication, Firestore, Paystack, and a shared
 cart context. The current work extends the existing application; it is
 not a rebuild.
 
-The customer authentication and profile chapter has been implemented.
-The current working tree contains changes related to Cloudinary image
+The customer authentication, profile, and order-history chapter has
+been implemented. The customer dashboard lists the authenticated
+customer's orders, and a dedicated order-details page retrieves an order
+through a customer-scoped API. Browser tests confirmed that an order
+belonging to another customer is rejected with a 404 response.
+
+The working tree also contains changes related to Cloudinary image
 uploads, admin authentication, admin catalogue/order screens, and the
 storefront.
 
-The immediate task is to finish reviewing and verifying the landing
-page, category pages, and product presentation using actual Firestore
-data. Before further storefront changes, preserve the current work and
-save an accurate progress checkpoint.
+The next account-related decisions and delivery enhancements remain
+separate from this completed order-history milestone. Continue reviewing
+the landing page, category pages, and product presentation using actual
+Firestore data, while preserving the existing application architecture.
 
 ## 2. Feature tracker
 
@@ -61,9 +66,9 @@ save an accurate progress checkpoint.
 | Customer account recovery | [x] | Recovery flow implemented; retain in regression tests. |
 | Customer dashboard | [x] | Account dashboard and Quick actions implemented. |
 | Customer profile | [x] | `app/account/profile/page.tsx`; user reported persistence after refresh and re-login, and signed-out access checks passing. |
-| Customer order history | [~] | Customer-scoped order retrieval and ownership checks remain to be confirmed. |
-| Customer-owned order association | [ ] | Verify server-side association with the authenticated Firebase UID. Existing guest checkout must continue to work. |
-| Customer order-detail page | [ ] | Customer-specific order detail and ownership checks remain outstanding. |
+| Customer order history | [x] | `app/api/account/orders/route.ts`; customer-scoped order retrieval and dashboard display tested. |
+| Customer-owned order association | [x] | Authenticated orders are associated server-side with the verified Firebase UID; existing guest checkout is preserved. |
+| Customer order-detail page | [x] | `app/account/orders/[orderId]/page.tsx` and `app/api/account/orders/[orderId]/route.ts`; build and browser tests passed, including cross-customer access rejection. |
 | Secure guest-order recovery/claiming | [?] | Decide whether and how guest orders can be claimed by an authenticated customer. |
 | Admin manual shipping updates | [~] | Shipping fields and admin order operations exist; regression-test current transitions. |
 | Guest order tracking API | [x] | `app/api/orders/[orderId]/track/route.ts` exists. |
@@ -81,9 +86,9 @@ save an accurate progress checkpoint.
 ### A. Working-tree checkpoint
 
 - [~] Review all existing modified and untracked files before committing.
-- [ ] Update and inspect this progress tracker.
+- [x] Update the tracker for the customer order-history milestone; inspect the final diff before committing.
 - [ ] Review the staged diff and exclude secrets, local environment files, and unrelated files.
-- [ ] Run TypeScript and production build checks against the final checkpoint.
+- [x] Run TypeScript and production build checks after implementing the customer order-details feature.
 - [ ] Commit the intended, verified work.
 
 ### B. Admin authentication and Cloudinary
@@ -147,14 +152,14 @@ avoid changing category IDs or product data unnecessarily.
 
 ### Phase 3 — Customer order history
 
-**Status: [~] Outstanding account work.**
+**Status: [x] Implemented and browser-tested; guest-order claiming remains undecided.**
 
-- [ ] Associate authenticated orders with the verified Firebase UID on the server.
-- [ ] Implement customer-scoped order-list retrieval.
-- [ ] Implement customer-scoped order-detail retrieval.
-- [ ] Ensure one customer cannot access another customer's orders.
+- [x] Associate authenticated orders with the verified Firebase UID on the server.
+- [x] Implement customer-scoped order-list retrieval.
+- [x] Implement customer-scoped order-detail retrieval.
+- [x] Ensure one customer cannot access another customer's orders; cross-customer access returned 404 in browser testing.
 - [ ] Decide secure guest-order recovery/claiming behaviour.
-- [x] Preserve guest checkout.
+- [x] Preserve guest checkout; the user reports that guest checkout, cancellation, and tracking regression tests passed.
 
 ### Phase 4 — Admin authentication and image hosting
 
