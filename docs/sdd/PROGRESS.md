@@ -1,6 +1,6 @@
 # VeriLyft Progress Tracker
 
-**Last updated:** 23 October 2026
+**Last updated:** 25 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Branch:** `main`
 **Last committed baseline:** `bccda2f` — `feat: complete customer profile and authentication`
@@ -60,6 +60,7 @@ Firestore data, while preserving the existing application architecture.
 | Admin product management | [~] | `app/admin/products/page.tsx`; image upload integration and product UI have changed. |
 | Admin order management | [~] | `app/admin/orders/page.tsx` has changed; rerun regression checks before declaring the current version verified. |
 | Admin image-upload API | [~] | `app/api/admin/uploads/images/route.ts`; server-side authorization and Cloudinary upload behaviour require verification. |
+| Firestore security rules | [x] | `firestore.rules`; local Emulator tests passed twice (11/11 each run). Public catalogue reads, administrator claim checks, and denied direct client order access were tested. Local rules were compared with the published Console rules on 25 October 2026. |
 | Cloudinary image hosting | [~] | `lib/cloudinary.ts`; Firebase Storage helper was removed. Verify upload, validation, authorization, and persisted image URLs. |
 | Customer registration | [x] | Customer registration flow implemented; user previously reported successful account testing. |
 | Customer sign-in / sign-out | [x] | Implemented and previously tested. Keep customer authentication separate from admin authorization. |
@@ -257,3 +258,23 @@ At the end of each meaningful session:
 5. Record material architecture decisions in `DECISIONS.md`.
 6. State which tests were actually run and which remain outstanding.
 7. Inspect the Git diff before committing and never include secrets or local environment files.
+
+### 25 October 2026 — Firestore security rules
+
+- Saved the existing Firestore rules to `firestore.rules` without changing
+  their policy.
+- Added `firebase.json` to point the Firestore Emulator at the local rules.
+- Added `@firebase/rules-unit-testing` and
+  `tests/firestore.rules.test.mjs`.
+- Installed OpenJDK 21 because the Firestore Emulator requires Java.
+- Ran the local rules test suite twice; both runs passed all 11 tests.
+- Verified public category/product reads, denied unauthenticated and
+  ordinary-customer catalogue writes, verified-email and admin-claim
+  requirements, and denied direct client access to orders.
+- Compared the local rules with the published Firebase Console rules;
+  the user confirmed their contents match.
+- These tests validate Firestore rules in the emulator. They do not replace
+  verification of the live admin authentication flow or API route security.
+- Added the emulator's generated `firestore-debug.log` to `.gitignore`.
+- The Firebase configuration, rules, tests, and tracker changes remain
+  uncommitted and should be reviewed before staging.
