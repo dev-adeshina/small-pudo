@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { createHash, randomBytes } from "node:crypto";
 import { FieldValue, type DocumentReference } from "firebase-admin/firestore";
-
-// import { adminDb } from "@/lib/firebase-admin";
 import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { Resend } from "resend";
 
 export const runtime = "nodejs";
 
@@ -52,6 +51,21 @@ function requiredString(
   }
 
   return value.trim();
+}
+
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (character) => {
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+
+    return entities[character];
+  });
 }
 
 export async function POST(request: Request) {
@@ -464,10 +478,109 @@ export async function POST(request: Request) {
       }
     );
 
+
+    let trackingEmailSent = false;
+
+    // Guest customers need an email link to recover their tracking access.
+    // Registered customers continue using authenticated order tracking.
+    if (!customerUid) {
+      try {
+        const apiKey = process.env.RESEND_API_KEY;
+        const emailFrom = process.env.EMAIL_FROM;
+        const appUrl = process.env.APP_URL;
+
+        if (!apiKey || !emailFrom || !appUrl) {
+          throw new Error(
+            "Resend or application URL configuration is incomplete."
+          );
+        }
+
+        const trackingUrl = new URL("/track-order", appUrl);
+
+        trackingUrl.searchParams.set("orderId", result.orderId);
+
+        // The fragment is not included in the HTTP request to the server.
+        trackingUrl.hash = `token=${result.orderAccessToken}`;
+
+        const resend = new Resend(apiKey);
+
+        const safeCustomerName = escapeHtml(customer.name);
+        const safeOrderId = escapeHtml(result.orderId);
+        const safeTrackingUrl = escapeHtml(trackingUrl.toString());
+
+        const { error } = await resend.emails.send({
+          from: emailFrom,
+          to: customer.email,
+          subject: `Track your VeriLyft order ${result.orderId}`,
+          html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #222;">
+              <h1>Thank you for ordering with VeriLyft</h1>
+
+              <p>Hello ${safeCustomerName},</p>
+
+              <p>
+                Your order has been created successfully.
+                You can use the link below to check its payment and delivery status.
+              </p>
+
+              <p>
+                <strong>Order reference:</strong> ${safeOrderId}
+              </p>
+
+              <p style="margin: 28px 0;">
+                <a
+                  href="${safeTrackingUrl}"
+                  style="background: #111; color: #fff; padding: 12px 20px;
+                         text-decoration: none; border-radius: 5px;"
+                >
+                  Track your order
+                </a>
+              </p>
+
+              <p>
+                Keep this email private because its tracking link grants access
+                to your order information. If you need assistance, contact
+                VeriLyft support through our official website.
+              </p>
+
+              <p>Thank you for choosing VeriLyft — Beyond Borders.</p>
+            </div>
+          `,
+          text: [
+            "Thank you for ordering with VeriLyft.",
+            "",
+            `Hello ${customer.name},`,
+            "",
+            "Your order has been created successfully.",
+            `Order reference: ${result.orderId}`,
+            "",
+            `Track your order: ${trackingUrl.toString()}`,
+            "",
+            "Keep this email private because its tracking link grants access to your order information.",
+            "",
+            "Thank you for choosing VeriLyft — Beyond Borders.",
+          ].join("\n"),
+        });
+
+        if (error) {
+          // Email failure must not invalidate an order already created.
+          console.error("Resend could not send the guest tracking email.");
+        } else {
+          trackingEmailSent = true;
+        }
+      } catch {
+        // Never roll back a successful order because email delivery failed.
+        console.error(
+          "Guest tracking email could not be sent. The order was created successfully."
+        );
+      }
+    }
+
     return NextResponse.json(
       {
         success: true,
         ...result,
+        trackingEmailSent,
       },
       { status: 201 }
     );

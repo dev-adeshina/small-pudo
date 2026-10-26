@@ -196,60 +196,6 @@ export default function CustomerAccountPage() {
   }, [user, reloadKey]);
 
 
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   let cancelled = false;
-
-  //   async function loadProfile() {
-  //     setProfileLoading(true);
-  //     setProfileError("");
-
-  //     try {
-  //       const token = await user!.getIdToken();
-
-  //       const response = await fetch("/api/account/profile", {
-  //         method: "GET",
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         cache: "no-store",
-  //       });
-
-  //       const data = await response.json();
-
-  //       if (!response.ok) {
-  //         throw new Error(data.error || "Unable to load your profile.");
-  //       }
-
-  //       // Supports either { profile: {...} } or a direct profile response.
-  //       const profile = data.profile ?? data;
-
-  //       if (!cancelled) {
-  //         setProfileName(profile.displayName ?? user!.displayName ?? "");
-  //         setProfilePhone(profile.phone ?? "");
-  //       }
-  //     } catch (err) {
-  //       if (!cancelled) {
-  //         setProfileError(
-  //           err instanceof Error
-  //             ? err.message
-  //             : "Unable to load your profile."
-  //         );
-  //       }
-  //     } finally {
-  //       if (!cancelled) {
-  //         setProfileLoading(false);
-  //       }
-  //     }
-  //   }
-
-  //   void loadProfile();
-
-  //   return () => {
-  //     cancelled = true;
-  //   };
-  // }, [user]);
 
   async function handleSignOut() {
     setError("");
@@ -264,80 +210,7 @@ export default function CustomerAccountPage() {
     }
   }
 
-  // async function handleSaveProfile(
-  //   event: React.FormEvent<HTMLFormElement>
-  // ) {
-  //   event.preventDefault();
 
-  //   if (!user) return;
-
-  //   setProfileError("");
-  //   setProfileMessage("");
-  //   setProfileSaving(true);
-
-  //   try {
-  //     const displayName = profileName.trim();
-  //     const phone = profilePhone.trim();
-
-  //     if (displayName.length < 2 || displayName.length > 80) {
-  //       throw new Error("Your name must be between 2 and 80 characters.");
-  //     }
-
-  //     if (phone && !/^[+\d\s().-]+$/.test(phone)) {
-  //       throw new Error("Please enter a valid phone number.");
-  //     }
-
-  //     if (phone && phone.replace(/\D/g, "").length < 7) {
-  //       throw new Error("Your phone number must contain at least 7 digits.");
-  //     }
-
-  //     if (phone.length > 25) {
-  //       throw new Error("Your phone number cannot exceed 25 characters.");
-  //     }
-
-  //     const token = await user.getIdToken();
-
-  //     const response = await fetch("/api/account/profile", {
-  //       method: "PATCH",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         displayName,
-  //         phone,
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       throw new Error(data.error || "Unable to save your profile.");
-  //     }
-
-  //     const profile = data.profile ?? data;
-
-  //     const savedName = profile.displayName ?? displayName;
-  //     const savedPhone = profile.phone ?? phone;
-
-  //     // Keep Firebase Authentication's display name in sync with the profile.
-  //     await updateProfile(user, {
-  //       displayName: savedName,
-  //     });
-
-  //     setProfileName(savedName);
-  //     setProfilePhone(savedPhone);
-  //     setProfileMessage("Your profile has been updated.");
-  //   } catch (err) {
-  //     setProfileError(
-  //       err instanceof Error
-  //         ? err.message
-  //         : "Something went wrong while saving your profile."
-  //     );
-  //   } finally {
-  //     setProfileSaving(false);
-  //   }
-  // }
 
   if (checkingAuth || !user) {
     return (
@@ -618,12 +491,23 @@ export default function CustomerAccountPage() {
                         </p>
 
                       )}
-                      <Link
-                        href={`/account/orders/${encodeURIComponent(order.id)}`}
-                        className="customer-order-view-link"
-                      >
-                        View order details <ArrowRight size={15} />
-                      </Link>
+
+                      <div className="customer-order-actions">
+                        <Link
+                          href={`/account/orders/${encodeURIComponent(order.id)}`}
+                          className="customer-order-view-link"
+                        >
+                          View order details <ArrowRight size={15} />
+                        </Link>
+
+                        <Link
+                          href={`/track-order?orderId=${encodeURIComponent(order.id)}`}
+                          className="customer-order-view-link"
+                        >
+                          <Truck size={15} />
+                          Track order
+                        </Link>
+                      </div>
                     </div>
                   </article>
                 ))}
@@ -655,6 +539,8 @@ export default function CustomerAccountPage() {
                 <ArrowUpRight size={17} />
               </Link>
 
+
+
               <a href="#orders" className="customer-action">
                 <span>
                   <Package size={18} />
@@ -662,6 +548,8 @@ export default function CustomerAccountPage() {
                 </span>
                 <ArrowUpRight size={17} />
               </a>
+
+
 
               <Link href="/" className="customer-action">
                 <span>

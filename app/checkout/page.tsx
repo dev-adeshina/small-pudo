@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
 import { auth } from "@/lib/firebase";
@@ -27,6 +27,61 @@ export default function CheckoutPage() {
     country: "Nigeria",
     instructions: "",
   });
+
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadCustomerDetails() {
+      const currentUser = auth.currentUser;
+
+      // Keep guest checkout available.
+      if (!currentUser) {
+        return;
+      }
+
+      try {
+        const token = await currentUser.getIdToken();
+
+        const response = await fetch("/api/account/profile", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          cache: "no-store",
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.error || "Unable to load your saved profile."
+          );
+        }
+
+        if (cancelled) {
+          return;
+        }
+
+        const profile = data.profile ?? data;
+
+        setForm((current) => ({
+          ...current,
+          name: current.name || profile.displayName || currentUser.displayName || "",
+          email: current.email || currentUser.email || "",
+          phone: current.phone || profile.phone || "",
+        }));
+      } catch (error) {
+        console.error("Failed to prefill checkout details:", error);
+      }
+    }
+
+    void loadCustomerDetails();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -178,10 +233,6 @@ export default function CheckoutPage() {
         );
       }
 
-      // if (!data.orderId) {
-      //   throw new Error("The server did not return an order ID.");
-      // }
-
       if (!data.orderId) {
         throw new Error(
           "The server did not return an order ID."
@@ -204,10 +255,6 @@ export default function CheckoutPage() {
       clearCart();
       setOrderId(data.orderId);
 
-      await startPaystackPayment(
-        data.orderId,
-        data.orderAccessToken
-      );
     } catch (error) {
       console.error(
         "Failed to create order:",
@@ -329,10 +376,6 @@ export default function CheckoutPage() {
             </h1>
 
             <p>
-              {/* {isCancelled
-                ? "Your order has been cancelled successfully. The reserved product stock has been restored."
-                : "Your order has been created successfully and is currently awaiting payment."} */}
-
               {isCancelled
                 ? "Your order has been cancelled successfully. The reserved product stock has been restored."
                 : paymentError
@@ -343,6 +386,35 @@ export default function CheckoutPage() {
             <p>
               Order ID: <strong>{orderId}</strong>
             </p>
+
+            {!isCancelled && !paymentError && (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  const orderAccessToken = sessionStorage.getItem(
+                    `order-access:${orderId}`
+                  );
+
+                  if (!orderAccessToken) {
+                    setPaymentError(
+                      "The order access token could not be found in this browser tab. Please use the tab where you placed the order."
+                    );
+                    return;
+                  }
+
+                  void startPaystackPayment(
+                    orderId,
+                    orderAccessToken
+                  );
+                }}
+                disabled={isStartingPayment || isCancelling}
+              >
+                {isStartingPayment
+                  ? "Connecting to Paystack..."
+                  : "Proceed to Payment"}
+              </button>
+            )}
 
             {paymentError && (
               <div className="checkout-error" role="alert">
@@ -386,6 +458,13 @@ export default function CheckoutPage() {
             )}
 
             <div className="checkout-actions">
+              <Link
+                href={`/track-order?orderId=${encodeURIComponent(orderId)}`}
+                className="btn btn-secondary"
+              >
+                Track Order
+              </Link>
+
               {!isCancelled && (
                 <button
                   type="button"
@@ -457,6 +536,7 @@ export default function CheckoutPage() {
                       type="text"
                       value={form.name}
                       onChange={handleChange}
+                      autoComplete="name"
                       placeholder="Enter your full name"
                       required
                     />
@@ -470,6 +550,7 @@ export default function CheckoutPage() {
                       name="email"
                       type="email"
                       value={form.email}
+                      autoComplete="email"
                       onChange={handleChange}
                       placeholder="you@example.com"
                       required
@@ -484,6 +565,7 @@ export default function CheckoutPage() {
                       name="phone"
                       type="tel"
                       value={form.phone}
+                      autoComplete="tel"
                       onChange={handleChange}
                       placeholder="08012345678"
                       required

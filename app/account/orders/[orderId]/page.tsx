@@ -261,11 +261,33 @@ export default function CustomerOrderDetailsPage() {
           </Link>
         </div>
 
+        {/* <header className="customer-order-detail-header">
+          <div>
+            <span className="section-label">YOUR ACCOUNT / ORDER DETAILS</span>
+            <h1>Order #{order.id.slice(0, 8).toUpperCase()}</h1>
+            <p>Placed on {formatDate(order.createdAt)}</p>
+          </div>
+
+          <span
+            className={`customer-status ${getStatusClass(order.orderStatus)}`}
+          >
+            {formatStatus(order.orderStatus)}
+          </span>
+        </header> */}
+
         <header className="customer-order-detail-header">
           <div>
             <span className="section-label">YOUR ACCOUNT / ORDER DETAILS</span>
             <h1>Order #{order.id.slice(0, 8).toUpperCase()}</h1>
             <p>Placed on {formatDate(order.createdAt)}</p>
+
+            <Link
+              href={`/track-order?orderId=${encodeURIComponent(order.id)}`}
+              className="customer-secondary-action"
+            >
+              <Truck size={16} />
+              Track this order
+            </Link>
           </div>
 
           <span
@@ -384,7 +406,7 @@ export default function CustomerOrderDetailsPage() {
                   <h2>Payment details</h2>
                 </div>
                 {order.paymentStatus === "successful" ||
-                order.paymentStatus === "paid" ? (
+                  order.paymentStatus === "paid" ? (
                   <CheckCircle2 size={22} />
                 ) : (
                   <Clock3 size={22} />

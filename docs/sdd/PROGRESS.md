@@ -4,7 +4,7 @@
 **Repository:** `dev-adeshina/small-pudo`
 **Branch:** `main`
 **Last committed baseline:** `bccda2f` — `feat: complete customer profile and authentication`
-**Current phase:** Customer order history completed; storefront refinement and authentication/image-upload verification remain
+**Current phase:** Customer order history and guest tracking email completed; storefront refinement and authentication/image-upload verification remain
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -72,9 +72,10 @@ Firestore data, while preserving the existing application architecture.
 | Customer order-detail page | [x] | `app/account/orders/[orderId]/page.tsx` and `app/api/account/orders/[orderId]/route.ts`; build and browser tests passed, including cross-customer access rejection. |
 | Secure guest-order recovery/claiming | [?] | Decide whether and how guest orders can be claimed by an authenticated customer. |
 | Admin manual shipping updates | [~] | Shipping fields and admin order operations exist; regression-test current transitions. |
-| Guest order tracking API | [x] | `app/api/orders/[orderId]/track/route.ts` exists. |
-| Customer-facing delivery tracking UI | [ ] | Deferred until the account and storefront work is ready. |
+| Guest order tracking API | [x] | `app/api/orders/[orderId]/track/route.ts`; guest access uses the order access token. |
+| Customer-facing delivery tracking UI | [~] | `app/track-order/`; guest tracking page and email link have been tested. Continue regression testing. |
 | Courier/provider integration | [ ] | Deferred. |
+| Guest order-tracking email | [x] | Resend integration in `app/api/orders/route.ts`; verified sender domain and successful guest email test reported. Inbox placement needs monitoring. |
 | Telegram delivery notifications | [ ] | Deferred. Paid orders should initially be dispatched only after an administrator approves delivery assignment. |
 | TypeScript check | [x] | `npx tsc --noEmit` passed after the recent Next.js upgrade, according to the session record. Rerun after subsequent edits. |
 | Production build | [x] | `npm run build` passed after the recent Next.js upgrade, according to the session record. Rerun after subsequent edits. |
@@ -161,6 +162,8 @@ avoid changing category IDs or product data unnecessarily.
 - [x] Ensure one customer cannot access another customer's orders; cross-customer access returned 404 in browser testing.
 - [ ] Decide secure guest-order recovery/claiming behaviour.
 - [x] Preserve guest checkout; the user reports that guest checkout, cancellation, and tracking regression tests passed.
+- [x] Send guest order-tracking emails through Resend; successful delivery to the test inbox was reported.
+- [~] Monitor email inbox placement; the first test message landed in junk.
 
 ### Phase 4 — Admin authentication and image hosting
 
@@ -246,6 +249,17 @@ avoid changing category IDs or product data unnecessarily.
 - Noted that order creation used `userId: null`.
 - The supplied archive did not include enough root configuration to independently verify a production build.
 - Established the initial focused-audit and customer-account roadmap.
+
+### 25 October 2026 — Guest order-tracking email integration
+
+- Integrated Resend into guest order creation to send an order-tracking email.
+- Verified that the `verilyft.com` sending domain is verified in Resend.
+- Configured `EMAIL_FROM` for the VeriLyft sender address.
+- Successful guest order, payment, and tracking-email tests were reported.
+- The test email initially arrived in the junk folder; inbox placement remains under observation.
+- Keep the Resend API key and other credentials server-side; do not add `.env.local` to Git.
+- Guest tracking relies on the order access token. Preserve the existing token validation.
+- Next: continue admin authentication, Cloudinary, and storefront verification. Delivery assignment and Telegram notifications remain deferred.
 
 ## 6. Tracker maintenance rules
 
