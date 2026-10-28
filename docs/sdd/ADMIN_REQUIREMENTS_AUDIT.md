@@ -77,26 +77,26 @@ The status below is provisional and based on the paths listed. Where evidence is
 | ADM-R18 Refund accountability | Missing / unverified | No refund administration workflow was found in inspected Admin routes; payment-provider capabilities and current data model need review. |
 | ADM-R19 Linked record consistency | Partially implemented | Orders/payment references exist; distinct shipment and movement links are not evidenced in reviewed routes. |
 | ADM-R20 Payment/stock regression safety | Unverified | Existing endpoints and prior reported tests are not a substitute for current regression runs after the latest changes. |
-| ADM-R21 Shipment record/details | Missing in inspected Admin routes; conditional | No dedicated shipment route or shipment-specific API found in inspected paths. |
-| ADM-R22 Unified operational shipment view | Missing / technical model unresolved; conditional | Existing order shipping metadata is not proof of a unified independent-shipment model. |
-| ADM-R23 Minimum shipment lifecycle | Missing / unresolved; conditional | Existing order fulfilment states do not define the approved parcel lifecycle. |
+| ADM-R21 Shipment record/details | Missing in inspected Admin routes; launch scope confirmed | No dedicated shipment route or shipment-specific API found in inspected paths. |
+| ADM-R22 Unified operational shipment view | Missing / technical model unresolved; launch scope confirmed | Existing order shipping metadata is not proof of a unified independent-shipment model. |
+| ADM-R23 Minimum shipment lifecycle | Missing / unresolved; launch scope confirmed | Existing order fulfilment states do not define the approved parcel lifecycle. |
 | ADM-R24 Shipment event/history | Missing / unverified; conditional | No shipment event timeline or movement history found in inspected Admin routes. |
-| ADM-R25 Intake and measurements | Missing / conditional | No digital staffed-intake workflow found; required only if staffed intake launches in-app. |
-| ADM-R26 Dispatch and transport handover | Missing / conditional | Existing order shipping metadata is not a dispatch/movement handover workflow. |
+| ADM-R25 Intake and measurements | Missing; launch scope confirmed | No digital staffed-intake workflow found; required only if staffed intake launches in-app. |
+| ADM-R26 Dispatch and transport handover | Missing; launch scope confirmed | Existing order shipping metadata is not a dispatch/movement handover workflow. |
 | ADM-R27 Delivery/collection completion | Partially implemented for storefront orders only | Existing order statuses include shipped/delivered; proof of delivery and collection-centre completion are not evidenced. |
-| ADM-R28 Basic exceptions | Missing / conditional | No exception queue/workflow found in inspected Admin routes. |
+| ADM-R28 Basic exceptions | Missing; launch scope confirmed | No exception queue/workflow found in inspected Admin routes. |
 | ADM-R29 Returns | Missing / policy unresolved | No returns workflow found; launch return policy or documented manual process must be decided. |
-| ADM-R30 Shared pricing rules | Missing / conditional | No Admin pricing route/service found in inspected paths; current checkout delivery fee has historically been zero. |
-| ADM-R31 Route-leg pricing | Missing / conditional | No route-leg pricing implementation evidenced in inspected paths. |
-| ADM-R32 Quote snapshot | Missing / conditional | No saved delivery quote/rate snapshot evidenced in reviewed order schema/routes. |
-| ADM-R33 Measurement discrepancy | Missing / conditional | No intake-measurement adjustment path found. |
-| ADM-R34 Price adjustment settlement | Missing / conditional | No adjustment/dispute/top-up/refund settlement workflow found. |
-| ADM-R35 Dispatch settlement gate | Missing / conditional | No linked dispatch/payment-adjustment gate found. |
-| ADM-R36 PUDO location records | Missing in inspected Admin routes; conditional | No PUDO management page/API found in inspected paths. |
-| ADM-R37 Location type distinction | Missing / conditional | No staffed-station vs registered-collection-centre admin workflow found. |
-| ADM-R38 Transport connections | Missing / conditional | No route/connection management path found in inspected Admin routes. |
-| ADM-R39 Assignment/dispatch accountability | Missing / conditional | No transport assignment/handover workflow found in inspected Admin routes. |
-| ADM-R40 Network overview | Missing / conditional | No real network records/overview found in inspected Admin routes. |
+| ADM-R30 Shared pricing rules | Missing; launch scope confirmed | No Admin pricing route/service found in inspected paths; current checkout delivery fee has historically been zero. |
+| ADM-R31 Route-leg pricing | Missing; launch scope confirmed | No route-leg pricing implementation evidenced in inspected paths. |
+| ADM-R32 Quote snapshot | Missing; launch scope confirmed | No saved delivery quote/rate snapshot evidenced in reviewed order schema/routes. |
+| ADM-R33 Measurement discrepancy | Missing; launch scope confirmed | No intake-measurement adjustment path found. |
+| ADM-R34 Price adjustment settlement | Missing; launch scope confirmed | No adjustment/dispute/top-up/refund settlement workflow found. |
+| ADM-R35 Dispatch settlement gate | Missing; launch scope confirmed | No linked dispatch/payment-adjustment gate found. |
+| ADM-R36 PUDO location records | Missing in inspected Admin routes; launch scope confirmed | No PUDO management page/API found in inspected paths. |
+| ADM-R37 Location type distinction | Missing; launch scope confirmed | No staffed-station vs registered-collection-centre admin workflow found. |
+| ADM-R38 Transport connections | Missing; launch scope confirmed | No route/connection management path found in inspected Admin routes. |
+| ADM-R39 Assignment/dispatch accountability | Missing; launch scope confirmed | No transport assignment/handover workflow found in inspected Admin routes. |
+| ADM-R40 Network overview | Missing; launch scope confirmed | No real network records/overview found in inspected Admin routes. |
 | ADM-R41 Real-data dashboard | Missing — confirmed source gap | `app/admin/page.tsx` uses hardcoded demo statistics, sample recent orders, and a literal date. |
 | ADM-R42 Actionable operational overview | Partially implemented | Dashboard currently shows sample cards/recent orders; actual issue queues are not evidenced. |
 | ADM-R43 Financial terminology | Partially implemented / dashboard fails requirement | Existing dashboard labels a hardcoded figure as revenue; real data and definitions are absent. |
@@ -128,9 +128,9 @@ The status below is provisional and based on the paths listed. Where evidence is
 | ADM-P10 Formal appeal workflow | Missing | No case workflow found. |
 | ADM-P11 Advanced returns workflow | Missing | No returns workflow found. |
 | ADM-P12 Retention/archive tooling | Missing / unresolved | No archive or retention-management UI found. |
-| ADM-P13 Collection-centre performance/capacity | Missing; conditional | No network records/analytics found. |
-| ADM-P14 Fleet administration | Missing; conditional | No fleet-management route found. |
-| ADM-P15 Network bottleneck/capacity analysis | Missing; conditional | No network operational dataset/analysis found. |
+| ADM-P13 Collection-centre performance/capacity | Missing; launch scope confirmed | No network records/analytics found. |
+| ADM-P14 Fleet administration | Missing; launch scope confirmed | No fleet-management route found. |
+| ADM-P15 Network bottleneck/capacity analysis | Missing; launch scope confirmed | No network operational dataset/analysis found. |
 
 ## 5. Recommended order of work after source validation
 
@@ -139,7 +139,7 @@ Keep the startup scope lean. Do not start implementing all missing requirements 
 1. **Close security verification first:** test ordinary customer vs authorized admin for direct dashboard navigation, product/category access, order APIs, upload API, expired sessions, and production configuration. Reuse existing auth helpers and endpoints; avoid a new auth architecture.
 2. **Replace the dashboard demo content:** first define the small set of real, computable launch metrics and their data sources. Reuse existing order/payment data; do not add a new collection solely to support cards.
 3. **Verify the existing order/product/category paths:** test their current CRUD and status transitions; record specific defects before changing them.
-4. **Confirm the operating-model gate:** decide which parcel/PUDO/driver workflows are actually in-app at launch. Only then promote corresponding conditional P0 items.
+4. **Apply the owner-confirmed operating model:** the launch choices are recorded in §7. The corresponding shipment/intake/PUDO/transport/pricing requirements are part of the intended launch scope; resolve detailed policy values and implementation gaps before coding.
 5. **Design the minimum missing routes/workflows** only after those decisions and the underlying schema are inspected. Keep full finance operations in the separate Finance Portal and defer enterprise features.
 
 ## 6. Required verification still outstanding
@@ -152,13 +152,13 @@ Keep the startup scope lean. Do not start implementing all missing requirements 
 - [ ] Verify whether the dashboard's \`/admin/customers\` and \`/admin/services\` links have real routes.
 - [ ] Run the relevant payment/order/stock regression suite.
 - [ ] Verify deployed environment variables and current Firebase custom claims without exposing credentials.
-- [ ] Reconcile the Cloudinary/Firebase Storage conflict in `DECISIONS.md`.
+- [x] Reconcile the Cloudinary/Firebase Storage conflict in `DECISIONS.md` (DEC-008 now records Cloudinary as the selected integration).
 - [ ] Update each status with evidence as the remaining paths are inspected and tests are run.
 
-**Stage 2 status:** Initial source inventory and first-pass validation matrix drafted. This is not a full audit, no tests were run, and no requirement is declared fully verified based on this document alone.
+**Stage 2 status:** Initial source inventory and first-pass validation matrix drafted. This is not a full audit. At the time of the source review no runtime tests were run; a later user-reported TypeScript/dev-server checkpoint is recorded in §8. No requirement is declared fully verified based on this document alone.
 
 
-## 5. Supplemental verification and launch-scope update — 28 October 2026
+## 7. Supplemental verification and launch-scope update — 28 October 2026
 
 This supplement records additional direct reads of the current `main` branch and the owner's launch-scope decisions. It does not replace runtime testing.
 
@@ -193,6 +193,30 @@ This means the relevant shipment, intake, PUDO, route, assignment, pricing, and 
 
 ### Audit boundary and next checks
 
-- This remains a **source-level audit** performed through GitHub file reads. No local checkout, application runtime, browser, deployment environment, or live Firestore data was inspected.
-- No TypeScript/build/test commands were run in this review.
-- Next verify page and API authorization in runtime; test Cloudinary upload; test payment/stock edge cases; inspect category-count and inactive-record changes; then define the smallest compatible shipment/PUDO/pricing implementation.
+- This remains a **first-pass source-level audit** based on GitHub file reads. It is not a complete route-by-route security review and did not inspect live Firestore data or deployed environment values.
+- The user subsequently reported that `npx tsc --noEmit` passed and `npm run dev` started successfully on Next.js 16.4.2, ready in 936 ms (28 October 2026). This is a current type-check/dev-server checkpoint, not a browser/API security result or current production-build result.
+- Runtime authorization tests, authorized/denied Cloudinary upload tests, payment/stock edge-case tests, and a review of every privileged API remain outstanding.
+- PR #3 (inactive storefront visibility) and PR #4 (category product counts) were open at the time of this documentation reconciliation; their changes must not be described as merged into `main` without checking again.
+- Next: finish the documentation checkpoint, run customer/admin browser tests, test privileged API denial and Cloudinary upload behaviour, then decide whether any minimal code fix is warranted. Only after that should the team sequence implementation of the missing shipment/PUDO/pricing workflows.
+
+
+## 8. Runtime checkpoint — 28 October 2026
+
+### Confirmed by user
+
+- `npx tsc --noEmit` completed without reported errors.
+- `npm run dev` started successfully using Next.js 16.4.2 and reported `Ready in 936ms`.
+- Development server URLs reported: `http://localhost:3000` and `http://192.168.0.177:3000`.
+
+### Still not tested in this checkpoint
+
+- Ordinary customer direct navigation to `/admin`, `/admin/orders`, `/admin/products`, and `/admin/categories`.
+- Customer session preservation after admin access is denied.
+- Authorized administrator sign-in, refresh, and page navigation.
+- Unauthorized calls to privileged admin APIs.
+- Authorized and unauthorized Cloudinary upload requests.
+- Custom-claim revocation/allowlist changes and all remaining privileged API routes.
+- Payment, cancellation, late-webhook, and stock-restoration runtime edge cases.
+- Current production build.
+
+**Interpretation:** TypeScript and development-server startup pass. Do not mark runtime authorization, Cloudinary, or end-to-end security requirements complete until the corresponding behaviour is observed and recorded.
