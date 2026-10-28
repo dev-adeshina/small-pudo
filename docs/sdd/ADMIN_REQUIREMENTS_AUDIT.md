@@ -2,7 +2,7 @@
 
 **Last updated:** 28 October 2026  
 **Status:** Initial source review — not a runtime or deployment verification  
-**Requirements baseline:** `ADMIN_REQUIREMENTS.md` (draft; owner approval pending)  
+**Requirements baseline:** `ADMIN_REQUIREMENTS.md` (launch scope owner-approved 28 October 2026; implementation statuses remain unverified where noted)  
 **Reviewed branch:** `main` for application source; requirements document from the Stage 1 draft branch
 
 ## 1. Purpose and limits
@@ -156,3 +156,43 @@ Keep the startup scope lean. Do not start implementing all missing requirements 
 - [ ] Update each status with evidence as the remaining paths are inspected and tests are run.
 
 **Stage 2 status:** Initial source inventory and first-pass validation matrix drafted. This is not a full audit, no tests were run, and no requirement is declared fully verified based on this document alone.
+
+
+## 5. Supplemental verification and launch-scope update — 28 October 2026
+
+This supplement records additional direct reads of the current `main` branch and the owner's launch-scope decisions. It does not replace runtime testing.
+
+### Current source checks
+
+- **Dashboard:** `app/admin/page.tsx` still defines hardcoded statistic cards, sample recent orders, and a literal date. This is a confirmed P0 gap.
+- **Page-level admin gate:** The current dashboard calls `verifyAdminAccess(user)` after Firebase sign-in and verified-email checks. The current products, categories, and orders pages also import the shared helper. Therefore, the earlier customer-to-admin access report should be treated as a regression risk requiring browser testing, not as proof that the current `main` source still lacks a page-level check.
+- **Server-side admin checks:** The inspected admin order APIs, admin verification/claim endpoints, and image-upload API independently validate Firebase ID tokens and the verified email against `ADMIN_EMAILS`. This is positive source evidence, but it is not a complete audit of every privileged endpoint or deployed configuration.
+- **Firestore rules:** `firestore.rules` requires a verified email and `admin == true` for catalogue writes, permits public catalogue reads, and denies direct client reads/writes to `orders`. The progress tracker records 11/11 local Emulator rule tests passing twice. This does not verify the live admin page flow or all server APIs.
+- **Payment handling:** Paystack verification checks provider success, reference, amount, and currency; the webhook verifies the HMAC signature and uses a deterministic event key to make duplicate delivery idempotent. Late success for a cancelled order is flagged for review in the inspected source. Runtime regression testing for all timeout/retry/cancellation/stock-restoration cases remains outstanding.
+- **Cloudinary:** The current source uses Cloudinary, and the upload API enforces an admin allowlist, permitted folders, a 5 MiB size limit, allowed image types, and signature checks. Successful authorized upload and denied upload behaviour remain unverified at runtime.
+- **Order shipping versus shipments:** `lib/types/order.ts` stores provider, tracking number, shipment timestamps, and notes as optional order shipping metadata. Direct probes of `app/admin/shipments/page.tsx`, `app/admin/pudo/page.tsx`, `app/admin/delivery-pricing/page.tsx`, `app/admin/transactions/page.tsx`, and `app/admin/audit-logs/page.tsx` returned not found on `main`. This confirms those specific paths are absent; it does not rule out related code elsewhere.
+- **Category/product association:** The current product mapper uses `categoryId`, while the category helper's slug-change protection passes the category slug to the product-count helper. This mismatch requires focused verification. PR #4 proposes a compatibility fix but is not part of the current `main` baseline at the time of this review.
+- **Inactive storefront records:** PR #3 proposes to hide inactive categories/products. Its behaviour and merge status must be checked before claiming the fix is present in `main`.
+
+### Owner-confirmed launch model
+
+The owner approved the following scope on 28 October 2026:
+
+- Independent parcel booking is included alongside storefront order fulfilment.
+- Both advance bookings and staff-created walk-in intake are supported in the planned workflow.
+- One lean PUDO location page distinguishes staffed stations from registered collection centres and records operating hours, supported services, parcel-handling capabilities, and active/inactive status.
+- Delivery pricing is shared between storefront delivery and independent shipments, using fixed rates where suitable and calculated pricing where required.
+- Both advance online payment and payment at intake are supported in the planned business workflow.
+- Measurement-based price changes use a proposed recalculation and controlled review for material discrepancies or adjustments affecting an existing payment.
+- Routing is hybrid: configured rules propose route legs and Operations may review/adjust them.
+- Transport-provider records and route-leg assignments are managed by Operations; a dedicated driver portal is deferred.
+- Flexible proof-of-delivery methods and a hybrid failed-delivery resolution workflow are intended.
+- Verified payment is required before dispatch by default. Any exception must be policy-based, authorized, reasoned, and audited without changing the underlying payment status.
+
+This means the relevant shipment, intake, PUDO, route, assignment, pricing, and delivery requirements should no longer remain conditional solely because the launch model is undecided. Their exact policy thresholds and implementation status remain open.
+
+### Audit boundary and next checks
+
+- This remains a **source-level audit** performed through GitHub file reads. No local checkout, application runtime, browser, deployment environment, or live Firestore data was inspected.
+- No TypeScript/build/test commands were run in this review.
+- Next verify page and API authorization in runtime; test Cloudinary upload; test payment/stock edge cases; inspect category-count and inactive-record changes; then define the smallest compatible shipment/PUDO/pricing implementation.
