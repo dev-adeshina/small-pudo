@@ -3,8 +3,8 @@
 **Last updated:** 28 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Current main source baseline reviewed:** `a3e1e8a` — `Merge pull request #1 from dev-adeshina/docs/admin-portal-sdd`
-**Current requirements/audit review branch:** `docs/admin-requirements-prioritization` (PR #2; not merged at review time)
+**Current main documentation baseline:** `fbb56ce` — `Merge pull request #2 from dev-adeshina/docs/admin-requirements-prioritization`
+**Admin Portal requirements/audit:** PR #2 merged to `main` on 28 October 2026. PR #3 and PR #4 remain open and are tracked separately.
 **Current phase:** Reconcile SDD/progress/issue records before any application-code changes; then complete runtime admin-authorization checks. Launch operating model is owner-confirmed; formal P0/P1/deferred baseline approval and runtime security evidence remain outstanding
 
 > This tracker records the current working state, including uncommitted changes.
@@ -21,7 +21,7 @@
 
 VeriLyft remains the existing Next.js App Router ecommerce and delivery application using TypeScript, Firebase Authentication, Firestore/Firebase Admin, Paystack, Cloudinary, and the shared cart context. Continue the current architecture; do not rebuild it or introduce a parallel data/auth layer.
 
-The user-reported local `main` baseline is `5ca2337` — `feat: add guest order tracking and email notifications`. Admin Portal design PR #1 is merged to `main` as `a3e1e8a`. The fuller requirements inventory and source-level audit are on `docs/admin-requirements-prioritization` (PR #2), which remains open and is not yet part of the local `main` baseline. PR #3 (inactive category/product visibility) and PR #4 (category product-count compatibility) are also open; do not assume their changes are present on `main` until merge status is checked.
+The current `main` documentation baseline is `fbb56ce`, which merges Admin Portal requirements/audit PR #2. Admin Portal design PR #1 is also merged. PR #3 (inactive category/product visibility) and PR #4 (category product-count compatibility) remain open; do not assume their changes are present on `main` until merge status is checked.
 
 Customer authentication, profile, customer-scoped order history/details, guest tracking, and guest tracking email have implementation evidence recorded below. Guest-order claiming remains undecided. The admin dashboard, catalogue, orders, and Cloudinary upload foundations exist, but current authorization behaviour, authorized/denied image uploads, and payment/stock edge cases still need runtime verification.
 
@@ -355,7 +355,8 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 ## 10. Documentation reconciliation and runtime checkpoint — 28 October 2026
 
 - [x] Confirmed Admin Portal design PR #1 is merged to `main` as `a3e1e8a`.
-- [x] Confirmed Admin Portal requirements/audit PR #2 remains open on `docs/admin-requirements-prioritization`; PR #3 and PR #4 also remain open at the time of this review.
+- [x] Confirmed Admin Portal requirements/audit PR #2 merged to `main` on 28 October 2026 as merge commit `fbb56ce522fe713524d04f9a23c7ab7c43da8f95`.
+- [x] Rechecked PR #3 (`fix/public-category-visibility`) and PR #4 (`fix/category-product-counts`): both remain open and unmerged at this checkpoint.
 - [x] Recorded the user-reported current check: `npx tsc --noEmit` passed.
 - [x] Recorded the user-reported dev-server result: Next.js 16.4.2 started at `http://localhost:3000` and reported ready.
 - [ ] Complete browser test: a signed-in ordinary customer navigates directly to `/admin`, `/admin/orders`, `/admin/products`, and `/admin/categories`; each must deny access and preserve the customer session.
@@ -367,3 +368,12 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Re-run the relevant tests and update this tracker/issue log with actual results before implementing or marking security work complete.
 
 **No application code was changed in this documentation checkpoint.** TypeScript and dev-server startup were checked by the user; browser/API/upload tests remain unrun.
+
+
+## 11. Documentation merge confirmation — 28 October 2026
+
+- [x] PR #2, `docs: define startup Admin Portal requirements and priorities`, is closed and merged into `main`.
+- [x] Merge commit: `fbb56ce522fe713524d04f9a23c7ab7c43da8f95` (`fbb56ce`).
+- [x] Confirmed `main` points to that merge commit at the time of verification.
+- [x] Updated this tracker’s baseline metadata so it no longer describes PR #2 as open.
+- [ ] Continue with the planned browser/API authorization tests; no application-code changes until test results show a specific fix is required.
