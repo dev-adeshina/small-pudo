@@ -147,7 +147,9 @@ Keep the startup scope lean. Do not start implementing all missing requirements 
 - [ ] Inspect all remaining privileged API routes and Firestore rules against ADM-R02/ADM-R04.
 - [ ] Test customer and admin direct-navigation/session scenarios in a browser.
 - [ ] Test an authorized Cloudinary upload and a denied upload against the actual configured environment.
-- [ ] Confirm product/category public visibility, stock, image handling, and category-count behaviour.
+- [ ] Fix and regression-test inactive category/product filtering on the category route.
+- [ ] Confirm product/category public visibility, stock, image handling, and category-count behaviour; inspect existing data before correcting the category-count query.
+- [ ] Verify whether the dashboard's \`/admin/customers\` and \`/admin/services\` links have real routes.
 - [ ] Run the relevant payment/order/stock regression suite.
 - [ ] Verify deployed environment variables and current Firebase custom claims without exposing credentials.
 - [ ] Reconcile the Cloudinary/Firebase Storage conflict in `DECISIONS.md`.
