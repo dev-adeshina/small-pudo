@@ -1,7 +1,7 @@
 # VeriLyft Admin Portal — Requirements Inventory and Prioritization
 
 **Last updated:** 28 October 2026  
-**Document status:** Stage 1 working baseline — owner approval pending  
+**Document status:** Owner-approved startup launch-scope baseline; requirement-level verification pending  
 **Workstream:** Admin Portal  
 **Purpose:** Consolidate the Admin Portal requirements, prioritize them for a startup launch, remove unnecessary enterprise scope, and record what must be decided before detailed design.
 
@@ -41,16 +41,26 @@ Priority is not the same as implementation status. Existing functionality must b
 - No specialized evidence-archive platform when protected existing storage and records can satisfy the need.
 - No broad redesign, duplicate styling system, or replacement of working architecture.
 
-### 2.3 Launch-scope gate
+### 2.3 Confirmed launch-scope decisions — 28 October 2026
 
-The following operating choices materially affect which operational requirements are P0. They remain to be confirmed before implementation priority is locked:
-- Whether independent parcel bookings launch at the same time as storefront fulfilment.
-- Whether staffed PUDO intake/sorting/dispatch is active at initial launch.
-- Whether registered collection centres are active at initial launch, and whether they accept outgoing parcels as well as collection.
-- Whether drivers and transport assignments are managed inside VeriLyft at launch or recorded manually at first.
-- Which staff roles actually need accounts at launch.
+The owner has confirmed the following planning choices. These decisions establish intended launch scope; they do not prove implementation or runtime readiness.
 
-Until confirmed, operational items are marked conditional rather than treated as universally required.
+- **Independent shipment booking:** Included alongside storefront order fulfilment. Independent shipments do not require a storefront order.
+- **Booking and physical intake:** Both advance booking and staff-created walk-in shipment intake are supported in the planned workflow. Booking is not proof of physical receipt.
+- **PUDO locations:** Use one lean location-management page with a location type distinguishing staffed PUDO stations from registered collection centres. Record address/contact, operating hours, supported services, parcel-handling capabilities, and active/inactive status.
+- **Collection-centre capability:** Outgoing-parcel acceptance is explicitly configured; it is not automatically assumed for every collection centre.
+- **Shipment pricing and payment:** Use one shared hybrid pricing approach for storefront delivery and independent shipments. Support fixed rates where suitable and calculated pricing where required. Support advance online payment and payment at intake, subject to approved service rules.
+- **Pricing discrepancies:** Calculate a proposed adjustment from actual intake measurements; require review for material discrepancies or adjustments affecting an existing payment. Preserve the original quote and payment history.
+- **Routing:** Use hybrid routing: configured rules propose route legs and authorised Operations staff can review or adjust them. A shipment need not use all three PUDO layers.
+- **Transport assignments:** Use a basic provider directory and route-leg assignment history. Operations staff approve assignments; recommendations may be used only where reliable resource data exists.
+- **Driver portal:** Deferred. Operations staff manage assignments and record milestones at launch; data and permissions should allow a driver interface later without a redesign.
+- **Dispatch and payment:** Verified payment is the default dispatch prerequisite. Any unpaid-dispatch exception must be explicitly authorised, policy-based, and audited; an exception never marks the payment as paid.
+- **Delivery evidence:** Support approved flexible proof-of-delivery methods. The exact mandatory method by delivery type remains a policy item to define.
+- **Failed delivery:** Use a hybrid workflow: recommend next actions, with Operations reviewing exceptions and approving consequential changes.
+- **Startup boundary:** No advanced route optimisation, full fleet-management suite, separate driver application, enterprise workflow engine, or advanced analytics platform is required for the initial release.
+
+Operational requirements previously marked conditional should now be prioritized according to these confirmed choices. Numerical thresholds, detailed service policies, retention periods, and exact status transitions remain unresolved until their respective workflows are specified.
+
 
 ## 3. P0 — Launch-essential requirements
 
