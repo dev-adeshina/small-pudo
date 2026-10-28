@@ -37,19 +37,10 @@ identical to the live working tree.
 
 ## Current project position
 
-The storefront, product/category browsing, cart, checkout, order
-creation, Paystack endpoints, admin auth, admin catalogue management,
-admin order management, shipping fields, and a guest tracking API exist
-in the supplied baseline. The user has previously reported key
-checkout/payment/order tests and `/admin/orders` working, but do not
-claim to have rerun them unless you actually do so.
-
-The supplied baseline did not include root project configuration files,
-so build status needs verification against the complete working
-repository. Customer registration, customer dashboard, customer order
-history, and customer-facing tracking UI were not found in that archive.
-Existing order creation sets `userId: null`, so customer-order ownership
-needs to be implemented deliberately.
+The current feature state and latest verified baseline are recorded in
+`PROGRESS.md`. Historical notes in this handoff may be stale; verify the
+current repository and tracker before relying on any implementation or
+test claim. Do not treat older archive observations as current facts.
 
 ## Current priority
 
