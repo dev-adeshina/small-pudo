@@ -99,7 +99,7 @@ Operational requirements previously marked conditional should now be prioritized
 | ADM-R19 | Linked record consistency | Orders, shipments, and payments link to the correct records without conflating their IDs or double-counting them. |
 | ADM-R20 | Payment/stock regression safety | Existing initialization, verification, webhook, cancellation, retries, duplicate events, late outcomes, and stock restoration receive regression testing before release. |
 
-### 3.4 Shipment operations — conditional P0 if parcel operations launch
+### 3.4 Shipment operations — P0 for the owner-confirmed parcel launch scope
 
 | ID | Requirement | Minimum acceptance outcome |
 |---|---|---|
@@ -113,7 +113,7 @@ Operational requirements previously marked conditional should now be prioritized
 | ADM-R28 | Basic exceptions | Staff can record and follow up common problems such as delay, failed delivery, damage, or missing parcel. |
 | ADM-R29 | Returns | If returns are offered at launch, an authorized, auditable basic return process exists; otherwise document the temporary manual procedure. |
 
-### 3.5 Pricing and price adjustments — conditional P0 if parcel delivery launches
+### 3.5 Pricing and price adjustments — P0 for the owner-confirmed delivery launch scope
 
 | ID | Requirement | Minimum acceptance outcome |
 |---|---|---|
@@ -124,7 +124,7 @@ Operational requirements previously marked conditional should now be prioritized
 | ADM-R34 | Price adjustment settlement | Increases, decreases, disputes, top-ups, refunds, and authorized exceptions have an explicit outcome and record. |
 | ADM-R35 | Dispatch gate | If the policy requires settlement before dispatch, unpaid adjustments block dispatch unless a permitted, audited exception applies. |
 
-### 3.6 PUDO and transport — conditional P0 if network operations launch
+### 3.6 PUDO and transport — P0 for the owner-confirmed network launch scope
 
 | ID | Requirement | Minimum acceptance outcome |
 |---|---|---|
@@ -226,13 +226,13 @@ Every approved P0 feature must satisfy the applicable requirements below:
 | Startup exclusions and scope boundaries | Drafted in this document |
 | Known cross-cutting requirements recorded | Drafted in this document |
 | Requirements distinguished from pages/features/implementation | Established |
-| Conditional launch scope identified | Awaiting confirmation |
-| Existing code reconciled against every requirement | Not done; Stage 2 |
-| Detailed page/navigation flows | Not done; Stage 2 |
+| Owner-confirmed launch operating model | Recorded in §2.3; detailed policies and implementation still need validation |
+| Existing code reconciled against every requirement | Partial — first-pass source audit in `ADMIN_REQUIREMENTS_AUDIT.md`; runtime and broader source checks remain |
+| Detailed page/navigation flows | Partial — initial navigation/dashboard design is in `ADMIN_PORTAL.md`; detailed page specifications remain under review |
 | Feature and workflow specifications | Not done; later design stage |
 | Architecture/API/data mapping | Not done; later design stage |
-| Owner approval of the startup baseline | Pending |
+| Owner approval of the P0/P1/deferred priority baseline | Pending; operating-model choices are confirmed, but the consolidated priority baseline still needs review |
 
-**Stage 1 status: Inventory and prioritization drafted; not yet formally approved.**
+**Stage 1 status: Inventory and prioritization drafted; owner-confirmed operating-model choices are recorded, but the consolidated P0/P1/deferred baseline is not yet formally approved.**
 
-Do not mark the Admin Portal requirements phase complete until the launch scope and this P0/P1/deferred baseline have been reviewed and approved. Next, validate this list against the actual repository and current SDD, then map approved requirements to existing implementation and gaps.
+Do not mark the Admin Portal requirements phase complete until the priority baseline has been reviewed and approved. The first-pass source audit is in `ADMIN_REQUIREMENTS_AUDIT.md`; continue by resolving source/runtime evidence gaps and refining page-level specifications before implementation.
