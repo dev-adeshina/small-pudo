@@ -5,7 +5,7 @@
 **Project baseline branch:** `main`
 **Last committed baseline:** `5ca2337` — `feat: add guest order tracking and email notifications`
 **Documentation review branch:** `docs/admin-portal-sdd` (PR #1)
-**Current phase:** Admin Portal page-by-page design and SDD update; no new application code implemented in this design phase
+**Current phase:** Admin Portal requirements inventory and startup prioritization drafted; owner approval and repository-to-requirement validation remain pending
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -312,3 +312,19 @@ At the end of each meaningful session:
 ### Current next step
 
 Continue reviewing the Admin Portal design one page at a time. The user asked to finish and update the Admin SDD before moving to the next Admin section. The next design topic proposed is **Shipments**, but proceed only after the user is satisfied with this SDD update.
+
+
+## 8. Admin Portal requirements prioritization — 28 October 2026
+
+- [x] Added `docs/sdd/ADMIN_REQUIREMENTS.md` with stable requirement IDs, P0/P1/deferred priorities, startup exclusions, cross-cutting acceptance requirements, and Stage 1 completion tracking.
+- [x] Indexed the requirements document in `docs/sdd/README.md`.
+- [x] Explicitly distinguished requirements inventory from page design, implementation status, and test evidence.
+- [~] Stage 1 inventory/prioritization is drafted; owner approval of the startup scope and priority baseline remains pending.
+- [ ] Validate the requirements against the current repository and existing SDD; classify each relevant requirement as implemented, partial, missing, or unverified.
+- [ ] Confirm which operations are included in the first launch: independent parcel booking, staffed PUDO intake/dispatch, registered collection centres, and in-app driver/transport management.
+- [ ] Do not proceed as though all P0 requirements are unconditional until launch scope is confirmed.
+- [ ] This was a documentation-only change. No application code or tests were changed/run for this task.
+
+### Current next step
+
+Review and approve the launch scope and P0/P1/deferred baseline in `ADMIN_REQUIREMENTS.md`. Then begin Stage 2: validate each approved requirement against the actual repository and current SDD before mapping page flows or planning implementation.
