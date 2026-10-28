@@ -196,7 +196,7 @@ This means the relevant shipment, intake, PUDO, route, assignment, pricing, and 
 - This remains a **first-pass source-level audit** based on GitHub file reads. It is not a complete route-by-route security review and did not inspect live Firestore data or deployed environment values.
 - The user subsequently reported that `npx tsc --noEmit` passed and `npm run dev` started successfully on Next.js 16.4.2, ready in 936 ms (28 October 2026). This is a current type-check/dev-server checkpoint, not a browser/API security result or current production-build result.
 - Runtime authorization tests, authorized/denied Cloudinary upload tests, payment/stock edge-case tests, and a review of every privileged API remain outstanding.
-- PR #3 (inactive storefront visibility) and PR #4 (category product counts) were open at the time of this documentation reconciliation; their changes must not be described as merged into `main` without checking again.
+- PR #2 (Admin Portal requirements/audit) merged into `main` on 28 October 2026 as `fbb56ce`. PR #3 (inactive storefront visibility) and PR #4 (category product counts) remain open and unmerged at the latest status check; do not treat their changes as present on `main` until merged.
 - Next: finish the documentation checkpoint, run customer/admin browser tests, test privileged API denial and Cloudinary upload behaviour, then decide whether any minimal code fix is warranted. Only after that should the team sequence implementation of the missing shipment/PUDO/pricing workflows.
 
 
@@ -220,3 +220,11 @@ This means the relevant shipment, intake, PUDO, route, assignment, pricing, and 
 - Current production build.
 
 **Interpretation:** TypeScript and development-server startup pass. Do not mark runtime authorization, Cloudinary, or end-to-end security requirements complete until the corresponding behaviour is observed and recorded.
+
+
+## 9. Merge-status reconciliation — 28 October 2026
+
+- PR #2 is confirmed merged into `main`; merge commit `fbb56ce522fe713524d04f9a23c7ab7c43da8f95`.
+- PR #3 (`fix/public-category-visibility`) remains open and unmerged.
+- PR #4 (`fix/category-product-counts`) remains open and unmerged.
+- The next active work remains runtime authorization verification, not application-code implementation.
