@@ -28,7 +28,11 @@ export default async function ProductDetailsPage({
 
   const productCategory = await getCategory(product.categoryId);
 
-  if (!productCategory || productCategory.slug !== category) {
+  if (
+    !productCategory ||
+    !productCategory.isActive ||
+    productCategory.slug !== category
+  ) {
     notFound();
   }
 
