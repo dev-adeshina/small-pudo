@@ -183,7 +183,7 @@ export async function updateCategory(
   }
 
   // Changing the slug changes the category's document ID.
-  const productCount = await getCategoryProductCount(current.slug);
+  const productCount = await getCategoryProductCount(current.id, current.slug);
 
   if (productCount > 0) {
     throw new Error(
@@ -273,18 +273,34 @@ export async function deleteCategory(
  * which matches the category slug.
  */
 export async function getCategoryProductCount(
+  categoryId: string,
   slug: string
 ): Promise<number> {
   const productsRef = collection(db, "products")
 
-  const snapshot = await getDocs(
-    query(
-      productsRef,
-      where("category", "==", slug)
-    )
-  )
+  // Support the current categoryId relationship and legacy records that
+  // stored the category slug directly. Deduplicate in case a document has both.
+  const [byCategoryId, byLegacySlug] = await Promise.all([
+    getDocs(
+      query(
+        productsRef,
+        where("categoryId", "==", categoryId)
+      )
+    ),
+    getDocs(
+      query(
+        productsRef,
+        where("category", "==", slug)
+      )
+    ),
+  ])
 
-  return snapshot.size
+  const productIds = new Set([
+    ...byCategoryId.docs.map((product) => product.id),
+    ...byLegacySlug.docs.map((product) => product.id),
+  ])
+
+  return productIds.size
 }
 
 /**
@@ -300,7 +316,7 @@ export async function getCategoryProductCounts(
   await Promise.all(
     categories.map(async (category) => {
       counts[category.id] =
-        await getCategoryProductCount(category.slug)
+        await getCategoryProductCount(category.id, category.slug)
     })
   )
 
