@@ -312,6 +312,7 @@ export async function getProductsByCategory(
         item.data()
       )
     )
+    .filter((product) => product.isActive)
     .sort((a, b) =>
       a.name.localeCompare(b.name)
     )
