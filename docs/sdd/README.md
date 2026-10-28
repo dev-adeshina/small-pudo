@@ -10,6 +10,8 @@ VeriLyft Next.js + TypeScript + Firebase e-commerce project.
 -   `SPEC.md` --- product requirements, user flows, architecture,
     implementation principles, UI conventions, security expectations,
     acceptance criteria, and phased roadmap.
+-   `ADMIN_PORTAL.md` --- Admin Portal page-by-page design, confirmed
+    decisions, scope boundaries, and unresolved design items.
 -   `ADMIN_PORTAL.md` --- page-by-page Admin Portal design, agreed
     dashboard requirements, scope boundaries, and unresolved design items.
 -   `PROGRESS.md` --- current project status, the active phase, next
@@ -29,7 +31,7 @@ VeriLyft Next.js + TypeScript + Firebase e-commerce project.
 3.  Tell the session the specific task you want to work on.
 4.  Ask it to read `SPEC.md`, `PROGRESS.md`, `ISSUES.md`, and
     `DECISIONS.md` before proposing changes.
-5.  Keep `PROGRESS.md` and `ISSUES.md` updated as work is completed.
+6.  Keep `PROGRESS.md` and `ISSUES.md` updated as work is completed.
 
 ### Source-of-truth order
 
