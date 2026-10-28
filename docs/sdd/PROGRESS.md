@@ -2,8 +2,9 @@
 
 **Last updated:** 28 October 2026
 **Repository:** `dev-adeshina/small-pudo`
-**Branch:** `main`
-**Last committed baseline:** `bccda2f` — `feat: complete customer profile and authentication`
+**Project baseline branch:** `main`
+**Last committed baseline:** `5ca2337` — `feat: add guest order tracking and email notifications`
+**Documentation review branch:** `docs/admin-portal-sdd` (PR #1)
 **Current phase:** Admin Portal page-by-page design and SDD update; no new application code implemented in this design phase
 
 > This tracker records the current working state, including uncommitted changes.
