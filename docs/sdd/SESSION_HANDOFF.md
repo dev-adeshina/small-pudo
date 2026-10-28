@@ -9,8 +9,9 @@ repository or ZIP.
 We are continuing an existing Next.js + TypeScript + Firebase e-commerce
 project named **VeriLyft --- Beyond Borders**.
 
-Read these documents before proposing implementation: - `SPEC.md` -
-`PROGRESS.md` - `ISSUES.md` - `DECISIONS.md`
+Read these documents before proposing implementation: `SPEC.md`,
+`PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md`. For Admin Portal
+design or implementation tasks, also read `ADMIN_PORTAL.md`.
 
 Treat them as the project continuity documents. Then inspect the actual
 current repository before editing. Do not assume the ZIP baseline is
@@ -52,11 +53,10 @@ needs to be implemented deliberately.
 
 ## Current priority
 
-The progress tracker identifies Phase 1 (focused audit) as active.
-Inspect the complete working repository and record the actual build/test
-state. Check payment/order edge cases and authorization without
-rewriting working code. Then proceed to customer authentication,
-dashboard, and customer order history.
+The current active task and verified project position are recorded in
+`PROGRESS.md`. Always consult that tracker rather than relying on this
+handoff's historical description. If the task concerns Admin Portal design,
+consult `ADMIN_PORTAL.md` and continue page-by-page design before coding.
 
 Delivery/customer tracking UI and Telegram are deliberately later
 phases. Cloudinary is deferred unless a concrete requirement justifies
