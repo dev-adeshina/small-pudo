@@ -1,10 +1,10 @@
 # VeriLyft Progress Tracker
 
-**Last updated:** 25 October 2026
+**Last updated:** 28 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Branch:** `main`
 **Last committed baseline:** `bccda2f` — `feat: complete customer profile and authentication`
-**Current phase:** Customer order history and guest tracking email completed; storefront refinement and authentication/image-upload verification remain
+**Current phase:** Admin Portal page-by-page design and SDD update; no new application code implemented in this design phase
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -292,3 +292,22 @@ At the end of each meaningful session:
 - Added the emulator's generated `firestore-debug.log` to `.gitignore`.
 - The Firebase configuration, rules, tests, and tracker changes remain
   uncommitted and should be reviewed before staging.
+
+## 7. Admin Portal design — 28 October 2026
+
+- [x] Reviewed the current SDD files and added `docs/sdd/ADMIN_PORTAL.md` as the page-by-page Admin Portal design document.
+- [x] Added the Admin Portal document to the SDD README index.
+- [x] Recorded agreed Admin Portal decisions in `DECISIONS.md`.
+- [x] Documented the agreed combined dashboard: business overview, operational activity, and issues needing attention.
+- [x] Documented operational financial visibility versus the separate Finance Portal.
+- [x] Documented permission-aware search, notifications, quick actions, date filters, and preservation of the existing UI.
+- [x] Recorded the conceptual separation between orders, shipments, payments, and transport movements.
+- [x] Kept Government Requests basic: no dedicated page or elaborate workflow; use existing records and audit logs.
+- [~] Admin Portal page-by-page design is still in progress. Dashboard design is under review; Orders, Shipments, Transactions, Products, Categories, Delivery Pricing, PUDO Network, Transport Management, Users & Access, Finance Overview, Notifications, Reports, Settings, and Audit Logs need their detailed page design before implementation.
+- [ ] No application code was changed as part of this design-document update.
+- [ ] No TypeScript, build, browser, or runtime tests were run for this documentation-only update.
+- [ ] Do not mark any Admin Portal feature implemented merely because its design is documented.
+
+### Current next step
+
+Continue reviewing the Admin Portal design one page at a time. The user asked to finish and update the Admin SDD before moving to the next Admin section. The next design topic proposed is **Shipments**, but proceed only after the user is satisfied with this SDD update.
