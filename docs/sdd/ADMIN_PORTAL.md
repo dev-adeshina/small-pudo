@@ -118,16 +118,16 @@ Include loading, error, empty, refresh, date-range, and responsive states. Cards
 
 ## 5. Orders, shipments, payments, and transport records
 
-**Confirmed conceptual model — linked but separate records**
+**Confirmed business concept — linked records; technical representation remains unresolved**
 - Storefront purchases remain **orders**.
 - Parcels sent by individuals or independent businesses are **shipments**; independent shippers do not list products on the VeriLyft storefront.
 - A storefront order may link to a shipment.
 - An independent shipment does not require a storefront order.
-- Payments are separate records linked to the relevant order or shipment.
+- Payment information remains logically distinct and linked to the relevant order or shipment, reusing the existing payment implementation where appropriate.
 - A shipment may involve multiple transport movements/assignments.
 - The Admin Portal should provide a coherent view across linked records without conflating their IDs or lifecycles.
 
-**Confirmed status principle:** operational shipment status and payment status are separate. Payment success does not prove physical intake, dispatch, or delivery; physical receipt does not prove payment.
+**Confirmed status principle:** operational shipment status and payment status are separate concepts. Payment success does not prove physical intake, dispatch, or delivery; physical receipt does not prove payment. This does not yet prescribe new Firestore collections, duplicate types, or a migration.
 
 **Proposed, not finalized:** shipment lifecycle labels include booked, awaiting intake, received, sorting, awaiting dispatch, in transit, at destination, awaiting collection, delivered, exception, and cancelled. Some labels may be events or substatuses instead. The final lifecycle and transitions must be designed before implementation.
 
