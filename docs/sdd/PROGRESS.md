@@ -3,8 +3,8 @@
 **Last updated:** 28 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Last committed baseline:** `5ca2337` — `feat: add guest order tracking and email notifications`
-**Documentation review branch:** `docs/admin-portal-sdd` (PR #1)
+**Current main source baseline reviewed:** `a3e1e8a` — `Merge pull request #1 from dev-adeshina/docs/admin-portal-sdd`
+**Current requirements/audit review branch:** `docs/admin-requirements-prioritization` (PR #2; not merged at review time)
 **Current phase:** Admin Portal requirements prioritization drafted; Stage 2 source-level validation matrix started; owner approval and launch-scope confirmation remain pending
 
 > This tracker records the current working state, including uncommitted changes.
@@ -346,3 +346,17 @@ Review and approve the launch scope and P0/P1/deferred baseline in `ADMIN_REQUIR
 - [ ] Confirm launch operating-model choices before promoting conditional shipment/PUDO/transport/pricing requirements to firm P0.
 
 **Stage 2 status:** Initial source-level validation drafted; not a full audit, no application code changed, and no tests run.
+
+
+### 28 October 2026 — Owner-approved Admin Portal launch scope and audit supplement
+
+- Confirmed the launch-scope choices with the owner: independent parcel booking, advance booking plus staff-created walk-in intake, lean PUDO location management, shared hybrid pricing, advance online payment plus payment at intake, hybrid route proposals, Operations-managed route-leg assignments, no driver portal at launch, flexible proof of delivery, and controlled failed-delivery handling.
+- Classified advanced route optimisation, full fleet management, a separate driver portal, enterprise workflow tooling, and advanced analytics as deferred until a concrete business need exists.
+- Rechecked selected source files on the current `main` branch through GitHub. The dashboard's demo statistics, sample recent orders, and literal date remain a confirmed gap.
+- Confirmed the current dashboard source calls `verifyAdminAccess(user)`; the prior customer-to-admin access report remains a regression test requirement, not a confirmed current-source omission.
+- Confirmed current source uses Cloudinary despite DEC-008 still describing Firebase Storage; the documentation conflict remains to be resolved explicitly.
+- Confirmed that selected dedicated Admin routes for shipments, PUDO, delivery pricing, transactions, and audit logs are absent on `main`. Related implementation elsewhere was not ruled out.
+- Noted that PR #3 (inactive category/product visibility) and PR #4 (category product counts) were still separate proposed changes and must not be assumed present on `main` without checking merge status.
+- Updated the Admin requirements/audit documents on the existing `docs/admin-requirements-prioritization` review branch. No application code was changed.
+- No local build, TypeScript, browser, API runtime, or live Firestore tests were run. The audit remains source-level only.
+- Next: reconcile the accepted requirements with existing code, verify critical security/payment/image-upload paths at runtime, and prepare a minimal implementation sequence without adding a new architecture.
