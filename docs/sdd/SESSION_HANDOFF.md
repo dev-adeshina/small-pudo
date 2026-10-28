@@ -11,7 +11,8 @@ project named **VeriLyft --- Beyond Borders**.
 
 Read these documents before proposing implementation: `SPEC.md`,
 `PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md`. For Admin Portal
-design or implementation tasks, also read `ADMIN_PORTAL.md`.
+design or implementation tasks, also read `ADMIN_REQUIREMENTS.md`,
+`ADMIN_REQUIREMENTS_AUDIT.md`, and `ADMIN_PORTAL.md`.
 
 Treat them as the project continuity documents. Then inspect the actual
 current repository before editing. Do not assume the ZIP baseline is
@@ -44,7 +45,7 @@ test claim. Do not treat older archive observations as current facts.
 
 ## Current priority
 
-For Admin Portal work, use `ADMIN_REQUIREMENTS.md` as the working startup-priority baseline and `ADMIN_PORTAL.md` for page-level design. The requirements baseline remains a draft until the owner confirms launch scope and priorities. The current active task and verified project position are recorded in `PROGRESS.md`. Always consult that tracker rather than relying on this
+For Admin Portal work, use `ADMIN_REQUIREMENTS.md` as the working startup-priority baseline, `ADMIN_REQUIREMENTS_AUDIT.md` for source-level validation, and `ADMIN_PORTAL.md` for page-level design. The requirements baseline remains a draft until the owner confirms launch scope and priorities. The current active task and verified project position are recorded in `PROGRESS.md`. Always consult that tracker rather than relying on this
 handoff's historical description. If the task concerns Admin Portal design,
 consult `ADMIN_PORTAL.md` and continue page-by-page design before coding.
 
