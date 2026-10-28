@@ -69,7 +69,7 @@ Customer authentication, profile, customer-scoped order history/details, guest t
 | Guest order-tracking email | [x] | Resend integration in `app/api/orders/route.ts`; verified sender domain and successful guest email test reported. Inbox placement needs monitoring. |
 | Telegram delivery notifications | [ ] | Deferred. Paid orders should initially be dispatched only after an administrator approves delivery assignment. |
 | TypeScript check | [x] | User ran `npx tsc --noEmit` on 28 October 2026; it exited successfully. Rerun after any application-code change. |
-| Production build | [x] | `npm run build` passed after the recent Next.js upgrade, according to the session record. Rerun after subsequent edits. |
+| Production build | [~] | A prior build passed according to the session record, but `npm run build` was not run in the 28 October 2026 checkpoint. Rerun after application-code changes and before release. |
 | Production dependency audit | [x] | `npm audit --omit=dev` reported zero vulnerabilities. |
 | Development dependency audit | [~] | A `braces` advisory remains in the development tooling dependency tree. Do not force a breaking downgrade; reassess when a compatible upstream fix is available. |
 | Full end-to-end regression | [ ] | Run after the current authentication, image-upload, and storefront changes are verified. |
@@ -309,15 +309,15 @@ First reconcile this tracker, `ISSUES.md`, `DECISIONS.md`, `ADMIN_REQUIREMENTS.m
 - [x] Added `docs/sdd/ADMIN_REQUIREMENTS.md` with stable requirement IDs, P0/P1/deferred priorities, startup exclusions, cross-cutting acceptance requirements, and Stage 1 completion tracking.
 - [x] Indexed the requirements document in `docs/sdd/README.md`.
 - [x] Explicitly distinguished requirements inventory from page design, implementation status, and test evidence.
-- [~] Stage 1 inventory/prioritization is drafted; owner approval of the startup scope and priority baseline remains pending.
-- [ ] Validate the requirements against the current repository and existing SDD; classify each relevant requirement as implemented, partial, missing, or unverified.
-- [ ] Confirm which operations are included in the first launch: independent parcel booking, staffed PUDO intake/dispatch, registered collection centres, and in-app driver/transport management.
-- [ ] Do not proceed as though all P0 requirements are unconditional until launch scope is confirmed.
+- [~] Stage 1 inventory/prioritization is drafted; the owner-confirmed operating model is recorded, while formal approval of the consolidated P0/P1/deferred priority baseline remains pending.
+- [~] First-pass source validation is drafted in `ADMIN_REQUIREMENTS_AUDIT.md`; remaining privileged routes and runtime/deployment behaviour still need verification.
+- [x] Recorded owner-confirmed launch choices: independent parcel booking; advance booking and staff-created walk-in intake; lean PUDO location management; shared hybrid pricing; advance online payment and payment at intake; hybrid routing; Operations-managed route-leg assignments; no driver portal at launch; flexible proof of delivery; controlled failed-delivery handling.
+- [x] Removed uncertainty about whether the launch operating model includes parcel/PUDO/transport operations; exact policy values, technical representation, and priority-baseline approval remain open.
 - [ ] This was a documentation-only change. No application code or tests were changed/run for this task.
 
 ### Current next step
 
-Review and approve the launch scope and P0/P1/deferred baseline in `ADMIN_REQUIREMENTS.md`. Then begin Stage 2: validate each approved requirement against the actual repository and current SDD before mapping page flows or planning implementation.
+Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMENTS.md`. Stage 2 has a first-pass source audit; runtime security, upload, payment/stock, and full route coverage remain incomplete. Keep application-code changes paused until the documentation checkpoint is reviewed and the current security tests are completed.
 
 
 ## 9. Admin Portal requirements validation — 28 October 2026
@@ -332,8 +332,8 @@ Review and approve the launch scope and P0/P1/deferred baseline in `ADMIN_REQUIR
 - [ ] Verify admin/customer direct-navigation and API access in a browser/runtime.
 - [ ] Test a successful authorized Cloudinary upload and a denied upload against the configured environment.
 - [ ] Re-run relevant order/payment/stock regression tests; no tests were run in this documentation-only review.
-- [ ] Reconcile DEC-008's Firebase Storage statement with the current Cloudinary source integration.
-- [ ] Confirm launch operating-model choices before promoting conditional shipment/PUDO/transport/pricing requirements to firm P0.
+- [x] Reconciled DEC-008: Cloudinary is the selected image-hosting integration; runtime upload verification remains outstanding.
+- [x] Recorded owner-confirmed launch operating-model choices; the related requirements are no longer conditional solely because the launch model was unknown. Detailed policies and priority approval remain open.
 
 **Stage 2 status:** Initial source-level validation drafted; not a full audit, no application code changed, and no tests run.
 
