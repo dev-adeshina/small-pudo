@@ -1,6 +1,6 @@
 # VeriLyft Architecture and Product Decision Log
 
-**Last updated:** 17 October 2026
+**Last updated:** 28 October 2026
 
 This file records accepted constraints and provisional defaults so
 future sessions do not invent a different architecture. Items marked
@@ -120,3 +120,44 @@ Explain the conflict and why the existing decision is insufficient. 2.
 Describe the smallest viable alternative. 3. Ask for approval when the
 change affects architecture, data model, UX, payment, security, or
 scope. 4. Record the agreed decision here.
+
+
+## Admin Portal design decisions — 28 October 2026
+
+These decisions are accepted at the design level only. They do not mean the corresponding functionality has been implemented or tested.
+
+### DEC-012 — Keep the shipment business concept distinct from storefront orders
+
+- **Decision:** Storefront purchases are orders. Independent individuals and businesses may book shipments without creating a storefront order. A storefront order may be linked to a shipment, and a shipment may have multiple transport movements.
+- **Compatibility rule:** This clarifies the business concept in DEC-007; it does not by itself approve a new Firestore collection, duplicate type, migration, or route. Inspect the current order/shipping model first and propose the smallest compatible implementation before changing the schema.
+- **Status:** Accepted conceptually; technical representation unresolved.
+
+### DEC-013 — Admin dashboard structure
+
+- **Decision:** Use a combined dashboard: concise business overview first, operational activity in the middle, and issues needing attention below.
+- **Implication:** Use actual records, not hardcoded demo metrics or simulated activity. Provide date filters (today, last 7 days, this month, custom range), permission-aware global search, actionable notifications, and role-aware quick actions.
+- **Status:** Accepted at design level; exact metric definitions depend on the approved data model and shipment lifecycle.
+
+### DEC-014 — Operational financial visibility in Admin
+
+- **Decision:** Admin may show successful/pending/failed payments, refund summaries, order/shipment revenue summaries, delivery charges, and outstanding balances where supported by reliable records.
+- **Implication:** Do not label revenue as profit. Expenses, salaries/payroll, full profit-and-loss, commissions/payouts, and comprehensive reconciliation belong in the Finance Portal.
+- **Status:** Accepted.
+
+### DEC-015 — Keep operational and payment status distinct
+
+- **Decision:** Shipment operational status and payment status are separate concepts.
+- **Implication:** Successful payment does not prove physical intake, dispatch, or delivery; physical receipt does not prove payment.
+- **Status:** Accepted conceptually; exact shipment states, transitions, and data representation remain unresolved.
+
+### DEC-016 — Government requests remain basic
+
+- **Decision:** Do not create a dedicated Government Requests page or elaborate workflow at this stage.
+- **Implication:** Use existing Admin Portal records, evidence storage where necessary, and audit logs to record request basics, an authorized review/decision, relevant document references, and any disclosure.
+- **Status:** Accepted; deliberately limited in scope.
+
+### DEC-017 — Design must precede implementation
+
+- **Decision:** Design and review Admin pages/functions one area at a time before coding.
+- **Implication:** Mark page specifications as Draft, Under Review, or Approved for Implementation. Design agreement alone is not implementation evidence.
+- **Status:** Accepted.
