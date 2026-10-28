@@ -51,11 +51,10 @@ explicit decision.
 
 ### Important status caveat
 
-This documentation is based on the supplied `pudo(5).zip` archive and
-project context available on 17 October 2026. The archive did not
-include root project configuration such as `package.json`,
-`tsconfig.json`, or `next.config.*`, so a complete install/build
-verification was not possible from that archive alone. Some statuses
-below are based on the source structure and the user's previously
-reported tests; they are not claims that every path has been
-independently run.
+Some historical notes in this documentation originated from the
+`pudo(5).zip` archive and project context available on 17 October 2026.
+That archive lacked root project configuration and could not support a
+complete install/build verification. Treat those statements as
+historical, not as current repository facts. For the latest declared
+project position, use `PROGRESS.md`; verify current code and test
+results directly before claiming a feature is implemented or tested.
