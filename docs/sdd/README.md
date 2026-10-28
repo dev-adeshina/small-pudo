@@ -10,6 +10,8 @@ VeriLyft Next.js + TypeScript + Firebase e-commerce project.
 -   `SPEC.md` --- product requirements, user flows, architecture,
     implementation principles, UI conventions, security expectations,
     acceptance criteria, and phased roadmap.
+-   `ADMIN_PORTAL.md` --- page-by-page Admin Portal design, agreed
+    dashboard requirements, scope boundaries, and unresolved design items.
 -   `PROGRESS.md` --- current project status, the active phase, next
     actions, and completion checklist. **Update this file whenever work
     is completed or the active task changes.**
