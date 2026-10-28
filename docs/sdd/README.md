@@ -8,6 +8,7 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 
 - `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and phased roadmap.
 - `ADMIN_REQUIREMENTS.md` — consolidated Admin Portal requirements, startup priorities, scope boundaries, and requirements-baseline approval checklist.
+- `ADMIN_REQUIREMENTS_AUDIT.md` — source-level validation matrix for requirements versus existing code, including evidence, gaps, and outstanding verification.
 - `ADMIN_PORTAL.md` — Admin Portal page-by-page design, confirmed decisions, scope boundaries, and unresolved design items.
 - `PROGRESS.md` — current project status, active phase, next actions, and completion checklist. Update it whenever work is completed or the active task changes.
 - `ISSUES.md` — known gaps, risks, verification tasks, and decisions that must not be silently assumed.
@@ -28,10 +29,11 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 2. `PROGRESS.md` for the latest declared project position.
 3. `SPEC.md` for intended product behaviour and architecture principles.
 4. `ADMIN_REQUIREMENTS.md` for the proposed startup requirements and priorities for the Admin Portal.
-5. `ADMIN_PORTAL.md` for Admin Portal page-level design.
-6. `DECISIONS.md` for accepted decisions.
-7. `ISSUES.md` for known gaps and unverified claims.
-8. Prior chat history, only when available and consistent with the above.
+5. `ADMIN_REQUIREMENTS_AUDIT.md` for the current code-to-requirement validation evidence and gaps.
+6. `ADMIN_PORTAL.md` for Admin Portal page-level design.
+7. `DECISIONS.md` for accepted decisions.
+8. `ISSUES.md` for known gaps and unverified claims.
+9. Prior chat history, only when available and consistent with the above.
 
 If the code differs from this documentation, do not blindly rewrite code to match the document. Report the difference, determine whether the code or specification is stale, and update the relevant document after an explicit decision.
 
