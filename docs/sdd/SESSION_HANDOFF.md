@@ -11,7 +11,8 @@ project named **VeriLyft --- Beyond Borders**.
 
 Read these documents before proposing implementation: `SPEC.md`,
 `PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md`. For Admin Portal
-design or implementation tasks, also read `ADMIN_PORTAL.md`.
+design or implementation tasks, also read `ADMIN_REQUIREMENTS.md`,
+`ADMIN_REQUIREMENTS_AUDIT.md`, and `ADMIN_PORTAL.md`.
 
 Treat them as the project continuity documents. Then inspect the actual
 current repository before editing. Do not assume the ZIP baseline is
@@ -32,8 +33,8 @@ identical to the live working tree.
 -   Use `app/globals.css` and existing Tailwind patterns; do not
     introduce a new CSS framework or broad redesign.
 -   Be honest about which tests you actually ran.
--   Update `PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md` when
-    appropriate.
+-   Before application-code changes, reconcile `PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md` with the current requirements/audit docs and test evidence.
+-   Do not change application code until the active task, acceptance criteria, and outstanding verification are recorded consistently.
 
 ## Current project position
 
@@ -44,14 +45,11 @@ test claim. Do not treat older archive observations as current facts.
 
 ## Current priority
 
-The current active task and verified project position are recorded in
-`PROGRESS.md`. Always consult that tracker rather than relying on this
-handoff's historical description. If the task concerns Admin Portal design,
-consult `ADMIN_PORTAL.md` and continue page-by-page design before coding.
+For Admin Portal work, use `ADMIN_REQUIREMENTS.md` as the startup-priority draft, `ADMIN_REQUIREMENTS_AUDIT.md` for source-level validation, and `ADMIN_PORTAL.md` for page-level design. The owner-confirmed operating model is recorded, but the consolidated P0/P1/deferred priority baseline and detailed page specifications remain under review. The current active task and evidence are in `PROGRESS.md`; check the current repository/PR states rather than relying on this handoff alone.
 
-Delivery/customer tracking UI and Telegram are deliberately later
-phases. Cloudinary is deferred unless a concrete requirement justifies
-migration from Firebase Storage.
+Current active task: reconcile the SDD/progress/issue records before any application-code changes, then complete the runtime admin-authorization checks. The user reported `npx tsc --noEmit` passing and the Next.js 16.4.2 dev server starting successfully on 28 October 2026; browser/API/upload tests remain outstanding.
+
+Guest order tracking and email have implementation evidence recorded in `PROGRESS.md`; Telegram remains deferred. Cloudinary is the selected image-hosting integration, but runtime upload verification is still required.
 
 ## How to work
 

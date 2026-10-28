@@ -3,9 +3,9 @@
 **Last updated:** 28 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Last committed baseline:** `5ca2337` — `feat: add guest order tracking and email notifications`
-**Documentation review branch:** `docs/admin-portal-sdd` (PR #1)
-**Current phase:** Admin Portal page-by-page design and SDD update; no new application code implemented in this design phase
+**Current main source baseline reviewed:** `a3e1e8a` — `Merge pull request #1 from dev-adeshina/docs/admin-portal-sdd`
+**Current requirements/audit review branch:** `docs/admin-requirements-prioritization` (PR #2; not merged at review time)
+**Current phase:** Reconcile SDD/progress/issue records before any application-code changes; then complete runtime admin-authorization checks. Launch operating model is owner-confirmed; formal P0/P1/deferred baseline approval and runtime security evidence remain outstanding
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -19,25 +19,15 @@
 
 ## 1. Current position
 
-VeriLyft is an existing Next.js App Router ecommerce application using
-TypeScript, Firebase Authentication, Firestore, Paystack, and a shared
-cart context. The current work extends the existing application; it is
-not a rebuild.
+VeriLyft remains the existing Next.js App Router ecommerce and delivery application using TypeScript, Firebase Authentication, Firestore/Firebase Admin, Paystack, Cloudinary, and the shared cart context. Continue the current architecture; do not rebuild it or introduce a parallel data/auth layer.
 
-The customer authentication, profile, and order-history chapter has
-been implemented. The customer dashboard lists the authenticated
-customer's orders, and a dedicated order-details page retrieves an order
-through a customer-scoped API. Browser tests confirmed that an order
-belonging to another customer is rejected with a 404 response.
+The user-reported local `main` baseline is `5ca2337` — `feat: add guest order tracking and email notifications`. Admin Portal design PR #1 is merged to `main` as `a3e1e8a`. The fuller requirements inventory and source-level audit are on `docs/admin-requirements-prioritization` (PR #2), which remains open and is not yet part of the local `main` baseline. PR #3 (inactive category/product visibility) and PR #4 (category product-count compatibility) are also open; do not assume their changes are present on `main` until merge status is checked.
 
-The working tree also contains changes related to Cloudinary image
-uploads, admin authentication, admin catalogue/order screens, and the
-storefront.
+Customer authentication, profile, customer-scoped order history/details, guest tracking, and guest tracking email have implementation evidence recorded below. Guest-order claiming remains undecided. The admin dashboard, catalogue, orders, and Cloudinary upload foundations exist, but current authorization behaviour, authorized/denied image uploads, and payment/stock edge cases still need runtime verification.
 
-The next account-related decisions and delivery enhancements remain
-separate from this completed order-history milestone. Continue reviewing
-the landing page, category pages, and product presentation using actual
-Firestore data, while preserving the existing application architecture.
+**Latest runtime checkpoint (28 October 2026, user-reported):** `npx tsc --noEmit` exited successfully. `npm run dev` started Next.js 16.4.2 and reported `Ready in 936ms`. This confirms the type check and development-server startup only; it does not establish browser authorization, API security, upload success, or production-build status for the current checkout.
+
+**Working rule:** update and reconcile the SDD documents before application-code work. Until the tracker and issue list agree on the active task and acceptance criteria, do not edit application code. Once documentation is aligned, finish the planned security tests and record observed results before deciding whether a code change is needed.
 
 ## 2. Feature tracker
 
@@ -56,13 +46,13 @@ Firestore data, while preserving the existing application architecture.
 | Paystack verification | [x] | `app/api/payments/verify/route.ts`. |
 | Paystack webhook | [x] | `app/api/payments/webhook/route.ts`; previous webhook success reported. |
 | Payment callback UI | [~] | Implemented; include in regression testing. |
-| Admin authentication | [~] | `lib/auth.ts`, `lib/admin-auth.ts`, and admin API routes have changed. Verify that ordinary customer accounts cannot access admin functionality and that session persistence behaves correctly. |
+| Admin authentication and authorization | [~] | Four main admin pages call `verifyAdminAccess(user)`; verification checks a verified email against `ADMIN_EMAILS` and claim setup exists. User-reported direct-navigation issue is still a runtime regression risk; browser/API checks are pending. |
 | Admin category management | [~] | `app/admin/categories/page.tsx`; Cloudinary image upload integration and category code have changed. |
 | Admin product management | [~] | `app/admin/products/page.tsx`; image upload integration and product UI have changed. |
 | Admin order management | [~] | `app/admin/orders/page.tsx` has changed; rerun regression checks before declaring the current version verified. |
 | Admin image-upload API | [~] | `app/api/admin/uploads/images/route.ts`; server-side authorization and Cloudinary upload behaviour require verification. |
 | Firestore security rules | [x] | `firestore.rules`; local Emulator tests passed twice (11/11 each run). Public catalogue reads, administrator claim checks, and denied direct client order access were tested. Local rules were compared with the published Console rules on 25 October 2026. |
-| Cloudinary image hosting | [~] | `lib/cloudinary.ts`; Firebase Storage helper was removed. Verify upload, validation, authorization, and persisted image URLs. |
+| Cloudinary image hosting | [~] | Cloudinary is the selected/current integration and the upload route contains server-side validation. Successful authorized upload, denied upload, and persisted image URL checks remain pending. |
 | Customer registration | [x] | Customer registration flow implemented; user previously reported successful account testing. |
 | Customer sign-in / sign-out | [x] | Implemented and previously tested. Keep customer authentication separate from admin authorization. |
 | Customer account recovery | [x] | Recovery flow implemented; retain in regression tests. |
@@ -78,8 +68,8 @@ Firestore data, while preserving the existing application architecture.
 | Courier/provider integration | [ ] | Deferred. |
 | Guest order-tracking email | [x] | Resend integration in `app/api/orders/route.ts`; verified sender domain and successful guest email test reported. Inbox placement needs monitoring. |
 | Telegram delivery notifications | [ ] | Deferred. Paid orders should initially be dispatched only after an administrator approves delivery assignment. |
-| TypeScript check | [x] | `npx tsc --noEmit` passed after the recent Next.js upgrade, according to the session record. Rerun after subsequent edits. |
-| Production build | [x] | `npm run build` passed after the recent Next.js upgrade, according to the session record. Rerun after subsequent edits. |
+| TypeScript check | [x] | User ran `npx tsc --noEmit` on 28 October 2026; it exited successfully. Rerun after any application-code change. |
+| Production build | [~] | A prior build passed according to the session record, but `npm run build` was not run in the 28 October 2026 checkpoint. Rerun after application-code changes and before release. |
 | Production dependency audit | [x] | `npm audit --omit=dev` reported zero vulnerabilities. |
 | Development dependency audit | [~] | A `braces` advisory remains in the development tooling dependency tree. Do not force a breaking downgrade; reassess when a compatible upstream fix is available. |
 | Full end-to-end regression | [ ] | Run after the current authentication, image-upload, and storefront changes are verified. |
@@ -311,4 +301,69 @@ At the end of each meaningful session:
 
 ### Current next step
 
-Continue reviewing the Admin Portal design one page at a time. The user asked to finish and update the Admin SDD before moving to the next Admin section. The next design topic proposed is **Shipments**, but proceed only after the user is satisfied with this SDD update.
+First reconcile this tracker, `ISSUES.md`, `DECISIONS.md`, `ADMIN_REQUIREMENTS.md`, `ADMIN_REQUIREMENTS_AUDIT.md`, and `SESSION_HANDOFF.md` on the existing documentation review branch. No application code changes until this documentation checkpoint is reviewed. Then complete browser tests for customer denial, customer session preservation, authorized-admin access, protected pages, privileged APIs, and image uploads. Do not start the Shipments implementation merely because its design is next in the page sequence.
+
+
+## 8. Admin Portal requirements prioritization — 28 October 2026
+
+- [x] Added `docs/sdd/ADMIN_REQUIREMENTS.md` with stable requirement IDs, P0/P1/deferred priorities, startup exclusions, cross-cutting acceptance requirements, and Stage 1 completion tracking.
+- [x] Indexed the requirements document in `docs/sdd/README.md`.
+- [x] Explicitly distinguished requirements inventory from page design, implementation status, and test evidence.
+- [~] Stage 1 inventory/prioritization is drafted; the owner-confirmed operating model is recorded, while formal approval of the consolidated P0/P1/deferred priority baseline remains pending.
+- [~] First-pass source validation is drafted in `ADMIN_REQUIREMENTS_AUDIT.md`; remaining privileged routes and runtime/deployment behaviour still need verification.
+- [x] Recorded owner-confirmed launch choices: independent parcel booking; advance booking and staff-created walk-in intake; lean PUDO location management; shared hybrid pricing; advance online payment and payment at intake; hybrid routing; Operations-managed route-leg assignments; no driver portal at launch; flexible proof of delivery; controlled failed-delivery handling.
+- [x] Removed uncertainty about whether the launch operating model includes parcel/PUDO/transport operations; exact policy values, technical representation, and priority-baseline approval remain open.
+- [ ] This was a documentation-only change. No application code or tests were changed/run for this task.
+
+### Current next step
+
+Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMENTS.md`. Stage 2 has a first-pass source audit; runtime security, upload, payment/stock, and full route coverage remain incomplete. Keep application-code changes paused until the documentation checkpoint is reviewed and the current security tests are completed.
+
+
+## 9. Admin Portal requirements validation — 28 October 2026
+
+- [x] Inspected the current `main` branch Admin route inventory and selected supporting source files through GitHub.
+- [x] Added `docs/sdd/ADMIN_REQUIREMENTS_AUDIT.md` with a first-pass matrix covering ADM-R01–ADM-R54 and ADM-P01–ADM-P15.
+- [x] Recorded source-backed findings and distinguished them from runtime/deployment verification.
+- [x] Confirmed a source-level gap: `app/admin/page.tsx` uses hardcoded dashboard statistics, recent-order examples, and a literal date.
+- [x] Confirmed the existing auth-verification foundation and the presence of order, product, category, payment, and Cloudinary upload code paths.
+- [~] Initial matrix is not a complete security or runtime audit; remaining privileged APIs, rules, call sites, and tests still require inspection.
+- [~] The route inventory shows no dedicated Admin pages for shipments, transactions, pricing, PUDO, transport, staff/users, finance overview, notifications, reports, settings, or audit logs in the inspected `app/admin` directory. Related logic elsewhere has not been ruled out.
+- [ ] Verify admin/customer direct-navigation and API access in a browser/runtime.
+- [ ] Test a successful authorized Cloudinary upload and a denied upload against the configured environment.
+- [ ] Re-run relevant order/payment/stock regression tests; no tests were run in this documentation-only review.
+- [x] Reconciled DEC-008: Cloudinary is the selected image-hosting integration; runtime upload verification remains outstanding.
+- [x] Recorded owner-confirmed launch operating-model choices; the related requirements are no longer conditional solely because the launch model was unknown. Detailed policies and priority approval remain open.
+
+**Stage 2 status:** Initial source-level validation drafted; not a full audit, no application code changed, and no tests run.
+
+
+### 28 October 2026 — Owner-approved Admin Portal launch scope and audit supplement
+
+- Confirmed the launch-scope choices with the owner: independent parcel booking, advance booking plus staff-created walk-in intake, lean PUDO location management, shared hybrid pricing, advance online payment plus payment at intake, hybrid route proposals, Operations-managed route-leg assignments, no driver portal at launch, flexible proof of delivery, and controlled failed-delivery handling.
+- Classified advanced route optimisation, full fleet management, a separate driver portal, enterprise workflow tooling, and advanced analytics as deferred until a concrete business need exists.
+- Rechecked selected source files on the current `main` branch through GitHub. The dashboard's demo statistics, sample recent orders, and literal date remain a confirmed gap.
+- Confirmed the current dashboard source calls `verifyAdminAccess(user)`; the prior customer-to-admin access report remains a regression test requirement, not a confirmed current-source omission.
+- Confirmed current source uses Cloudinary despite DEC-008 still describing Firebase Storage; the documentation conflict remains to be resolved explicitly.
+- Confirmed that selected dedicated Admin routes for shipments, PUDO, delivery pricing, transactions, and audit logs are absent on `main`. Related implementation elsewhere was not ruled out.
+- Noted that PR #3 (inactive category/product visibility) and PR #4 (category product counts) were still separate proposed changes and must not be assumed present on `main` without checking merge status.
+- Updated the Admin requirements/audit documents on the existing `docs/admin-requirements-prioritization` review branch. No application code was changed.
+- No local build, TypeScript, browser, API runtime, or live Firestore tests were run. The audit remains source-level only.
+- Next: reconcile the accepted requirements with existing code, verify critical security/payment/image-upload paths at runtime, and prepare a minimal implementation sequence without adding a new architecture.
+
+
+## 10. Documentation reconciliation and runtime checkpoint — 28 October 2026
+
+- [x] Confirmed Admin Portal design PR #1 is merged to `main` as `a3e1e8a`.
+- [x] Confirmed Admin Portal requirements/audit PR #2 remains open on `docs/admin-requirements-prioritization`; PR #3 and PR #4 also remain open at the time of this review.
+- [x] Recorded the user-reported current check: `npx tsc --noEmit` passed.
+- [x] Recorded the user-reported dev-server result: Next.js 16.4.2 started at `http://localhost:3000` and reported ready.
+- [ ] Complete browser test: a signed-in ordinary customer navigates directly to `/admin`, `/admin/orders`, `/admin/products`, and `/admin/categories`; each must deny access and preserve the customer session.
+- [ ] Confirm an authorized administrator can access the portal after sign-in, refresh, and navigation.
+- [ ] Test privileged admin APIs as an ordinary customer and confirm denial.
+- [ ] Test authorized and unauthorized Cloudinary uploads.
+- [ ] Review remaining privileged API routes, custom-claim revocation implications, and Firestore rules together.
+- [ ] After security checks, decide whether a focused code change is required. Do not assume the observed direct-navigation problem persists in current source until the browser test reproduces it.
+- [ ] Re-run the relevant tests and update this tracker/issue log with actual results before implementing or marking security work complete.
+
+**No application code was changed in this documentation checkpoint.** TypeScript and dev-server startup were checked by the user; browser/API/upload tests remain unrun.

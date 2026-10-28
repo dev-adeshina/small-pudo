@@ -64,13 +64,13 @@ future sessions do not invent a different architecture. Items marked
     without a demonstrated need.
 -   **Status:** Accepted.
 
-### DEC-008 --- Firebase Storage remains current image hosting
+### DEC-008 — Cloudinary is the selected image-hosting integration
 
--   **Decision:** Continue using existing Firebase Storage
-    implementation until a concrete need justifies migration.
--   **Implication:** Cloudinary is a later decision, not an assumed
-    dependency.
--   **Status:** Accepted as current approach; migration deferred.
+- **Decision:** Use Cloudinary for category/product image uploads rather than relying on Firebase Storage for this project.
+- **Reason:** The owner selected Cloudinary in light of Firebase free-tier/storage constraints.
+- **Implication:** Reuse the current upload endpoint and existing product/category image fields. Keep Cloudinary credentials server-side; do not introduce a second image-hosting architecture or a broad data migration without need.
+- **Verification status:** The source integration exists, but authorized upload success, unauthorized denial, and persisted image URL behaviour must be tested before the integration is marked verified.
+- **Status:** Accepted decision; runtime verification pending.
 
 ### DEC-009 --- UI/CSS consistency
 
@@ -108,8 +108,7 @@ future sessions do not invent a different architecture. Items marked
 -   Product/category validation helpers exist under `lib/validations/`.
 -   Paystack endpoints are under `app/api/payments/`.
 -   The current currency is NGN and the current delivery fee is zero.
--   Order creation currently assigns `userId: null`; customer
-    association is a planned change.
+-   Authenticated order creation is recorded as associating orders server-side with the verified Firebase UID while preserving guest checkout. Reinspect the current source before modifying this behaviour.
 -   Shipping data currently includes provider, tracking number,
     shipped/estimated/delivered timestamps, and notes.
 
@@ -161,3 +160,30 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Decision:** Design and review Admin pages/functions one area at a time before coding.
 - **Implication:** Mark page specifications as Draft, Under Review, or Approved for Implementation. Design agreement alone is not implementation evidence.
 - **Status:** Accepted.
+
+
+### DEC-018 — Owner-approved launch scope and lean implementation
+
+- **Decision:** Prioritize a minimum complete operational release for the startup, not an enterprise Admin Portal.
+- **Launch scope confirmed:** Independent shipment booking; advance booking and staff-created walk-in intake; lean PUDO location management distinguishing staffed stations from registered collection centres; shared hybrid delivery pricing; advance online payment and payment at intake; hybrid route proposals with Operations review; route-leg assignments managed by Operations; flexible proof of delivery; and controlled failed-delivery resolution.
+- **Dispatch rule:** Verified payment is required by default. Exceptions require explicit authorization, an approved business policy, a recorded reason, and an audit trail. An exception does not change the payment state.
+- **Driver portal:** Deferred. Operations staff manage assignments and shipment milestones initially. Preserve the option to add driver self-service later.
+- **Startup exclusions:** Defer advanced route optimization, full fleet management, separate driver application, enterprise workflow engine, and advanced analytics unless a concrete operating need justifies them.
+- **Implementation boundary:** These are design decisions only. They do not approve a schema migration or new architecture. Inspect existing code and propose the smallest compatible changes before implementation.
+- **Status:** Accepted at launch-scope planning level; detailed policies and implementation verification remain open.
+
+### DEC-019 — Shared hybrid delivery pricing and controlled measurement adjustments
+
+- **Decision:** Use one shared pricing service/rule set for storefront delivery and independent shipment bookings. Support configured fixed rates and calculated pricing according to the service.
+- **Quote preservation:** Preserve the original quote and the inputs/rates used. Later rate changes must not silently alter an existing quote or completed payment.
+- **Measurement discrepancy:** Recalculate a proposed charge from actual intake measurements. Material discrepancies and adjustments affecting an existing payment require review under a configurable policy.
+- **Settlement:** Additional payments, credits, and refunds remain distinct financial operations and must be verified and recorded. Unresolved payment outcomes do not qualify as successful payment.
+- **Status:** Accepted at design level; formula, thresholds, permitted methods, and approval limits remain unresolved.
+
+
+### DEC-020 — Reconcile project documentation before application-code changes
+
+- **Decision:** Before beginning a new implementation slice, reconcile `PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md` with the current requirements/audit documents and the latest verified repository/test evidence.
+- **Implication:** The tracker must state the active task, acceptance criteria, known risks, and tests still outstanding. Do not write application code until these records are consistent enough to guide the next step.
+- **Scope:** This is a workflow/continuity rule, not approval to change application architecture or implementation scope.
+- **Status:** Accepted on 28 October 2026.

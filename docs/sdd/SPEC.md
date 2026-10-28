@@ -435,10 +435,9 @@ Associate authenticated orders with verified UIDs, provide a
 customer-scoped order list and detail endpoint/page, and decide secure
 guest-order recovery.
 
-### Phase 5 --- Account experience and image-hosting decision
+### Phase 5 --- Account experience and image-hosting integration
 
-Finish essential account states and decide whether there is a concrete
-reason to migrate from Firebase Storage to Cloudinary.
+Finish essential account states and maintain the selected Cloudinary image-hosting integration. The upload route exists; verify authorized uploads, unauthorized denial, file validation, and persisted category/product image URLs before declaring the integration operationally verified.
 
 ### Phase 6 --- Regression testing
 
@@ -462,7 +461,7 @@ operational handling.
 -   Rebuilding the app or changing its framework
 -   Replacing Firebase or Paystack
 -   A broad UI redesign
--   Migrating to Cloudinary solely for novelty
+-   Replacing the selected Cloudinary integration without a concrete cost, reliability, security, or operational reason
 -   New payment methods
 -   Loyalty/rewards/reviews/wishlists
 -   Automated courier integration before the delivery requirements are
