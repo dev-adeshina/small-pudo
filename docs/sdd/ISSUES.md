@@ -2,7 +2,7 @@
 
 **Last updated:** 28 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
-**Active documentation review:** `docs/admin-requirements-prioritization` (PR #2; not merged at time of review)
+**Admin requirements baseline:** PR #2 merged into `main` on 28 October 2026 (`fbb56ce`). The consolidated P0/P1/deferred baseline still requires owner review.
 
 This is the current issue register. Older archive-based observations have been reconciled where current implementation or later test evidence supersedes them. Source presence is not the same as runtime verification.
 
@@ -73,7 +73,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** INVESTIGATING
 - **Priority:** Medium
-- **Evidence:** PR #3, `fix: hide inactive categories and products from storefront`, is open at the time of this review. Do not assume its change is in local `main`.
+- **Evidence:** PR #3, `fix: hide inactive categories and products from storefront`, remains open and unmerged at the 28 October 2026 checkpoint. Do not assume its change is in local `main`.
 - **Next action:** Check the PR diff and tests, then verify merge status and browser behaviour before marking the feature complete.
 - **Acceptance:** Inactive categories and products are not publicly browsable or purchasable, while admin management remains available.
 
@@ -81,7 +81,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** INVESTIGATING
 - **Priority:** Medium
-- **Evidence:** The reviewed product schema associates products through `categoryId`; a category helper has been observed querying by a different `category` field/slug. PR #4 proposes a compatibility fix and remains open at the time of this review.
+- **Evidence:** The reviewed product schema associates products through `categoryId`; a category helper has been observed querying by a different `category` field/slug. PR #4 proposes a compatibility fix and remains open and unmerged at the 28 October 2026 checkpoint.
 - **Next action:** Review PR #4 against the current schema and existing records; verify the intended behaviour before merging or changing data.
 - **Acceptance:** Product counts and category slug-change protection work with the current schema and any explicitly supported legacy records; no unnecessary data migration.
 
@@ -89,7 +89,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** OPEN
 - **Priority:** High before broad Admin implementation
-- **Evidence:** Admin Portal design PR #1 is merged. Requirements inventory and source-level validation are in PR #2, which remains open. The owner-confirmed launch operating model is recorded, but the full P0/P1/deferred baseline and page-by-page specifications are not all formally approved.
+- **Evidence:** Admin Portal design PR #1 is merged. Requirements inventory and source-level validation from PR #2 are merged into `main`; the consolidated priority baseline and detailed page specifications still need formal review. The owner-confirmed launch operating model is recorded, but the full P0/P1/deferred baseline and page-by-page specifications are not all formally approved.
 - **Next action:** Reconcile SDD documents, review/approve the priority baseline, then design each missing workflow before coding it.
 - **Acceptance:** Each requirement is labelled proposed/approved/implemented/tested accurately; no new collection, route, field, type, or workflow is introduced without source inspection and an explicit need.
 
