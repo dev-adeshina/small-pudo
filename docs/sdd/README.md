@@ -21,7 +21,7 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 2. Paste the handoff instructions from `SESSION_HANDOFF.md`.
 3. Tell the session the specific task you want to work on.
 4. Ask the session to read `SPEC.md`, `PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md` before proposing changes. For Admin Portal work, also read `ADMIN_REQUIREMENTS.md` and `ADMIN_PORTAL.md`.
-5. Keep `PROGRESS.md` and `ISSUES.md` updated as work is completed.
+5. Before application-code changes, reconcile `PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md` with the relevant specification and current test evidence. Keep them updated as work is completed.
 
 ### Source-of-truth order
 
@@ -39,4 +39,4 @@ If the code differs from this documentation, do not blindly rewrite code to matc
 
 ### Important status caveat
 
-The launch operating model and startup-scope boundaries were owner-confirmed on 28 October 2026 and are recorded in `ADMIN_REQUIREMENTS.md` and `DECISIONS.md`. Requirement-level implementation status and P0/P1/deferred assignments still need reconciliation against the current source and runtime evidence. Requirements do not prove implementation. Verify current code and actual test results before claiming that a feature is implemented or tested.
+The launch operating model was owner-confirmed on 28 October 2026 and is recorded in `ADMIN_REQUIREMENTS.md` and `DECISIONS.md`. The consolidated P0/P1/deferred priority baseline still needs review. Requirements do not prove implementation. Reconcile the progress/issues/decision records before code changes, and verify current code and actual test results before claiming that a feature is implemented or tested.
