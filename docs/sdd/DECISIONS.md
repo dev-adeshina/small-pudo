@@ -161,3 +161,22 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Decision:** Design and review Admin pages/functions one area at a time before coding.
 - **Implication:** Mark page specifications as Draft, Under Review, or Approved for Implementation. Design agreement alone is not implementation evidence.
 - **Status:** Accepted.
+
+
+### DEC-018 — Owner-approved launch scope and lean implementation
+
+- **Decision:** Prioritize a minimum complete operational release for the startup, not an enterprise Admin Portal.
+- **Launch scope confirmed:** Independent shipment booking; advance booking and staff-created walk-in intake; lean PUDO location management distinguishing staffed stations from registered collection centres; shared hybrid delivery pricing; advance online payment and payment at intake; hybrid route proposals with Operations review; route-leg assignments managed by Operations; flexible proof of delivery; and controlled failed-delivery resolution.
+- **Dispatch rule:** Verified payment is required by default. Exceptions require explicit authorization, an approved business policy, a recorded reason, and an audit trail. An exception does not change the payment state.
+- **Driver portal:** Deferred. Operations staff manage assignments and shipment milestones initially. Preserve the option to add driver self-service later.
+- **Startup exclusions:** Defer advanced route optimization, full fleet management, separate driver application, enterprise workflow engine, and advanced analytics unless a concrete operating need justifies them.
+- **Implementation boundary:** These are design decisions only. They do not approve a schema migration or new architecture. Inspect existing code and propose the smallest compatible changes before implementation.
+- **Status:** Accepted at launch-scope planning level; detailed policies and implementation verification remain open.
+
+### DEC-019 — Shared hybrid delivery pricing and controlled measurement adjustments
+
+- **Decision:** Use one shared pricing service/rule set for storefront delivery and independent shipment bookings. Support configured fixed rates and calculated pricing according to the service.
+- **Quote preservation:** Preserve the original quote and the inputs/rates used. Later rate changes must not silently alter an existing quote or completed payment.
+- **Measurement discrepancy:** Recalculate a proposed charge from actual intake measurements. Material discrepancies and adjustments affecting an existing payment require review under a configurable policy.
+- **Settlement:** Additional payments, credits, and refunds remain distinct financial operations and must be verified and recorded. Unresolved payment outcomes do not qualify as successful payment.
+- **Status:** Accepted at design level; formula, thresholds, permitted methods, and approval limits remain unresolved.
