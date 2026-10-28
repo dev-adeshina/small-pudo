@@ -5,7 +5,7 @@
 **Project baseline branch:** `main`
 **Last committed baseline:** `5ca2337` — `feat: add guest order tracking and email notifications`
 **Documentation review branch:** `docs/admin-portal-sdd` (PR #1)
-**Current phase:** Admin Portal requirements inventory and startup prioritization drafted; owner approval and repository-to-requirement validation remain pending
+**Current phase:** Admin Portal requirements prioritization drafted; Stage 2 source-level validation matrix started; owner approval and launch-scope confirmation remain pending
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -328,3 +328,21 @@ Continue reviewing the Admin Portal design one page at a time. The user asked to
 ### Current next step
 
 Review and approve the launch scope and P0/P1/deferred baseline in `ADMIN_REQUIREMENTS.md`. Then begin Stage 2: validate each approved requirement against the actual repository and current SDD before mapping page flows or planning implementation.
+
+
+## 8. Admin Portal requirements validation — 28 October 2026
+
+- [x] Inspected the current `main` branch Admin route inventory and selected supporting source files through GitHub.
+- [x] Added `docs/sdd/ADMIN_REQUIREMENTS_AUDIT.md` with a first-pass matrix covering ADM-R01–ADM-R54 and ADM-P01–ADM-P15.
+- [x] Recorded source-backed findings and distinguished them from runtime/deployment verification.
+- [x] Confirmed a source-level gap: `app/admin/page.tsx` uses hardcoded dashboard statistics, recent-order examples, and a literal date.
+- [x] Confirmed the existing auth-verification foundation and the presence of order, product, category, payment, and Cloudinary upload code paths.
+- [~] Initial matrix is not a complete security or runtime audit; remaining privileged APIs, rules, call sites, and tests still require inspection.
+- [~] The route inventory shows no dedicated Admin pages for shipments, transactions, pricing, PUDO, transport, staff/users, finance overview, notifications, reports, settings, or audit logs in the inspected `app/admin` directory. Related logic elsewhere has not been ruled out.
+- [ ] Verify admin/customer direct-navigation and API access in a browser/runtime.
+- [ ] Test a successful authorized Cloudinary upload and a denied upload against the configured environment.
+- [ ] Re-run relevant order/payment/stock regression tests; no tests were run in this documentation-only review.
+- [ ] Reconcile DEC-008's Firebase Storage statement with the current Cloudinary source integration.
+- [ ] Confirm launch operating-model choices before promoting conditional shipment/PUDO/transport/pricing requirements to firm P0.
+
+**Stage 2 status:** Initial source-level validation drafted; not a full audit, no application code changed, and no tests run.
