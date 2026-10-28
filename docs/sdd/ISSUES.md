@@ -125,24 +125,24 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Evidence:** The current repository has root configuration. On 28 October 2026 the user reported `npx tsc --noEmit` passed and `npm run dev` reached ready state under Next.js 16.4.2. A current production build was not run in this checkpoint.
 - **Follow-up:** Rerun `npx tsc --noEmit` and `npm run build` after application-code changes.
 
-### VLY-002 — Authenticated orders not associated with customer UID
+### VLY-002 — Authenticated order/customer UID association
 
 - **Status:** RESOLVED based on the current progress record and prior implementation/testing reports.
 - **Evidence:** Authenticated order creation associates orders server-side with the verified Firebase UID while preserving guest checkout.
 - **Constraint:** Reinspect current source before modifying this path; clients must never choose another user's UID.
 
-### VLY-003 — Customer account experience missing
+### VLY-003 — Customer account experience
 
 - **Status:** RESOLVED based on implemented and previously tested flows.
 - **Evidence:** Customer registration, sign-in/out, recovery, dashboard, profile, and customer-scoped order history/details are recorded as implemented. Profile persistence and cross-customer order-detail denial were reported tested.
 - **Constraint:** Keep customer identity separate from admin authorization.
 
-### VLY-006 — Customer-facing tracking UI missing
+### VLY-006 — Customer-facing order tracking
 
 - **Status:** RESOLVED based on current progress and reported tests.
 - **Evidence:** A guest order-tracking page under `app/track-order/`, token-protected tracking API, and guest tracking email are recorded as implemented. Continue regression testing.
 
-### VLY-008 — Cloudinary decision pending
+### VLY-008 — Cloudinary hosting decision
 
 - **Status:** RESOLVED as a product decision; integration runtime verification is tracked by VLY-011.
 - **Evidence:** Cloudinary was selected because of the Firebase free-tier/storage constraints, and the current code includes the integration.
