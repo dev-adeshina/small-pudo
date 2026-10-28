@@ -39,4 +39,4 @@ If the code differs from this documentation, do not blindly rewrite code to matc
 
 ### Important status caveat
 
-The requirements baseline contains proposed priorities and startup-scope assumptions; it is not owner-approved until the launch scope and P0/P1/deferred classification are reviewed. Requirements do not prove implementation. Verify current code and actual test results before claiming that a feature is implemented or tested.
+The launch operating model and startup-scope boundaries were owner-confirmed on 28 October 2026 and are recorded in `ADMIN_REQUIREMENTS.md` and `DECISIONS.md`. Requirement-level implementation status and P0/P1/deferred assignments still need reconciliation against the current source and runtime evidence. Requirements do not prove implementation. Verify current code and actual test results before claiming that a feature is implemented or tested.
