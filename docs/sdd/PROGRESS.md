@@ -3,11 +3,11 @@
 **Last updated:** 29 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Current live main head verified:** `c55abbba2cfffa6b2020a71c19f1aa50c676588d` — PR #11 second-pass source inventory is merged. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison to current `main` shows the 16 intervening commits changed SDD documentation only, not application source.
+**Current live main head verified:** `3fd1c1ae13e2016b75ca263f6d4971d7125624ef` — PR #13 cross-domain acceptance matrix is merged. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison to current `main` shows the 20 intervening commits changed SDD documentation only, not application source.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
-**Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. PR #5 established the first-pass audit and PR #6 merged the continuity-document reconciliation. PR #7 merged the actor/responsibility model and PR #8 merged the shared-workflow draft into the documentation baseline. PR #9 merged the domain/lifecycle/API/security draft. The current workstream is read-only source traceability and reconciliation against the platform SDD; no application-code changes are authorized.
+**Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. PR #5 established the first-pass audit and PR #6 merged the continuity-document reconciliation. PR #7 merged the actor/responsibility model and PR #8 merged the shared-workflow draft into the documentation baseline. PR #9 merged the domain/lifecycle/API/security draft. PR #13 (cross-domain acceptance matrix) is merged. The current workstream is dependency-ordered owner-decision review and platform-wide SDD reconciliation; no application-code changes are authorized.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -21,15 +21,25 @@
 
 ## 1. Current position
 
+### Active SDD milestone — owner decision register
+
+- PR #13, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, is merged to `main`.
+- PR #14 candidate branch: `docs/sdd/owner-decision-register`; documentation-only.
+- New register: `PLATFORM_OWNER_DECISION_REGISTER.md`. It orders unresolved decisions by dependency, preserves confirmed constraints, and labels recommendations as non-binding.
+- First decision to resolve: D-01, staff responsibility and approval boundaries. This affects authorization and approval contracts across the platform.
+- No business decision is made by the register itself. Accepted outcomes must be recorded in `DECISIONS.md` and reconciled into affected workflow, lifecycle, acceptance, issue, progress, and handoff documents.
+- Application-code work remains blocked until the platform-wide SDD is reconciled and explicitly approved.
+
+
 VeriLyft remains the existing Next.js App Router ecommerce and delivery application using TypeScript, Firebase Authentication, Firestore/Firebase Admin, Paystack, Cloudinary, and the shared cart context. Continue the current architecture; do not rebuild it or introduce a parallel data/auth layer.
 
-The live `main` head verified for the current documentation task is `c55abbba2cfffa6b2020a71c19f1aa50c676588d` (PR #11). The source traceability inventory was inspected at `c56be9b121e6007e1e99c6df2d3984e709771a92`; a commit comparison confirms that the 16 commits since that source baseline changed SDD documentation only, not application source. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #4 (category product-count compatibility) remains open/unmerged.
+The live `main` head verified for the current documentation task is `3fd1c1ae13e2016b75ca263f6d4971d7125624ef` (PR #13 merge). The source traceability inventory was inspected at `c56be9b121e6007e1e99c6df2d3984e709771a92`; a comparison against current `main` confirms that the 20 intervening commits changed SDD documentation only, not application source. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #4 (category product-count compatibility) remains open/unmerged.
 
 Customer authentication, profile, customer-scoped order history/details, guest tracking, and guest tracking email have implementation evidence recorded below. Guest-order claiming remains undecided. The admin dashboard, catalogue, orders, and Cloudinary upload foundations exist, but current authorization behaviour, authorized/denied image uploads, and payment/stock edge cases still need runtime verification.
 
 **Latest runtime checkpoint (28 October 2026, user-reported):** `npx tsc --noEmit` exited successfully. `npm run dev` started Next.js 16.4.2 and reported `Ready in 936ms`. This confirms the type check and development-server startup only; it does not establish browser authorization, API security, upload success, or production-build status for the current checkout.
 
-**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. PR #6 and PR #7 are merged. The actor/responsibility, shared-workflow, and domain/lifecycle documents are in the documentation baseline, with owner decisions still open. The current workstream is review of the cross-domain SDD acceptance matrix and reconciliation—not application-code changes.
+**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. PR #6 and PR #7 are merged. The actor/responsibility, shared-workflow, and domain/lifecycle documents are in the documentation baseline, with owner decisions still open. The cross-domain acceptance matrix was merged in PR #13. The current workstream is the owner decision register and reconciliation—not application-code changes.
 
 ## 2. Feature tracker
 
