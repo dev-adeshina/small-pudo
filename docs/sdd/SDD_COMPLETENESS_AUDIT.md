@@ -63,7 +63,7 @@ Status meanings:
 
 ## 4. Reconciliation findings and documentation inconsistencies
 
-1. **Continuity-task wording — reconciliation in this change.** The initial audit found that older `PROGRESS.md` and `SESSION_HANDOFF.md` entries directed work toward Admin runtime security checks. The current source-traceability workstream follows the merged actor/responsibility, shared-workflow, and domain/lifecycle drafts. Read-only source mapping is recorded in `IMPLEMENTATION_SOURCE_TRACEABILITY.md`; the next step is to finish source searches and reconcile remaining owner decisions. Older dated entries remain historical evidence, not the current work order.
+1. **Continuity-task wording — reconciliation in this change.** The initial audit found that older `PROGRESS.md` and `SESSION_HANDOFF.md` entries directed work toward Admin runtime security checks. The current source-traceability workstream follows the merged actor/responsibility, shared-workflow, and domain/lifecycle drafts. Read-only source mapping and a second source pass are recorded in `IMPLEMENTATION_SOURCE_TRACEABILITY.md`; the remaining gate is scope confirmation for `pudo.zip`, owner decisions, SDD acceptance criteria, and explicit approval. Older dated entries remain historical evidence, not the current work order.
 
 2. **Baseline and PR state — reconciled at the 29 October 2026 checkpoint.** The audit’s comparison baseline remains `cccad3c4eebe398c8369d5ce90ea05ee551589cf`; it is historical and must not be described as the current head. The latest source inspection used `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`, which includes PR #9 and PR #3. PR #3 is merged; PR #4 remains open/unmerged.
 
@@ -163,6 +163,17 @@ Do not implement new routes, collections, fields, services, or portal pages unti
 
 Current repository baseline inspected: `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`. PR #9 (domain/lifecycle/API/security draft) and PR #3 (inactive catalogue visibility) are merged. PR #4 remains open/unmerged.
 
-The source inventory in `IMPLEMENTATION_SOURCE_TRACEABILITY.md` confirms a concrete storefront order/payment/fulfilment path, customer-scoped order reads, guest-token access, server-side Admin API checks, Cloudinary upload validation, and restrictive direct-client order Firestore rules. It does not establish a complete independent shipment booking, intake/custody, PUDO location, pricing, route-leg/movement, delivery-proof, or general financial-event/audit workflow in the inspected API route surface. Existing helpers/data elsewhere must be investigated before concluding what can be reused.
+The source inventory in `IMPLEMENTATION_SOURCE_TRACEABILITY.md` confirms a concrete storefront order/payment/fulfilment path, customer-scoped order reads, guest-token access, server-side Admin API checks, Cloudinary upload validation, and restrictive direct-client order Firestore rules. A second pass confirms that the four inspected Admin pages call `verifyAdminAccess`, catalogue writes use Firebase client helpers guarded by custom claims, and the webhook event collection supports webhook deduplication/outcome processing rather than a general audit ledger. It does not establish a complete independent shipment booking, intake/custody, PUDO location, pricing, route-leg/movement, delivery-proof, or general financial-event/audit workflow in the inspected active TypeScript source surface. The repository-root `pudo.zip` remains uninspected and out of the evidence baseline pending owner scope confirmation.
 
-The source inventory is not a runtime test. It did not execute the rules tests, inspect production data/configuration, or reproduce the browser Admin-access report. Keep VLY-005, VLY-009, VLY-010, VLY-011, VLY-013, VLY-016, VLY-017, VLY-019, VLY-020, and VLY-021 open/investigating as applicable. The complete platform-wide SDD remains unapproved for implementation; no application-code changes are authorized.
+The source inventory is not a runtime test. It did not execute the rules tests, inspect production data/configuration, unpack `pudo.zip`, or reproduce the browser Admin-access report. Keep VLY-005, VLY-009, VLY-010, VLY-011, VLY-013, VLY-016, VLY-017, VLY-019, VLY-020, and VLY-021 open/investigating as applicable. The complete platform-wide SDD remains unapproved for implementation; no application-code changes are authorized.
+
+
+## 9. Second-pass source review and remaining gate — 29 October 2026
+
+The follow-up source pass reviewed the active TypeScript module inventory, all 15 API route handlers, Firebase category/product/order helpers, all four Admin page guards, Firestore rules/tests, and the payment routes. The source map has been updated accordingly. No dedicated audit/financial-event, independent shipment/PUDO, pricing, or route/movement service module was found in that active source surface; this is not proof that related production records or contents of the uninspected `pudo.zip` archive do not exist.
+
+Before marking the platform SDD complete:
+1. Confirm whether `pudo.zip` belongs to the active VeriLyft source-of-truth scope.
+2. Resolve or explicitly defer all launch-critical owner decisions in `DECISIONS.md` and the domain/workflow drafts.
+3. Produce a cross-domain acceptance matrix tying each approved workflow to roles, lifecycle transitions, API/provider contracts, audit/evidence, failure recovery, and verification criteria.
+4. Obtain explicit owner approval of the reconciled platform-wide SDD. No application-code changes are authorized before that approval.
