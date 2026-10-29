@@ -80,7 +80,7 @@ For each applicable case, the approved test specification must state initial sta
 The matrix must not paper over the following unresolved areas:
 
 1. **Actor and permission boundaries:** Admin vs Operations responsibilities, staff-role granularity, partner/station permissions, and any separation-of-duties requirements.
-2. **Independent shipment booking:** DEC-023 sets registered/authenticated eligibility; DEC-024 accepts distinct booking-party/sender/receiver/payer/handover roles and payment-only payer visibility by default. Verification checkpoints, consent, change authority by type/stage, quote acceptance/expiry, cancellation, and shipment creation point remain open.
+2. **Independent shipment booking:** DEC-023 sets registered/authenticated eligibility; DEC-024 accepts distinct booking-party/sender/receiver/payer/handover roles and payment-only payer visibility by default; DEC-025 accepts capability-based location actions and lean location records. Verification checkpoints, consent, change authority by type/stage, quote acceptance/expiry, cancellation, and shipment creation point remain open.
 3. **Pricing and commercial terms:** inputs, shared rule coverage, rounding, fees/taxes, rate effective dates, quote validity, remeasurement and additional-payment/refund rules.
 4. **Order/payment transitions:** expiry, cancellation, stock release, duplicate/out-of-order provider events, late payment, review states and fulfilment gates.
 5. **Physical operations:** location capabilities, intake/measurement, custody evidence, route approval/assignment, dispatch, movement correction, delivery proof, failed attempts, collection and returns.
@@ -115,3 +115,10 @@ Do not mark this matrix approved until all applicable boxes are checked.
 5. Run the approved runtime/security verification plan in a safe environment and record dated evidence.
 6. Obtain explicit owner approval of the reconciled platform-wide SDD.
 7. Only then scope implementation PRs; keep each change focused and aligned with existing Next.js/Firebase architecture.
+
+
+## D-04 reconciliation — DEC-025
+
+The owner accepted a minimal per-location capability model. The initial location record is limited to name, address, active status, and configured capabilities. Walk-in intake creation, measurement, custody acceptance, payment collection/recording, and parcel release are distinct capabilities; each must be separately authorized. Capabilities are not inferred from location type, authenticated status, or Admin status. Consequential actions must be attributable to actor, location, and time with applicable evidence/reason.
+
+The acceptance matrix must ultimately verify that inactive or unsupported locations cannot perform an action; one capability does not imply another; collection requires verified recipient entitlement; and partner/collection-centre permissions do not exceed configured capabilities. Exact staff assignment, partner access, measurement discrepancy rules, payment evidence, and collection verification remain unresolved. No implementation or runtime test is authorized by this policy decision.
