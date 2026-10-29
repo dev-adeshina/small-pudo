@@ -3,7 +3,7 @@
 **Document status:** Draft for owner review — not approved for implementation  
 **Last updated:** 29 October 2026  
 **Scope:** Platform-level human/system actors, responsibility boundaries, and portal/module distinctions  
-**Related decisions:** DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, DEC-021, DEC-022, DEC-023, DEC-024
+**Related decisions:** DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, DEC-021, DEC-022, DEC-023, DEC-024, DEC-025
 
 ## 1. Purpose and status
 
@@ -86,9 +86,9 @@ No role names, custom claims, Firestore rules, collections, or permission code a
 
 ## 6. Decisions required before this model can be approved
 
-The high-level staff model is accepted in DEC-022. This draft still requires workflow-specific authorization detail and owner decisions below.
+The high-level staff model is accepted in DEC-022, and the capability-based location policy is accepted in DEC-025. This draft still requires workflow-specific authorization detail and owner decisions below.
 
-1. **Operations versus PUDO:** Can staffed station personnel record intake/custody directly, or must Operations staff create/approve those records? Can registered collection-centre partners access the system, or are their actions recorded by VeriLyft staff?
+1. **Operations versus PUDO (partially resolved by DEC-025):** Staff capabilities are configured per location and are not inferred from location type or login status. Walk-in intake, measurement, custody acceptance, payment recording, and parcel release are separate capabilities. Whether registered collection-centre partners receive direct system access or their actions are recorded by VeriLyft staff remains open; detailed staff assignment, verification, and approval rules also remain open.
 3. **Finance deployment boundary:** Should Finance be a distinct portal, a permission-protected module in the existing application, or a later decision? The financial responsibilities remain distinct regardless of deployment.
 4. **Management access:** Is Management a separate role, a limited reporting permission set, or part of Admin for the first release? Which sensitive records may be drilled into?
 5. **Shipper identity and account:** DEC-023 requires a registered, authenticated customer to create independent bookings at launch; guest shipment booking is excluded. Can a customer also be a shipper under one account? What business-account handling is needed?

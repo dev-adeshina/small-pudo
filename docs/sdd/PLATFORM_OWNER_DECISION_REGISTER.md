@@ -69,12 +69,14 @@ The order below follows dependencies: authority and booking semantics first; com
 
 ### D-04 — Staff-created walk-in intake and location capabilities
 
-- **Status:** Owner decision required.
-- **Confirmed:** Staff-created walk-in intake and lean PUDO location management are in launch scope.
-- **Decision needed:** Which capabilities can a staffed station perform versus a registered collection centre? Which staff may create a walk-in record, measure a parcel, accept custody, collect payment, or release a parcel?
-- **Recommendation:** Define capabilities per location and action rather than inferring all capabilities from a location label.
-- **Dependencies:** Intake/custody lifecycle, location permissions, payment-at-intake, routing eligibility, and audit evidence.
-- **Record after decision:** Capability matrix, responsible actor for each physical event, and minimum receipt/custody evidence.
+- **Status:** Owner decision accepted; recorded as DEC-025 on 29 October 2026.
+- **Accepted choice:** Use a minimal capability-based location model. Staff capabilities are configured per location rather than inferred from the location label or from a person's authentication/admin status. The initial location record is lean: name, address, active status, and configured capabilities.
+- **Launch actions:** Subject to assigned authorization, location staff may create staff-assisted walk-in intake records, measure and record parcel dimensions/weight, accept and record physical custody, collect and record payment with required evidence, and release parcels to recipients whose collection authority has been verified. These are distinct actions; permission to perform one does not automatically grant the others.
+- **Accountability:** Consequential intake, measurement, custody, payment, release, and capability/configuration actions must be attributable to the responsible actor, location, and time, with the applicable evidence/reason. Server-side authorization remains mandatory.
+- **Boundaries:** A location can perform only explicitly configured services. A registered collection centre is not automatically authorized to accept outgoing parcels or release every parcel. This decision does not define exact staff-role/claim representation, partner system access, required measurement units/thresholds, payment methods/evidence, collection verification, or second-person approval rules.
+- **Dependencies:** D-01 staff authorization, D-03 party/collection entitlement, D-05 pricing, D-06 discrepancy review, D-07 payment-at-intake evidence, D-09 dispatch exceptions, D-10 route/movement evidence, and D-12 audit/evidence retention.
+- **Acceptance direction:** Reject unauthorized actions and actions at inactive/unsupported locations; keep creation, measurement, custody acceptance, payment recording, and release independently authorized; retain actor/location/time evidence; and deny collection when recipient entitlement is not established.
+- **Implementation boundary:** This decision accepts business policy only. It does not authorize a schema, endpoint, permission implementation, or application-code change.
 
 ### D-05 — Shared pricing formula and quote terms
 

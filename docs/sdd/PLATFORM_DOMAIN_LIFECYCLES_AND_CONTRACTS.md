@@ -4,7 +4,7 @@
 **Last updated:** 29 October 2026  
 **Scope:** Conceptual domain boundaries, lifecycle transition rules, service/API contract expectations, and authorization/security invariants  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, PLATFORM_SHARED_WORKFLOWS.md, SDD_COMPLETENESS_AUDIT.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-024
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-024, DEC-025
 
 ## 1. Purpose and guardrails
 
@@ -166,6 +166,9 @@ Required guards:
 - A custody event must not imply payment settlement or delivery completion.
 
 Open policy: location capabilities, mandatory measurements/condition checks, units/tolerances, refusal/hold outcomes, evidence requirements, and partner access.
+
+
+**Accepted location-capability policy (DEC-025):** A location's configured capabilities determine which actions are available there. Walk-in intake record creation, measurement, custody acceptance, payment collection/recording, and parcel release are distinct actions and require the corresponding authorization. The initial location record is lean (name, address, active status, configured capabilities). Authentication or Admin status alone is insufficient. Consequential events must identify actor, location, and time, with applicable evidence/reason. Exact data representation and transition rules remain subject to source inspection and later SDD approval.
 
 ### 4.5 Route proposal, assignment, and movement lifecycle
 
@@ -342,7 +345,7 @@ Exact HTTP status codes and payload shapes must be aligned with existing Next.js
 | Read/modify audit/evidence | Only explicitly entitled subset | Only approved job scope | Only approved finance scope | No implied access |
 | Approve disclosure to authority | No | Only designated internal reviewer | No implied authority | No implied authority |
 
-This table is not an approved role matrix. It highlights that no role's authority can be inferred solely from its label. The nine actor-model owner decisions and additional workflow policy decisions remain dependencies.
+This table is not an approved role matrix. It highlights that no role's authority can be inferred solely from its label. The actor-model owner decisions and additional workflow policy decisions remain dependencies. DEC-025 resolves the high-level location-capability direction, but exact staff assignment, partner access, action-level verification, payment evidence, and approval rules remain open.
 
 ### 7.3 Security risks requiring explicit verification
 

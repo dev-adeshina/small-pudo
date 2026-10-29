@@ -231,3 +231,15 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Rationale:** Support legitimate third-party booking/payment while avoiding accidental disclosure or unauthorized shipment changes and collection.
 - **Still unresolved:** Exact verification checkpoints; detailed permissions for each change type and lifecycle stage; sender/receiver consent rules; collection-proof requirements; notification event/recipient/field matrix; and implementation/runtime acceptance tests.
 - **Status:** Owner-approved policy direction; detailed workflow contracts and implementation remain open. No schema or application-code change is authorized by this decision.
+
+
+### DEC-025 — Capability-based staff actions and lean PUDO location records
+
+- **Decision date:** 29 October 2026.
+- **Decision:** Use a minimal capability-based location model. Staff capabilities are configured per location rather than inferred from a location label or from authentication/admin status. The initial location record remains lean: name, address, active status, and configured capabilities.
+- **Launch actions:** Subject to explicit assigned authorization, location staff may create staff-assisted walk-in intake records, measure and record parcel dimensions/weight, accept and record physical custody, collect and record payment with the required evidence, and release parcels to recipients whose collection authority has been verified. These actions are separate capabilities; permission for one does not automatically grant another.
+- **Accountability:** Consequential intake, measurement, custody, payment, release, and capability/configuration actions must identify the responsible actor, location, and time, with applicable evidence/reason. Server-side authorization is mandatory.
+- **Location boundary:** A location can perform only explicitly configured services. A registered collection centre is not automatically authorized to accept outgoing parcels or release every parcel.
+- **Still unresolved:** Exact role/claim representation and assignment administration; partner system access; measurement units and discrepancy thresholds; supported payment-at-intake methods and evidence; collection verification checkpoints; second-person approvals; and detailed correction/exception workflows.
+- **Rationale:** Keep launch operations practical while separating high-impact actions and avoiding an unnecessarily granular role for every task.
+- **Status:** Owner-approved high-level policy; detailed workflow rules, source reconciliation, and implementation remain open.

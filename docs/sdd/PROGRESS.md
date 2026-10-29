@@ -478,3 +478,17 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Keep detailed verification checkpoints, consent rules, per-change permissions, post-intake/post-dispatch handling, and runtime acceptance tests open until separately defined.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's acceptance of the recommended policy. No application source, schema, access rules, deployed configuration, or runtime behavior changed or was tested. The platform-wide SDD implementation gate remains in force.
+
+
+## 16. Owner decision D-04 — 29 October 2026
+
+- [x] Owner accepted the recommended capability-based location policy, recorded as DEC-025.
+- [x] Confirmed the lean initial location record: name, address, active status, and configured capabilities.
+- [x] Separated walk-in intake creation, parcel measurement, custody acceptance, payment collection/recording, and release to a verified authorized recipient into distinct capabilities.
+- [x] Reconciled the owner decision register, decisions log, actor model, shared workflows, domain/lifecycle contracts, cross-domain acceptance matrix, issue tracker, progress tracker, and session handoff in this documentation proposal.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Continue with D-05: shared pricing formula and quote terms.
+- [ ] Keep exact staff assignment, partner access, measurement/discrepancy thresholds, payment-at-intake evidence, collection verification, second-person approvals, and runtime acceptance tests open.
+- [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's acceptance of the recommended policy. No application source, schema, access rules, deployed configuration, or runtime behaviour changed or was tested.
