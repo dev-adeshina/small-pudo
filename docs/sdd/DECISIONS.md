@@ -187,3 +187,12 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Implication:** The tracker must state the active task, acceptance criteria, known risks, and tests still outstanding. Do not write application code until these records are consistent enough to guide the next step.
 - **Scope:** This is a workflow/continuity rule, not approval to change application architecture or implementation scope.
 - **Status:** Accepted on 28 October 2026.
+
+
+### DEC-021 — Complete the platform-wide SDD before application-code changes
+
+- **Decision:** Complete and reconcile the SDD for the whole VeriLyft platform before resuming application-code changes or implementing new portal functionality.
+- **Scope:** Include all in-scope customer and staff experiences, shared business workflows, domain/data relationships, API contracts, security boundaries, integrations, audit/evidence, reporting, testing, and acceptance criteria. Do not assume every functional area must be a separately deployed portal; explicitly record deferred scope, including the separate Driver Portal at launch.
+- **Working method:** Read-only source inspection is allowed to document current implementation facts. The approved SDD describes intended behaviour; source inspection describes what exists; test/deployment evidence describes what has been verified. Conflicts must be recorded and resolved explicitly.
+- **Implication:** Do not implement new routes, collections, fields, services, or portal pages until the relevant SDD has been reviewed and approved. Reconcile `README.md`, `SPEC.md`, `DECISIONS.md`, `ISSUES.md`, `PROGRESS.md`, and `SESSION_HANDOFF.md` before declaring the baseline ready.
+- **Status:** Accepted on 29 October 2026.
