@@ -63,9 +63,9 @@ Status meanings:
 
 ## 4. Reconciliation findings and documentation inconsistencies
 
-1. **Continuity-task wording — reconciliation in this change.** The initial audit found that older `PROGRESS.md` and `SESSION_HANDOFF.md` entries directed work toward Admin runtime security checks. The continuity-document reconciliation now identifies the actor/responsibility model as the next SDD workstream after this checkpoint is reviewed and accepted. Older dated entries remain historical evidence, not the current work order.
+1. **Continuity-task wording — reconciliation in this change.** The initial audit found that older `PROGRESS.md` and `SESSION_HANDOFF.md` entries directed work toward Admin runtime security checks. The current source-traceability workstream follows the merged actor/responsibility, shared-workflow, and domain/lifecycle drafts. Read-only source mapping is recorded in `IMPLEMENTATION_SOURCE_TRACEABILITY.md`; the next step is to finish source searches and reconcile remaining owner decisions. Older dated entries remain historical evidence, not the current work order.
 
-2. **Baseline and PR state — reconciled at the 29 October 2026 checkpoint.** The audit’s comparison baseline remains `cccad3c4eebe398c8369d5ce90ea05ee551589cf`; it is historical and must not be described as the current head. Current `main` is `d57dd3baec63313b429718aa2d569ccf9351b9ff`, which merges PR #5. PR #3 and PR #4 were checked on 29 October 2026 and remain open/unmerged.
+2. **Baseline and PR state — reconciled at the 29 October 2026 checkpoint.** The audit’s comparison baseline remains `cccad3c4eebe398c8369d5ce90ea05ee551589cf`; it is historical and must not be described as the current head. The latest source inspection used `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`, which includes PR #9 and PR #3. PR #3 is merged; PR #4 remains open/unmerged.
 
 3. **Historical roadmap — wording reconciled.** The earlier customer-first roadmap and phased sequence are retained as history, but `SPEC.md` now explicitly says that they do not define the current work order. Current implementation status remains in `PROGRESS.md` and must be supported by dated source/test evidence.
 
@@ -154,12 +154,12 @@ The platform SDD is ready for implementation planning when:
 
 ## 7. Immediate next action
 
-The continuity-document reconciliation was completed in PR #6, the actor/responsibility model was merged in PR #7, and the shared workflow draft was owner-reviewed and merged in PR #8 on 29 October 2026. The current checkpoint is review of `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`. The actor-model decisions and detailed workflow policies remain open unless separately recorded in `DECISIONS.md`. Review the conceptual relationships and contract checklist, then map existing source read-only before proposing technical changes or portal-specific requirements.
+PR #6 through PR #9 are merged. The current checkpoint is read-only source traceability and reconciliation, recorded in `IMPLEMENTATION_SOURCE_TRACEABILITY.md`. The actor-model decisions and detailed workflow/domain policies remain open unless separately recorded in `DECISIONS.md`. Continue source searches for reusable helpers and data before proposing technical changes or portal-specific requirements. PR #3 is merged; PR #4 remains open/unmerged.
 
 Do not implement new routes, collections, fields, services, or portal pages until their relevant SDD sections have been reviewed and approved.
 
 
-## 6. Update after PR #9 and read-only source inspection — 29 October 2026
+## 8. Update after PR #9 and read-only source inspection — 29 October 2026
 
 Current repository baseline inspected: `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`. PR #9 (domain/lifecycle/API/security draft) and PR #3 (inactive catalogue visibility) are merged. PR #4 remains open/unmerged.
 
