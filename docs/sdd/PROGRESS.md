@@ -3,7 +3,7 @@
 **Last updated:** 29 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Current main baseline inspected:** `c56be9b121e6007e1e99c6df2d3984e709771a92` — includes PR #9 domain/lifecycle draft and PR #3 inactive catalogue visibility fix.
+**Current live main head verified:** `c55abbba2cfffa6b2020a71c19f1aa50c676588d` — PR #11 second-pass source inventory is merged. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison to current `main` shows the 16 intervening commits changed SDD documentation only, not application source.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
@@ -23,13 +23,13 @@
 
 VeriLyft remains the existing Next.js App Router ecommerce and delivery application using TypeScript, Firebase Authentication, Firestore/Firebase Admin, Paystack, Cloudinary, and the shared cart context. Continue the current architecture; do not rebuild it or introduce a parallel data/auth layer.
 
-The current `main` baseline inspected is `c56be9b121e6007e1e99c6df2d3984e709771a92`, which includes PR #9 and PR #3. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #4 (category product-count compatibility) remains open/unmerged.
+The live `main` head verified for the current documentation task is `c55abbba2cfffa6b2020a71c19f1aa50c676588d` (PR #11). The source traceability inventory was inspected at `c56be9b121e6007e1e99c6df2d3984e709771a92`; a commit comparison confirms that the 16 commits since that source baseline changed SDD documentation only, not application source. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #4 (category product-count compatibility) remains open/unmerged.
 
 Customer authentication, profile, customer-scoped order history/details, guest tracking, and guest tracking email have implementation evidence recorded below. Guest-order claiming remains undecided. The admin dashboard, catalogue, orders, and Cloudinary upload foundations exist, but current authorization behaviour, authorized/denied image uploads, and payment/stock edge cases still need runtime verification.
 
 **Latest runtime checkpoint (28 October 2026, user-reported):** `npx tsc --noEmit` exited successfully. `npm run dev` started Next.js 16.4.2 and reported `Ready in 936ms`. This confirms the type check and development-server startup only; it does not establish browser authorization, API security, upload success, or production-build status for the current checkout.
 
-**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. PR #6 and PR #7 are merged. The actor/responsibility, shared-workflow, and domain/lifecycle documents are in the documentation baseline, with owner decisions still open. The current workstream is source traceability and reconciliation—not application-code changes.
+**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. PR #6 and PR #7 are merged. The actor/responsibility, shared-workflow, and domain/lifecycle documents are in the documentation baseline, with owner decisions still open. The current workstream is review of the cross-domain SDD acceptance matrix and reconciliation—not application-code changes.
 
 ## 2. Feature tracker
 
@@ -429,3 +429,17 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Complete the platform-wide SDD acceptance matrix and obtain explicit approval before any application-code changes.
 
 **Evidence boundary:** Source reads only; no application code or data changed, no tests run, no production Firestore data/configuration inspected, and no browser/runtime behaviour reproduced.
+
+
+## 13. Cross-domain acceptance matrix — 29 October 2026
+
+- [x] Independently verified live `main` at `c55abbba2cfffa6b2020a71c19f1aa50c676588d` through the GitHub repository connector.
+- [x] Compared the prior source-inspection baseline `c56be9b121e6007e1e99c6df2d3984e709771a92` with live `main`; the 16 intervening commits are SDD documentation changes only, so the previously inspected application-source baseline remains applicable for this checkpoint.
+- [x] Added `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md` as a draft review aid covering storefront, customer access, independent shipment booking, shared pricing, payments, financial events, intake/custody, locations, routing, movement, delivery, notifications, authorization, audit/evidence, exceptions, reporting, and production readiness.
+- [x] Included cross-domain invariants, proposed acceptance criteria, failure/replay test families, unresolved owner decisions, and explicit SDD approval gates.
+- [x] Added the matrix to the SDD README index.
+- [ ] Review the matrix and decide the open business policies listed in its Section 5; do not treat proposed criteria as approved requirements.
+- [ ] Reconcile accepted decisions with `DECISIONS.md`, `ISSUES.md`, `PLATFORM_SHARED_WORKFLOWS.md`, and `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`.
+- [ ] Only after policy approval, derive detailed transition tables and test cases from existing architecture/source; obtain explicit approval of the reconciled platform-wide SDD before application-code changes.
+
+**Evidence boundary:** Documentation-only changes. No application code, schema, API, permission, production data, or runtime configuration was changed. No tests or production runtime checks were run.
