@@ -389,7 +389,7 @@ The following cases require explicit outcomes in the detailed lifecycle and acce
 
 This draft deliberately does not resolve the following:
 
-1. **Actor and staff-role boundaries:** the nine decisions in §6 of PLATFORM_ACTORS_AND_RESPONSIBILITIES.md remain open unless explicitly recorded as decided in DECISIONS.md.
+1. **Actor and staff-role boundaries:** DEC-022 accepts the minimal hybrid staff model. Workflow-specific permissions, second-person approval thresholds, PUDO/station authority, Finance boundaries, and external-party access remain open in §6 of PLATFORM_ACTORS_AND_RESPONSIBILITIES.md.
 2. **Shipper eligibility and identity:** guest booking, account requirements, multi-capacity accounts, sender/receiver/payer relationships, verification points, and change/cancellation authority.
 3. **Lifecycle/state transitions:** allowed states and transitions for booking, intake, shipment, route leg, dispatch, delivery, failed delivery, cancellation, and returns.
 4. **Pricing policy:** formulas, units, distance source/bands, service classes, quote validity, thresholds, approval limits, rounding, taxes, surcharges, and permitted methods.
