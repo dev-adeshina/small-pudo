@@ -157,7 +157,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 3. **Pricing policy values:** Define formulas, distance bands, material-discrepancy thresholds, review/approval limits, and permitted settlement methods.
 4. **Proof of delivery:** The business accepts flexible proof methods; define mandatory evidence by delivery type and access/retention rules.
 5. **Returns:** If not supported in the initial release, document the temporary manual procedure.
-6. **Staff permissions:** Current allowlist/admin-claim design does not prove a granular staff role/permission model. Confirm whether role separation is required at launch.
+6. **Staff permissions:** DEC-022 accepts the minimal hybrid staff model. The current allowlist/admin-claim design does not prove that workflow-specific permissions, sensitive-action approval boundaries, and audit evidence are implemented. Define the action matrix and verify every privileged API/rule before implementation or acceptance.
 7. **Admin priority baseline:** Review the P0/P1/deferred inventory in `ADMIN_REQUIREMENTS.md`; operating-model choices are recorded as owner-confirmed, but formal baseline approval remains pending.
 
 
@@ -166,7 +166,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Status:** OPEN
 - **Priority:** Blocking for new application-code implementation under the current owner-approved working direction.
 - **Evidence:** PR #7 (actor/responsibility), PR #8 (shared workflows), PR #9 (domain/lifecycle/API/security draft), and PR #10 (implementation source traceability) are merged. The follow-up source pass is recorded in `IMPLEMENTATION_SOURCE_TRACEABILITY.md`; it checked current TypeScript helpers, Admin pages, Firestore rules/tests, payment routes, and design decisions. The drafts and source map expose remaining owner decisions, scope questions, and runtime verification work; merging documents does not approve unresolved policy.
-- **Next action:** Confirm whether the root `pudo.zip` archive is in scope for the active source review; resolve owner decisions in `DECISIONS.md`; reconcile the source findings with the completeness audit and acceptance criteria. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
+- **Next action:** Confirm whether the root `pudo.zip` archive is in scope for the active source review; resolve remaining owner decisions in `DECISIONS.md`; reconcile the source findings with the completeness audit and acceptance criteria. D-01's high-level staff model is accepted as DEC-022, while action-level permissions and approval rules remain design work. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
 - **Acceptance:** Every launch-essential workflow has an agreed owner, lifecycle, permissions, data relationships, API/integration expectations, exception handling, and acceptance/test criteria; unresolved business rules are explicitly listed for owner decision; continuity docs agree on status and evidence; no application code is changed to close this issue.
 
 ### VLY-020 — Shared platform workflows require owner review

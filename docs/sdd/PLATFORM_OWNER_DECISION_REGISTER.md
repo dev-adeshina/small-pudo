@@ -24,7 +24,7 @@ It does not replace those domain documents and does not decide policy on the own
 |---|---|---|
 | DEC-001–005 | Keep the existing Next.js App Router, TypeScript, Firebase architecture; make focused changes; server remains authoritative for transactional data. | Does not approve any new schema or implementation. |
 | DEC-006 | Preserve guest checkout as the current provisional default. | This is not a decision that independent shipment booking must permit guests. |
-| DEC-010 | Customer authentication does not grant Admin/staff authorization. | Exact staff roles and permissions remain to be approved. |
+| DEC-010, DEC-022 | Customer authentication does not grant Admin/staff authorization; the minimal hybrid staff model is accepted. | The action-by-action permission/approval matrix and workflow-specific rules remain open. |
 | DEC-012 | Storefront orders and independent shipments are distinct business concepts; shipments can involve multiple transport movements. | Technical representation remains unresolved. |
 | DEC-014–016 | Admin financial visibility is operational, not full Finance; operational and payment status are distinct; government requests remain basic. | Detailed permissions and evidence rules remain open. |
 | DEC-018 | Lean launch scope includes independent shipment booking, advance and staff-created walk-in intake, lean PUDO location management, shared hybrid pricing, advance payment and payment at intake, Operations-reviewed route proposals/assignments, flexible proof of delivery, and controlled failed-delivery resolution. | Scope-level acceptance does not settle the detailed rules below. |
@@ -40,12 +40,10 @@ The order below follows dependencies: authority and booking semantics first; com
 
 ### D-01 — Staff responsibility and approval boundaries
 
-- **Status:** Owner decision required.
-- **Existing evidence:** Admin and Operations responsibilities are described, but exact role granularity and separation of duties are unresolved.
-- **Decision needed:** At launch, should Admin and Operations be (A) separate permission roles, (B) one trusted staff role with distinct documented responsibilities, or (C) a minimal mixed model with only high-risk actions separately restricted?
-- **Recommendation:** Use the smallest role model that enforces server-side least privilege and separates high-risk financial/disclosure/override actions where required. Do not create separate portals solely to represent different responsibilities.
-- **Dependencies:** Required before final authorization matrix, staff-facing workflows, and privileged-action acceptance tests.
-- **Record after decision:** Role catalogue, action/approval matrix, denial expectations, and any separation-of-duties requirements.
+- **Status:** Owner decision accepted; recorded as DEC-022 on 29 October 2026.
+- **Accepted choice:** Option C — minimal hybrid staff model. Admin and Operations remain distinct responsibilities without automatically requiring separate portals or a separate permission role for every function. Routine actions may be shared when assigned permissions allow. Sensitive actions (including financial adjustments, dispatch exceptions, and restricted disclosures) require explicit permission and approval boundaries; privileged operations must be authorized server-side and consequential actions must be auditable.
+- **Still unresolved:** The action-by-action permission matrix, exact second-person approval requirements, role/claim representation, and workflow-specific denial/evidence tests. This decision does not authorize implementation.
+- **Dependencies:** D-01 establishes the model for the authorization matrix, staff-facing workflows, and privileged-action acceptance tests.
 
 ### D-02 — Independent shipment booking eligibility and account requirements
 
@@ -185,6 +183,6 @@ For each D-01–D-15 item:
 
 ## 5. Current recommended next decision
 
-Start with **D-01: Staff responsibility and approval boundaries**. This decision affects who may perform or approve intake, pricing adjustments, financial actions, route assignments, dispatch exceptions, delivery resolution, audit review, and disclosure. If D-01 remains open, those permission and acceptance contracts should stay provisional.
+Proceed to **D-02: Independent shipment booking eligibility and account requirements**. D-01's high-level hybrid responsibility model is accepted, but exact permissions and approval requirements must be resolved within each affected workflow. Decide guest versus signed-in booking independently from the storefront guest-checkout rule.
 
 **No decision in this register is approved merely by appearing here.**

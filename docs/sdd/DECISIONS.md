@@ -196,3 +196,14 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Working method:** Read-only source inspection is allowed to document current implementation facts. The approved SDD describes intended behaviour; source inspection describes what exists; test/deployment evidence describes what has been verified. Conflicts must be recorded and resolved explicitly.
 - **Implication:** Do not implement new routes, collections, fields, services, or portal pages until the relevant SDD has been reviewed and approved. Reconcile `README.md`, `SPEC.md`, `DECISIONS.md`, `ISSUES.md`, `PROGRESS.md`, and `SESSION_HANDOFF.md` before declaring the baseline ready.
 - **Status:** Accepted on 29 October 2026.
+
+
+### DEC-022 — Minimal hybrid staff responsibility and approval model
+
+- **Decision date:** 29 October 2026.
+- **Decision:** Adopt a minimal hybrid staff model. Admin and Operations are distinct responsibilities, but this does not automatically require separate portals or separate permission roles for every function. Routine actions may be shared where assigned permissions allow. Sensitive actions—including financial adjustments, dispatch exceptions, and restricted information disclosures—must have explicit permission and approval boundaries.
+- **Security invariant:** Authentication alone does not grant staff authority. Every privileged operation must be authorized server-side; hiding UI controls is not an access-control boundary.
+- **Accountability:** Privileged and consequential actions must retain appropriate evidence of the acting staff identity, target/action, outcome, and reason; record an approver when policy requires one.
+- **Scope boundary:** This decision establishes the role-model direction, not a complete action-by-action permission matrix, second-person approval rule, custom-claim design, schema, route, or implementation approval. Those details must be defined in affected workflows and acceptance criteria before code changes.
+- **Rationale:** Preserve a lean launch without conflating responsibilities or granting broad authority to every signed-in user.
+- **Status:** Owner-approved design direction; detailed permissions and workflow-specific approval rules remain open.
