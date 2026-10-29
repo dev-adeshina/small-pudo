@@ -17,7 +17,8 @@ The owner’s current working direction is to complete and reconcile the platfor
 |---|---|---|
 | `README.md` | Index, continuity protocol, source/evidence precedence | The SDD-first protocol and distinction between intended behaviour, source facts, and verification evidence are documented. The current-task pointer remains `PROGRESS.md`. |
 | `PLATFORM_SHARED_WORKFLOWS.md` | Draft cross-domain workflow model | First-pass workflows and invariants are documented; owner policy decisions, final transitions, data/API contracts, and acceptance criteria remain open. |
-| `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` | Draft conceptual domain/lifecycle/API/security model | Conceptual relationships, lifecycle guards, contract categories, security expectations, and source-validation questions are listed; owner decisions and source mapping remain open. |
+| `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` | Draft conceptual domain/lifecycle/API/security model | Conceptual relationships, lifecycle guards, contract categories, security expectations, and source-validation questions are listed; owner decisions remain open. Read-only source mapping is recorded separately. |
+| `IMPLEMENTATION_SOURCE_TRACEABILITY.md` | Read-only current-source inventory mapped to platform SDD | Maps current storefront order, customer access, payment, admin authorization, uploads, fulfilment, and Firestore rules; records source gaps and evidence limits. Further source searches, owner decisions, and runtime verification remain open. |
 | `SPEC.md` | Product/technical specification, conventions, historical roadmap, acceptance principles | Strong technical conventions and customer/order requirements remain. The customer-first roadmap language is now explicitly marked historical; unresolved guest-order claiming and cross-portal requirements remain open. |
 | `DECISIONS.md` | Accepted architecture and product decisions | Important constraints and launch decisions are recorded. Several decisions remain conceptual; exact lifecycle, pricing policy, technical data representation, and role boundaries remain unresolved. |
 | `ISSUES.md` | Risks, gaps, verification tasks, open decisions | Useful gap inventory, but it is Admin-heavy and needs platform-wide coverage and reconciliation against current decisions and progress. |
@@ -156,3 +157,12 @@ The platform SDD is ready for implementation planning when:
 The continuity-document reconciliation was completed in PR #6, the actor/responsibility model was merged in PR #7, and the shared workflow draft was owner-reviewed and merged in PR #8 on 29 October 2026. The current checkpoint is review of `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`. The actor-model decisions and detailed workflow policies remain open unless separately recorded in `DECISIONS.md`. Review the conceptual relationships and contract checklist, then map existing source read-only before proposing technical changes or portal-specific requirements.
 
 Do not implement new routes, collections, fields, services, or portal pages until their relevant SDD sections have been reviewed and approved.
+
+
+## 6. Update after PR #9 and read-only source inspection — 29 October 2026
+
+Current repository baseline inspected: `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`. PR #9 (domain/lifecycle/API/security draft) and PR #3 (inactive catalogue visibility) are merged. PR #4 remains open/unmerged.
+
+The source inventory in `IMPLEMENTATION_SOURCE_TRACEABILITY.md` confirms a concrete storefront order/payment/fulfilment path, customer-scoped order reads, guest-token access, server-side Admin API checks, Cloudinary upload validation, and restrictive direct-client order Firestore rules. It does not establish a complete independent shipment booking, intake/custody, PUDO location, pricing, route-leg/movement, delivery-proof, or general financial-event/audit workflow in the inspected API route surface. Existing helpers/data elsewhere must be investigated before concluding what can be reused.
+
+The source inventory is not a runtime test. It did not execute the rules tests, inspect production data/configuration, or reproduce the browser Admin-access report. Keep VLY-005, VLY-009, VLY-010, VLY-011, VLY-013, VLY-016, VLY-017, VLY-019, VLY-020, and VLY-021 open/investigating as applicable. The complete platform-wide SDD remains unapproved for implementation; no application-code changes are authorized.
