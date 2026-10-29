@@ -25,7 +25,7 @@ The model preserves the owner-confirmed launch scope: storefront orders and inde
 5. Authentication establishes identity, not permission. Customer identity never implies Admin or staff access.
 6. Privileged actions require server-side authorization. Sensitive approvals, overrides, payment adjustments, custody changes, and disclosures should be attributable and auditable.
 7. Payment state, order state, shipment state, and individual transport-movement state must not be treated as interchangeable.
-8. The least authority needed for the approved task should be granted. The exact staff-role granularity remains unresolved; do not silently turn this draft into a detailed role-based access-control matrix.
+8. The least authority needed for the approved task should be granted. DEC-022 accepts a minimal hybrid model: Admin and Operations are distinct responsibilities, routine actions may be shared where assigned permissions allow, and sensitive actions require explicit permission/approval boundaries. The action-by-action authorization matrix remains unresolved.
 
 ## 3. Actor catalogue
 
@@ -37,8 +37,8 @@ The model preserves the owner-confirmed launch scope: storefront orders and inde
 | Independent shipper / booking party | Confirmed | Book a shipment independently of a storefront purchase, as an individual or business. | Eligibility, account requirement, booking amendments/cancellation, business accounts, and how the booking party relates to sender/payer are unresolved. Do not assume a separate Shipper Portal is required. |
 | Sender | Conceptual business participant | Supplies or confirms parcel and origin information and may hand a parcel over. | Sender may or may not be the booking party or payer. Identity verification and evidence requirements are unresolved. |
 | Receiver / collection recipient | Conceptual business participant | Receives a delivered parcel or collects it through an approved collection workflow. | Receiver identity checks, collection authorization, and evidence requirements are unresolved. |
-| Authorized Admin staff | Confirmed as a privileged actor class | Manage the storefront catalogue and oversee orders, shipments, transactions, pricing, network, settings, and operational visibility within approved permissions. | Exact Admin versus Operations permission boundaries and staff-role granularity remain unresolved. Customer authentication alone is insufficient. |
-| Operations staff | Confirmed responsibility; role implementation unresolved | Review/adjust proposed route legs, approve transport assignments, manage shipment operations, record launch-time milestones, and review consequential failed-delivery exceptions. | Driver Portal is deferred. Exact lifecycle transitions, approval limits, separation of duties, and whether Operations is a distinct permission role are unresolved. |
+| Authorized Admin staff | Confirmed as a privileged actor class; hybrid model accepted | Manage the storefront catalogue and oversee orders, shipments, transactions, pricing, network, settings, and operational visibility within approved permissions. | Exact action-by-action permissions and approval rules remain to be defined. Customer authentication alone is insufficient; sensitive actions must have explicit server-enforced boundaries. |
+| Operations staff | Confirmed responsibility; hybrid staff model accepted | Review/adjust proposed route legs, approve transport assignments, manage shipment operations, record launch-time milestones, and review consequential failed-delivery exceptions. | Driver Portal is deferred. Exact lifecycle transitions, approval limits, and workflow-specific separation-of-duties rules remain unresolved; a separate portal is not implied. |
 | Staffed PUDO station staff | Location type confirmed; actor permissions proposed | Support authorized physical intake, measurement, custody, handover, and/or collection at a staffed station according to its configured capabilities. | Exact station actions, staff identity model, and permission scope must be approved in the intake/custody workflows. Do not infer that every station performs every operation. |
 | Registered collection-centre operator / partner | Location type confirmed; actor permissions unresolved | Operate a registered collection centre for explicitly configured services. | Outgoing-parcel acceptance is not automatic. Whether partners receive system access or all actions are recorded by VeriLyft staff is unresolved. |
 | Transport provider / carrier | Confirmed as a conceptual external party | Performs an assigned transport leg and supplies agreed handover/movement information. | Provider onboarding, service-level commitments, proof format, and integration versus manual recording are unresolved. |
@@ -86,14 +86,15 @@ No role names, custom claims, Firestore rules, collections, or permission code a
 
 ## 6. Decisions required before this model can be approved
 
-1. **Staff role boundaries:** Is a single authorized Admin role sufficient for the first release, or must Admin, Operations, Finance, and Management be separate permission roles at launch?
-2. **Operations versus PUDO:** Can staffed station personnel record intake/custody directly, or must Operations staff create/approve those records? Can registered collection-centre partners access the system, or are their actions recorded by VeriLyft staff?
+The high-level staff model is accepted in DEC-022. This draft still requires workflow-specific authorization detail and owner decisions below.
+
+1. **Operations versus PUDO:** Can staffed station personnel record intake/custody directly, or must Operations staff create/approve those records? Can registered collection-centre partners access the system, or are their actions recorded by VeriLyft staff?
 3. **Finance deployment boundary:** Should Finance be a distinct portal, a permission-protected module in the existing application, or a later decision? The financial responsibilities remain distinct regardless of deployment.
 4. **Management access:** Is Management a separate role, a limited reporting permission set, or part of Admin for the first release? Which sensitive records may be drilled into?
 5. **Shipper identity and account:** Must an independent shipper register/sign in, or can a guest book a shipment? Can a customer also be a shipper under one account? This must preserve the accepted guest-checkout principle unless explicitly changed.
 6. **Sender, receiver, and payer:** Which party must be identified and verified at booking, intake, collection, and delivery? Who can authorize changes or cancellation?
 7. **Support role:** Is customer support a real launch responsibility requiring a distinct role, or should support actions remain with existing authorized staff?
-8. **Approval separation:** Which actions require a second person or higher authority, especially unpaid dispatch, material price adjustment, refunds/credits, failed-delivery resolution, and disclosure?
+8. **Approval separation:** Which actions require a second person or higher authority, especially unpaid dispatch, material price adjustment, refunds/credits, failed-delivery resolution, and disclosure? DEC-022 requires explicit boundaries for sensitive actions but does not decide every threshold or second-person rule.
 9. **External actor access:** Are transport providers, drivers, or collection-centre partners ever expected to log in during launch? Current default in this draft is no direct access; Operations records their movements.
 
 These questions are not answered by the current documents. They must be resolved before implementing fine-grained access rules or role-specific interfaces.
@@ -102,7 +103,7 @@ These questions are not answered by the current documents. They must be resolved
 
 - Every launch-essential journey names the initiating actor, accountable function, other participants, and any external system.
 - Each responsibility is assigned to a function without assuming that function requires a separate portal.
-- Customer, Admin, Operations, Finance, and Management responsibilities are distinguishable; unresolved role separation is explicitly recorded.
+- Customer, Admin, Operations, Finance, and Management responsibilities are distinguishable; the accepted minimal hybrid model is reflected, and unresolved action-level permission/approval rules are explicitly recorded.
 - Sender, receiver, booking party, payer, and physical custodian are not assumed to be the same party.
 - Every privileged or consequential action is assigned an authorization boundary and required audit/evidence fields, with unresolved rules flagged.
 - The model preserves DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, and DEC-021.
