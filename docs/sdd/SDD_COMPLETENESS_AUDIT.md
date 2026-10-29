@@ -16,6 +16,7 @@ The owner’s current working direction is to complete and reconcile the platfor
 | Document | Current role | Audit finding |
 |---|---|---|
 | `README.md` | Index, continuity protocol, source/evidence precedence | The SDD-first protocol and distinction between intended behaviour, source facts, and verification evidence are documented. The current-task pointer remains `PROGRESS.md`. |
+| `PLATFORM_SHARED_WORKFLOWS.md` | Draft cross-domain workflow model | First-pass workflows and invariants are documented; owner policy decisions, final transitions, data/API contracts, and acceptance criteria remain open. |
 | `SPEC.md` | Product/technical specification, conventions, historical roadmap, acceptance principles | Strong technical conventions and customer/order requirements remain. The customer-first roadmap language is now explicitly marked historical; unresolved guest-order claiming and cross-portal requirements remain open. |
 | `DECISIONS.md` | Accepted architecture and product decisions | Important constraints and launch decisions are recorded. Several decisions remain conceptual; exact lifecycle, pricing policy, technical data representation, and role boundaries remain unresolved. |
 | `ISSUES.md` | Risks, gaps, verification tasks, open decisions | Useful gap inventory, but it is Admin-heavy and needs platform-wide coverage and reconciliation against current decisions and progress. |
@@ -90,12 +91,13 @@ Complete these in dependency order, keeping decisions explicit and avoiding spec
 - [x] Preserve historical test claims with their evidence date and attribution.
 
 ### Workstream 2 — Platform actors and responsibility boundaries
-- Identify external actors and internal staff roles.
-- Distinguish portals/modules from roles and deployment boundaries.
-- Define who can create, view, change, approve, cancel, and close each major record.
-- Confirm the launch role model; do not assume a granular role system without owner approval.
+- [x] Draft the actor catalogue and distinguish people/organizations, functional responsibilities, and deployed portals/modules in `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` (PR #7 merged on 29 October 2026).
+- [x] Preserve the distinction between Admin operational visibility and the Finance function, and keep the Driver Portal deferred at launch.
+- [ ] Resolve the nine owner decisions in §6 of the actor model; merge approval of the draft does not automatically decide those policies.
 
 ### Workstream 3 — Canonical business workflows
+- [x] Create a first-pass cross-domain workflow draft in `PLATFORM_SHARED_WORKFLOWS.md`.
+- [ ] Review and approve the shared workflow draft and resolve or explicitly retain its owner decisions.
 - Storefront order and fulfilment.
 - Independent shipper booking and walk-in intake.
 - Pricing, quote preservation, measurement adjustment, and settlement.
@@ -150,6 +152,6 @@ The platform SDD is ready for implementation planning when:
 
 ## 7. Immediate next action
 
-The continuity-document reconciliation is complete: PR #6 merged on 29 October 2026. The current checkpoint is review of `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`. Resolve its owner decisions on role separation, PUDO/partner access, Finance/Management boundaries, shipper identity, support, and consequential-action approvals. Then specify the shared shipment, pricing, payment, intake, transport, and delivery workflows before writing portal-specific documents, because those workflows are dependencies for Shipper, Operations, PUDO, Admin, and Finance.
+The continuity-document reconciliation was completed in PR #6 and the actor/responsibility model was merged in PR #7 on 29 October 2026. The current checkpoint is review of `PLATFORM_SHARED_WORKFLOWS.md`. The nine actor-model owner decisions remain open unless separately recorded in `DECISIONS.md`. Review shared shipment, pricing, payment, intake, transport, dispatch, delivery, notification, and audit workflows before writing portal-specific documents, because those workflows are dependencies for Shipper, Operations, PUDO, Admin, and Finance.
 
 Do not implement new routes, collections, fields, services, or portal pages until their relevant SDD sections have been reviewed and approved.
