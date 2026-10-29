@@ -153,8 +153,11 @@ Use these evidence labels consistently:
 ### Accepted constraints
 
 - One shared pricing service/rule set serves storefront delivery and independent shipment booking where applicable.
-- Configured fixed rates and calculated rates are supported in the design.
-- The accepted quote and the inputs/rates used must be preserved.
+- Fixed versus calculated pricing is assigned by service according to cost characteristics; do not force every service into one formula (DEC-026).
+- Storefront delivery and independent shipment booking use one shared approved pricing rule set wherever service inputs overlap.
+- Calculated rates use only the inputs applicable to the selected service, chosen from origin/destination or defined distance band, parcel weight, dimensions/volumetric weight, service class/delivery speed, and configured minimum charge. Exact formulas and units remain open.
+- Quote validity is configured by service; exact expiry and re-quote behaviour remain open.
+- Preserve the accepted quote's inputs, itemized charges, total, currency, and applicable rate/rule version/effective context.
 - Actual intake measurements may produce a proposed recalculation.
 - Material discrepancies and payment-impacting adjustments require review under a configurable policy.
 - Additional payments, credits, and refunds are separate financial operations; unresolved payment outcomes are not successful payments.
@@ -173,9 +176,9 @@ Use these evidence labels consistently:
 
 ### Open policy / design questions
 
-- Exact formula, units, distance source/bands, service classes, minimums, surcharges, discounts, tax treatment, rounding, and currency rules.
-- Which services use fixed versus calculated rates and how rates are versioned/effective-dated.
-- Quote validity, repricing triggers, and whether/how rates can be changed after acceptance.
+- Exact formula catalogue, units, distance source/bands, service-to-formula mapping, rounding, currency handling, and rate effective-date rules.
+- Whether taxes, surcharges, discounts, or other fees apply and how they are calculated, displayed, and approved; unknown treatment must not be assumed to be zero.
+- Quote-expiry outcome, re-quote requirements, permitted repricing triggers, and customer-consent rules for any proposed change after acceptance.
 - Material-discrepancy thresholds, approval limits, and who can authorize adjustments.
 - Which payment-at-intake methods are accepted and what evidence verifies them.
 - Who can initiate/approve refunds, credits, additional charges, and write-offs; separation-of-duties requirements.
@@ -183,8 +186,10 @@ Use these evidence labels consistently:
 
 ### Acceptance criteria to define
 
-- The same approved pricing rules are reused across applicable booking paths.
-- Quotes can be reconstructed from their preserved inputs and rate/rule version.
+- The same approved pricing rules are reused across applicable booking paths, while fixed/calculated pricing is selected by service.
+- Each calculated quote uses only that service's approved inputs; equivalent inputs and the same rate/rule version produce a reproducible result.
+- Quote validity is configured by service and expiry is handled according to an explicit rule.
+- Quotes can be reconstructed from their preserved inputs, itemized charges, total, currency, and rate/rule version/effective context.
 - A rate update does not silently change an accepted quote.
 - Every adjustment is linked to the original quote and records the review decision where required.
 - Charges, credits, refunds, and payment status remain separately traceable.
@@ -408,7 +413,7 @@ This draft deliberately does not resolve the following:
 1. **Actor and staff-role boundaries:** DEC-022 accepts the minimal hybrid staff model and DEC-025 accepts separate per-location capabilities for walk-in intake, measurement, custody, payment recording, and release. Exact staff assignment, partner access, second-person approval thresholds, Finance boundaries, and external-party access remain open in §6 of PLATFORM_ACTORS_AND_RESPONSIBILITIES.md.
 2. **Shipper eligibility and identity:** guest booking is excluded by DEC-023; DEC-024 accepts distinct booking-party/sender/receiver/payer/handover roles and payment-only payer access by default. Exact verification points, consent, change/cancellation authority by type and lifecycle stage, and business-account handling remain open.
 3. **Lifecycle/state transitions:** allowed states and transitions for booking, intake, shipment, route leg, dispatch, delivery, failed delivery, cancellation, and returns.
-4. **Pricing policy:** formulas, units, distance source/bands, service classes, quote validity, thresholds, approval limits, rounding, taxes, surcharges, and permitted methods.
+4. **Pricing policy:** DEC-026 accepts service-specific fixed/calculated pricing, shared rules where inputs overlap, and service-configured quote validity. Exact formulas, units, distance source/bands, effective dates, rounding, taxes/fees/discounts, expiry/re-quote behaviour, and adjustment thresholds remain unresolved.
 5. **Payment and settlement:** payment-at-intake methods, late/duplicate/contradictory events, refunds/credits/additional charges, reconciliation, and separation of duties.
 6. **PUDO capability model:** which locations support which services and which actors may record each physical event.
 7. **Transport and proof:** provider assignment rules, movement evidence, mandatory proof of delivery, identity checks, evidence retention, and failed-delivery resolution.
