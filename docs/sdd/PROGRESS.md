@@ -6,7 +6,7 @@
 **Current main baseline inspected:** `c56be9b121e6007e1e99c6df2d3984e709771a92` — includes PR #9 domain/lifecycle draft and PR #3 inactive catalogue visibility fix.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
-**Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 and PR #4 were checked on 29 October 2026 and remain open/unmerged; their changes are not in the current `main` baseline.
+**Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
 **Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. PR #5 established the first-pass audit and PR #6 merged the continuity-document reconciliation. PR #7 merged the actor/responsibility model and PR #8 merged the shared-workflow draft into the documentation baseline. PR #9 merged the domain/lifecycle/API/security draft. The current workstream is read-only source traceability and reconciliation against the platform SDD; no application-code changes are authorized.
 
 > This tracker records the current working state, including uncommitted changes.
@@ -23,13 +23,13 @@
 
 VeriLyft remains the existing Next.js App Router ecommerce and delivery application using TypeScript, Firebase Authentication, Firestore/Firebase Admin, Paystack, Cloudinary, and the shared cart context. Continue the current architecture; do not rebuild it or introduce a parallel data/auth layer.
 
-The current `main` baseline includes PR #8, merged as `aac7c689119ed5769f9e7e3125368b92c6e4ea64`. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. The audit’s reviewed comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` is historical, not the current head. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #3 (inactive category/product visibility) and PR #4 (category product-count compatibility) were checked on 29 October 2026 and remain open/unmerged.
+The current `main` baseline inspected is `c56be9b121e6007e1e99c6df2d3984e709771a92`, which includes PR #9 and PR #3. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #4 (category product-count compatibility) remains open/unmerged.
 
 Customer authentication, profile, customer-scoped order history/details, guest tracking, and guest tracking email have implementation evidence recorded below. Guest-order claiming remains undecided. The admin dashboard, catalogue, orders, and Cloudinary upload foundations exist, but current authorization behaviour, authorized/denied image uploads, and payment/stock edge cases still need runtime verification.
 
 **Latest runtime checkpoint (28 October 2026, user-reported):** `npx tsc --noEmit` exited successfully. `npm run dev` started Next.js 16.4.2 and reported `Ready in 936ms`. This confirms the type check and development-server startup only; it does not establish browser authorization, API security, upload success, or production-build status for the current checkout.
 
-**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. PR #6 and PR #7 are merged. The actor/responsibility model is in the documentation baseline, with its owner decisions still open. The current workstream is source traceability and reconciliation—not application-code changes.
+**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. PR #6 and PR #7 are merged. The actor/responsibility, shared-workflow, and domain/lifecycle documents are in the documentation baseline, with owner decisions still open. The current workstream is source traceability and reconciliation—not application-code changes.
 
 ## 2. Feature tracker
 
@@ -348,7 +348,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - Confirmed the current dashboard source calls `verifyAdminAccess(user)`; the prior customer-to-admin access report remains a regression test requirement, not a confirmed current-source omission.
 - Historical note (28 October checkpoint): source and DEC-008 wording appeared inconsistent at that time. This was reconciled in the 29 October documentation review; Cloudinary runtime verification remains outstanding.
 - Confirmed that selected dedicated Admin routes for shipments, PUDO, delivery pricing, transactions, and audit logs are absent on `main`. Related implementation elsewhere was not ruled out.
-- Noted that PR #3 (inactive category/product visibility) and PR #4 (category product counts) were still separate proposed changes and must not be assumed present on `main` without checking merge status.
+- Historical note: PR #3 (inactive category/product visibility) and PR #4 (category product counts) were separate proposals at that checkpoint. PR #3 later merged; PR #4 remains open.
 - Updated the Admin requirements/audit documents on the existing `docs/admin-requirements-prioritization` review branch. No application code was changed.
 - No local build, TypeScript, browser, API runtime, or live Firestore tests were run. The audit remains source-level only.
 - Next: reconcile the accepted requirements with existing code, verify critical security/payment/image-upload paths at runtime, and prepare a minimal implementation sequence without adding a new architecture.
@@ -358,7 +358,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 
 - [x] Confirmed Admin Portal design PR #1 is merged to `main` as `a3e1e8a`.
 - [x] Confirmed Admin Portal requirements/audit PR #2 merged to `main` on 28 October 2026 as merge commit `fbb56ce522fe713524d04f9a23c7ab7c43da8f95`.
-- [x] Rechecked PR #3 (`fix/public-category-visibility`) and PR #4 (`fix/category-product-counts`): both remain open and unmerged at this checkpoint.
+- [x] Rechecked PR #3 (`fix/public-category-visibility`) and PR #4 (`fix/category-product-counts`): PR #3 is merged; PR #4 remains open/unmerged.
 - [x] Recorded the user-reported current check: `npx tsc --noEmit` passed.
 - [x] Recorded the user-reported dev-server result: Next.js 16.4.2 started at `http://localhost:3000` and reported ready.
 - [ ] Complete browser test: a signed-in ordinary customer navigates directly to `/admin`, `/admin/orders`, `/admin/products`, and `/admin/categories`; each must deny access and preserve the customer session.
@@ -386,7 +386,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Reviewed the nine current documents listed in `docs/sdd/README.md` on `main`.
 - [x] Created the first-pass platform-wide matrix and reconciliation findings in `SDD_COMPLETENESS_AUDIT.md` on documentation review branch `docs/sdd-platform-completeness-audit`.
 - [x] Updated the SDD index with the new audit and documented the SDD-first working protocol in `README.md`.
-- [x] Verified PR #3 and PR #4 remain open and unmerged at this checkpoint; do not assume their changes are in `main`.
+- [x] Verified PR #3 is merged and its changes are present in `main`; PR #4 remains open/unmerged and must not be treated as part of `main`.
 - [x] Reconcile stale current-baseline and active-task statements across the continuity documents; retain `cccad3c4...` only as the audit’s historical comparison baseline.
 - [x] Mark the customer-first implementation roadmap in `SPEC.md` as historical without removing its requirements or implementation history.
 - [x] Align Cloudinary wording: DEC-008 selects Cloudinary; the Admin requirements audit and this audit distinguish that decision from pending runtime verification.
