@@ -47,12 +47,13 @@ The order below follows dependencies: authority and booking semantics first; com
 
 ### D-02 — Independent shipment booking eligibility and account requirements
 
-- **Status:** Owner decision required.
-- **Confirmed:** Independent shipment booking is in launch scope.
-- **Decision needed:** Is a booking allowed for (A) signed-in customers only, (B) guests and signed-in customers, or (C) a staged model with restricted guest booking? What contact/identity verification is required before acceptance or physical intake?
-- **Recommendation:** Decide the booking journey separately from the storefront guest-checkout rule; do not infer one from the other.
+- **Status:** Owner decision accepted; recorded as DEC-023 on 29 October 2026.
+- **Accepted choice:** Option B — registered customers only. A customer must have a registered account and be authenticated before creating an independent shipment booking. Guest shipment booking is outside the initial launch scope.
+- **Security invariant:** Booking creation and access must be authorized server-side against the authenticated customer identity. A public page or hidden UI control is not an authorization boundary; a customer may access only bookings for which they have verified entitlement.
+- **Unresolved:** Exact contact/identity verification checkpoints, minimum sender/receiver/payer details, business-account handling, quote validity, and amendment/cancellation authority. This decision does not imply email/phone verification beyond the registration/authentication requirements explicitly defined elsewhere.
+- **Boundary:** Preserve the separate provisional guest-checkout rule for storefront purchases. This decision does not change storefront checkout or decide guest-order recovery/claiming (VLY-004).
 - **Dependencies:** Booking workflow, actor model, quote acceptance, cancellation, customer access, and notification requirements.
-- **Record after decision:** Eligibility, minimum required details, verification checkpoints, and who may amend/cancel a booking.
+- **Acceptance direction:** Unauthenticated users cannot create or retrieve customer booking details; an authenticated customer cannot read or alter another customer's booking; booking remains distinct from physical intake and storefront orders.
 
 ### D-03 — Booking party, sender, receiver, and payer relationships
 
