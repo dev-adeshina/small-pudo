@@ -492,3 +492,19 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's acceptance of the recommended policy. No application source, schema, access rules, deployed configuration, or runtime behaviour changed or was tested.
+
+
+## 17. Owner decision D-05 — 29 October 2026
+
+- [x] Owner accepted service-specific selection of fixed versus calculated pricing, recorded as DEC-026.
+- [x] Confirmed a shared pricing rule set for storefront delivery and independent shipment booking wherever service inputs overlap.
+- [x] Confirmed calculated pricing should use service-applicable inputs from origin/destination or distance band, parcel weight, dimensions/volumetric weight, service class/delivery speed, and configured minimum charge.
+- [x] Confirmed quote validity should be configured by service.
+- [x] Reaffirmed preservation of accepted quote inputs, itemized charges, total, currency, and rate/rule version/effective context; later rate changes must not silently alter accepted quotes or completed payments.
+- [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff in this documentation proposal.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Continue with D-06: measurement discrepancy and adjustment approval.
+- [ ] Keep exact formulas, units, service mapping, distance source/bands, rounding, effective dates, quote expiry/re-quote behaviour, taxes/fees/discounts, and adjustment thresholds unresolved.
+- [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's acceptance of the recommended policy. No application source, schema, pricing implementation, deployed configuration, or runtime behaviour changed or was tested.

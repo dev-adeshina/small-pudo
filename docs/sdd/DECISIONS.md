@@ -243,3 +243,16 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Still unresolved:** Exact role/claim representation and assignment administration; partner system access; measurement units and discrepancy thresholds; supported payment-at-intake methods and evidence; collection verification checkpoints; second-person approvals; and detailed correction/exception workflows.
 - **Rationale:** Keep launch operations practical while separating high-impact actions and avoiding an unnecessarily granular role for every task.
 - **Status:** Owner-approved high-level policy; detailed workflow rules, source reconciliation, and implementation remain open.
+
+
+### DEC-026 — Service-specific hybrid pricing and quote validity
+
+- **Decision date:** 29 October 2026.
+- **Decision:** Assign fixed or calculated pricing by service according to cost characteristics. Storefront delivery and independent shipment booking use one shared approved pricing rule set wherever service inputs overlap.
+- **Calculated-price inputs:** A service may use applicable inputs from origin/destination or a defined distance band, parcel weight, parcel dimensions or volumetric weight, service class/delivery speed, and a configured minimum charge. The exact formula, units, distance source/bands, service-to-formula mapping, and any additional inputs remain unresolved.
+- **Quote validity:** Configure quote validity by service. Quote expiry and whether a fresh quote is required after expiry must be explicitly defined before implementation.
+- **Quote preservation:** Preserve accepted inputs, itemized charges, total, currency, and applicable rate/rule version/effective context. Later rate changes must not silently alter accepted quotes or completed payments.
+- **Unknown charges:** Do not assume taxes, surcharges, discounts, or other fees are zero. Their applicability, calculation, display, and approval remain unresolved.
+- **Adjustments:** Actual intake measurements or other permitted changes may generate a proposed adjustment linked to the original quote. Material discrepancies and adjustments affecting existing payments require review under a policy still to be defined. Charges, additional payments, credits, and refunds remain distinct financial events.
+- **Rationale:** Maintain consistent pricing across relevant booking paths while allowing service-appropriate cost models and preserving commercial facts customers accepted.
+- **Status:** High-level owner policy accepted. Formula catalogue, examples, units, rounding, effective dates, expiry behaviour, tax/fee treatment, adjustment thresholds, and implementation remain open.

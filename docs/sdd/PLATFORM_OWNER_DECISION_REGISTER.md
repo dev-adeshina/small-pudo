@@ -80,12 +80,16 @@ The order below follows dependencies: authority and booking semantics first; com
 
 ### D-05 — Shared pricing formula and quote terms
 
-- **Status:** Owner decision required.
-- **Confirmed:** Shared hybrid pricing applies to storefront delivery and independent shipment booking; preserve the quote inputs/rate version used.
-- **Decision needed:** Which service uses fixed versus calculated rates? Define units, distance source/bands, service classes, minimums, surcharges/discounts, taxes if applicable, currency, rounding, rate effective dates, and quote validity.
-- **Recommendation:** Specify each formula and its inputs in business terms before choosing a technical representation. Keep any unknown tax or fee treatment explicitly unresolved rather than assuming zero.
-- **Dependencies:** Quote acceptance, checkout/booking totals, payment amounts, measurement adjustments, refunds/credits, and financial reporting.
-- **Record after decision:** Formula catalogue, examples, rounding rules, quote validity, rate versioning, and acceptance tests.
+- **Status:** Owner decision accepted at the business-policy level; recorded as DEC-026 on 29 October 2026.
+- **Accepted approach:** Assign fixed or calculated pricing by service according to its cost characteristics; do not force every service into a single pricing formula. Storefront delivery and independent shipment booking share the same approved pricing rule set wherever service inputs overlap.
+- **Calculated-price inputs:** Use only inputs applicable to the selected service, chosen from origin/destination or a defined distance band, parcel weight, parcel dimensions or volumetric weight, service class/delivery speed, and a configured minimum charge. Exact formulae, units, distance source/bands, service mapping, and any additional inputs remain to be defined.
+- **Quote validity:** Configure validity by service. Quote expiry and whether a fresh quote is required must be specified before implementation.
+- **Historical quote preservation:** Preserve accepted quote inputs, itemized charges, total, currency, and applicable rate/rule version/effective context. A later rate change must not silently mutate an accepted quote or completed payment.
+- **Unknown charges:** Do not assume taxes, surcharges, discounts, or other fees are zero. Their applicability, calculation, display, and approval remain unresolved until separately specified.
+- **Adjustments:** Actual intake measurements or other permitted changes may produce a proposed adjustment linked to the original quote. Material discrepancies and adjustments affecting an existing payment require review under a policy still to be defined. Charges, additional payments, credits, and refunds remain separate financial events.
+- **Dependencies:** D-06 measurement discrepancy/adjustment approval, D-07 payment-at-intake evidence, D-08 cancellations/refunds/reconciliation, and D-12 audit/evidence retention.
+- **Acceptance direction:** Equivalent approved inputs for the same service and rate version produce a reproducible result; a rate update does not alter an accepted historical quote; service-specific expiry is enforced; and no unconfirmed fee/tax treatment is invented.
+- **Implementation boundary:** Business policy only. Exact formulas, data representation, UI presentation, and application-code changes remain outside this decision and the platform-wide SDD approval gate.
 
 ### D-06 — Measurement discrepancy and adjustment approval
 
@@ -190,6 +194,6 @@ For each D-01–D-15 item:
 
 ## 5. Current recommended next decision
 
-Proceed to **D-02: Independent shipment booking eligibility and account requirements**. D-01's high-level hybrid responsibility model is accepted, but exact permissions and approval requirements must be resolved within each affected workflow. Decide guest versus signed-in booking independently from the storefront guest-checkout rule.
+Proceed to **D-06: Measurement discrepancy and adjustment approval**. D-01 through D-05 have high-level owner decisions recorded, but action-level staff permissions, exact pricing formulas, quote expiry behaviour, measurement thresholds, financial approval limits, and runtime acceptance evidence remain open. Define when intake measurements may trigger a proposed adjustment and who must review or approve it before it affects an existing quote/payment.
 
 **No decision in this register is approved merely by appearing here.**

@@ -171,6 +171,15 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Next action:** Carry DEC-025 into the consolidated SDD and define detailed acceptance tests only after the remaining dependent decisions and source validation are complete.
 - **Boundary:** Documentation-only decision; no application code, schema, route, permission implementation, or runtime behaviour was changed or tested.
 
+### D-05 pricing policy reconciliation — DEC-026
+
+- **Status:** High-level owner decision accepted; detailed commercial rules remain open.
+- **Accepted:** Select fixed or calculated pricing by service; share the approved rule set across storefront delivery and independent shipment booking wherever inputs overlap; configure quote validity by service; preserve accepted quote inputs, itemized charges, total, currency, and applicable rate/rule version/effective context.
+- **Possible calculated inputs:** Origin/destination or distance band, parcel weight, dimensions/volumetric weight, service class/delivery speed, and configured minimum charge, as applicable to the selected service.
+- **Still open:** Exact formulas, units, service mapping, distance source/bands, rounding, rate effective dates, expiry/re-quote behaviour, taxes/fees/discounts, and adjustment thresholds/approval.
+- **Next action:** Resolve D-06 measurement discrepancy and adjustment approval before defining detailed repricing and runtime acceptance scenarios.
+- **Boundary:** Documentation-only decision; no application code, schema, route, pricing implementation, or runtime behaviour was changed or tested.
+
 ### VLY-019 — Platform-wide SDD completeness and reconciliation
 
 - **Status:** OPEN
