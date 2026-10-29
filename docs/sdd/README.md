@@ -32,19 +32,18 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 4. Ask the session to read `SPEC.md`, `PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md` before proposing changes. For Admin Portal work, also read `ADMIN_REQUIREMENTS.md` and `ADMIN_PORTAL.md`.
 5. Before application-code changes, reconcile `PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md` with the relevant specification and current test evidence. Keep them updated as work is completed.
 
-### Source-of-truth order
+### Authority and evidence precedence
 
-1. The current working repository and its actual code.
-2. `PROGRESS.md` for the latest declared project position.
-3. `SPEC.md` for intended product behaviour and architecture principles.
-4. `ADMIN_REQUIREMENTS.md` for the proposed startup requirements and priorities for the Admin Portal.
-5. `ADMIN_REQUIREMENTS_AUDIT.md` for the current code-to-requirement validation evidence and gaps.
-6. `ADMIN_PORTAL.md` for Admin Portal page-level design.
-7. `DECISIONS.md` for accepted decisions.
-8. `ISSUES.md` for known gaps and unverified claims.
-9. Prior chat history, only when available and consistent with the above.
+Use each source for the kind of fact it can establish:
 
-If the code differs from this documentation, do not blindly rewrite code to match the document. Report the difference, determine whether the code or specification is stale, and update the relevant document after an explicit decision.
+1. **Intended product behaviour:** the reviewed/approved SDD and accepted decisions in `DECISIONS.md`. A draft requirement is not approved merely because it is written down.
+2. **Current implementation facts:** the current repository source, configuration, and schema. Source presence does not prove that a feature works or that the behaviour is product-approved.
+3. **Verified behaviour:** dated test results and deployment/runtime evidence. A reported result must be attributed to the reporter until independently reproduced.
+4. **Current work status:** `PROGRESS.md`, reconciled with open items in `ISSUES.md` and the actual current branch/PR state.
+5. **Domain-specific detail:** use `ADMIN_REQUIREMENTS.md`, `ADMIN_REQUIREMENTS_AUDIT.md`, and `ADMIN_PORTAL.md` for Admin requirements, source-level evidence, and page design respectively.
+6. **Prior chat history:** only when available and consistent with the current approved decisions and evidence.
+
+When sources conflict, do not silently favour code or documentation. Record the discrepancy, identify whether it concerns intended behaviour, implementation, or verification, and resolve it explicitly. The current repository is the evidence for what exists; the approved SDD is the authority for what the system is intended to do.
 
 ### Important status caveat
 
