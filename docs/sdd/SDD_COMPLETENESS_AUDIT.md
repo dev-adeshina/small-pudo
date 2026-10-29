@@ -15,11 +15,11 @@ The owner’s current working direction is to complete and reconcile the platfor
 
 | Document | Current role | Audit finding |
 |---|---|---|
-| `README.md` | Index, continuity protocol, source/evidence precedence | The SDD-first protocol and distinction between intended behaviour, source facts, and verification evidence are now documented. The current-task pointer remains `PROGRESS.md`. |
+| `README.md` | Index, continuity protocol, source/evidence precedence | The SDD-first protocol and distinction between intended behaviour, source facts, and verification evidence are documented. The current-task pointer remains `PROGRESS.md`. |
 | `SPEC.md` | Product/technical specification, conventions, historical roadmap, acceptance principles | Strong technical conventions and customer/order requirements remain. The customer-first roadmap language is now explicitly marked historical; unresolved guest-order claiming and cross-portal requirements remain open. |
 | `DECISIONS.md` | Accepted architecture and product decisions | Important constraints and launch decisions are recorded. Several decisions remain conceptual; exact lifecycle, pricing policy, technical data representation, and role boundaries remain unresolved. |
 | `ISSUES.md` | Risks, gaps, verification tasks, open decisions | Useful gap inventory, but it is Admin-heavy and needs platform-wide coverage and reconciliation against current decisions and progress. |
-| `PROGRESS.md` | Status, evidence, active work, roadmap | The current baseline is now distinguished from the audit’s historical comparison baseline. The continuity reconciliation is the current checkpoint; actor/responsibility modelling follows review/acceptance. |
+| `PROGRESS.md` | Status, evidence, active work, roadmap | The baseline and historical comparison point are distinguished. PR #6 is merged; the actor/responsibility draft is the current review checkpoint. |
 | `SESSION_HANDOFF.md` | New-session continuity instructions | The handoff now points to the continuity-document review checkpoint, then actor/responsibility modelling; Admin authorization and upload tests remain separate outstanding verification tasks. |
 | `ADMIN_PORTAL.md` | Admin page-level design | Substantial design foundation; some page areas remain draft and dependent on unresolved platform workflows. |
 | `ADMIN_REQUIREMENTS.md` | Admin requirements and P0/P1/deferred priorities | Detailed launch-scope inventory, but formal baseline approval and some policy decisions remain open. |
@@ -35,7 +35,7 @@ Status meanings:
 
 | Domain | Current documentation coverage | Missing or incomplete specification | Status |
 |---|---|---|---|
-| Platform vision and architecture | `SPEC.md`, `DECISIONS.md` | Current platform-wide context, actor map, portal boundaries, shared capabilities, and end-to-end context diagram | Partial |
+| Platform vision and architecture | `SPEC.md`, `DECISIONS.md`, `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` | A first-pass actor catalogue and responsibility boundary draft now exists. Owner decisions, final role boundaries, and end-to-end context diagram remain outstanding. | Partial |
 | Customer accounts | `SPEC.md`, `PROGRESS.md`, `ISSUES.md` | Reconcile historical roadmap wording; guest-order claiming/recovery decision; complete customer journeys and acceptance criteria | Partial |
 | Storefront and ecommerce | `SPEC.md`, Admin requirements | Consolidated requirements for catalogue discovery, cart, checkout, stock, order lifecycle, accessibility, empty/error states, and acceptance scenarios | Partial |
 | Shipper experience | Independent shipment booking is recorded in launch decisions and Admin requirements | Shipper/customer eligibility, onboarding, booking, quote acceptance, payment options, label/receipt, shipment history, changes/cancellation, notifications, and support flows | Major gap |
@@ -150,6 +150,6 @@ The platform SDD is ready for implementation planning when:
 
 ## 7. Immediate next action
 
-The continuity-document reconciliation is the current checkpoint. After it is reviewed and accepted, define the platform actors and responsibility boundaries, distinguishing actors, functional modules, and separately deployed portals. Then specify the shared shipment, pricing, payment, intake, transport, and delivery workflows before writing portal-specific documents, because those workflows are dependencies for Shipper, Operations, PUDO, Admin, and Finance.
+The continuity-document reconciliation is complete: PR #6 merged on 29 October 2026. The current checkpoint is review of `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`. Resolve its owner decisions on role separation, PUDO/partner access, Finance/Management boundaries, shipper identity, support, and consequential-action approvals. Then specify the shared shipment, pricing, payment, intake, transport, and delivery workflows before writing portal-specific documents, because those workflows are dependencies for Shipper, Operations, PUDO, Admin, and Finance.
 
 Do not implement new routes, collections, fields, services, or portal pages until their relevant SDD sections have been reviewed and approved.
