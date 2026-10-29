@@ -57,11 +57,14 @@ The order below follows dependencies: authority and booking semantics first; com
 
 ### D-03 — Booking party, sender, receiver, and payer relationships
 
-- **Status:** Owner decision required.
-- **Decision needed:** May the booking party differ from the sender, receiver, and payer? If yes, what consent, contact validation, and change authority apply?
-- **Recommendation:** Model these as distinct business relationships in the specification even if the initial UI supports the same person in multiple roles; do not assume they are always identical.
-- **Dependencies:** Booking data requirements, access/privacy rules, intake handover, payment attribution, and delivery/collection evidence.
-- **Record after decision:** Who may book, pay, hand over, collect, change recipient details, and receive each class of notification.
+- **Status:** Owner decision accepted; recorded as DEC-024 on 29 October 2026.
+- **Accepted choice:** The booking party, sender, receiver/collection recipient, payer, and physical handover person may be different parties. One person may occupy multiple roles, but each relationship must be explicit wherever it affects authority, liability, access, notification, payment attribution, intake, or collection.
+- **Change authority:** Do not grant blanket edit authority merely because someone is the booking party, sender, receiver, or payer. Define authority by change type and shipment lifecycle stage. The booking party may initiate permitted requests; receiver/collection changes must follow the relevant verification and approval policy, with staff-mediated handling where the change affects an already-intaked or dispatched shipment. Detailed verification checkpoints and transition-specific permissions remain open.
+- **Payer access:** Payment alone grants the payer payment confirmation/receipt information only by default, not full shipment details. Additional shipment visibility requires a separately approved entitlement and minimum-data rule; notification recipients and fields must follow the party's authorized relationship.
+- **Security/privacy invariants:** Booking does not itself authorize parcel collection. Payment does not itself authorize access to private shipment details. The person handing over a parcel and the person collecting it must satisfy the approved intake/collection verification policy.
+- **Dependencies:** Booking data requirements, access/privacy rules, intake handover, payment attribution, recipient changes, collection authorization, and notifications.
+- **Still unresolved:** Exact identity/contact verification checkpoints; which change types the booking party may complete directly; which changes require sender/receiver consent or staff approval; and detailed collection-proof and notification rules. This decision does not authorize a schema or implementation.
+- **Acceptance direction:** Tests must distinguish booking-party, sender, receiver, payer, handover-person, and collection-person entitlements; deny access based solely on a booking ID or payment; and reject changes outside the approved actor/change/stage policy.
 
 ### D-04 — Staff-created walk-in intake and location capabilities
 
