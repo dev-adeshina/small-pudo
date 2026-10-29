@@ -114,9 +114,11 @@ Open policy: eligibility, guest/account rules, quote validity, booking confirmat
 ### 4.2 Quote and adjustment lifecycle
 
 Conceptual progression:
-- Pricing inputs are validated.
-- A quote is calculated from the approved shared rule set.
-- The quote and rate/rule context are preserved.
+- Pricing inputs are validated for the selected service.
+- Fixed or calculated pricing is selected according to that service's approved rule; calculated rules use only the inputs applicable to the service (which may include origin/destination or distance band, parcel weight, dimensions/volumetric weight, service class/delivery speed, and a configured minimum charge).
+- A quote is calculated from the shared approved rule set wherever storefront delivery and independent shipment booking inputs overlap.
+- The quote's validity is determined by the selected service's configured policy.
+- The quote and rate/rule context are preserved, including accepted inputs, itemized charges, total, currency, and applicable effective/version context.
 - The customer accepts, declines, or lets the quote expire under the approved rule.
 - Later measurement or service changes may create a proposed adjustment.
 - Any required review/approval occurs before the adjustment becomes binding.
@@ -128,7 +130,7 @@ Required guards:
 - A proposed adjustment is not a settled financial event.
 - An adjustment affecting an existing payment follows the approved review policy.
 
-Open policy: formulas, validity, thresholds, rounding, taxes, allowed repricing events, customer consent, approval limits, and consequences if the customer declines.
+Open policy: exact formulas and service mapping, units/distance source and bands, rounding, rate effective dates, expiry and re-quote behaviour, tax/fee/discount treatment, allowed repricing events, customer consent, adjustment thresholds/approval limits, and consequences if the customer declines.
 
 ### 4.3 Payment and financial-event lifecycle
 
