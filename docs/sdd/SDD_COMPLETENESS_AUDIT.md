@@ -17,6 +17,7 @@ The owner’s current working direction is to complete and reconcile the platfor
 |---|---|---|
 | `README.md` | Index, continuity protocol, source/evidence precedence | The SDD-first protocol and distinction between intended behaviour, source facts, and verification evidence are documented. The current-task pointer remains `PROGRESS.md`. |
 | `PLATFORM_SHARED_WORKFLOWS.md` | Draft cross-domain workflow model | First-pass workflows and invariants are documented; owner policy decisions, final transitions, data/API contracts, and acceptance criteria remain open. |
+| `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` | Draft conceptual domain/lifecycle/API/security model | Conceptual relationships, lifecycle guards, contract categories, security expectations, and source-validation questions are listed; owner decisions and source mapping remain open. |
 | `SPEC.md` | Product/technical specification, conventions, historical roadmap, acceptance principles | Strong technical conventions and customer/order requirements remain. The customer-first roadmap language is now explicitly marked historical; unresolved guest-order claiming and cross-portal requirements remain open. |
 | `DECISIONS.md` | Accepted architecture and product decisions | Important constraints and launch decisions are recorded. Several decisions remain conceptual; exact lifecycle, pricing policy, technical data representation, and role boundaries remain unresolved. |
 | `ISSUES.md` | Risks, gaps, verification tasks, open decisions | Useful gap inventory, but it is Admin-heavy and needs platform-wide coverage and reconciliation against current decisions and progress. |
@@ -152,6 +153,6 @@ The platform SDD is ready for implementation planning when:
 
 ## 7. Immediate next action
 
-The continuity-document reconciliation was completed in PR #6 and the actor/responsibility model was merged in PR #7 on 29 October 2026. The current checkpoint is review of `PLATFORM_SHARED_WORKFLOWS.md`. The nine actor-model owner decisions remain open unless separately recorded in `DECISIONS.md`. Review shared shipment, pricing, payment, intake, transport, dispatch, delivery, notification, and audit workflows before writing portal-specific documents, because those workflows are dependencies for Shipper, Operations, PUDO, Admin, and Finance.
+The continuity-document reconciliation was completed in PR #6, the actor/responsibility model was merged in PR #7, and the shared workflow draft was owner-reviewed and merged in PR #8 on 29 October 2026. The current checkpoint is review of `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`. The actor-model decisions and detailed workflow policies remain open unless separately recorded in `DECISIONS.md`. Review the conceptual relationships and contract checklist, then map existing source read-only before proposing technical changes or portal-specific requirements.
 
 Do not implement new routes, collections, fields, services, or portal pages until their relevant SDD sections have been reviewed and approved.

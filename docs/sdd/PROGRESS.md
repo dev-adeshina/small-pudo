@@ -3,11 +3,11 @@
 **Last updated:** 29 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Current main baseline before this PR:** `5c4ecbaa0172d4d35b91252edb87f95e762af17f` — merge of PR #7, `docs: draft platform actor responsibility model`.
+**Current main baseline before this PR:** `aac7c689119ed5769f9e7e3125368b92c6e4ea64` — merge of PR #8, `docs: draft shared platform workflows`.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 and PR #4 were checked on 29 October 2026 and remain open/unmerged; their changes are not in the current `main` baseline.
-**Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. PR #5 established the first-pass audit and PR #6 merged the continuity-document reconciliation. PR #7 merged the actor/responsibility model into the documentation baseline. The current workstream is the draft shared platform workflow specification in `PLATFORM_SHARED_WORKFLOWS.md`; no application-code changes are authorized.
+**Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. PR #5 established the first-pass audit and PR #6 merged the continuity-document reconciliation. PR #7 merged the actor/responsibility model and PR #8 merged the shared-workflow draft into the documentation baseline. The current workstream is `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, a conceptual domain/lifecycle/API/security draft; no application-code changes are authorized.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -23,7 +23,7 @@
 
 VeriLyft remains the existing Next.js App Router ecommerce and delivery application using TypeScript, Firebase Authentication, Firestore/Firebase Admin, Paystack, Cloudinary, and the shared cart context. Continue the current architecture; do not rebuild it or introduce a parallel data/auth layer.
 
-The current `main` baseline includes PR #7, merged as `5c4ecbaa0172d4d35b91252edb87f95e762af17f`. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. The audit’s reviewed comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` is historical, not the current head. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #3 (inactive category/product visibility) and PR #4 (category product-count compatibility) were checked on 29 October 2026 and remain open/unmerged.
+The current `main` baseline includes PR #8, merged as `aac7c689119ed5769f9e7e3125368b92c6e4ea64`. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. The audit’s reviewed comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` is historical, not the current head. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #3 (inactive category/product visibility) and PR #4 (category product-count compatibility) were checked on 29 October 2026 and remain open/unmerged.
 
 Customer authentication, profile, customer-scoped order history/details, guest tracking, and guest tracking email have implementation evidence recorded below. Guest-order claiming remains undecided. The admin dashboard, catalogue, orders, and Cloudinary upload foundations exist, but current authorization behaviour, authorized/denied image uploads, and payment/stock edge cases still need runtime verification.
 
@@ -393,8 +393,10 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Draft `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` to map actor classes, functional responsibilities, and portal/module boundaries without authorizing implementation.
 - [x] Merge PR #7, `docs: draft platform actor responsibility model`, on 29 October 2026 (merge `5c4ecba`); its nine owner decisions remain unresolved unless separately recorded.
 - [x] Create `PLATFORM_SHARED_WORKFLOWS.md` as the next documentation-only draft, covering storefront fulfilment, independent booking, intake/custody, pricing, payments/reconciliation, routing, dispatch, delivery, notifications, and audit/disclosure.
-- [ ] Review and approve the shared workflow draft; resolve or explicitly retain the owner decisions listed in it.
-- [ ] Define conceptual domain/data relationships, state transitions, API/security contracts, audit requirements, and acceptance/test criteria before proposing implementation.
+- [x] Review and merge PR #8, `docs: draft shared platform workflows`, on 29 October 2026 (merge `aac7c68`); detailed policy questions remain open.
+- [x] Create `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` as the next documentation-only draft for conceptual relationships, lifecycle boundaries, API/service contracts, security, and source validation.
+- [ ] Review and approve the domain/lifecycle/contract draft; resolve or explicitly retain its owner decisions.
+- [ ] Perform read-only source inspection and map existing records, routes, authorization, payment verification, idempotency, concurrency, uploads, and test evidence to the accepted conceptual design.
 - [ ] Complete the Shipper, Operations, PUDO, Finance, Management, and Customer functional specifications; record the separate Driver Portal as deferred unless scope changes.
 - [ ] Obtain owner decisions on unresolved business policies and formal launch priorities.
 - [x] PR #6, `docs: reconcile platform SDD continuity baseline`, reviewed and merged on 29 October 2026 (merge `a88a0d6`).
