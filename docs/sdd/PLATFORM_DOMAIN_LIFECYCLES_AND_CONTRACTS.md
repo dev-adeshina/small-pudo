@@ -4,7 +4,7 @@
 **Last updated:** 29 October 2026  
 **Scope:** Conceptual domain boundaries, lifecycle transition rules, service/API contract expectations, and authorization/security invariants  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, PLATFORM_SHARED_WORKFLOWS.md, SDD_COMPLETENESS_AUDIT.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-024
 
 ## 1. Purpose and guardrails
 
@@ -68,7 +68,7 @@ The following are conceptual objects/record responsibilities, not proposed Fires
 - A shipment may have multiple intake, custody, route-leg, movement, delivery-attempt, and evidence records over time.
 - A route proposal may be revised before Operations approves assignments. Approved assignments and subsequent physical movement events remain separately traceable.
 - A shipment or order may have multiple payment/financial events. Financial events must link to their business purpose and, where relevant, provider transaction and original event.
-- A person may occupy more than one business relationship (customer, shipper, sender, payer, receiver), but each relationship must be explicit where it affects access, notification, liability, or change authority.
+- A person may occupy more than one business relationship (customer, shipper, sender, payer, receiver), but each relationship must be explicit where it affects access, notification, liability, or change authority. DEC-024 requires that payer status alone grants payment confirmation/receipt information only by default, and neither booking nor payment alone authorizes physical collection or full shipment-detail access.
 - A location has explicit service capabilities and authorization boundaries; location type alone must not imply an unapproved capability.
 - An audit record may reference an action, decision, target, actor, reason, and evidence reference. It should not store secrets or duplicate sensitive payloads unnecessarily.
 
@@ -81,22 +81,26 @@ The following are conceptual objects/record responsibilities, not proposed Fires
 5. Whether one payment can settle multiple bookings/orders, and whether partial settlement is allowed.
 6. How quote versions, adjustments, refunds, credits, and provider transactions are linked.
 7. How a route leg relates to a shipment containing multiple parcels.
-8. Which identity relationships must be verified and which may be recorded as supplied information.
+8. Exact identity relationships/checkpoints to verify and which may be recorded as supplied information; DEC-024 has already accepted distinct party roles, payment-only payer visibility by default, and no inferred collection authority.
 9. What data retention, deletion, legal hold, and evidence access rules apply.
 10. Which concepts already exist in source and should be reused rather than represented by new records.
 
 ## 4. Lifecycle boundaries and transition rules
+
+**Accepted party/access rule (DEC-024):** Booking party, sender, receiver/collection recipient, payer, and physical handover person may differ. Access, change authority, notification scope, and collection entitlement must be checked independently. Payer status alone grants payment confirmation/receipt information only by default. A booking does not authorize collection, and payment does not authorize full shipment-detail access. Exact verification checkpoints, change-type permissions, consent requirements, and post-intake/post-dispatch handling remain unresolved.
 
 The lists below are lifecycle dimensions and transition requirements, not approved status values. Do not translate them directly into enums until owners approve the transitions and source inspection confirms compatibility.
 
 ### 4.1 Booking lifecycle
 
 Conceptual progression:
-- Booking intent is started.
+- Booking intent is started by a registered, authenticated customer.
+- Booking party, sender, receiver/collection recipient, payer, and expected handover person are recorded as distinct relationships where relevant; a person may occupy multiple roles.
 - Required details and quote inputs are collected.
 - A quote is produced and presented.
 - The quote is accepted or booking is confirmed under the approved rule.
-- The booking may be changed, cancelled, abandoned, or proceed to physical intake according to policy.
+- The booking may be changed, cancelled, abandoned, or proceed to physical intake according to policy. Change authority is defined by change type and lifecycle stage; booking-party status does not create blanket authority.
+- A payer who is not separately entitled receives payment confirmation/receipt information only by default; payment alone does not grant full shipment-detail access or collection authority.
 - Intake either links to an existing booking or follows the approved staff-created walk-in path.
 
 Required guards:

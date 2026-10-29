@@ -99,7 +99,8 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Priority:** High for the approved parcel-operations launch scope
 - **Evidence:** The source-level audit found no dedicated Admin routes in the inspected paths for shipments, PUDO management, delivery pricing, transactions, or audit logs. Existing order shipping metadata does not by itself implement independent shipments or route-leg movements.
 - **Latest source check:** The second source pass found no dedicated shipment, pricing, PUDO, route/movement, or audit service module in the active TypeScript source inventory. This is a source-surface finding only; Firestore data and the uninspected `pudo.zip` archive were not checked.
-- **Policy update:** DEC-023 resolves D-02: only registered, authenticated customers may create independent shipment bookings at launch. Guest shipment booking is excluded; this does not alter storefront guest checkout.
+- **Policy update:** DEC-023 resolves D-02: only registered, authenticated customers may create independent shipment bookings at launch. DEC-024 resolves D-03's high-level policy: booking party, sender, receiver/collection recipient, payer, and handover person may differ; payer visibility defaults to payment confirmation/receipt only; payment does not authorize full shipment-detail access; booking does not authorize collection; change authority is defined by type and lifecycle stage. Guest shipment booking remains excluded and storefront guest checkout is unchanged.
+- **Still open:** Detailed verification checkpoints, sender/receiver consent, change-type permissions, post-intake/post-dispatch controls, business-account handling, and runtime tests.
 - **Next action:** Complete the remaining owner decisions and reconcile the platform-wide SDD, then design the smallest compatible data and workflow representation after SDD approval.
 - **Acceptance:** Shipment, order, payment, and transport-movement identities/lifecycles remain distinct; booking creation and customer-scoped access are server-authorized; no schema changes occur before review.
 
@@ -175,6 +176,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Status:** OPEN
 - **Priority:** Blocking for detailed implementation planning
 - **Evidence:** `PLATFORM_SHARED_WORKFLOWS.md` was reviewed and merged in PR #8 on 29 October 2026. It establishes a reviewed workflow-draft baseline but leaves detailed policy unresolved by design.
+- **Policy update:** DEC-024 now resolves the high-level D-03 party/access direction. The shared workflow must retain the remaining detail as open policy: verification checkpoints, consent, per-change permissions and lifecycle stage, post-intake/post-dispatch handling, and notification fields.
 - **Next action:** Keep the unresolved policy list in `PLATFORM_SHARED_WORKFLOWS.md` and `DECISIONS.md` current while the domain/lifecycle contract work proceeds. Do not close the issue until each launch-essential workflow has agreed owners, transitions, permissions, evidence, exception outcomes, and testable acceptance criteria—or an explicit owner decision/blocker.
 - **Acceptance:** Each launch-essential workflow has an agreed owner, trigger, transitions, exception outcomes, permissions, evidence, and testable acceptance criteria—or a clearly recorded owner decision/blocker. No application code is changed to close this issue.
 

@@ -4,7 +4,7 @@
 **Last updated:** 29 October 2026  
 **Scope:** Cross-domain business workflows and invariants for storefront fulfilment and independent parcel shipments  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, ADMIN_REQUIREMENTS.md, ADMIN_PORTAL.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022, DEC-023
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022, DEC-023, DEC-024
 
 ## 1. Purpose, status, and boundaries
 
@@ -78,15 +78,18 @@ Use these evidence labels consistently:
 4. The shipper reviews the quote and chooses an allowed payment path. Accepted launch scope includes advance online payment and payment at intake; exact method availability and rules still require definition.
 5. The system records booking intent/acceptance and supplies a booking reference or receipt. The exact point at which a quote becomes an accepted booking must be specified.
 6. The booking is available to the intake/Operations workflow. It remains a planned booking until physical receipt is recorded.
-7. The shipper, sender, payer, and person physically handing over the parcel may be different people; the flow must record the relationships required by the approved policy.
+7. The booking party, sender, receiver/collection recipient, payer, and person physically handing over the parcel may be different people. Record the distinct relationships where they affect access, authority, liability, payment attribution, notifications, intake, or collection.
+8. Booking-party status does not itself authorize physical collection, and payer status does not itself authorize full shipment-detail access. Payment confirmation/receipt information is the default payer visibility; broader access requires a separately approved entitlement.
+9. Define changes by type and lifecycle stage. The booking party may initiate permitted requests, but receiver/collection changes follow the applicable verification and approval policy. Changes affecting a shipment after intake or dispatch must use the approved controlled, staff-mediated workflow; the detailed change matrix remains open.
 
 ### Open policy / design questions
 
 - **Resolved by DEC-023:** only registered, authenticated customers may create independent shipment bookings; guest shipment booking is out of launch scope.
+- **Resolved by DEC-024:** booking party, sender, receiver/collection recipient, payer, and handover person may differ; payer visibility defaults to payment confirmation/receipt only; payment does not grant full shipment-detail access; booking does not authorize collection; change permissions must be defined by change type and lifecycle stage.
 - Can one customer account act as both storefront customer and shipper? The actor model permits this, but account identity and booking-record relationships must still be verified in the detailed design.
-- What registration, contact, or identity verification beyond sign-in is required, and at which booking/intake checkpoints? Do not assume an additional verification method before it is decided.
+- What registration, contact, or identity verification beyond sign-in is required, and at which booking/intake/collection checkpoints? Do not assume an additional verification method before it is decided.
+- Which change types can the booking party complete directly, when is sender/receiver consent required, and which changes require authorized staff? How does this vary before intake, after intake, after dispatch, or after payment?
 - What sender, receiver, payer, booking-party, and handover-person information is required, and when must each identity be verified?
-- Which booking changes/cancellations are allowed before intake, after intake, after dispatch, or after payment?
 - How long is a quote valid, what makes a booking accepted, and when is a reference/label/receipt issued?
 - Which payment methods are supported at intake and how are they verified and recorded?
 - What happens when the quote is paid online but the parcel is never handed over?
@@ -97,7 +100,9 @@ Use these evidence labels consistently:
 - An authenticated customer can access or amend only bookings they are authorized to access; Customer A cannot read or change Customer B's booking.
 - Booking acceptance never claims physical receipt or custody.
 - The quote and the applied inputs/rates can be reconstructed for later review.
-- Booking-party identity and permissions are sufficient to prevent unauthorized changes.
+- Booking-party identity and permissions are sufficient to prevent unauthorized changes; role relationships do not automatically grant full shipment visibility or collection authority.
+- A payer who is not otherwise authorized receives payment confirmation/receipt information only by default; payment alone cannot retrieve private shipment details.
+- Receiver/collection changes are allowed only through the approved change-type and lifecycle-stage policy, with required verification/consent and controlled handling after intake/dispatch.
 - A booking can be distinguished from a storefront order and from later movement records.
 - Unpaid, partially settled, cancelled, and abandoned bookings have explicitly defined outcomes.
 
@@ -393,7 +398,7 @@ The following cases require explicit outcomes in the detailed lifecycle and acce
 This draft deliberately does not resolve the following:
 
 1. **Actor and staff-role boundaries:** DEC-022 accepts the minimal hybrid staff model. Workflow-specific permissions, second-person approval thresholds, PUDO/station authority, Finance boundaries, and external-party access remain open in §6 of PLATFORM_ACTORS_AND_RESPONSIBILITIES.md.
-2. **Shipper eligibility and identity:** guest booking, account requirements, multi-capacity accounts, sender/receiver/payer relationships, verification points, and change/cancellation authority.
+2. **Shipper eligibility and identity:** guest booking is excluded by DEC-023; DEC-024 accepts distinct booking-party/sender/receiver/payer/handover roles and payment-only payer access by default. Exact verification points, consent, change/cancellation authority by type and lifecycle stage, and business-account handling remain open.
 3. **Lifecycle/state transitions:** allowed states and transitions for booking, intake, shipment, route leg, dispatch, delivery, failed delivery, cancellation, and returns.
 4. **Pricing policy:** formulas, units, distance source/bands, service classes, quote validity, thresholds, approval limits, rounding, taxes, surcharges, and permitted methods.
 5. **Payment and settlement:** payment-at-intake methods, late/duplicate/contradictory events, refunds/credits/additional charges, reconciliation, and separation of duties.

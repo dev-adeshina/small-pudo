@@ -26,7 +26,8 @@
 - PR #13, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, and PR #14, `PLATFORM_OWNER_DECISION_REGISTER.md`, are merged to `main`.
 - Owner selected **Option C** for D-01 on 29 October 2026: minimal hybrid staff model, recorded in DEC-022. PR #15 containing the documentation reconciliation is merged.
 - D-01 is no longer an open high-level model choice. Exact action permissions, approval thresholds, and workflow-specific separation of duties remain unresolved.
-- Owner selected **Option B** for D-02 on 29 October 2026: independent shipment booking is limited to registered, authenticated customers at launch; recorded in DEC-023 in the current documentation PR.
+- Owner selected **Option B** for D-02 on 29 October 2026: independent shipment booking is limited to registered, authenticated customers at launch; recorded in DEC-023.
+- Owner accepted D-03's recommended party/access policy on 29 October 2026: booking party, sender, receiver, payer, and handover person may differ; payer access defaults to payment confirmation/receipt only; booking/payment alone do not grant collection or full shipment-detail access; change authority is defined by change type and lifecycle stage. Recorded in DEC-024 in the current documentation PR.
 - Guest shipment booking is excluded at launch; ordinary storefront guest checkout remains unchanged.
 - Application-code work remains blocked until the platform-wide SDD is reconciled and explicitly approved.
 
@@ -465,3 +466,15 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Keep the platform-wide SDD implementation gate in force; no application-code changes or tests are authorized by this decision.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's explicit choice. No application source, schema, access rules, deployed configuration, or runtime behavior changed or was tested.
+
+
+## 15. Owner decision D-03 — 29 October 2026
+
+- [x] Owner accepted the recommended party/access direction: booking party, sender, receiver/collection recipient, payer, and physical handover person may differ, with relationships explicit where they affect access, authority, liability, payment attribution, notification, intake, or collection.
+- [x] Recorded DEC-024: payer visibility defaults to payment confirmation/receipt only; payment does not grant full shipment-detail access; booking does not authorize collection; change authority is defined by change type and lifecycle stage.
+- [x] Reconciled the owner decision register, decisions log, actor model, shared workflows, domain/lifecycle contracts, cross-domain acceptance matrix, issues tracker, progress tracker, and session handoff.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Continue with D-04: staff-created walk-in intake and location capabilities.
+- [ ] Keep detailed verification checkpoints, consent rules, per-change permissions, post-intake/post-dispatch handling, and runtime acceptance tests open until separately defined.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's acceptance of the recommended policy. No application source, schema, access rules, deployed configuration, or runtime behavior changed or was tested. The platform-wide SDD implementation gate remains in force.
