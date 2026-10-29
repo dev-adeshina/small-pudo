@@ -3,11 +3,11 @@
 **Last updated:** 29 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Current main baseline before this PR:** `aac7c689119ed5769f9e7e3125368b92c6e4ea64` — merge of PR #8, `docs: draft shared platform workflows`.
+**Current main baseline inspected:** `c56be9b121e6007e1e99c6df2d3984e709771a92` — includes PR #9 domain/lifecycle draft and PR #3 inactive catalogue visibility fix.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 and PR #4 were checked on 29 October 2026 and remain open/unmerged; their changes are not in the current `main` baseline.
-**Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. PR #5 established the first-pass audit and PR #6 merged the continuity-document reconciliation. PR #7 merged the actor/responsibility model and PR #8 merged the shared-workflow draft into the documentation baseline. The current workstream is `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, a conceptual domain/lifecycle/API/security draft; no application-code changes are authorized.
+**Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. PR #5 established the first-pass audit and PR #6 merged the continuity-document reconciliation. PR #7 merged the actor/responsibility model and PR #8 merged the shared-workflow draft into the documentation baseline. PR #9 merged the domain/lifecycle/API/security draft. The current workstream is read-only source traceability and reconciliation against the platform SDD; no application-code changes are authorized.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -29,7 +29,7 @@ Customer authentication, profile, customer-scoped order history/details, guest t
 
 **Latest runtime checkpoint (28 October 2026, user-reported):** `npx tsc --noEmit` exited successfully. `npm run dev` started Next.js 16.4.2 and reported `Ready in 936ms`. This confirms the type check and development-server startup only; it does not establish browser authorization, API security, upload success, or production-build status for the current checkout.
 
-**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. PR #6 and PR #7 are merged. The actor/responsibility model is in the documentation baseline, with its owner decisions still open. The current workstream is shared workflow design—not application-code changes.
+**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. PR #6 and PR #7 are merged. The actor/responsibility model is in the documentation baseline, with its owner decisions still open. The current workstream is source traceability and reconciliation—not application-code changes.
 
 ## 2. Feature tracker
 
@@ -404,3 +404,15 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Approve the complete platform SDD baseline before resuming application-code changes.
 
 **Scope note:** This phase permits read-only source inspection to establish implementation facts. It does not authorize application-code changes, new routes, schema changes, or new portal implementations.
+
+
+## Current source-traceability checkpoint — 29 October 2026
+
+- [x] PR #9 merged: domain/lifecycle/API/security draft is now in `main`; its unresolved policy decisions remain open.
+- [x] Read-only source inventory completed against `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`; findings are documented in `IMPLEMENTATION_SOURCE_TRACEABILITY.md`.
+- [x] Confirmed PR #3 is merged into the inspected baseline; inactive category/product source filtering is present. Browser regression testing was not performed by this source inspection.
+- [ ] Continue read-only inspection for existing audit/event helpers, payment recovery, direct Firestore access, and any existing PUDO/pricing/route data.
+- [ ] Reconcile source findings with `ISSUES.md`, `SDD_COMPLETENESS_AUDIT.md`, and `SESSION_HANDOFF.md`; keep source facts distinct from reported tests.
+- [ ] Resolve owner decisions and approve the complete platform-wide SDD before application-code changes.
+
+**Inspection boundary:** This checkpoint used GitHub source reads only. It did not run tests, inspect production Firestore data/configuration, reproduce browser behaviour, or change application code.
