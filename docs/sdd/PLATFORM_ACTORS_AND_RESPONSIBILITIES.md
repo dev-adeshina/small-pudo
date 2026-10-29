@@ -3,7 +3,7 @@
 **Document status:** Draft for owner review — not approved for implementation  
 **Last updated:** 29 October 2026  
 **Scope:** Platform-level human/system actors, responsibility boundaries, and portal/module distinctions  
-**Related decisions:** DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, DEC-021
+**Related decisions:** DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, DEC-021, DEC-022, DEC-023
 
 ## 1. Purpose and status
 
@@ -31,10 +31,10 @@ The model preserves the owner-confirmed launch scope: storefront orders and inde
 
 | Actor / actor class | Status | Main responsibility or interaction | Boundaries and unresolved points |
 |---|---|---|---|
-| Public visitor | Proposed | Browse public storefront information and products; begin a purchase or shipment-booking journey if offered publicly. | Publicly available shipment-booking steps and rate visibility need workflow definition. |
+| Public visitor | Proposed | Browse public storefront information and products; may enter the independent shipment-booking journey only through registration/sign-in before booking creation. | Public quote/rate visibility and pre-registration information remain to be defined; a visitor cannot create a shipment booking as a guest. |
 | Storefront customer — guest | Confirmed in principle | Purchase VeriLyft's own products without mandatory account registration; access an order using the approved guest-access mechanism. | Guest checkout is preserved. Guest-order recovery/claiming is unresolved (VLY-004). |
 | Storefront customer — signed in | Confirmed | Manage own account/profile and access only orders associated with verified ownership. | Account identity does not grant staff/Admin access. Whether and how an existing guest order can be claimed remains unresolved. |
-| Independent shipper / booking party | Confirmed | Book a shipment independently of a storefront purchase, as an individual or business. | Eligibility, account requirement, booking amendments/cancellation, business accounts, and how the booking party relates to sender/payer are unresolved. Do not assume a separate Shipper Portal is required. |
+| Independent shipper / booking party | Confirmed | A registered, authenticated customer may book a shipment independently of a storefront purchase, as an individual or business subject to the still-open business-account policy. | Guest shipment booking is excluded at launch. Booking access must be authorized server-side and scoped to the authenticated customer's entitlement. Amendment/cancellation authority, business-account handling, and the relationship to sender/payer remain unresolved. Do not assume a separate Shipper Portal is required. |
 | Sender | Conceptual business participant | Supplies or confirms parcel and origin information and may hand a parcel over. | Sender may or may not be the booking party or payer. Identity verification and evidence requirements are unresolved. |
 | Receiver / collection recipient | Conceptual business participant | Receives a delivered parcel or collects it through an approved collection workflow. | Receiver identity checks, collection authorization, and evidence requirements are unresolved. |
 | Authorized Admin staff | Confirmed as a privileged actor class; hybrid model accepted | Manage the storefront catalogue and oversee orders, shipments, transactions, pricing, network, settings, and operational visibility within approved permissions. | Exact action-by-action permissions and approval rules remain to be defined. Customer authentication alone is insufficient; sensitive actions must have explicit server-enforced boundaries. |
