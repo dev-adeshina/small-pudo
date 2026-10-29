@@ -5,8 +5,7 @@
 -   **Document type:** Product + technical specification for spec-driven
     development
 -   **Baseline date:** 17 October 2026
--   **Status:** Working specification; verify against the complete local
-    repository before implementation
+-   **Status:** Working specification; reconcile with `SDD_COMPLETENESS_AUDIT.md` before implementation
 -   **Primary objective:** Continue the existing application without
     unnecessary redesign or duplicate architecture.
 
@@ -20,10 +19,7 @@ product discovery, cart management, checkout, order creation, payment
 handling, admin catalogue management, and an initial admin
 shipping/fulfilment workflow.
 
-The near-term goal is to complete the customer-facing account experience
-and connect customers to their own order history. The remaining customer
-delivery experience and Telegram fulfilment integration are
-intentionally later phases.
+Historical roadmap note: this overview was written before the customer-account and tracking milestones recorded in `PROGRESS.md`. Treat the dated progress tracker and current source/test evidence as the status record, not the original near-term objective. The current owner-approved working direction is to complete and reconcile the platform-wide SDD before further application-code changes.
 
 ### Product principles
 
@@ -414,6 +410,8 @@ that can be tested end-to-end.
 ------------------------------------------------------------------------
 
 ## 9. Feature roadmap and scope boundaries
+
+> Historical roadmap: the phase sequence below records the original staged plan. Reconcile it with `PROGRESS.md` and `SDD_COMPLETENESS_AUDIT.md` before selecting the next implementation task. The current active phase is platform-wide SDD completion; do not resume application-code changes until the SDD baseline is reviewed and approved.
 
 ### Phase 1 --- Focused audit
 

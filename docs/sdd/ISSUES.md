@@ -158,6 +158,15 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 6. **Staff permissions:** Current allowlist/admin-claim design does not prove a granular staff role/permission model. Confirm whether role separation is required at launch.
 7. **Admin priority baseline:** Review the P0/P1/deferred inventory in `ADMIN_REQUIREMENTS.md`; operating-model choices are recorded as owner-confirmed, but formal baseline approval remains pending.
 
+
+### VLY-019 — Platform-wide SDD completeness and reconciliation
+
+- **Status:** OPEN
+- **Priority:** Blocking for new application-code implementation under the current owner-approved working direction.
+- **Evidence:** The current SDD contains a general product/technical specification and detailed Admin Portal documents, but the Shipper, Finance, Management, Operations/PUDO workflows, shared pricing/settlement policies, and cross-portal acceptance criteria are not yet fully specified. Continuity documents also contain stale active-task/roadmap statements and an audit wording conflict regarding DEC-008.
+- **Next action:** Use `SDD_COMPLETENESS_AUDIT.md` to reconcile continuity documents, define actors and responsibility boundaries, specify shared shipment/pricing/payment/intake/transport/delivery workflows, and complete portal-level requirements before implementation.
+- **Acceptance:** Every launch-essential workflow has an agreed owner, lifecycle, permissions, data relationships, API/integration expectations, exception handling, and acceptance/test criteria; unresolved business rules are explicitly listed for owner decision; continuity docs agree on status and evidence; no application code is changed to close this issue.
+
 ## Maintenance rule
 
 When new evidence arrives, update the relevant issue in this file and the matching row/session log in `PROGRESS.md`. Record material architecture/product decisions in `DECISIONS.md`. Do not close an issue solely because a source file exists; use actual test results where the acceptance criterion requires runtime behaviour.
