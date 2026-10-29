@@ -8,7 +8,8 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 
 - `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and historical roadmap (not the current work order).
 - `SDD_COMPLETENESS_AUDIT.md` — platform-wide documentation coverage, inconsistencies, gaps, and the proposed SDD completion sequence.
-- `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` — draft platform actor catalogue, responsibility boundaries, portal/module distinction, and decisions requiring owner review.
+- `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` — platform actor catalogue, responsibility boundaries, portal/module distinction, and unresolved owner decisions.
+- `PLATFORM_SHARED_WORKFLOWS.md` — draft cross-domain workflows for storefront fulfilment, independent shipment booking, intake/custody, pricing, payments, routing, dispatch, delivery, notifications, and audit/evidence.
 - `ADMIN_REQUIREMENTS.md` — consolidated Admin Portal requirements, startup priorities, scope boundaries, and requirements-baseline approval checklist.
 - `ADMIN_REQUIREMENTS_AUDIT.md` — source-level validation matrix for requirements versus existing code, including evidence, gaps, and outstanding verification.
 - `ADMIN_PORTAL.md` — Admin Portal page-by-page design, confirmed decisions, scope boundaries, and unresolved design items.
@@ -22,7 +23,7 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 1. Complete and reconcile the platform-wide SDD before application-code changes.
 2. Use approved SDD documents as the source of intended product behaviour; use source inspection to establish current implementation facts and test/deployment evidence to establish verified behaviour.
 3. Record conflicts between intended behaviour, source, and evidence. Do not silently treat implementation as product approval or documentation as proof of implementation.
-4. Use `SDD_COMPLETENESS_AUDIT.md` as the current checklist for platform-wide documentation gaps.
+4. Use `SDD_COMPLETENESS_AUDIT.md` as the current checklist for platform-wide documentation gaps and `PLATFORM_SHARED_WORKFLOWS.md` for the current shared-workflow draft.
 5. Read-only source inspection is allowed when needed to document the current system; do not implement new routes, collections, fields, services, or portal pages until the relevant SDD is reviewed and approved.
 6. Treat dated roadmap/checkpoint entries as historical unless revalidated. `PROGRESS.md` is the active-task pointer, reconciled with `ISSUES.md` and the current branch/PR state.
 

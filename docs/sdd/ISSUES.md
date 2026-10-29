@@ -163,9 +163,17 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** OPEN
 - **Priority:** Blocking for new application-code implementation under the current owner-approved working direction.
-- **Evidence:** The current SDD contains a general product/technical specification and detailed Admin Portal documents, but the Shipper, Finance, Management, Operations/PUDO workflows, shared pricing/settlement policies, and cross-portal acceptance criteria are not yet fully specified. The 29 October continuity reconciliation corrects stale baseline/active-task/roadmap wording and aligns the Cloudinary decision/audit wording; the wider platform specification and owner decisions remain open.
-- **Next action:** Review `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` and resolve its explicit owner decisions on staff roles, PUDO/partner access, Finance and Management boundaries, shipper identity, support, and approval separation. Then specify shared shipment/pricing/payment/intake/transport/delivery workflows. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
+- **Evidence:** PR #7 merged `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` into the documentation baseline on 29 October 2026. The actor model is accepted as a documentation baseline, but its nine owner decisions are not automatically resolved by merging it. `PLATFORM_SHARED_WORKFLOWS.md` is now a first-pass cross-domain workflow draft; detailed lifecycle, pricing, settlement, permission, exception, and acceptance rules remain incomplete.
+- **Next action:** Review `PLATFORM_SHARED_WORKFLOWS.md`, record owner decisions in `DECISIONS.md`, and continue through conceptual domain/data relationships, lifecycle/state transitions, API/security contracts, portal requirements, and cross-platform acceptance tests. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
 - **Acceptance:** Every launch-essential workflow has an agreed owner, lifecycle, permissions, data relationships, API/integration expectations, exception handling, and acceptance/test criteria; unresolved business rules are explicitly listed for owner decision; continuity docs agree on status and evidence; no application code is changed to close this issue.
+
+### VLY-020 — Shared platform workflows require owner review
+
+- **Status:** OPEN
+- **Priority:** Blocking for detailed implementation planning
+- **Evidence:** A first-pass draft exists in `PLATFORM_SHARED_WORKFLOWS.md` following the actor/responsibility model merged in PR #7. It covers storefront fulfilment, independent shipment booking, intake/custody, shared pricing, payment/reconciliation, route proposal/assignment, dispatch, delivery/failed delivery, notifications/tracking, and audit/disclosure. The document deliberately leaves detailed policy unresolved and does not define implementation schema or API contracts.
+- **Next action:** Review the draft and decide the launch policies for booking identity/eligibility, lifecycle transitions, pricing formulas/thresholds, payment-at-intake and settlement, PUDO capabilities, transport evidence, dispatch exceptions, proof of delivery, failed-delivery outcomes, notification triggers, and audit/disclosure controls. Then reconcile the accepted workflow with current source read-only before proposing data/API contracts.
+- **Acceptance:** Each launch-essential workflow has an agreed owner, trigger, transitions, exception outcomes, permissions, evidence, and testable acceptance criteria—or a clearly recorded owner decision/blocker. No application code is changed to close this issue.
 
 ## Maintenance rule
 
