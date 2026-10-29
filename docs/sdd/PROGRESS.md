@@ -3,9 +3,10 @@
 **Last updated:** 29 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Current main documentation baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — `docs: reconcile admin audit with merged requirements baseline`
-**Admin Portal requirements/audit:** PR #2 merged to `main` on 28 October 2026. PR #3 and PR #4 remain open and are tracked separately.
-**Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. The first-pass completeness audit is in `SDD_COMPLETENESS_AUDIT.md`; the draft documentation review is tracked in PR #5. No application-code changes are authorized during this phase.
+**Current main baseline:** `d57dd3baec63313b429718aa2d569ccf9351b9ff` — merge of PR #5, `docs: establish platform-wide SDD completeness audit`.
+**Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
+**Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 and PR #4 were checked on 29 October 2026 and remain open/unmerged; their changes are not in the current `main` baseline.
+**Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. PR #5 is merged and established the first-pass completeness audit. This branch proposes the continuity-document reconciliation; no application-code changes are authorized during this phase.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -21,13 +22,13 @@
 
 VeriLyft remains the existing Next.js App Router ecommerce and delivery application using TypeScript, Firebase Authentication, Firestore/Firebase Admin, Paystack, Cloudinary, and the shared cart context. Continue the current architecture; do not rebuild it or introduce a parallel data/auth layer.
 
-The reviewed `main` documentation baseline is `cccad3c4eebe398c8369d5ce90ea05ee551589cf`, which includes the merged Admin Portal requirements/audit work and a later documentation reconciliation commit. Admin Portal design PR #1 is also merged. PR #3 (inactive category/product visibility) and PR #4 (category product-count compatibility) remain open; do not assume their changes are present on `main` until merge status is checked.
+The current `main` baseline is `d57dd3baec63313b429718aa2d569ccf9351b9ff`, which merges PR #5 and the first-pass platform-wide SDD audit. The audit’s reviewed comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` is historical, not the current head. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #3 (inactive category/product visibility) and PR #4 (category product-count compatibility) were checked on 29 October 2026 and remain open/unmerged.
 
 Customer authentication, profile, customer-scoped order history/details, guest tracking, and guest tracking email have implementation evidence recorded below. Guest-order claiming remains undecided. The admin dashboard, catalogue, orders, and Cloudinary upload foundations exist, but current authorization behaviour, authorized/denied image uploads, and payment/stock edge cases still need runtime verification.
 
 **Latest runtime checkpoint (28 October 2026, user-reported):** `npx tsc --noEmit` exited successfully. `npm run dev` started Next.js 16.4.2 and reported `Ready in 936ms`. This confirms the type check and development-server startup only; it does not establish browser authorization, API security, upload success, or production-build status for the current checkout.
 
-**Working rule:** update and reconcile the SDD documents before application-code work. Until the tracker and issue list agree on the active task and acceptance criteria, do not edit application code. Once documentation is aligned, finish the planned security tests and record observed results before deciding whether a code change is needed.
+**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. Once the continuity documents are reviewed and accepted, the next workstream is the platform actor/responsibility model—not application-code changes.
 
 ## 2. Feature tracker
 
@@ -344,7 +345,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - Classified advanced route optimisation, full fleet management, a separate driver portal, enterprise workflow tooling, and advanced analytics as deferred until a concrete business need exists.
 - Rechecked selected source files on the current `main` branch through GitHub. The dashboard's demo statistics, sample recent orders, and literal date remain a confirmed gap.
 - Confirmed the current dashboard source calls `verifyAdminAccess(user)`; the prior customer-to-admin access report remains a regression test requirement, not a confirmed current-source omission.
-- Confirmed current source uses Cloudinary despite DEC-008 still describing Firebase Storage; the documentation conflict remains to be resolved explicitly.
+- Historical note (28 October checkpoint): source and DEC-008 wording appeared inconsistent at that time. This was reconciled in the 29 October documentation review; Cloudinary runtime verification remains outstanding.
 - Confirmed that selected dedicated Admin routes for shipments, PUDO, delivery pricing, transactions, and audit logs are absent on `main`. Related implementation elsewhere was not ruled out.
 - Noted that PR #3 (inactive category/product visibility) and PR #4 (category product counts) were still separate proposed changes and must not be assumed present on `main` without checking merge status.
 - Updated the Admin requirements/audit documents on the existing `docs/admin-requirements-prioritization` review branch. No application code was changed.
@@ -385,13 +386,14 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Created the first-pass platform-wide matrix and reconciliation findings in `SDD_COMPLETENESS_AUDIT.md` on documentation review branch `docs/sdd-platform-completeness-audit`.
 - [x] Updated the SDD index with the new audit and documented the SDD-first working protocol in `README.md`.
 - [x] Verified PR #3 and PR #4 remain open and unmerged at this checkpoint; do not assume their changes are in `main`.
-- [ ] Reconcile stale active-task/baseline statements across all continuity documents.
-- [ ] Reconcile the old customer-first roadmap in `SPEC.md` with the current project state without losing historical evidence.
-- [ ] Resolve the Cloudinary decision/audit wording conflict.
+- [x] Reconcile stale current-baseline and active-task statements across the continuity documents; retain `cccad3c4...` only as the audit’s historical comparison baseline.
+- [x] Mark the customer-first implementation roadmap in `SPEC.md` as historical without removing its requirements or implementation history.
+- [x] Align Cloudinary wording: DEC-008 selects Cloudinary; the Admin requirements audit and this audit distinguish that decision from pending runtime verification.
 - [ ] Specify platform actors and responsibility boundaries, then shared shipment/pricing/payment/intake/transport/delivery workflows.
 - [ ] Complete the Shipper, Operations, PUDO, Finance, Management, and Customer functional specifications; record the separate Driver Portal as deferred unless scope changes.
 - [ ] Define conceptual data relationships, state transitions, API/security contracts, audit requirements, and acceptance/test criteria before proposing implementation.
 - [ ] Obtain owner decisions on unresolved business policies and formal launch priorities.
-- [ ] Approve the reconciled SDD baseline before resuming application-code changes.
+- [ ] Review and accept the continuity-document reconciliation; after acceptance, begin the platform actor/responsibility model.
+- [ ] Approve the complete platform SDD baseline before resuming application-code changes.
 
 **Scope note:** This phase permits read-only source inspection to establish implementation facts. It does not authorize application-code changes, new routes, schema changes, or new portal implementations.

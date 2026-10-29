@@ -6,7 +6,7 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 
 ### Documents
 
-- `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and phased roadmap.
+- `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and historical roadmap (not the current work order).
 - `SDD_COMPLETENESS_AUDIT.md` — platform-wide documentation coverage, inconsistencies, gaps, and the proposed SDD completion sequence.
 - `ADMIN_REQUIREMENTS.md` — consolidated Admin Portal requirements, startup priorities, scope boundaries, and requirements-baseline approval checklist.
 - `ADMIN_REQUIREMENTS_AUDIT.md` — source-level validation matrix for requirements versus existing code, including evidence, gaps, and outstanding verification.
@@ -23,6 +23,7 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 3. Record conflicts between intended behaviour, source, and evidence. Do not silently treat implementation as product approval or documentation as proof of implementation.
 4. Use `SDD_COMPLETENESS_AUDIT.md` as the current checklist for platform-wide documentation gaps.
 5. Read-only source inspection is allowed when needed to document the current system; do not implement new routes, collections, fields, services, or portal pages until the relevant SDD is reviewed and approved.
+6. Treat dated roadmap/checkpoint entries as historical unless revalidated. `PROGRESS.md` is the active-task pointer, reconciled with `ISSUES.md` and the current branch/PR state.
 
 ### How to use these documents in a new session
 
@@ -30,7 +31,7 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 2. Paste the handoff instructions from `SESSION_HANDOFF.md`.
 3. Tell the session the specific task you want to work on.
 4. Ask the session to read `SPEC.md`, `PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md` before proposing changes. For Admin Portal work, also read `ADMIN_REQUIREMENTS.md` and `ADMIN_PORTAL.md`.
-5. Before application-code changes, reconcile `PROGRESS.md`, `ISSUES.md`, and `DECISIONS.md` with the relevant specification and current test evidence. Keep them updated as work is completed.
+5. Before application-code changes, reconcile `README.md`, `SPEC.md`, `DECISIONS.md`, `ISSUES.md`, `PROGRESS.md`, and `SESSION_HANDOFF.md` with the completeness audit, relevant requirements, current source, and test evidence. Keep them updated as work is completed.
 
 ### Authority and evidence precedence
 

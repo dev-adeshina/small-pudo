@@ -7,7 +7,7 @@
 
 ## 1. Scope and evidence limits
 
-This is a documentation audit based on the current `docs/sdd/` files on the reviewed `main` branch. It is not a complete source-code audit, deployed-system test, or assertion that a feature is implemented. Where existing documents report implementation or test evidence, those claims remain attributed to the project records until independently rechecked.
+The initial audit reviewed the `docs/sdd/` files on `main` at the historical baseline recorded above. This document has since been updated to track reconciliation status; it is not a complete source-code audit, deployed-system test, or assertion that a feature is implemented. Reported implementation/test claims remain attributed to project records until independently rechecked.
 
 The owner’s current working direction is to complete and reconcile the platform-wide SDD before resuming application-code changes. Read-only source inspection may be used to document current reality, but this audit does not authorize application-code changes.
 
@@ -15,12 +15,12 @@ The owner’s current working direction is to complete and reconcile the platfor
 
 | Document | Current role | Audit finding |
 |---|---|---|
-| `README.md` | Index, continuity protocol, source-of-truth order | Useful navigation, but its code-first source-of-truth order and Admin-first instructions should be reconciled with the current SDD-first working direction. |
-| `SPEC.md` | Product/technical specification, conventions, roadmap, acceptance principles | Strong technical conventions and customer/order foundations. Parts of its product overview and roadmap are historical and no longer reflect the current platform-wide documentation objective. |
+| `README.md` | Index, continuity protocol, source/evidence precedence | The SDD-first protocol and distinction between intended behaviour, source facts, and verification evidence are now documented. The current-task pointer remains `PROGRESS.md`. |
+| `SPEC.md` | Product/technical specification, conventions, historical roadmap, acceptance principles | Strong technical conventions and customer/order requirements remain. The customer-first roadmap language is now explicitly marked historical; unresolved guest-order claiming and cross-portal requirements remain open. |
 | `DECISIONS.md` | Accepted architecture and product decisions | Important constraints and launch decisions are recorded. Several decisions remain conceptual; exact lifecycle, pricing policy, technical data representation, and role boundaries remain unresolved. |
 | `ISSUES.md` | Risks, gaps, verification tasks, open decisions | Useful gap inventory, but it is Admin-heavy and needs platform-wide coverage and reconciliation against current decisions and progress. |
-| `PROGRESS.md` | Status, evidence, active work, roadmap | Detailed history, but the recorded baseline SHA and current task sequence are stale relative to the reviewed `main` head and the owner’s current SDD-first direction. |
-| `SESSION_HANDOFF.md` | New-session continuity instructions | Contains good safety principles, but its Admin-security active task is stale for the current documentation-first work. |
+| `PROGRESS.md` | Status, evidence, active work, roadmap | The current baseline is now distinguished from the audit’s historical comparison baseline. The continuity reconciliation is the current checkpoint; actor/responsibility modelling follows review/acceptance. |
+| `SESSION_HANDOFF.md` | New-session continuity instructions | The handoff now points to the continuity-document review checkpoint, then actor/responsibility modelling; Admin authorization and upload tests remain separate outstanding verification tasks. |
 | `ADMIN_PORTAL.md` | Admin page-level design | Substantial design foundation; some page areas remain draft and dependent on unresolved platform workflows. |
 | `ADMIN_REQUIREMENTS.md` | Admin requirements and P0/P1/deferred priorities | Detailed launch-scope inventory, but formal baseline approval and some policy decisions remain open. |
 | `ADMIN_REQUIREMENTS_AUDIT.md` | Requirements-to-source validation | Useful source-level audit. Findings are limited to inspected paths and must not be treated as a full repository or runtime certification. |
@@ -60,15 +60,15 @@ Status meanings:
 
 ## 4. Reconciliation findings and documentation inconsistencies
 
-1. **The current active work is stale in continuity documents.** `PROGRESS.md` and `SESSION_HANDOFF.md` direct work toward Admin runtime security checks after documentation reconciliation. The owner’s current direction is to finish and reconcile the whole platform SDD before resuming application-code changes. Update the active task only after the documentation plan is agreed and reflected consistently.
+1. **Continuity-task wording — reconciliation in this change.** The initial audit found that older `PROGRESS.md` and `SESSION_HANDOFF.md` entries directed work toward Admin runtime security checks. The continuity-document reconciliation now identifies the actor/responsibility model as the next SDD workstream after this checkpoint is reviewed and accepted. Older dated entries remain historical evidence, not the current work order.
 
-2. **The recorded main baseline is stale.** `PROGRESS.md` names `fbb56ce` as the current documentation baseline, while the reviewed `main` head is `cccad3c4eebe398c8369d5ce90ea05ee551589cf`. Refresh commit/PR references and verify the current status of PR #3 and PR #4 before relying on historical status.
+2. **Baseline and PR state — reconciled at the 29 October 2026 checkpoint.** The audit’s comparison baseline remains `cccad3c4eebe398c8369d5ce90ea05ee551589cf`; it is historical and must not be described as the current head. Current `main` is `d57dd3baec63313b429718aa2d569ccf9351b9ff`, which merges PR #5. PR #3 and PR #4 were checked on 29 October 2026 and remain open/unmerged.
 
-3. **The product roadmap in `SPEC.md` is historical.** It describes customer accounts as the next major capability and gives an earlier eight-phase roadmap. The tracker records those customer features as implemented or partially verified. Reconcile the roadmap with the actual current project position and the new platform-wide SDD-first plan without erasing historical evidence.
+3. **Historical roadmap — wording reconciled.** The earlier customer-first roadmap and phased sequence are retained as history, but `SPEC.md` now explicitly says that they do not define the current work order. Current implementation status remains in `PROGRESS.md` and must be supported by dated source/test evidence.
 
-4. **The source-of-truth order needs clarification.** `README.md` places actual code first, which is appropriate for describing current implementation facts, but intended product behaviour and approved requirements must be the SDD source of truth for design. The revised process should distinguish: approved SDD for intended behaviour; source for current implementation facts; test/deployment evidence for verified behaviour. A conflict should be recorded and resolved, not silently resolved in favour of either source.
+4. **Source/evidence precedence — documented in `README.md`.** Approved SDD defines intended behaviour; current source/configuration defines implementation facts; dated test/deployment evidence establishes verified behaviour. A discrepancy must be recorded and explicitly resolved rather than silently favouring either source.
 
-5. **The audit’s DEC-008 statement appears stale or incorrect.** `ADMIN_REQUIREMENTS_AUDIT.md` says DEC-008 describes Firebase Storage as current and Cloudinary as deferred. The current `DECISIONS.md` DEC-008 selects Cloudinary and records runtime verification as pending. Reconcile the audit text to the current decision, while retaining the distinction between a selected integration and a runtime-verified integration.
+5. **Cloudinary decision versus verification — wording reconciled.** `DECISIONS.md` DEC-008 selects Cloudinary. The current `ADMIN_REQUIREMENTS_AUDIT.md` also records Cloudinary as selected and explicitly leaves authorized/unauthorized runtime upload verification outstanding. Do not reopen this as a decision conflict unless new contrary evidence appears.
 
 6. **Requirements approval is incomplete.** `ADMIN_REQUIREMENTS.md` and `ADMIN_PORTAL.md` record a confirmed launch operating model, but the formal P0/P1/deferred baseline and several detailed page specifications still need approval. Do not treat every proposed Admin page or requirement as final simply because it appears in the inventory.
 
@@ -83,11 +83,11 @@ Status meanings:
 Complete these in dependency order, keeping decisions explicit and avoiding speculative schema or route design.
 
 ### Workstream 1 — Reconcile the existing baseline
-- Correct stale active-task and baseline references in the continuity documents.
-- Reconcile the Cloudinary decision/audit inconsistency.
-- Reconcile the historical roadmap in `SPEC.md`.
-- Define the documentation status vocabulary and source/evidence precedence.
-- Preserve historical test claims with their evidence date and attribution.
+- [x] Correct stale active-task and baseline references in the continuity documents.
+- [x] Reconcile Cloudinary decision/audit wording while keeping runtime verification pending.
+- [x] Mark the historical roadmap in `SPEC.md` as historical without deleting its requirements or evidence.
+- [x] Clarify source/evidence precedence in `README.md`.
+- [x] Preserve historical test claims with their evidence date and attribution.
 
 ### Workstream 2 — Platform actors and responsibility boundaries
 - Identify external actors and internal staff roles.
@@ -150,6 +150,6 @@ The platform SDD is ready for implementation planning when:
 
 ## 7. Immediate next action
 
-Use this audit as a working checklist. First reconcile the existing SDD baseline and source/evidence terminology. Then specify the shared shipment, pricing, payment, intake, transport, and delivery workflows before writing portal-specific documents, because those workflows are dependencies for Shipper, Operations, PUDO, Admin, and Finance.
+The continuity-document reconciliation is the current checkpoint. After it is reviewed and accepted, define the platform actors and responsibility boundaries, distinguishing actors, functional modules, and separately deployed portals. Then specify the shared shipment, pricing, payment, intake, transport, and delivery workflows before writing portal-specific documents, because those workflows are dependencies for Shipper, Operations, PUDO, Admin, and Finance.
 
 Do not implement new routes, collections, fields, services, or portal pages until their relevant SDD sections have been reviewed and approved.
