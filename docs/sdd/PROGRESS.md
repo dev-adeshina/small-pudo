@@ -3,10 +3,11 @@
 **Last updated:** 29 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Current main baseline:** `d57dd3baec63313b429718aa2d569ccf9351b9ff` — merge of PR #5, `docs: establish platform-wide SDD completeness audit`.
+**Current main baseline:** `a88a0d664dbba601e0f8a06605770aa7b0f873bc` — merge of PR #6, `docs: reconcile platform SDD continuity baseline`.
+**Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 and PR #4 were checked on 29 October 2026 and remain open/unmerged; their changes are not in the current `main` baseline.
-**Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. PR #5 is merged and established the first-pass completeness audit. This branch proposes the continuity-document reconciliation; no application-code changes are authorized during this phase.
+**Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. PR #5 established the first-pass audit and PR #6 merged the continuity-document reconciliation. The current workstream is a draft platform actor/responsibility model for owner review; no application-code changes are authorized.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -28,7 +29,7 @@ Customer authentication, profile, customer-scoped order history/details, guest t
 
 **Latest runtime checkpoint (28 October 2026, user-reported):** `npx tsc --noEmit` exited successfully. `npm run dev` started Next.js 16.4.2 and reported `Ready in 936ms`. This confirms the type check and development-server startup only; it does not establish browser authorization, API security, upload success, or production-build status for the current checkout.
 
-**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. Once the continuity documents are reviewed and accepted, the next workstream is the platform actor/responsibility model—not application-code changes.
+**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. PR #6 is merged. The current workstream is the draft actor/responsibility model; after review and decisions, proceed to shared workflows—not application-code changes.
 
 ## 2. Feature tracker
 
@@ -389,11 +390,14 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Reconcile stale current-baseline and active-task statements across the continuity documents; retain `cccad3c4...` only as the audit’s historical comparison baseline.
 - [x] Mark the customer-first implementation roadmap in `SPEC.md` as historical without removing its requirements or implementation history.
 - [x] Align Cloudinary wording: DEC-008 selects Cloudinary; the Admin requirements audit and this audit distinguish that decision from pending runtime verification.
-- [ ] Specify platform actors and responsibility boundaries, then shared shipment/pricing/payment/intake/transport/delivery workflows.
+- [x] Draft `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` to map actor classes, functional responsibilities, and portal/module boundaries without authorizing implementation.
+- [ ] Review the actor/responsibility model and resolve the owner decisions listed in that draft.
+- [ ] Specify shared shipment/pricing/payment/intake/transport/delivery workflows.
 - [ ] Complete the Shipper, Operations, PUDO, Finance, Management, and Customer functional specifications; record the separate Driver Portal as deferred unless scope changes.
 - [ ] Define conceptual data relationships, state transitions, API/security contracts, audit requirements, and acceptance/test criteria before proposing implementation.
 - [ ] Obtain owner decisions on unresolved business policies and formal launch priorities.
-- [ ] Review and accept the continuity-document reconciliation; after acceptance, begin the platform actor/responsibility model.
+- [x] PR #6, `docs: reconcile platform SDD continuity baseline`, reviewed and merged on 29 October 2026 (merge `a88a0d6`).
+- [ ] Review and approve the draft platform actor/responsibility model; resolve open role/access decisions.
 - [ ] Approve the complete platform SDD baseline before resuming application-code changes.
 
 **Scope note:** This phase permits read-only source inspection to establish implementation facts. It does not authorize application-code changes, new routes, schema changes, or new portal implementations.

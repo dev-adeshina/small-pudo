@@ -39,13 +39,13 @@ identical to the live working tree.
 
 ## Current project position
 
-The current repository baseline, active phase, implementation notes, and dated verification claims are recorded in `PROGRESS.md`. The platform-wide audit was reviewed against the historical baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf`; current `main` is `d57dd3baec63313b429718aa2d569ccf9351b9ff` (PR #5 merge). Historical notes and roadmap entries are not current task instructions unless revalidated. Do not treat older archive observations as current facts.
+The current repository baseline, active phase, implementation notes, and dated verification claims are recorded in `PROGRESS.md`. The platform-wide audit was reviewed against the historical baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf`; current `main` is `a88a0d664dbba601e0f8a06605770aa7b0f873bc` (PR #6 merge). Historical notes and roadmap entries are not current task instructions unless revalidated. Do not treat older archive observations as current facts.
 
 ## Current priority
 
 For platform-wide design work, start with `SDD_COMPLETENESS_AUDIT.md`, `SPEC.md`, `DECISIONS.md`, `ISSUES.md`, and `PROGRESS.md`. For Admin Portal details, also use `ADMIN_REQUIREMENTS.md`, `ADMIN_REQUIREMENTS_AUDIT.md`, and `ADMIN_PORTAL.md`. The owner-confirmed operating model is recorded, but the consolidated P0/P1/deferred priority baseline and detailed page specifications remain under review. The current active task and evidence are in `PROGRESS.md`; check the current repository/PR states rather than relying on this handoff alone.
 
-Current active task: review and accept the proposed continuity-document reconciliation. After that checkpoint, define the platform actors and responsibility boundaries, then specify shared shipment/pricing/payment/intake/transport/delivery workflows before completing portal-level requirements and acceptance criteria. Do not resume application-code changes until the platform-wide SDD is reviewed and approved. Runtime Admin authorization and Cloudinary tests remain outstanding; they are verification tasks, not proof that the SDD work is complete.
+Current active task: review the draft `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` and resolve its explicitly listed owner decisions. After the actor/responsibility model is accepted, specify shared shipment/pricing/payment/intake/transport/delivery workflows and then complete portal-level requirements and acceptance criteria. Do not resume application-code changes until the platform-wide SDD is reviewed and approved. Do not resume application-code changes until the platform-wide SDD is reviewed and approved. Runtime Admin authorization and Cloudinary tests remain outstanding; they are verification tasks, not proof that the SDD work is complete.
 
 Guest order tracking and email have implementation evidence recorded in `PROGRESS.md`; Telegram remains deferred. Cloudinary is the selected image-hosting integration, but runtime upload verification is still required.
 

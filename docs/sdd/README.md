@@ -8,6 +8,7 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 
 - `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and historical roadmap (not the current work order).
 - `SDD_COMPLETENESS_AUDIT.md` — platform-wide documentation coverage, inconsistencies, gaps, and the proposed SDD completion sequence.
+- `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` — draft platform actor catalogue, responsibility boundaries, portal/module distinction, and decisions requiring owner review.
 - `ADMIN_REQUIREMENTS.md` — consolidated Admin Portal requirements, startup priorities, scope boundaries, and requirements-baseline approval checklist.
 - `ADMIN_REQUIREMENTS_AUDIT.md` — source-level validation matrix for requirements versus existing code, including evidence, gaps, and outstanding verification.
 - `ADMIN_PORTAL.md` — Admin Portal page-by-page design, confirmed decisions, scope boundaries, and unresolved design items.
