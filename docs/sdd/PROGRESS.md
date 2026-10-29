@@ -3,7 +3,7 @@
 **Last updated:** 29 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Current live main head verified:** `3fd1c1ae13e2016b75ca263f6d4971d7125624ef` — PR #13 cross-domain acceptance matrix is merged. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison to current `main` shows the 20 intervening commits changed SDD documentation only, not application source.
+**Current live main head at start of this task:** `57f5eb609a8abb046ffde4dd08e13f850bc54769` — PR #14 owner decision register is merged. The current branch proposes the accepted D-01 reconciliation; verify the resulting PR/merge before updating this head again. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison to current `main` shows the 20 intervening commits changed SDD documentation only, not application source.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
@@ -21,13 +21,12 @@
 
 ## 1. Current position
 
-### Active SDD milestone — owner decision register
+### Active SDD milestone — owner decision register and reconciliation
 
-- PR #13, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, is merged to `main`.
-- PR #14 candidate branch: `docs/sdd/owner-decision-register`; documentation-only.
-- New register: `PLATFORM_OWNER_DECISION_REGISTER.md`. It orders unresolved decisions by dependency, preserves confirmed constraints, and labels recommendations as non-binding.
-- First decision to resolve: D-01, staff responsibility and approval boundaries. This affects authorization and approval contracts across the platform.
-- No business decision is made by the register itself. Accepted outcomes must be recorded in `DECISIONS.md` and reconciled into affected workflow, lifecycle, acceptance, issue, progress, and handoff documents.
+- PR #13, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, and PR #14, `PLATFORM_OWNER_DECISION_REGISTER.md`, are merged to `main`.
+- Owner selected **Option C** for D-01 on 29 October 2026: minimal hybrid staff model. This documentation-only reconciliation records it as DEC-022 and updates the actor, workflow, acceptance, issue, progress, and handoff documents.
+- D-01 is no longer an open high-level model choice. Exact action permissions, approval thresholds, and workflow-specific separation of duties remain unresolved.
+- Next owner decision: D-02, independent shipment booking eligibility and account requirements.
 - Application-code work remains blocked until the platform-wide SDD is reconciled and explicitly approved.
 
 
@@ -453,3 +452,15 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Only after policy approval, derive detailed transition tables and test cases from existing architecture/source; obtain explicit approval of the reconciled platform-wide SDD before application-code changes.
 
 **Evidence boundary:** Documentation-only changes. No application code, schema, API, permission, production data, or runtime configuration was changed. No tests or production runtime checks were run.
+
+
+## 14. Owner decision D-01 — 29 October 2026
+
+- [x] Owner selected Option C: minimal hybrid staff responsibility and approval model.
+- [x] Added DEC-022 to record the decision and its boundary: distinct responsibilities do not automatically require separate portals or a role for every function; routine actions may be shared where permitted; sensitive actions require explicit permission/approval boundaries; privileged operations require server-side authorization and consequential actions require audit evidence.
+- [x] Reconciled the actor/responsibility model, shared workflows, cross-domain acceptance matrix, issue tracker, progress tracker, and session handoff in the documentation proposal.
+- [ ] Review and merge the focused documentation PR; then update the live-main SHA from the merged result.
+- [ ] Proceed to D-02: independent shipment booking eligibility and account requirements.
+- [ ] Keep the platform-wide SDD implementation gate in force; no application-code changes or tests are authorized by this decision.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's explicit choice. No application source, schema, access rules, deployed configuration, or runtime behavior changed or was tested.
