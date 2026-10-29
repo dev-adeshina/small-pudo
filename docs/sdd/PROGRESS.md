@@ -3,7 +3,7 @@
 **Last updated:** 29 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Current live main head at start of this task:** `57f5eb609a8abb046ffde4dd08e13f850bc54769` — PR #14 owner decision register is merged. The current branch proposes the accepted D-01 reconciliation; verify the resulting PR/merge before updating this head again. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison to current `main` shows the 20 intervening commits changed SDD documentation only, not application source.
+**Current live main head at start of this task:** `0db49af2ddcd50dbf8e92e5342b66992c29358a9` — PR #15's D-01 hybrid staff-model reconciliation is merged. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; previous comparisons found the intervening commits changed SDD documentation only, not application source.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
@@ -24,15 +24,16 @@
 ### Active SDD milestone — owner decision register and reconciliation
 
 - PR #13, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, and PR #14, `PLATFORM_OWNER_DECISION_REGISTER.md`, are merged to `main`.
-- Owner selected **Option C** for D-01 on 29 October 2026: minimal hybrid staff model. This documentation-only reconciliation records it as DEC-022 and updates the actor, workflow, acceptance, issue, progress, and handoff documents.
+- Owner selected **Option C** for D-01 on 29 October 2026: minimal hybrid staff model, recorded in DEC-022. PR #15 containing the documentation reconciliation is merged.
 - D-01 is no longer an open high-level model choice. Exact action permissions, approval thresholds, and workflow-specific separation of duties remain unresolved.
-- Next owner decision: D-02, independent shipment booking eligibility and account requirements.
+- Owner selected **Option B** for D-02 on 29 October 2026: independent shipment booking is limited to registered, authenticated customers at launch; recorded in DEC-023 in the current documentation PR.
+- Guest shipment booking is excluded at launch; ordinary storefront guest checkout remains unchanged.
 - Application-code work remains blocked until the platform-wide SDD is reconciled and explicitly approved.
 
 
 VeriLyft remains the existing Next.js App Router ecommerce and delivery application using TypeScript, Firebase Authentication, Firestore/Firebase Admin, Paystack, Cloudinary, and the shared cart context. Continue the current architecture; do not rebuild it or introduce a parallel data/auth layer.
 
-The live `main` head verified for the current documentation task is `3fd1c1ae13e2016b75ca263f6d4971d7125624ef` (PR #13 merge). The source traceability inventory was inspected at `c56be9b121e6007e1e99c6df2d3984e709771a92`; a comparison against current `main` confirms that the 20 intervening commits changed SDD documentation only, not application source. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #4 (category product-count compatibility) remains open/unmerged.
+The live `main` head verified before the current documentation PR is `0db49af2ddcd50dbf8e92e5342b66992c29358a9` (PR #15 merge). The source traceability inventory was inspected at `c56be9b121e6007e1e99c6df2d3984e709771a92`; a comparison against current `main` confirms that the 20 intervening commits changed SDD documentation only, not application source. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #4 (category product-count compatibility) remains open/unmerged.
 
 Customer authentication, profile, customer-scoped order history/details, guest tracking, and guest tracking email have implementation evidence recorded below. Guest-order claiming remains undecided. The admin dashboard, catalogue, orders, and Cloudinary upload foundations exist, but current authorization behaviour, authorized/denied image uploads, and payment/stock edge cases still need runtime verification.
 
