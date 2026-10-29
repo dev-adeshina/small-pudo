@@ -4,7 +4,7 @@
 **Last updated:** 29 October 2026  
 **Scope:** Conceptual domain boundaries, lifecycle transition rules, service/API contract expectations, and authorization/security invariants  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, PLATFORM_SHARED_WORKFLOWS.md, SDD_COMPLETENESS_AUDIT.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-024, DEC-025
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-024, DEC-025, DEC-026, DEC-027
 
 ## 1. Purpose and guardrails
 
@@ -432,3 +432,9 @@ This draft does not resolve:
 11. Technical contract choices that depend on read-only source inspection and existing architecture.
 
 **Next step:** review this conceptual model and contract checklist. Once accepted and owner decisions are recorded, inspect the existing source read-only and map each conceptual responsibility to the current implementation before proposing minimal compatible technical changes. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
+
+## Measurement discrepancy and adjustment contract — DEC-027
+
+Conceptual contract: retain the original quote and its accepted inputs/rate context; separately record actual intake measurements and their actor, location, time, and required evidence; and link any proposed adjustment to the original quote. The measurement record, proposal, approval decision, payment, additional charge, credit, and refund are distinct facts and must not be collapsed into one status.
+
+Material discrepancies and adjustments affecting an existing payment must follow the configured review/authority policy. Routine-versus-material thresholds must be service-appropriate and configurable; exact units, values, approval limits, customer consent/notification rules, and refusal/dispute outcomes remain unresolved. A proposal or unresolved dispute is not authorization to mutate the accepted quote or represent a financial event as settled. No schema, API, or implementation details are approved here.
