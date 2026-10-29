@@ -47,7 +47,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** INVESTIGATING
 - **Priority:** High
-- **Evidence:** `lib/admin-auth.ts` calls `/api/admin/auth/verify` and `/api/admin/auth/claim`. The verify endpoint checks a verified email against `ADMIN_EMAILS`. The dashboard, products, categories, and orders pages use the shared client guard. A previous report said a normal customer could reach `/admin` after restarting the browser; the current behaviour has not yet been reproduced or disproved in the active runtime test.
+- **Evidence:** `lib/admin-auth.ts` calls `/api/admin/auth/verify` and `/api/admin/auth/claim`. The verify endpoint checks a verified email against `ADMIN_EMAILS`. The dashboard, products, categories, and orders pages call the shared client guard in current source. A previous report said a normal customer could reach `/admin` after restarting the browser; source inspection alone neither reproduces nor disproves that runtime report.
 - **Latest check:** On 28 October 2026 the user reported that `npx tsc --noEmit` passed and `npm run dev` started successfully on Next.js 16.4.2. No browser authorization test has been reported yet.
 - **Next action:** With a regular customer account, test direct navigation to `/admin`, `/admin/orders`, `/admin/products`, and `/admin/categories`; verify redirect and session preservation. Then test authorized-admin access and privileged API denial.
 - **Acceptance:** Ordinary customers cannot access protected pages or privileged APIs; denial does not unnecessarily sign a customer out; legitimate admin email/password and Google flows remain functional.
@@ -81,7 +81,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** INVESTIGATING
 - **Priority:** Medium
-- **Evidence (checked 29 October 2026):** The reviewed product schema associates products through `categoryId`; a category helper has been observed querying by a different `category` field/slug. PR #4 proposes a compatibility fix and is open and unmerged. Its change is not in `main` at the current checkpoint.
+- **Evidence (checked 29 October 2026):** The current product type and create/update/query helpers use `categoryId`, while `getCategoryProductCount` queries `category == slug`. PR #4 proposes a compatibility fix and is open/unmerged; the prevalence of legacy records has not been checked against production data.
 - **Next action:** Review PR #4 against the current schema and existing records; verify the intended behaviour before merging or changing data.
 - **Acceptance:** Product counts and category slug-change protection work with the current schema and any explicitly supported legacy records; no unnecessary data migration.
 
@@ -98,7 +98,8 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Status:** OPEN
 - **Priority:** High for the approved parcel-operations launch scope
 - **Evidence:** The source-level audit found no dedicated Admin routes in the inspected paths for shipments, PUDO management, delivery pricing, transactions, or audit logs. Existing order shipping metadata does not by itself implement independent shipments or route-leg movements.
-- **Next action:** After security verification and requirements approval, inspect existing order/types/services and design the smallest compatible data and workflow representation.
+- **Latest source check:** The second source pass found no dedicated shipment, pricing, PUDO, route/movement, or audit service module in the active TypeScript source inventory. This is a source-surface finding only; Firestore data and the uninspected `pudo.zip` archive were not checked.
+- **Next action:** Complete the owner-approved domain and workflow model, confirm the archive's scope, then design the smallest compatible data and workflow representation after SDD approval.
 - **Acceptance:** Shipment, order, payment, and transport-movement identities/lifecycles remain distinct; no schema changes occur before review.
 
 ### VLY-017 — Privileged-action audit trail and minimum evidence handling need review
@@ -106,7 +107,8 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Status:** OPEN
 - **Priority:** High for operational/legal readiness
 - **Evidence:** No dedicated audit-log route was found in the inspected `app/admin` paths. A reusable audit helper or records elsewhere have not been ruled out.
-- **Next action:** Search existing source for audit/event logging and identify the minimum necessary records for admin changes, payment exceptions, measurement adjustments, delivery proof, and government requests.
+- **Latest source check:** The active TypeScript `app/api` route inventory and `lib/` module inventory do not show a dedicated general audit-log or financial-event service. The Paystack webhook uses `paymentWebhookEvents` for idempotency/outcome handling; this is not a general audit trail. The root `pudo.zip` archive has not been inspected and is not treated as active source.
+- **Next action:** Confirm whether `pudo.zip` is in scope; if not, continue with the active Next.js app and define the minimum audit/evidence requirements in the SDD.
 - **Acceptance:** Important privileged decisions are traceable with actor, timestamp, action, target, reason where appropriate, and outcome; do not build an elaborate audit platform before verifying existing facilities.
 
 ### VLY-018 — Guest order-tracking email inbox placement
@@ -163,8 +165,8 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** OPEN
 - **Priority:** Blocking for new application-code implementation under the current owner-approved working direction.
-- **Evidence:** PR #7 (actor/responsibility), PR #8 (shared workflows), and PR #9 (domain/lifecycle/API/security draft) are merged into the documentation baseline. `IMPLEMENTATION_SOURCE_TRACEABILITY.md` now records a read-only source inventory against `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`. The drafts and source map expose remaining owner decisions, source-investigation gaps, and runtime verification work; merging documents does not approve unresolved policy.
-- **Next action:** Continue source inspection for existing audit/event helpers, payment recovery, direct Firestore access, and any reusable PUDO/pricing/route data; reconcile findings with the completeness audit and decisions. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
+- **Evidence:** PR #7 (actor/responsibility), PR #8 (shared workflows), PR #9 (domain/lifecycle/API/security draft), and PR #10 (implementation source traceability) are merged. The follow-up source pass is recorded in `IMPLEMENTATION_SOURCE_TRACEABILITY.md`; it checked current TypeScript helpers, Admin pages, Firestore rules/tests, payment routes, and design decisions. The drafts and source map expose remaining owner decisions, scope questions, and runtime verification work; merging documents does not approve unresolved policy.
+- **Next action:** Confirm whether the root `pudo.zip` archive is in scope for the active source review; resolve owner decisions in `DECISIONS.md`; reconcile the source findings with the completeness audit and acceptance criteria. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
 - **Acceptance:** Every launch-essential workflow has an agreed owner, lifecycle, permissions, data relationships, API/integration expectations, exception handling, and acceptance/test criteria; unresolved business rules are explicitly listed for owner decision; continuity docs agree on status and evidence; no application code is changed to close this issue.
 
 ### VLY-020 — Shared platform workflows require owner review
@@ -179,11 +181,15 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** OPEN
 - **Priority:** Blocking for implementation design
-- **Evidence:** The domain/lifecycle/API/security draft is merged but remains a draft for owner review. `IMPLEMENTATION_SOURCE_TRACEABILITY.md` maps the inspected order, customer access, payment, admin authorization, upload, fulfilment, and Firestore-rules source to the conceptual design. Independent booking/PUDO/pricing/routing/audit coverage and complete runtime evidence remain unresolved. The source inspection did not execute tests or inspect production configuration/data.
-- **Next action:** Continue read-only source searches for reusable audit/event helpers, direct Firestore access, payment recovery, and any existing PUDO/pricing/route data; then review owner decisions and update the platform completeness audit. Do not implement until the complete SDD is approved.
+- **Evidence:** The domain/lifecycle/API/security draft is merged but remains a draft for owner review. `IMPLEMENTATION_SOURCE_TRACEABILITY.md` now includes a second source pass: all four inspected Admin pages call `verifyAdminAccess`; category/product helpers use client Firestore writes behind custom-claim rules; checkout uses the server order route while a legacy client-side order helper remains; the webhook event record is for deduplication rather than a general audit ledger. Independent booking/PUDO/pricing/routing/audit source surfaces and complete runtime evidence remain unresolved. No tests were executed and production configuration/data were not inspected.
+- **Next action:** Confirm whether `pudo.zip` is authoritative/in-scope; then resolve the open domain, pricing, custody, routing, financial-event, and audit decisions and reconcile the full SDD acceptance matrix. Do not implement until the complete SDD is approved.
 - **Acceptance:** Owner-approved conceptual relationships and transition rules exist for launch-essential flows; API/security contracts define validation, authorization, failure, idempotency, concurrency, and audit expectations; source facts and runtime evidence are documented separately; no application code is changed to close this issue.
 
 ## Source-traceability checkpoint — 29 October 2026
+
+- PR #10 is merged. A second read-only pass expanded the source map to include category/product client helpers, all four Admin page guards, payment recovery surfaces, and the distinction between webhook deduplication and a general audit ledger.
+- `pudo.zip` is present at repository root but has not been inspected; confirm whether it belongs to the active VeriLyft source scope before including it in the SDD evidence model.
+- The Admin authorization issue remains a runtime verification task; current source calls `verifyAdminAccess` on all four inspected Admin pages, but no browser reproduction was performed.
 
 - `IMPLEMENTATION_SOURCE_TRACEABILITY.md` records the current read-only source inventory and distinguishes source presence from runtime evidence.
 - PR #3 is merged; its source change is present, but browser regression verification remains open under VLY-013.
