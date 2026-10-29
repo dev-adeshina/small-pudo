@@ -220,3 +220,10 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 ## Maintenance rule
 
 When new evidence arrives, update the relevant issue in this file and the matching row/session log in `PROGRESS.md`. Record material architecture/product decisions in `DECISIONS.md`. Do not close an issue solely because a source file exists; use actual test results where the acceptance criterion requires runtime behaviour.
+
+### D-06 measurement discrepancy and adjustment approval — DEC-027
+
+- **Status:** High-level owner policy accepted; detailed rules remain open.
+- **Accepted:** Use configurable, service-appropriate thresholds; preserve quoted and actual intake measurements separately; retain actor/location/time and applicable evidence; link proposals to the original quote; require review for material discrepancies and adjustments affecting existing payments; keep proposed adjustments separate from approved charges and settled financial events.
+- **Still open:** Numeric thresholds, units and service-specific measurement requirements, staff approval limits, second-person rules, customer notification/consent, and explicit acceptance/dispute/refusal outcomes.
+- **Next action:** Resolve D-07 payment-at-intake methods and evidence, then continue the dependency-ordered owner decisions. Keep the platform-wide SDD approval gate in force; no application code changed or tested for this policy decision.

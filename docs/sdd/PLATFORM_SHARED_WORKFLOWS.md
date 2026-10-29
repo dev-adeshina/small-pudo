@@ -4,7 +4,7 @@
 **Last updated:** 29 October 2026  
 **Scope:** Cross-domain business workflows and invariants for storefront fulfilment and independent parcel shipments  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, ADMIN_REQUIREMENTS.md, ADMIN_PORTAL.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022, DEC-023, DEC-024, DEC-025
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022, DEC-023, DEC-024, DEC-025, DEC-026, DEC-027
 
 ## 1. Purpose, status, and boundaries
 
@@ -438,3 +438,9 @@ The shared workflow specification is ready to inform implementation planning onl
 - [ ] README.md, SPEC.md, DECISIONS.md, ISSUES.md, PROGRESS.md, and SESSION_HANDOFF.md agree on the current baseline and next task.
 
 **Next step:** review this shared workflow draft, then resolve owner decisions in dependency order. Do not begin application-code implementation until the complete platform-wide SDD has been reviewed and approved.
+
+## D-06 reconciliation — DEC-027: measurement discrepancy and adjustment approval
+
+The owner accepted a configurable, evidence-based policy distinguishing routine measurement variation from material discrepancies. Preserve original quoted inputs and separately record actual intake measurements with actor, location, time, and applicable evidence/reason. A discrepancy may create a proposed adjustment linked to the original quote, but the proposal must not silently overwrite accepted commercial terms or be treated as an approved charge or settled financial event.
+
+Material discrepancies and adjustments affecting an existing payment require review under configured authority. Exact numeric thresholds, units and service-specific measurement requirements, approval limits, second-person rules, customer notification/consent, and outcomes for acceptance/dispute/refusal remain open. No application implementation or runtime test is authorized by this decision.

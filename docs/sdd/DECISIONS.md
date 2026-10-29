@@ -256,3 +256,15 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Adjustments:** Actual intake measurements or other permitted changes may generate a proposed adjustment linked to the original quote. Material discrepancies and adjustments affecting existing payments require review under a policy still to be defined. Charges, additional payments, credits, and refunds remain distinct financial events.
 - **Rationale:** Maintain consistent pricing across relevant booking paths while allowing service-appropriate cost models and preserving commercial facts customers accepted.
 - **Status:** High-level owner policy accepted. Formula catalogue, examples, units, rounding, effective dates, expiry behaviour, tax/fee treatment, adjustment thresholds, and implementation remain open.
+
+### DEC-027 — Configurable measurement discrepancy and adjustment review
+
+- **Decision date:** 29 October 2026.
+- **Decision:** Adopt a configurable, evidence-based policy that distinguishes routine measurement variation from material discrepancies. Thresholds must be appropriate to the service and relevant measurement; no numeric threshold is approved by this decision.
+- **Measurement evidence:** Preserve the original quoted inputs and separately record actual intake measurements with responsible actor, location, time, and applicable evidence/reason.
+- **Quote and adjustment integrity:** Preserve the accepted quote and its rate/rule context. A discrepancy may create a proposed adjustment linked to the original quote, but the proposal must not silently overwrite the quote or be treated as an approved charge or settled financial event.
+- **Review authority:** Staff may record measurements and propose adjustments only within assigned permissions. Material discrepancies and adjustments affecting an existing payment require review under a configured authority policy. Exact approval limits and second-person requirements remain unresolved.
+- **Customer outcomes:** Notification/consent requirements and explicit outcomes for acceptance, dispute, refusal, and unresolved cases must be defined before implementation. A disputed or refused adjustment must not silently become an approved charge.
+- **Still unresolved:** Units and required measurements by service; numeric thresholds; authority limits and separation of duties; customer consent/notification rules; refusal/dispute outcomes; evidence details and runtime acceptance tests.
+- **Rationale:** Protect quote integrity and customer trust while allowing operationally practical handling of routine variation and controlled review of material differences.
+- **Status:** High-level owner policy accepted. Detailed thresholds, authority matrix, customer/financial outcomes, source reconciliation, and implementation remain open.

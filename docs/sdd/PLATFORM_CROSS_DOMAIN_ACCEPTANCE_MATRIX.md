@@ -129,3 +129,9 @@ The acceptance matrix must ultimately verify that inactive or unsupported locati
 The owner accepted service-specific selection of fixed versus calculated pricing, service-configured quote validity, and a shared rule set across storefront delivery and independent shipment booking wherever inputs overlap. Applicable calculated-price inputs may include origin/destination or distance band, parcel weight, dimensions/volumetric weight, service class/delivery speed, and a configured minimum charge.
 
 Acceptance evidence must eventually show that quotes are reproducible from preserved inputs and rate/rule version; a rate change cannot silently alter an accepted quote or completed payment; and service-specific expiry is enforced. Exact formulas, units, effective dates, taxes/fees/discounts, rounding, expiry/re-quote behaviour, and adjustment thresholds remain open. No application implementation or runtime test is authorized by this decision.
+
+## D-06 reconciliation — DEC-027
+
+Acceptance evidence must eventually demonstrate that quoted measurements and actual intake measurements are preserved separately; each measurement event is attributable to actor, location, and time with required evidence; and any proposed adjustment links to the original quote without silently mutating it. Routine variation and material discrepancy must be handled according to a configured, service-appropriate policy. Material/payment-impacting adjustments must be reviewed by authorized staff, and a proposal or dispute must not be represented as an approved/settled financial event.
+
+Numeric thresholds, measurement units/service requirements, approval limits, second-person rules, customer consent/notification, and acceptance/dispute/refusal outcomes remain unresolved. No application implementation or runtime test is authorized by this decision.
