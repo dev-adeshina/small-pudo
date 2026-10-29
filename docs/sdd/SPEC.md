@@ -303,7 +303,7 @@ tested. Validate transition rules before extending them.
 
 ## 6. Customer accounts and ownership requirements
 
-This is the next major product capability to implement.
+Historical roadmap note: this section records customer-account requirements from an earlier implementation phase. Use `PROGRESS.md` and current source/test evidence for implementation status; this section does not define the current work order.
 
 ### Functional requirements
 

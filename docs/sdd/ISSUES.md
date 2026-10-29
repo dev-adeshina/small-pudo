@@ -1,6 +1,6 @@
 # VeriLyft Issues, Risks, and Open Questions
 
-**Last updated:** 28 October 2026  
+**Last updated:** 29 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Admin requirements baseline:** PR #2 merged into `main` on 28 October 2026 (`fbb56ce`). The consolidated P0/P1/deferred baseline still requires owner review.
 
@@ -73,7 +73,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** INVESTIGATING
 - **Priority:** Medium
-- **Evidence:** PR #3, `fix: hide inactive categories and products from storefront`, remains open and unmerged at the 28 October 2026 checkpoint. Do not assume its change is in local `main`.
+- **Evidence (checked 29 October 2026):** PR #3, `fix: hide inactive categories and products from storefront`, is open and unmerged. Its change is not in `main` at the current checkpoint.
 - **Next action:** Check the PR diff and tests, then verify merge status and browser behaviour before marking the feature complete.
 - **Acceptance:** Inactive categories and products are not publicly browsable or purchasable, while admin management remains available.
 
@@ -81,7 +81,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** INVESTIGATING
 - **Priority:** Medium
-- **Evidence:** The reviewed product schema associates products through `categoryId`; a category helper has been observed querying by a different `category` field/slug. PR #4 proposes a compatibility fix and remains open and unmerged at the 28 October 2026 checkpoint.
+- **Evidence (checked 29 October 2026):** The reviewed product schema associates products through `categoryId`; a category helper has been observed querying by a different `category` field/slug. PR #4 proposes a compatibility fix and is open and unmerged. Its change is not in `main` at the current checkpoint.
 - **Next action:** Review PR #4 against the current schema and existing records; verify the intended behaviour before merging or changing data.
 - **Acceptance:** Product counts and category slug-change protection work with the current schema and any explicitly supported legacy records; no unnecessary data migration.
 
@@ -163,8 +163,8 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** OPEN
 - **Priority:** Blocking for new application-code implementation under the current owner-approved working direction.
-- **Evidence:** The current SDD contains a general product/technical specification and detailed Admin Portal documents, but the Shipper, Finance, Management, Operations/PUDO workflows, shared pricing/settlement policies, and cross-portal acceptance criteria are not yet fully specified. Continuity documents also contain stale active-task/roadmap statements and an audit wording conflict regarding DEC-008.
-- **Next action:** Use `SDD_COMPLETENESS_AUDIT.md` to reconcile continuity documents, define actors and responsibility boundaries, specify shared shipment/pricing/payment/intake/transport/delivery workflows, and complete portal-level requirements before implementation.
+- **Evidence:** The current SDD contains a general product/technical specification and detailed Admin Portal documents, but the Shipper, Finance, Management, Operations/PUDO workflows, shared pricing/settlement policies, and cross-portal acceptance criteria are not yet fully specified. The 29 October continuity reconciliation corrects stale baseline/active-task/roadmap wording and aligns the Cloudinary decision/audit wording; the wider platform specification and owner decisions remain open.
+- **Next action:** After the continuity-document reconciliation is reviewed and accepted, define platform actors and responsibility boundaries. Then specify shared shipment/pricing/payment/intake/transport/delivery workflows and portal-level requirements before implementation.
 - **Acceptance:** Every launch-essential workflow has an agreed owner, lifecycle, permissions, data relationships, API/integration expectations, exception handling, and acceptance/test criteria; unresolved business rules are explicitly listed for owner decision; continuity docs agree on status and evidence; no application code is changed to close this issue.
 
 ## Maintenance rule
