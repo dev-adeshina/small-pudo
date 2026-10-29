@@ -18,7 +18,7 @@ export default async function ProductPage({ params }: Props) {
 
     const currentCategory = await getCategoryBySlug(category)
 
-    if (!currentCategory) {
+    if (!currentCategory || !currentCategory.isActive) {
         notFound()
     }
 
