@@ -4,7 +4,7 @@
 **Last updated:** 29 October 2026  
 **Scope:** Cross-domain business workflows and invariants for storefront fulfilment and independent parcel shipments  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, ADMIN_REQUIREMENTS.md, ADMIN_PORTAL.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022, DEC-023
 
 ## 1. Purpose, status, and boundaries
 
@@ -72,7 +72,7 @@ Use these evidence labels consistently:
 
 ### Proposed sequence
 
-1. A public visitor or eligible shipper begins a shipment booking using only the booking entry points approved for launch.
+1. A registered customer signs in and begins an independent shipment booking. A public visitor must register and authenticate before booking creation; guest shipment booking is not available at launch.
 2. The booking flow collects the origin, destination, service, parcel details, and other inputs required by the approved pricing policy.
 3. The shared pricing capability calculates or selects the applicable quote. The quote should preserve its inputs, applied rates/rule version, currency, and validity/acceptance context once those details are defined.
 4. The shipper reviews the quote and chooses an allowed payment path. Accepted launch scope includes advance online payment and payment at intake; exact method availability and rules still require definition.
@@ -82,8 +82,9 @@ Use these evidence labels consistently:
 
 ### Open policy / design questions
 
-- Must an independent shipper register/sign in, or may a guest book?
-- Can one account act as both storefront customer and shipper? The actor model permits the possibility but does not decide account/record identity.
+- **Resolved by DEC-023:** only registered, authenticated customers may create independent shipment bookings; guest shipment booking is out of launch scope.
+- Can one customer account act as both storefront customer and shipper? The actor model permits this, but account identity and booking-record relationships must still be verified in the detailed design.
+- What registration, contact, or identity verification beyond sign-in is required, and at which booking/intake checkpoints? Do not assume an additional verification method before it is decided.
 - What sender, receiver, payer, booking-party, and handover-person information is required, and when must each identity be verified?
 - Which booking changes/cancellations are allowed before intake, after intake, after dispatch, or after payment?
 - How long is a quote valid, what makes a booking accepted, and when is a reference/label/receipt issued?
@@ -92,6 +93,8 @@ Use these evidence labels consistently:
 
 ### Acceptance criteria to define
 
+- Only a registered, authenticated customer can create an independent shipment booking; unauthenticated booking-creation requests are denied server-side.
+- An authenticated customer can access or amend only bookings they are authorized to access; Customer A cannot read or change Customer B's booking.
 - Booking acceptance never claims physical receipt or custody.
 - The quote and the applied inputs/rates can be reconstructed for later review.
 - Booking-party identity and permissions are sufficient to prevent unauthorized changes.

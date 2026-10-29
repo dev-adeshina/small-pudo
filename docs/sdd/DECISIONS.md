@@ -207,3 +207,14 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Scope boundary:** This decision establishes the role-model direction, not a complete action-by-action permission matrix, second-person approval rule, custom-claim design, schema, route, or implementation approval. Those details must be defined in affected workflows and acceptance criteria before code changes.
 - **Rationale:** Preserve a lean launch without conflating responsibilities or granting broad authority to every signed-in user.
 - **Status:** Owner-approved design direction; detailed permissions and workflow-specific approval rules remain open.
+
+
+### DEC-023 — Registered customers only for independent shipment booking
+
+- **Decision date:** 29 October 2026.
+- **Decision:** At launch, only registered, authenticated customers may create an independent shipment booking. Guest shipment booking is out of scope for the initial launch.
+- **Authorization invariant:** The server must enforce authenticated customer identity and customer-scoped booking access. Unauthenticated users cannot create bookings or retrieve booking details, and one customer cannot access or amend another customer's booking without separately verified entitlement.
+- **Scope boundary:** This decision applies only to independent shipment booking. It does not change the provisional guest-checkout rule for storefront purchases and does not resolve guest-order recovery/claiming (VLY-004).
+- **Still unresolved:** Additional contact/identity verification checkpoints, minimum sender/receiver/payer details, business-account handling, quote validity, booking acceptance, amendment/cancellation authority, and corresponding runtime acceptance tests.
+- **Rationale:** Begin launch with an accountable customer identity for independent bookings while keeping the storefront guest-purchase path separate.
+- **Status:** Owner-approved eligibility rule; detailed workflow policy, source reconciliation, and implementation remain open.

@@ -99,8 +99,9 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Priority:** High for the approved parcel-operations launch scope
 - **Evidence:** The source-level audit found no dedicated Admin routes in the inspected paths for shipments, PUDO management, delivery pricing, transactions, or audit logs. Existing order shipping metadata does not by itself implement independent shipments or route-leg movements.
 - **Latest source check:** The second source pass found no dedicated shipment, pricing, PUDO, route/movement, or audit service module in the active TypeScript source inventory. This is a source-surface finding only; Firestore data and the uninspected `pudo.zip` archive were not checked.
-- **Next action:** Complete the owner-approved domain and workflow model, confirm the archive's scope, then design the smallest compatible data and workflow representation after SDD approval.
-- **Acceptance:** Shipment, order, payment, and transport-movement identities/lifecycles remain distinct; no schema changes occur before review.
+- **Policy update:** DEC-023 resolves D-02: only registered, authenticated customers may create independent shipment bookings at launch. Guest shipment booking is excluded; this does not alter storefront guest checkout.
+- **Next action:** Complete the remaining owner decisions and reconcile the platform-wide SDD, then design the smallest compatible data and workflow representation after SDD approval.
+- **Acceptance:** Shipment, order, payment, and transport-movement identities/lifecycles remain distinct; booking creation and customer-scoped access are server-authorized; no schema changes occur before review.
 
 ### VLY-017 — Privileged-action audit trail and minimum evidence handling need review
 
