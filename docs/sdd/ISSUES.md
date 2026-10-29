@@ -69,13 +69,13 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Next action:** After security verification, define a small set of computable launch metrics and their existing data sources. Replace demo values only through a separately agreed focused implementation task.
 - **Acceptance:** No fabricated metrics or activity; definitions distinguish current-state counts from date-filtered totals and do not double-count linked records.
 
-### VLY-013 — Inactive category/product visibility change is not yet part of main baseline
+### VLY-013 — Inactive category/product visibility requires runtime regression verification
 
 - **Status:** INVESTIGATING
 - **Priority:** Medium
-- **Evidence (checked 29 October 2026):** PR #3, `fix: hide inactive categories and products from storefront`, is open and unmerged. Its change is not in `main` at the current checkpoint.
-- **Next action:** Check the PR diff and tests, then verify merge status and browser behaviour before marking the feature complete.
-- **Acceptance:** Inactive categories and products are not publicly browsable or purchasable, while admin management remains available.
+- **Evidence (checked 29 October 2026):** PR #3, `fix: hide inactive categories and products from storefront`, is merged into `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`. Source inspection confirms inactive category pages return not-found, inactive products are filtered from category listings, and product details reject inactive categories. This source inspection did not run browser tests.
+- **Next action:** Verify active/inactive category and product scenarios in the browser and ensure inactive products cannot be purchased through the server order-creation endpoint.
+- **Acceptance:** Inactive categories and products are not publicly browsable or purchasable, while admin management remains available; runtime evidence is recorded separately from source presence.
 
 ### VLY-014 — Category product-count/slug protection mismatch
 
@@ -163,8 +163,8 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** OPEN
 - **Priority:** Blocking for new application-code implementation under the current owner-approved working direction.
-- **Evidence:** PR #7 merged `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, and PR #8 merged the owner-reviewed `PLATFORM_SHARED_WORKFLOWS.md`, into the documentation baseline on 29 October 2026. These documents are accepted as the current conceptual documentation baseline, but their unresolved owner decisions are not automatically settled by merging. `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` is the next draft; final transitions, domain relationships, API/security contracts, source mapping, and acceptance evidence remain incomplete.
-- **Next action:** Review `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`; record decisions or blockers in `DECISIONS.md`; then inspect current source read-only to map records, routes, authorization, payment verification, idempotency, concurrency, uploads, and tests. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
+- **Evidence:** PR #7 (actor/responsibility), PR #8 (shared workflows), and PR #9 (domain/lifecycle/API/security draft) are merged into the documentation baseline. `IMPLEMENTATION_SOURCE_TRACEABILITY.md` now records a read-only source inventory against `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`. The drafts and source map expose remaining owner decisions, source-investigation gaps, and runtime verification work; merging documents does not approve unresolved policy.
+- **Next action:** Continue source inspection for existing audit/event helpers, payment recovery, direct Firestore access, and any reusable PUDO/pricing/route data; reconcile findings with the completeness audit and decisions. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
 - **Acceptance:** Every launch-essential workflow has an agreed owner, lifecycle, permissions, data relationships, API/integration expectations, exception handling, and acceptance/test criteria; unresolved business rules are explicitly listed for owner decision; continuity docs agree on status and evidence; no application code is changed to close this issue.
 
 ### VLY-020 — Shared platform workflows require owner review
@@ -179,9 +179,17 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** OPEN
 - **Priority:** Blocking for implementation design
-- **Evidence:** A first-pass draft exists in PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md. It distinguishes conceptual domain responsibilities, proposes lifecycle boundaries without defining final status values, lists API/service contract groups, describes baseline security expectations, and sets out a read-only source-validation plan. It does not prescribe concrete collections, fields, route names, payloads, or permissions.
-- **Next action:** Review the conceptual relationships and lifecycle boundaries; resolve or explicitly retain owner decisions; then map existing source records, routes, auth checks, payment integration, idempotency/concurrency controls, upload handling, and test coverage before proposing minimal compatible technical contracts.
+- **Evidence:** The domain/lifecycle/API/security draft is merged but remains a draft for owner review. `IMPLEMENTATION_SOURCE_TRACEABILITY.md` maps the inspected order, customer access, payment, admin authorization, upload, fulfilment, and Firestore-rules source to the conceptual design. Independent booking/PUDO/pricing/routing/audit coverage and complete runtime evidence remain unresolved. The source inspection did not execute tests or inspect production configuration/data.
+- **Next action:** Continue read-only source searches for reusable audit/event helpers, direct Firestore access, payment recovery, and any existing PUDO/pricing/route data; then review owner decisions and update the platform completeness audit. Do not implement until the complete SDD is approved.
 - **Acceptance:** Owner-approved conceptual relationships and transition rules exist for launch-essential flows; API/security contracts define validation, authorization, failure, idempotency, concurrency, and audit expectations; source facts and runtime evidence are documented separately; no application code is changed to close this issue.
+
+## Source-traceability checkpoint — 29 October 2026
+
+- `IMPLEMENTATION_SOURCE_TRACEABILITY.md` records the current read-only source inventory and distinguishes source presence from runtime evidence.
+- PR #3 is merged; its source change is present, but browser regression verification remains open under VLY-013.
+- PR #4 remains open/unmerged; do not describe its proposed compatibility fix as part of `main`.
+- Current baseline inspected: `c56be9b121e6007e1e99c6df2d3984e709771a92`.
+- Application-code implementation remains blocked by VLY-019 until the platform-wide SDD is reconciled and approved.
 
 ## Maintenance rule
 
