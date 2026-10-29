@@ -31,6 +31,7 @@ It does not replace those domain documents and does not decide policy on the own
 | DEC-018 | Verified payment is the default dispatch prerequisite; exceptions require explicit authorization, approved policy, reason, and audit trail. | Exception eligibility, authority, limits, and evidence remain unresolved. |
 | DEC-018 | Driver Portal, advanced route optimization, full fleet management, enterprise workflow engine, and advanced analytics are deferred unless a concrete need justifies them. | Do not expand launch scope without an explicit decision. |
 | DEC-019 | Reuse shared hybrid pricing principles, preserve accepted quotes and rate inputs, review material measurement discrepancies, and keep financial adjustments distinct and verified. | Formula, thresholds, methods, and approval limits remain open. |
+| DEC-024 | Booking party, sender, receiver/collection recipient, payer, and handover person may differ; payer access defaults to payment confirmation/receipt only; booking/payment alone do not grant collection authority/full shipment-detail access. | Exact verification checkpoints, change-type/lifecycle permissions, consent, collection proof, and notification fields remain open. |
 | DEC-021 | Complete and reconcile the platform-wide SDD before application-code changes. | This is a hard working constraint. |
 | VLY-007 | Telegram remains deferred; a future paid-order delivery notification must respect the administrator's delivery-assignment approval gate. | Triggers, recipients, fields, retries, and deduplication remain open. |
 
