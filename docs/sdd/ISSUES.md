@@ -163,17 +163,25 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 - **Status:** OPEN
 - **Priority:** Blocking for new application-code implementation under the current owner-approved working direction.
-- **Evidence:** PR #7 merged `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` into the documentation baseline on 29 October 2026. The actor model is accepted as a documentation baseline, but its nine owner decisions are not automatically resolved by merging it. `PLATFORM_SHARED_WORKFLOWS.md` is now a first-pass cross-domain workflow draft; detailed lifecycle, pricing, settlement, permission, exception, and acceptance rules remain incomplete.
-- **Next action:** Review `PLATFORM_SHARED_WORKFLOWS.md`, record owner decisions in `DECISIONS.md`, and continue through conceptual domain/data relationships, lifecycle/state transitions, API/security contracts, portal requirements, and cross-platform acceptance tests. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
+- **Evidence:** PR #7 merged `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, and PR #8 merged the owner-reviewed `PLATFORM_SHARED_WORKFLOWS.md`, into the documentation baseline on 29 October 2026. These documents are accepted as the current conceptual documentation baseline, but their unresolved owner decisions are not automatically settled by merging. `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` is the next draft; final transitions, domain relationships, API/security contracts, source mapping, and acceptance evidence remain incomplete.
+- **Next action:** Review `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`; record decisions or blockers in `DECISIONS.md`; then inspect current source read-only to map records, routes, authorization, payment verification, idempotency, concurrency, uploads, and tests. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
 - **Acceptance:** Every launch-essential workflow has an agreed owner, lifecycle, permissions, data relationships, API/integration expectations, exception handling, and acceptance/test criteria; unresolved business rules are explicitly listed for owner decision; continuity docs agree on status and evidence; no application code is changed to close this issue.
 
 ### VLY-020 — Shared platform workflows require owner review
 
 - **Status:** OPEN
 - **Priority:** Blocking for detailed implementation planning
-- **Evidence:** A first-pass draft exists in `PLATFORM_SHARED_WORKFLOWS.md` following the actor/responsibility model merged in PR #7. It covers storefront fulfilment, independent shipment booking, intake/custody, shared pricing, payment/reconciliation, route proposal/assignment, dispatch, delivery/failed delivery, notifications/tracking, and audit/disclosure. The document deliberately leaves detailed policy unresolved and does not define implementation schema or API contracts.
-- **Next action:** Review the draft and decide the launch policies for booking identity/eligibility, lifecycle transitions, pricing formulas/thresholds, payment-at-intake and settlement, PUDO capabilities, transport evidence, dispatch exceptions, proof of delivery, failed-delivery outcomes, notification triggers, and audit/disclosure controls. Then reconcile the accepted workflow with current source read-only before proposing data/API contracts.
+- **Evidence:** `PLATFORM_SHARED_WORKFLOWS.md` was reviewed and merged in PR #8 on 29 October 2026. It establishes a reviewed workflow-draft baseline but leaves detailed policy unresolved by design.
+- **Next action:** Keep the unresolved policy list in `PLATFORM_SHARED_WORKFLOWS.md` and `DECISIONS.md` current while the domain/lifecycle contract work proceeds. Do not close the issue until each launch-essential workflow has agreed owners, transitions, permissions, evidence, exception outcomes, and testable acceptance criteria—or an explicit owner decision/blocker.
 - **Acceptance:** Each launch-essential workflow has an agreed owner, trigger, transitions, exception outcomes, permissions, evidence, and testable acceptance criteria—or a clearly recorded owner decision/blocker. No application code is changed to close this issue.
+
+### VLY-021 — Conceptual domain, lifecycle, and API/security contracts require review
+
+- **Status:** OPEN
+- **Priority:** Blocking for implementation design
+- **Evidence:** A first-pass draft exists in PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md. It distinguishes conceptual domain responsibilities, proposes lifecycle boundaries without defining final status values, lists API/service contract groups, describes baseline security expectations, and sets out a read-only source-validation plan. It does not prescribe concrete collections, fields, route names, payloads, or permissions.
+- **Next action:** Review the conceptual relationships and lifecycle boundaries; resolve or explicitly retain owner decisions; then map existing source records, routes, auth checks, payment integration, idempotency/concurrency controls, upload handling, and test coverage before proposing minimal compatible technical contracts.
+- **Acceptance:** Owner-approved conceptual relationships and transition rules exist for launch-essential flows; API/security contracts define validation, authorization, failure, idempotency, concurrency, and audit expectations; source facts and runtime evidence are documented separately; no application code is changed to close this issue.
 
 ## Maintenance rule
 
