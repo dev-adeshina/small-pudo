@@ -416,3 +416,16 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Resolve owner decisions and approve the complete platform-wide SDD before application-code changes.
 
 **Inspection boundary:** This checkpoint used GitHub source reads only. It did not run tests, inspect production Firestore data/configuration, reproduce browser behaviour, or change application code.
+
+
+### Second read-only source pass — 29 October 2026
+
+- [x] Rechecked the active TypeScript source inventory, all 15 API route handlers, Firebase category/product/order helpers, all four Admin page guards, Firestore rules/tests, payment routes, and relevant SDD decisions.
+- [x] Confirmed all four inspected Admin pages call `verifyAdminAccess`; the prior customer-access report remains a runtime test requirement, not a source-confirmed defect.
+- [x] Confirmed category/product CRUD uses client Firestore helpers protected by custom-claim rules, while storefront checkout uses `/api/orders`; a legacy client-side order-creation helper remains but direct client order writes are denied by the rules.
+- [x] Confirmed `paymentWebhookEvents` is used for webhook deduplication/outcome processing, not a general audit ledger. No dedicated audit/financial-event, shipment/PUDO, pricing, or routing/movement service module was found in the inspected active TypeScript source surface.
+- [ ] Owner to confirm whether repository-root `pudo.zip` is in scope for the active VeriLyft SDD/source-of-truth review. It has not been unpacked or audited and is not treated as deployed behaviour.
+- [ ] Resolve remaining owner decisions for booking identity/acceptance, quote validity and adjustments, custody/intake, route legs, proof of delivery, settlement/refunds, audit/evidence retention, and staff role boundaries.
+- [ ] Complete the platform-wide SDD acceptance matrix and obtain explicit approval before any application-code changes.
+
+**Evidence boundary:** Source reads only; no application code or data changed, no tests run, no production Firestore data/configuration inspected, and no browser/runtime behaviour reproduced.
