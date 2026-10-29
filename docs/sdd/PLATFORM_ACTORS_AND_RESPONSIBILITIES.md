@@ -3,7 +3,7 @@
 **Document status:** Draft for owner review — not approved for implementation  
 **Last updated:** 29 October 2026  
 **Scope:** Platform-level human/system actors, responsibility boundaries, and portal/module distinctions  
-**Related decisions:** DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, DEC-021, DEC-022, DEC-023
+**Related decisions:** DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, DEC-021, DEC-022, DEC-023, DEC-024
 
 ## 1. Purpose and status
 
