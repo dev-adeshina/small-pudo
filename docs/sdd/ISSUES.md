@@ -163,6 +163,14 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 7. **Admin priority baseline:** Review the P0/P1/deferred inventory in `ADMIN_REQUIREMENTS.md`; operating-model choices are recorded as owner-confirmed, but formal baseline approval remains pending.
 
 
+### D-04 policy reconciliation — DEC-025
+
+- **Status:** High-level owner decision accepted; detailed operational controls remain open.
+- **Accepted:** Per-location capabilities and lean location records. Walk-in intake creation, measurement, custody acceptance, payment recording, and parcel release are separate capabilities; actions require server-side authorization and consequential events retain actor/location/time plus applicable evidence.
+- **Still open:** Staff capability assignment, collection-centre partner access, measurement/discrepancy rules, payment-at-intake methods/evidence, collection verification, and second-person approval requirements.
+- **Next action:** Carry DEC-025 into the consolidated SDD and define detailed acceptance tests only after the remaining dependent decisions and source validation are complete.
+- **Boundary:** Documentation-only decision; no application code, schema, route, permission implementation, or runtime behaviour was changed or tested.
+
 ### VLY-019 — Platform-wide SDD completeness and reconciliation
 
 - **Status:** OPEN
