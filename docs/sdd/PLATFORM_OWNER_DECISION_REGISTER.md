@@ -93,12 +93,16 @@ The order below follows dependencies: authority and booking semantics first; com
 
 ### D-06 — Measurement discrepancy and adjustment approval
 
-- **Status:** Owner decision required.
-- **Confirmed:** Intake measurement may lead to a proposed recalculated charge; material discrepancies require review under policy.
-- **Decision needed:** Define measurement units and required dimensions/weight; materiality thresholds; who reviews discrepancies; and what happens when a customer accepts, disputes, or declines an adjustment.
-- **Recommendation:** Preserve the original quote and record the measured inputs and proposed adjustment separately. Do not silently overwrite an accepted quote or treat an unresolved adjustment as settled.
-- **Dependencies:** D-05, intake evidence, additional payment/credit/refund workflow, dispatch gates, and customer communications.
-- **Record after decision:** Thresholds, review authority, customer choice, allowed outcomes, and evidence required.
+- **Status:** Owner decision accepted at the policy level; recorded as DEC-027 on 29 October 2026.
+- **Accepted approach:** Use configurable, evidence-based thresholds appropriate to the service and relevant measurement. Distinguish routine variation from a material discrepancy; exact numeric thresholds and required units remain unresolved.
+- **Measurement record:** Preserve the original quoted inputs and separately record actual intake measurements, including the responsible actor, location, time, and applicable evidence/reason. Do not silently replace the original quote.
+- **Adjustment lifecycle:** A discrepancy may create a proposed adjustment linked to the original quote. A proposal is not an approved charge, settled payment, credit, or refund. Preserve the original quote and its historical rate/rule context.
+- **Review and authority:** Authorized staff may record measurements and propose adjustments within their assigned permissions. Material discrepancies and adjustments affecting an existing payment require review under configured authority. Exact staff limits and second-person approval rules remain unresolved.
+- **Customer and financial outcomes:** Define notification/consent requirements and explicit outcomes for acceptance, dispute, refusal, and unresolved cases before implementation. Do not silently impose a disputed adjustment or treat it as settled. Additional charges, payments, credits, and refunds remain distinct, traceable financial events.
+- **Still unresolved:** Measurement units and service-specific requirements; numeric thresholds; approval limits and separation of duties; customer consent and notification rules; consequences of refusal/dispute; and detailed evidence/test criteria.
+- **Dependencies:** D-05 pricing and quote preservation, D-04 intake/location capabilities, D-07 payment-at-intake evidence, D-08 financial events/reconciliation, dispatch gates, customer communications, and D-12 audit/evidence retention.
+- **Acceptance direction:** Preserve quoted and actual measurements; prevent unauthorized or silent quote mutation; route material discrepancies to the required review; and ensure no proposed/disputed adjustment is treated as an approved or settled financial event.
+- **Implementation boundary:** Business policy only. No schema, endpoint, permission implementation, pricing implementation, or application-code change is authorized by this decision.
 
 ### D-07 — Supported payment-at-intake methods and evidence
 
