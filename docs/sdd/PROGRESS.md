@@ -508,3 +508,17 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's acceptance of the recommended policy. No application source, schema, pricing implementation, deployed configuration, or runtime behaviour changed or was tested.
+
+## 18. Owner decision D-06 — 29 October 2026
+
+- [x] Owner accepted the recommended configurable, evidence-based measurement discrepancy and adjustment policy, recorded as DEC-027.
+- [x] Confirmed that original quoted inputs and actual intake measurements must be preserved separately, with actor/location/time and applicable evidence.
+- [x] Confirmed that proposed adjustments must link to the original quote and must not silently overwrite accepted terms or be treated as approved/settled financial events.
+- [x] Confirmed that material discrepancies and adjustments affecting existing payments require review under configured authority.
+- [x] Reconciled the owner decision register, decisions log, shared workflows, domain/lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff in this documentation proposal.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Continue with D-07: payment-at-intake methods and evidence.
+- [ ] Keep numeric thresholds, units/service requirements, approval limits, second-person rules, customer notification/consent, and acceptance/dispute/refusal outcomes unresolved.
+- [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's acceptance of the recommended policy. No application source, schema, pricing implementation, deployed configuration, or runtime behaviour changed or was tested.
