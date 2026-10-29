@@ -4,7 +4,7 @@
 **Last updated:** 29 October 2026  
 **Scope:** Cross-domain business workflows and invariants for storefront fulfilment and independent parcel shipments  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, ADMIN_REQUIREMENTS.md, ADMIN_PORTAL.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022, DEC-023, DEC-024
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022, DEC-023, DEC-024, DEC-025
 
 ## 1. Purpose, status, and boundaries
 
@@ -109,6 +109,14 @@ Use these evidence labels consistently:
 ## 5. Workflow C — Physical intake, measurement, and custody
 
 **Purpose:** Record the actual physical handover of a parcel at a supported staffed location or other approved intake arrangement.
+
+### Accepted constraints (DEC-025)
+
+- Location capabilities are configured per location; capabilities must not be inferred from a location label, staff login, or Admin status.
+- The launch capability set includes walk-in intake record creation, parcel measurement, custody acceptance, payment collection/recording with required evidence, and parcel release to a verified authorized recipient. Each action is separately authorized.
+- The initial location record is intentionally lean: name, address, active status, and configured capabilities. More elaborate hours/contact/capacity management is not implied.
+- Consequential physical and payment actions record the responsible actor, location, and time, plus applicable evidence/reason. Server-side authorization is mandatory.
+- A registered collection centre may perform only explicitly configured services; outgoing intake and parcel release are not automatically enabled.
 
 ### Proposed sequence
 
@@ -397,7 +405,7 @@ The following cases require explicit outcomes in the detailed lifecycle and acce
 
 This draft deliberately does not resolve the following:
 
-1. **Actor and staff-role boundaries:** DEC-022 accepts the minimal hybrid staff model. Workflow-specific permissions, second-person approval thresholds, PUDO/station authority, Finance boundaries, and external-party access remain open in §6 of PLATFORM_ACTORS_AND_RESPONSIBILITIES.md.
+1. **Actor and staff-role boundaries:** DEC-022 accepts the minimal hybrid staff model and DEC-025 accepts separate per-location capabilities for walk-in intake, measurement, custody, payment recording, and release. Exact staff assignment, partner access, second-person approval thresholds, Finance boundaries, and external-party access remain open in §6 of PLATFORM_ACTORS_AND_RESPONSIBILITIES.md.
 2. **Shipper eligibility and identity:** guest booking is excluded by DEC-023; DEC-024 accepts distinct booking-party/sender/receiver/payer/handover roles and payment-only payer access by default. Exact verification points, consent, change/cancellation authority by type and lifecycle stage, and business-account handling remain open.
 3. **Lifecycle/state transitions:** allowed states and transitions for booking, intake, shipment, route leg, dispatch, delivery, failed delivery, cancellation, and returns.
 4. **Pricing policy:** formulas, units, distance source/bands, service classes, quote validity, thresholds, approval limits, rounding, taxes, surcharges, and permitted methods.
