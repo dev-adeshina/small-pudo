@@ -218,3 +218,16 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Still unresolved:** Additional contact/identity verification checkpoints, minimum sender/receiver/payer details, business-account handling, quote validity, booking acceptance, amendment/cancellation authority, and corresponding runtime acceptance tests.
 - **Rationale:** Begin launch with an accountable customer identity for independent bookings while keeping the storefront guest-purchase path separate.
 - **Status:** Owner-approved eligibility rule; detailed workflow policy, source reconciliation, and implementation remain open.
+
+
+### DEC-024 — Distinct shipment parties, change authority, and payer privacy
+
+- **Decision date:** 29 October 2026.
+- **Decision:** The booking party, sender, receiver/collection recipient, payer, and person physically handing over the parcel may be different people. One person may occupy multiple roles, but each relationship must be explicit wherever it affects authority, liability, access, notifications, payment attribution, intake, or collection.
+- **Change authority:** Do not infer blanket edit authority from any one relationship. Permissions must be defined by change type and shipment lifecycle stage. The booking party may initiate permitted requests. Receiver/collection changes must follow the applicable verification and approval policy; changes affecting a shipment after intake or dispatch require the approved staff-mediated/controlled workflow. The exact change matrix, consent requirements, verification checkpoints, and permissions remain open.
+- **Payer privacy:** Payment alone grants the payer payment confirmation/receipt information only by default. It does not grant full shipment-detail access. Additional visibility requires a separately approved entitlement and minimum-data rule.
+- **Physical authority:** Booking does not itself authorize parcel collection. Payment does not itself authorize access to private shipment details. Handover and collection identities/evidence must satisfy the approved intake/collection policy.
+- **Notification boundary:** Send each party only notifications and minimum fields appropriate to their approved relationship; payer notifications do not automatically disclose full shipment details.
+- **Rationale:** Support legitimate third-party booking/payment while avoiding accidental disclosure or unauthorized shipment changes and collection.
+- **Still unresolved:** Exact verification checkpoints; detailed permissions for each change type and lifecycle stage; sender/receiver consent rules; collection-proof requirements; notification event/recipient/field matrix; and implementation/runtime acceptance tests.
+- **Status:** Owner-approved policy direction; detailed workflow contracts and implementation remain open. No schema or application-code change is authorized by this decision.
