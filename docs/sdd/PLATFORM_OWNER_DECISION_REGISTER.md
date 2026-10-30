@@ -297,3 +297,20 @@ The owner approved the following additional policy boundaries:
 - Rejection triggers an authorized service-resolution decision, not automatic cancellation, refund, credit, or charge. Possible controlled outcomes include safe/commercially feasible continuation under original terms, a separately accepted eligible alternative service, or cancellation under the applicable policy.
 - Dispatch cannot proceed under a rejected revised price.
 - **Still open:** Exact thresholds, units/conversion, evidence, approval limits/separation of duties, service-resolution authority and eligibility, customer response periods/non-response handling, and detailed acceptance tests. No technical implementation is authorized.
+
+
+### D-07 / D-08 refinement — DEC-041 (30 October 2026)
+
+The owner approved the following payment and financial-resolution boundaries, refining but not replacing DEC-018, DEC-028, DEC-029, and DEC-030:
+
+- Both advance online payment and payment at intake remain in launch scope, subject to service/location configuration. Quote acceptance confirms booking, not payment. Electronic settlement requires authoritative confirmation; payment at intake uses only location-enabled methods and DEC-028 evidence requirements.
+- Screenshots, verbal claims, browser redirects, and unsupported staff notes are not proof of electronic settlement. Cash requires attributable receipt/equivalent evidence and reconciliation.
+- Partial payment is allowed only where a service explicitly permits it. Record amount received and amount outstanding distinctly; partial payment does not satisfy the normal dispatch gate by itself. Underpayment/overpayment require authorized resolution; additional payments remain separate linked events.
+- Pending and failed attempts are not settlement. Retries and replayed events must not duplicate financial effects. Late success is recorded against its original transaction and does not reactivate a cancelled/expired booking automatically.
+- Refund request, approval, initiation, and confirmed execution are distinct. Partial refunds are authorized, traceable outcomes. Customer credit is distinct from cash refund. Reversals and chargebacks preserve original transaction history.
+- Reconciliation covers authoritative provider/bank records and applicable location cash collections. Mismatches require investigation and attributable resolution; no silent correction.
+- Verified full settlement of the amount currently due remains the normal dispatch prerequisite. Partial, pending, failed, or unverified payment does not satisfy it. DEC-030 exceptions do not change payment status or bypass unrelated holds.
+
+**Still open:** Service eligibility and conditions for partial payment; enabled methods/providers and transaction/cash limits; evidence/receipt details; refund approval limits, separation of duties, timelines and partial-refund eligibility; cancellation fees; credit expiry/use/transfer; late-payment disposition; reconciliation frequency, ownership, tolerances, escalation and cash handling; chargeback procedure; DEC-030 eligible circumstances/limits/evidence; and detailed acceptance tests.
+
+DEC-041 is high-level business policy only. No technical representation, schema, fields, collections, endpoints, permission implementation, provider choice, or application-code change is approved.
