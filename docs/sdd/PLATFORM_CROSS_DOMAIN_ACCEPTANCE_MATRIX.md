@@ -131,7 +131,9 @@ The owner accepted service-specific fixed, calculated, or hybrid pricing; servic
 
 Acceptance evidence must eventually show that quotes are reproducible from preserved inputs and rate/rule version; a rate change cannot silently alter an accepted quote or completed payment; unaccepted quote expiry requires a fresh quote; accepted quote expiry does not silently cancel/rewrite the confirmed booking; and the separately configured service handover deadline is communicated and enforced. Exact formulas/rates, service-to-input mapping, input sources, units/conversions, distance source/bands, effective dates, tax/fee/discount treatment, rounding, minimums, quote-validity durations, handover durations, and adjustment thresholds remain open. No application implementation or runtime test is authorized by this decision.
 
-DEC-039 additionally requires client-submitted values to remain inputs only, server-authoritative pricing, transparent charge components, and historical quote preservation. This is a policy boundary, not proof of source implementation or runtime verification.\n\n## D-06 reconciliation — DEC-027
+DEC-039 additionally requires client-submitted values to remain inputs only, server-authoritative pricing, transparent charge components, and historical quote preservation. This is a policy boundary, not proof of source implementation or runtime verification.
+
+## D-06 reconciliation — DEC-027
 
 Acceptance evidence must eventually demonstrate that quoted measurements and actual intake measurements are preserved separately; each measurement event is attributable to actor, location, and time with required evidence; and any proposed adjustment links to the original quote without silently mutating it. Routine variation and material discrepancy must be handled according to a configured, service-appropriate policy. Material/payment-impacting adjustments must be reviewed by authorized staff, and a proposal or dispute must not be represented as an approved/settled financial event.
 
