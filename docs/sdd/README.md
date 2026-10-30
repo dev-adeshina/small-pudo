@@ -8,12 +8,12 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 
 - `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and historical roadmap (not the current work order).
 - `SDD_COMPLETENESS_AUDIT.md` — platform-wide documentation coverage, inconsistencies, gaps, and the proposed SDD completion sequence.
-- `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` — platform actor catalogue, responsibility boundaries, portal/module distinction, and unresolved owner decisions.
+- `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` — platform actor catalogue, accepted responsibility boundaries, portal/module distinction, and remaining role/permission design questions.
 - `PLATFORM_SHARED_WORKFLOWS.md` — draft cross-domain workflows for storefront fulfilment, independent shipment booking, intake/custody, pricing, payments, routing, dispatch, delivery, notifications, and audit/evidence.
 - `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` — draft conceptual domain relationships, lifecycle boundaries, API/service contract expectations, security controls, and source-validation checklist.
 - `IMPLEMENTATION_SOURCE_TRACEABILITY.md` — read-only source inventory mapped to the platform SDD, with evidence limits, implementation gaps, and verification follow-ups.
-- `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md` — draft cross-domain acceptance matrix for workflows, actors, lifecycle boundaries, security, failure recovery, audit evidence, and unresolved owner decisions; not implementation approval.
-- `PLATFORM_OWNER_DECISION_REGISTER.md` — dependency-ordered register of unresolved platform-wide owner decisions, confirmed constraints, non-binding recommendations, and the process for recording decisions; not approved policy.
+- `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md` — draft cross-domain acceptance matrix for workflows, actors, lifecycle boundaries, security, failure recovery, audit evidence, and outstanding specification/verification work; not implementation approval.
+- `PLATFORM_OWNER_DECISION_REGISTER.md` — dependency-ordered record of D-01–D-15 owner decisions, accepted constraints, and remaining detailed design questions; the complete SDD is not yet approved.
 - `ADMIN_REQUIREMENTS.md` — consolidated Admin Portal requirements, startup priorities, scope boundaries, and requirements-baseline approval checklist.
 - `ADMIN_REQUIREMENTS_AUDIT.md` — source-level validation matrix for requirements versus existing code, including evidence, gaps, and outstanding verification.
 - `ADMIN_PORTAL.md` — Admin Portal page-by-page design, confirmed decisions, scope boundaries, and unresolved design items.
@@ -54,4 +54,4 @@ When sources conflict, do not silently favour code or documentation. Record the 
 
 ### Important status caveat
 
-The launch operating model was owner-confirmed on 28 October 2026 and is recorded in `ADMIN_REQUIREMENTS.md` and `DECISIONS.md`. The consolidated P0/P1/deferred priority baseline still needs review. Requirements do not prove implementation. Reconcile the progress/issues/decision records before code changes, and verify current code and actual test results before claiming that a feature is implemented or tested.
+All 15 tracked owner decisions (D-01–D-15; DEC-022–DEC-036) have high-level accepted outcomes recorded. DEC-036 accepts an evidence-based P0/P1/deferred launch approach, but requirement-level classification, detailed acceptance evidence, source/runtime verification, and complete platform-wide SDD approval remain outstanding. Requirements do not prove implementation. `PROGRESS.md` is the current work pointer; verify source and actual test/deployment evidence before claiming a feature is implemented, tested, or launch-ready.
