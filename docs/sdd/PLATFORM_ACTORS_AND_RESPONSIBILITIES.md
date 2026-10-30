@@ -150,7 +150,7 @@ The owner has accepted detailed policy BP-01–BP-22 in `PLATFORM_BOOKING_PARTY_
 - **Designated Admin/reviewer:** handles defined exceptions, sensitive changes, disputes, and appeals only within explicitly assigned authority.
 - **Delegated customer:** receives only explicit, limited, time-bounded, revocable, non-transferable access; no sub-delegation.
 
-Verification methods, detailed staff permissions, business-account representation, operational evidence, and technical enforcement remain open. This policy addendum does not approve a separate Support portal, role schema, permission claim, or application implementation.
+Verification methods, detailed staff permissions, business identity/relationship representation and multiple-user authority, operational evidence, and technical enforcement remain open. This policy addendum does not approve a separate Support portal, role schema, permission claim, or application implementation.
 
 
 ## Independent shipment booking responsibility update — DEC-038
