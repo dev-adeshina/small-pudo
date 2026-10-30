@@ -925,8 +925,21 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Owner approved preservation of original location assignments, distinction between administrative correction and physical transfer, and accountable custody/reason for prolonged holds.
 - [x] Owner approved attributable investigation and authorized reasoned resolution; original records/evidence remain preserved, corrections are separately traceable, and unresolved exceptions are not silently closed.
 - [x] Recorded DEC-044 across the decisions log, shared workflow, lifecycle/contract draft, owner decision register, cross-domain acceptance direction, issue register, progress tracker, and session handoff.
-- [ ] Review and merge the Milestone 3 Part 3 documentation-only PR.
+- [x] Review and merge the Milestone 3 Part 3 documentation-only PR (PR #51; merge commit `817bf60cd1d1ef15d060215131f2228bb24552a9`).
 - [ ] Keep service-specific handover proof, confirmation/dispute/correction authority, second-approver rules, investigation ownership, damage/liability assessment, hold ownership/review/maximum periods, evidence retention, financial/customer entitlements, technical contracts, and executable tests open.
 - [ ] Continue platform-wide SDD reconciliation, read-only source traceability, acceptance-test specification, and production-readiness evidence planning. Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
 **Evidence boundary:** DEC-044 records owner-approved high-level business policy only. This proposal changes documentation only; no application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed or verified. No technical structure, status enum, proof technology, automatic escalation, liability rule, financial outcome, or application-code change is approved.
+
+
+## 41. Milestone 3 completion — Parts 1–3 owner-approved and merged — 30 October 2026
+
+- [x] Milestone 3 Part 1 — physical intake and custody policy — merged and recorded in the preceding milestone documentation history.
+- [x] Milestone 3 Part 2 — location capabilities and operational authority — PR #50 merged at `06d485f351246b5304227d79d5e03eeed0c1b9c1`.
+- [x] Milestone 3 Part 3 — custody transfers and physical exceptions — PR #51 merged at `817bf60cd1d1ef15d060215131f2228bb24552a9`.
+- [x] Owner confirmed approval following PR #51 merge.
+- [ ] Continue platform-wide SDD reconciliation, read-only source traceability, acceptance-test specification, and production-readiness evidence planning.
+- [ ] Keep unresolved service-specific procedures, evidence standards/retention, actor authority, exception ownership, hold limits, financial/legal outcomes, technical contracts, and executable tests open until separately specified and approved.
+- [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
+
+**Milestone outcome:** Parts 1–3 are complete at the owner-approved policy/documentation level. This does not mean the platform-wide SDD is complete, nor does it authorize implementation. No application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests are changed or verified by this progress reconciliation.
