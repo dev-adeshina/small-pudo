@@ -268,3 +268,19 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Still unresolved:** Units and required measurements by service; numeric thresholds; authority limits and separation of duties; customer consent/notification rules; refusal/dispute outcomes; evidence details and runtime acceptance tests.
 - **Rationale:** Protect quote integrity and customer trust while allowing operationally practical handling of routine variation and controlled review of material differences.
 - **Status:** High-level owner policy accepted. Detailed thresholds, authority matrix, customer/financial outcomes, source reconciliation, and implementation remain open.
+
+
+### DEC-028 — Configured payment-at-intake methods and evidence
+
+- **Decision date:** 30 October 2026.
+- **Decision:** Use location-configured payment methods with evidence-based confirmation. A location may accept only payment methods explicitly enabled for that location; supported methods are not inferred from its label or general staff access.
+- **Payment evidence:** Each recorded payment must distinguish its method and preserve amount, currency, applicable transaction reference or receipt, collecting/recording staff member, location, and time. Method-specific evidence requirements must be defined before implementation.
+- **Electronic payments:** Treat an electronic payment as verified only when confirmed by an authoritative provider, bank, or approved reconciliation source. A customer screenshot, verbal claim, or unsupported staff note alone is not authoritative proof of successful settlement.
+- **Cash:** A cash collection requires an attributable receipt or equivalent record and must be included in reconciliation. Detailed cash-handling and reconciliation procedures remain open.
+- **Separate facts:** A payment record does not by itself establish that the parcel was accepted into physical custody. Booking, payment, and custody remain distinct facts and independently evidenced events.
+- **History and corrections:** Failed, reversed, refunded, disputed, or corrected payment outcomes must retain their traceable history. Do not silently overwrite or erase prior financial events.
+- **Still unresolved:** Exact enabled methods/providers per location; transaction and cash limits; receipt format; cash-handling and reconciliation procedures; mandatory second-person verification/approval; method-specific evidence and exception handling; and detailed acceptance tests.
+- **Dependencies:** D-01 staff authority, D-04 location capabilities and intake, D-05 quote/pricing preservation, D-06 measurement adjustments, D-08 cancellation/refund/credit/reconciliation policy, dispatch gates, and D-12 audit/evidence retention.
+- **Rationale:** Allow practical location-level flexibility while ensuring that payment verification is based on reliable evidence and remains distinct from physical custody.
+- **Status:** Owner-approved high-level policy; detailed procedures, source reconciliation, acceptance tests, and implementation remain open.
+
