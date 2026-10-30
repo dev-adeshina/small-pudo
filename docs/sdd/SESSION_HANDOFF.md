@@ -4,9 +4,9 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 
 ## Verified repository state
 
-- Latest verified `main`: `712d32da11a5740fdbc4e2a0b826adab42ed352b` — PR #40 merged.
-- Current documentation-only proposal branch: `docs/stage-5-5-dependency-traceability`.
-- Active-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Changes through PR #40 are documentation-only; they do not establish runtime behaviour.
+- Latest verified `main`: `93f389cf16b9f1e40bbe414426ccc490d1221865` — PR #41 merged.
+- Current documentation-only proposal branch: `docs/stage-5-5-p0-readiness`.
+- Active-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Changes through PR #41 are documentation-only; they do not establish runtime behaviour.
 - Application-code changes remain prohibited until the complete platform-wide SDD is reconciled and explicitly approved.
 
 ## Accepted policy and completed documentation stages
@@ -23,15 +23,15 @@ Stage 5.4 is complete. The owner explicitly approved the policy/scenario-design 
 
 Stage 5.5 proceeds in four controlled steps:
 1. **Completed in PR #40:** Correct continuity records, duplicate issue identifiers, and stale approval/status statements.
-2. **First-pass alignment recorded in PR #40:** Reconcile DEC-022–DEC-036 against actor, shared-workflow, lifecycle, and cross-domain acceptance documents. Accepted policies remain accepted; unresolved technical contracts remain open. Detailed workflow/lifecycle reconciliation continues where register review identifies gaps.
-3. **Prepared for owner review:** `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md` maps all A-01–A-20 and ADM-R01–ADM-R54 to priorities, policy dependencies, actors, shared workflows, lifecycle references, source status, and test-specification gates.
-4. **Next:** Review/approve the register, then assess P0/Conditional P0 test-specification readiness and identify blockers before any safe non-production execution plan.
+2. **First-pass alignment recorded in PR #40:** Reconcile DEC-022–DEC-036 against actor, shared-workflow, lifecycle, and cross-domain acceptance documents. Accepted policies remain accepted; unresolved technical contracts remain open.
+3. **Completed in PR #41:** Consolidated dependency/traceability register for A-01–A-20 and ADM-R01–ADM-R54, accepted as a navigation baseline only.
+4. **Current proposal:** `PLATFORM_P0_TEST_SPECIFICATION_READINESS.md` assesses all 45 P0 and 6 Conditional P0 requirements, the 80 scenario outlines, source-backed test-specification candidates, missing capabilities, policy/contract blockers, and conditional activation gates. No requirement is approved for execution yet.
 
 Do not invent unresolved thresholds, formulas, permission limits, proof methods, retention periods, or retry/time-out values. Before any test execution, each P0/Conditional P0 needs an approved, reproducible test specification with preconditions, actor, action, expected state and non-state changes, replay/failure behaviour, evidence artifacts, cleanup, and accountable reviewer. Production-readiness evidence is a separate workstream.
 
 Other unresolved gates:
 - Confirm whether repository-root `pudo.zip` belongs to the active VeriLyft source-of-truth scope; it has not been inspected.
-- Review the proposed dependency/traceability register and reconcile any corrections; preserve the active source baseline at `e0f69055` unless a source-changing commit is inspected.
+- Review the P0/Conditional P0 readiness assessment and confirm initial launch scope/conditional manual fallbacks. Then resolve the listed blockers and author individual reproducible test specifications; preserve the active source baseline at `e0f69055` unless a source-changing commit is inspected.
 - Define production-like environment, blocker ownership, deployment/rollback, backup/restore proof, monitoring/alerts, incident response, and dated release sign-off.
 - Obtain explicit owner approval of the complete platform-wide SDD before implementation.
 
