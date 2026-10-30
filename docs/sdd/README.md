@@ -12,6 +12,7 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 - `PLATFORM_SHARED_WORKFLOWS.md` — draft cross-domain workflows for storefront fulfilment, independent shipment booking, intake/custody, pricing, payments, routing, dispatch, delivery, notifications, and audit/evidence.
 - `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` — draft conceptual domain relationships, lifecycle boundaries, API/service contract expectations, security controls, and source-validation checklist.
 - `IMPLEMENTATION_SOURCE_TRACEABILITY.md` — read-only source inventory mapped to the platform SDD, with evidence limits, implementation gaps, and verification follow-ups.
+- `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` — proposed platform-wide P0/P1/conditional-P0/deferred mapping for all 20 cross-domain areas and ADM-R01–ADM-R54, with evidence-state rules; owner review pending.
 - `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md` — draft cross-domain acceptance matrix for workflows, actors, lifecycle boundaries, security, failure recovery, audit evidence, and outstanding specification/verification work; not implementation approval.
 - `PLATFORM_OWNER_DECISION_REGISTER.md` — dependency-ordered record of D-01–D-15 owner decisions, accepted constraints, and remaining detailed design questions; the complete SDD is not yet approved.
 - `ADMIN_REQUIREMENTS.md` — consolidated Admin Portal requirements, startup priorities, scope boundaries, and requirements-baseline approval checklist.
@@ -54,4 +55,4 @@ When sources conflict, do not silently favour code or documentation. Record the 
 
 ### Important status caveat
 
-All 15 tracked owner decisions (D-01–D-15; DEC-022–DEC-036) have high-level accepted outcomes recorded. DEC-036 accepts an evidence-based P0/P1/deferred launch approach, but requirement-level classification, detailed acceptance evidence, source/runtime verification, and complete platform-wide SDD approval remain outstanding. Requirements do not prove implementation. `PROGRESS.md` is the current work pointer; verify source and actual test/deployment evidence before claiming a feature is implemented, tested, or launch-ready.
+All 15 tracked owner decisions (D-01–D-15; DEC-022–DEC-036) have high-level accepted outcomes recorded. DEC-036 accepts an evidence-based P0/P1/deferred launch approach. `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` now contains a proposed requirement-level mapping for owner review; detailed acceptance evidence, refreshed source/runtime verification, and complete platform-wide SDD approval remain outstanding. Requirements do not prove implementation. `PROGRESS.md` is the current work pointer; verify source and actual test/deployment evidence before claiming a feature is implemented, tested, or launch-ready.
