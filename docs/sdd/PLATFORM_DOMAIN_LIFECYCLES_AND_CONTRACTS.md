@@ -535,3 +535,12 @@ The owner has accepted BP-01–BP-22 in `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISI
 ### Remaining contract questions
 
 The BP policy record leaves verification mechanisms, consent evidence, exact lifecycle gates, financial-responsibility transfer mechanics, delegated action/expiry values, retention/legal-hold interaction, notification fields, dispute severity/targets, reviewer eligibility, and appeal submission/decision procedure to detailed specification. Every mutation contract must still define actor, target, preconditions, authorization, resulting state, side effects, audit/evidence, idempotency/concurrency behaviour, and failure response. No collection, field, endpoint, token format, permission claim, or implementation is approved.
+
+
+### DEC-040 — Adjustment rejection and service-resolution contract refinement
+
+- A non-material discrepancy that does not meet the service's configured review criteria leaves accepted commercial terms unchanged. Potentially material/payment-impacting discrepancies enter the controlled review path.
+- Explicit customer acceptance is required for a price-changing adjustment; silence/non-response is not acceptance. Acceptance records revised commercial terms but does not settle payment. A dispute holds the disputed additional charge pending review.
+- Rejection triggers an authorized service-resolution decision. It does not automatically cancel, refund, credit, or charge. Continuing under original terms requires safe and commercially feasible fulfilment; an alternative service requires separately accepted pricing; cancellation follows its applicable policy.
+- Dispatch cannot proceed under a rejected revised price and remains subject to verified payment and all other operational holds.
+- Service-specific thresholds, evidence, approval authority, service-resolution eligibility, response periods, non-response handling, and technical/acceptance contracts remain open.

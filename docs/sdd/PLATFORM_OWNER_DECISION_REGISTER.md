@@ -285,3 +285,15 @@ Accepted:
 Still unresolved: exact rates/formulas; units/conversions; distance source/bands; rounding; effective dates; service-to-input mapping; tax/fee/discount applicability and calculation; minimums; special-handling rates; quote validity; and associated executable acceptance tests.
 
 DEC-039 is business policy only. It does not approve pricing tables, configuration formats, fields, collections, routes, APIs, permissions, provider choices, or application-code changes. The complete platform-wide SDD approval gate remains in force.
+
+
+### D-06 refinement — DEC-040 (30 October 2026)
+
+The owner approved the following additional policy boundaries:
+
+- If actual measurements do not meet the service's configured materiality/review criteria, retain the accepted commercial terms. Potentially material/payment-impacting discrepancies enter controlled review.
+- A proposed adjustment preserves and links to the original quote/agreement; the proposal records changed facts, reason, and revised amount. Required review precedes approval; proposer authority does not automatically confer approval authority.
+- Customer acceptance must be explicit; silence is not acceptance. Acceptance records revised commercial terms, not settlement. A dispute holds the disputed additional charge pending review.
+- Rejection triggers an authorized service-resolution decision, not automatic cancellation, refund, credit, or charge. Possible controlled outcomes include safe/commercially feasible continuation under original terms, a separately accepted eligible alternative service, or cancellation under the applicable policy.
+- Dispatch cannot proceed under a rejected revised price.
+- **Still open:** Exact thresholds, units/conversion, evidence, approval limits/separation of duties, service-resolution authority and eligibility, customer response periods/non-response handling, and detailed acceptance tests. No technical implementation is authorized.

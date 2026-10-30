@@ -845,3 +845,19 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
 **Evidence boundary:** DEC-039 records owner-approved business policy only. The proposal is documentation-only; no application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed/run. No numeric rates, formulas, units, distance sources, thresholds, tax/fee rules, or technical implementation are approved. The complete SDD and production-readiness gates remain open.
+
+
+## 36. Milestone 2 Part 2 — measurement-adjustment and customer-resolution policy approved — 30 October 2026
+
+- [x] Reviewed DEC-019 and DEC-026–DEC-029, plus the shared pricing workflow, lifecycle contract, owner decision register, issue register, and acceptance matrix.
+- [x] Owner approved the intake-to-adjustment direction: preserve declared/actual measurements separately; use service-configured materiality criteria; retain accepted terms when no adjustment is required; route potentially material/payment-impacting discrepancies through review.
+- [x] Owner approved proposal/review boundaries: preserve and link the original quote, identify changed facts/reason/revised amount, and keep proposer authority distinct from approval where required.
+- [x] Owner approved customer outcomes: explicit acceptance is required; silence is not acceptance; acceptance records revised commercial terms but is not settlement; disputes suspend the disputed additional charge pending review.
+- [x] Owner approved rejection handling: rejection triggers an authorized service-resolution decision and does not automatically cancel, refund, credit, or charge. Possible controlled outcomes include safe/commercially feasible continuation under original terms, an eligible alternative under separately accepted pricing, or cancellation under the applicable policy.
+- [x] Confirmed that dispatch cannot proceed under a rejected revised price and remains subject to verified payment and all other operational holds.
+- [x] Recorded the refinement as DEC-040 and reconciled decisions, shared workflow, lifecycle contract, owner decision register, issue register, and cross-domain acceptance matrix in this documentation-only proposal.
+- [ ] Review and merge the Milestone 2 Part 2 documentation-only PR.
+- [ ] Keep thresholds, units/conversion, evidence, staff approval limits/separation of duties, service-resolution authority/eligibility, response periods/non-response handling, and runtime acceptance tests open.
+- [ ] Continue remaining Milestone 2 payment/settlement decisions and preserve the platform-wide SDD approval gate.
+
+**Evidence boundary:** DEC-040 records owner-approved high-level business policy only. No application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed/run. No numeric thresholds, units, formulas, staff limits, or technical implementation are approved. The complete SDD and production-readiness gates remain open.
