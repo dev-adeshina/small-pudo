@@ -204,7 +204,7 @@ Use these evidence labels consistently:
 
 - Exact formula catalogue, rates, service mapping, input sources, units, rounding, currency handling, and effective-date rules.
 - Whether taxes, surcharges, discounts, or other fees apply and how they are calculated, displayed, and approved; unknown treatment must not be assumed to be zero.
-- Treatment of an already accepted quote after its validity period; precise booking-confirmation point and reference/receipt issuance.
+- Exact quote-validity durations, handover-deadline configuration, and booking-reference/receipt format. DEC-038 resolves that valid quote acceptance by the authenticated booking party confirms the booking and accepted-quote expiry does not silently cancel or rewrite it.
 - Service-specific required measurements, units, explicit conversion rules, numeric discrepancy thresholds, and evidence requirements.
 - Approval limits, separation of duties, second-person review cases, and operational consequences when a customer rejects an adjustment.
 - Payment-at-intake methods/evidence; authority for additional charges, refunds, credits, and write-offs; reconciliation frequency and exception ownership.
