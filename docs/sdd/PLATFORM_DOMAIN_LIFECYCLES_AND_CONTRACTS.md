@@ -579,3 +579,18 @@ The following owner-approved policy refines the conceptual intake and custody li
 **Cross-domain guards:** Measurement-based price changes follow DEC-040; payment and settlement follow DEC-041. Physical custody, accepted commercial terms, payment, dispatch, and delivery remain independently observable facts.
 
 **Still open:** Service-specific inspection/prohibited-item checklists; measurement units/conversion; identity and acknowledgement methods; receipt format; evidence and retention; actor/partner authority and second-person approval; location capability assignment; hold ownership/review/maximum period; transfer proof/correction authority; missing/damaged parcel and failed/disputed handover resolution; liability/compensation/insurance; exact status vocabulary, technical contracts, and acceptance tests.
+
+## 4.4B Location capability and configuration lifecycle — DEC-043
+
+This section records owner-approved policy boundaries; it is not an executable configuration model or permission matrix.
+
+1. A location is eligible for new operational work only while active and explicitly configured for both the relevant service and the requested action. Location type, name, authentication, or Admin status cannot substitute for explicit configuration.
+2. Location capabilities are action-specific. Outgoing parcel intake, staff-created walk-in intake, measurement, custody acceptance, payment collection/recording, parcel collection/release, and custody handover remain distinct. No capability implies another.
+3. The system must independently authorize the acting staff member for the specific action and scope. A location capability is not an actor permission; an actor permission does not enable an unsupported location. Both checks are required server-side.
+4. Designated Admin users may administer location capabilities only within their assigned authority. Location creation/editing, activation/deactivation, capability administration, and staff permission assignment are distinct administrative responsibilities. Exact assignments and technical enforcement remain open.
+5. Capability grants, changes, and revocations are consequential configuration events. Preserve the affected location, change, responsible actor, timestamp, and reason where applicable. Configuration changes must not rewrite historical custody or operational events.
+6. Revoking a capability or making a location unavailable blocks new work requiring that capability. It does not erase or abandon parcels already in custody, silently reassign custody, or prove a physical transfer. Existing custody remains visible until authorized resolution or a separately recorded transfer.
+7. External partner/collection-centre/carrier/driver physical activity remains distinct from internal platform recording. No direct partner or driver login is implied at launch.
+8. DEC-043 does not add automated opening hours, capacity calculation, or availability scheduling to the lean location model.
+
+**Open specification:** Service/location/action eligibility matrix; exact capability catalogue; designated Admin authority and staff permission scopes; partner operational arrangements; queued-work treatment; temporary closure and restoration procedure; configuration audit retention; technical representation, APIs, authorization contracts, failure/replay handling, and test scenarios. These must be reconciled with existing source before technical design approval.
