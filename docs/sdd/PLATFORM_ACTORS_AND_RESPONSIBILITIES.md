@@ -3,7 +3,7 @@
 **Document status:** Draft for owner review — not approved for implementation  
 **Last updated:** 29 October 2026  
 **Scope:** Platform-level human/system actors, responsibility boundaries, and portal/module distinctions  
-**Related decisions:** DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, DEC-021, DEC-022, DEC-023, DEC-024, DEC-025
+**Related decisions:** DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, DEC-021, DEC-022–DEC-036
 
 ## 1. Purpose and status
 
@@ -32,8 +32,8 @@ The model preserves the owner-confirmed launch scope: storefront orders and inde
 | Actor / actor class | Status | Main responsibility or interaction | Boundaries and unresolved points |
 |---|---|---|---|
 | Public visitor | Proposed | Browse public storefront information and products; may enter the independent shipment-booking journey only through registration/sign-in before booking creation. | Public quote/rate visibility and pre-registration information remain to be defined; a visitor cannot create a shipment booking as a guest. |
-| Storefront customer — guest | Confirmed in principle | Purchase VeriLyft's own products without mandatory account registration; access an order using the approved guest-access mechanism. | Guest checkout is preserved. Guest-order recovery/claiming is unresolved (VLY-004). |
-| Storefront customer — signed in | Confirmed | Manage own account/profile and access only orders associated with verified ownership. | Account identity does not grant staff/Admin access. Whether and how an existing guest order can be claimed remains unresolved. |
+| Storefront customer — guest | Confirmed in principle | Purchase VeriLyft's own products without mandatory account registration; access an order using the approved guest-access mechanism. | Guest checkout is preserved. DEC-035 accepts secure recovery through proof of control of the original checkout email and optional account claiming through a separate ownership challenge; technical details and verification remain open (VLY-004). |
+| Storefront customer — signed in | Confirmed | Manage own account/profile and access only orders associated with verified ownership. | Account identity does not grant staff/Admin access. Optional claiming of an eligible guest order is accepted by DEC-035; ownership verification, eligibility, credential mechanics, and runtime evidence remain to be specified. |
 | Independent shipper / booking party | Confirmed | A registered, authenticated customer may book a shipment independently of a storefront purchase, as an individual or business subject to the still-open business-account policy. | Guest shipment booking is excluded at launch. Booking access must be authorized server-side and scoped to the authenticated customer's entitlement. Under DEC-024, booking-party status does not grant blanket change or collection authority. Detailed amendment/cancellation permissions and business-account handling remain unresolved. Do not assume a separate Shipper Portal is required. |
 | Sender | Conceptual business participant | Supplies or confirms parcel and origin information and may hand a parcel over. | Sender may differ from the booking party and payer. Identity verification, handover authority, and evidence requirements follow the approved intake policy; sender status alone does not imply full booking access or blanket change authority. |
 | Receiver / collection recipient | Conceptual business participant | Receives a delivered parcel or collects it through an approved collection workflow. | Receiver/collection identity checks and collection authorization are required under the approved policy. Receiver status does not by itself authorize changes to a booking; detailed verification and evidence requirements remain open. |
@@ -84,20 +84,22 @@ The following are design constraints; the detailed matrix is not yet approved.
 
 No role names, custom claims, Firestore rules, collections, or permission code are prescribed by this conceptual draft.
 
-## 6. Decisions required before this model can be approved
+## 6. Remaining actor and permission specification work
 
-The high-level staff model is accepted in DEC-022, and the capability-based location policy is accepted in DEC-025. This draft still requires workflow-specific authorization detail and owner decisions below.
+The high-level owner choices for staff model, booking eligibility, party relationships, location capabilities, dispatch exceptions, audit/disclosure, and launch boundary are accepted in DEC-022–DEC-036. This draft remains unapproved as a complete actor/permission specification. The following detail is still required:
 
-1. **Operations versus PUDO (partially resolved by DEC-025):** Staff capabilities are configured per location and are not inferred from location type or login status. Walk-in intake, measurement, custody acceptance, payment recording, and parcel release are separate capabilities. Whether registered collection-centre partners receive direct system access or their actions are recorded by VeriLyft staff remains open; detailed staff assignment, verification, and approval rules also remain open.
-3. **Finance deployment boundary:** Should Finance be a distinct portal, a permission-protected module in the existing application, or a later decision? The financial responsibilities remain distinct regardless of deployment.
-4. **Management access:** Is Management a separate role, a limited reporting permission set, or part of Admin for the first release? Which sensitive records may be drilled into?
-5. **Shipper identity and account:** DEC-023 requires a registered, authenticated customer to create independent bookings at launch; guest shipment booking is excluded. Can a customer also be a shipper under one account? What business-account handling is needed?
-6. **Sender, receiver, and payer:** DEC-024 accepts distinct parties and payment-only payer access by default. Which verification checkpoints and consent/evidence requirements apply? Which change types can the booking party complete directly, which require sender/receiver consent or authorized staff, and how does authority vary before/after intake and dispatch?
-7. **Support role:** Is customer support a real launch responsibility requiring a distinct role, or should support actions remain with existing authorized staff?
-8. **Approval separation:** Which actions require a second person or higher authority, especially unpaid dispatch, material price adjustment, refunds/credits, failed-delivery resolution, and disclosure? DEC-022 requires explicit boundaries for sensitive actions but does not decide every threshold or second-person rule.
-9. **External actor access:** Are transport providers, drivers, or collection-centre partners ever expected to log in during launch? Current default in this draft is no direct access; Operations records their movements.
+1. **Action-level staff permissions:** Translate the minimal hybrid Admin/Operations model into a workflow/action matrix. Authentication or Admin status alone must not imply every permission. Define assignment, revocation, and authorization checks at each privileged boundary.
+2. **Approval separation:** Identify which sensitive financial, measurement, dispatch, route, delivery, correction, and disclosure actions require a second approver, and define materiality/limits without contradicting accepted decisions.
+3. **Location and partner access:** DEC-025 requires separately configured location capabilities. Specify who configures/assigns them, whether collection-centre partners ever receive direct access, and how staff-recorded actions identify the physical actor.
+4. **Finance deployment boundary:** Financial responsibility remains distinct from Admin operational visibility. Decide whether Finance is a separate portal, a permission-protected module, or a later deployment choice.
+5. **Management access:** Define whether Management is a separate role or reporting permission set, and which metrics/records may be drilled into.
+6. **Shipper/business accounts:** DEC-023 requires registered, authenticated customers for independent booking. Define business-account handling and whether multiple authorized users may act for one business.
+7. **Sender/receiver/payer authority:** DEC-024 accepts distinct parties and the default payer privacy boundary. Specify verification checkpoints, consent, change-type permissions, and lifecycle-stage restrictions.
+8. **Support responsibility:** Decide whether support requires a distinct launch responsibility or remains with existing authorized staff; any support-assisted guest-order recovery/transfer must follow DEC-035 and DEC-033.
+9. **External actor access:** Confirm whether transport providers, drivers, or collection-centre partners require direct login. Current launch boundary does not imply a Driver Portal; Operations records provider/driver movement evidence.
+10. **Notification recipient scope:** Apply DEC-034 party entitlements and minimum disclosure to each event; no party relationship alone grants broader access than accepted policy.
 
-These questions are not answered by the current documents. They must be resolved before implementing fine-grained access rules or role-specific interfaces.
+These are detailed design questions under accepted high-level policy, not a reopening of the completed D-01–D-15 decision queue.
 
 ## 7. Acceptance criteria for the actor/responsibility model
 
