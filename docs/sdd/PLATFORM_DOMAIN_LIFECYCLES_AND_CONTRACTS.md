@@ -544,3 +544,19 @@ The BP policy record leaves verification mechanisms, consent evidence, exact lif
 - Rejection triggers an authorized service-resolution decision. It does not automatically cancel, refund, credit, or charge. Continuing under original terms requires safe and commercially feasible fulfilment; an alternative service requires separately accepted pricing; cancellation follows its applicable policy.
 - Dispatch cannot proceed under a rejected revised price and remains subject to verified payment and all other operational holds.
 - Service-specific thresholds, evidence, approval authority, service-resolution eligibility, response periods, non-response handling, and technical/acceptance contracts remain open.
+
+
+### DEC-041 — Payment and financial-event lifecycle refinement
+
+The payment/financial-event lifecycle must preserve these business boundaries:
+
+1. Quote acceptance confirms the booking under DEC-038; it does not create proof of settlement. Advance online payment and payment at intake remain distinct permitted paths, subject to service/location configuration.
+2. A payment attempt is not a completed payment. Electronic settlement requires authoritative provider, bank, or approved reconciliation confirmation. Customer screenshots, verbal claims, browser redirects, and unsupported staff notes are insufficient. Cash collection requires attributable receipt/equivalent evidence and reconciliation.
+3. Record the amount received and outstanding obligation distinctly. Partial payment is permitted only when the service explicitly allows it and does not, by itself, satisfy the default dispatch payment gate. Underpayments and overpayments require authorized resolution. Additional payments are separate linked events; original payment history is preserved.
+4. Pending and failed attempts do not satisfy settlement. Retries, callbacks, webhooks, and reconciliation imports must be idempotent with respect to financial effects. A late success is recorded against its original transaction and reconciled; it does not silently reactivate a cancelled or expired booking/order/shipment.
+5. Refund request, approval, initiation, and confirmed execution are distinguishable. Partial refund is a separately authorized outcome linked to the originating payment. Customer credit is distinct from cash refund. Reversals and chargebacks preserve the original event and record their own outcomes.
+6. Reconciliation compares internal records with authoritative provider/bank records and includes location cash collections in the applicable process. A mismatch requires investigation and attributable resolution; the original event is not silently rewritten.
+7. Consequential financial actions retain actor, timestamp, reason, transaction/reference, and applicable evidence. Payment, refund, cancellation, order/shipment, custody, dispatch, and delivery facts remain distinct.
+8. Verified full settlement of the amount currently due is the normal dispatch prerequisite. Partial, pending, failed, or unverified payment does not satisfy it. Any DEC-030 exception is a separate authorization and does not mutate payment status or bypass unrelated holds.
+
+The detailed service/location configuration, partial-payment eligibility, payment-method evidence, financial approval authority, refund/credit rules, late-payment disposition, reconciliation schedule/ownership/tolerances, chargeback process, idempotency/concurrency contracts, and executable acceptance tests remain open. This refinement does not approve a schema, field, endpoint, status vocabulary, permission model, provider integration, or implementation.

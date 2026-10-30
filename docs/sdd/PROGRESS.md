@@ -545,7 +545,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Reconciled cancellation versus refund, late payment after cancellation/expiry, refund request versus execution, customer credits, additional payments, reversals/chargebacks, provider/bank reconciliation, attributable evidence, and duplicate-event protection across the SDD.
 - [x] Preserved the distinction between operational order/shipment status, cancellation status, payment status, and refund status; verified payment remains the default dispatch prerequisite under DEC-018.
 - [ ] Review and merge the focused documentation-only PR.
-- [ ] Continue to D-09: dispatch exception authority.
+- [x] D-09 dispatch exception authority was accepted as DEC-030; the historical next-action note is superseded. Continue the remaining financial detail under DEC-041 and platform-wide SDD reconciliation.
 - [ ] Keep approval limits, refund timelines, fees, partial refunds, credit expiry/use, late-payment disposition, reconciliation cadence/ownership, and detailed tests unresolved.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, provider integration, deployed configuration, or runtime behaviour changed or was tested. The platform-wide SDD implementation gate remains in force.
@@ -840,7 +840,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Confirmed preservation of quote input snapshots, itemized charges, total, currency, rule/rate version, and effective context; later rate changes cannot silently alter historical issued/accepted quotes or completed payments.
 - [x] Recorded the policy as DEC-039 and reconciled the shared workflow, lifecycle contract, owner decision register, issue register, and cross-domain acceptance matrix in this documentation-only proposal.
 - [ ] Review and merge the Milestone 2 Part 1 documentation-only PR.
-- [ ] Continue Milestone 2 Part 2: measurement-based adjustment decisions, customer consent/rejection outcomes, payment-at-intake and advance-payment verification, partial/late payment, refunds/credits/reversals, and reconciliation.
+- [x] Complete Milestone 2 Part 2: measurement-based adjustment decisions and customer consent/rejection outcomes were recorded as DEC-040 and merged in PR #47.
 - [ ] Continue platform-wide SDD reconciliation, source traceability, acceptance-test specification, and production-readiness evidence planning.
 - [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
@@ -858,6 +858,24 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Recorded the refinement as DEC-040 and reconciled decisions, shared workflow, lifecycle contract, owner decision register, issue register, and cross-domain acceptance matrix in this documentation-only proposal.
 - [ ] Review and merge the Milestone 2 Part 2 documentation-only PR.
 - [ ] Keep thresholds, units/conversion, evidence, staff approval limits/separation of duties, service-resolution authority/eligibility, response periods/non-response handling, and runtime acceptance tests open.
-- [ ] Continue remaining Milestone 2 payment/settlement decisions and preserve the platform-wide SDD approval gate.
+- [x] Complete the approved high-level Milestone 2 payment/settlement policy as DEC-041 in this proposal; detailed service/location rules and financial procedures remain open. Preserve the platform-wide SDD approval gate.
 
 **Evidence boundary:** DEC-040 records owner-approved high-level business policy only. No application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed/run. No numeric thresholds, units, formulas, staff limits, or technical implementation are approved. The complete SDD and production-readiness gates remain open.
+
+
+## 37. Milestone 2 Part 3 — payment and financial-settlement boundaries approved — 30 October 2026
+
+- [x] Inspected existing DEC-018, DEC-028, DEC-029, and DEC-030 and their current workflow, lifecycle, owner-register, issue, and acceptance references.
+- [x] Owner approved retaining advance online payment and payment at intake, subject to service/location configuration; quote acceptance remains distinct from payment.
+- [x] Owner approved authoritative electronic-payment verification and attributable cash receipt/equivalent evidence, consistent with DEC-028.
+- [x] Owner approved that partial payment is allowed only where a service explicitly permits it; received and outstanding amounts remain distinct and partial payment alone does not satisfy the normal dispatch gate.
+- [x] Owner approved authorized resolution for underpayment/overpayment; distinct treatment of pending, failed, retry, and late-success events; and preservation of original transaction history.
+- [x] Owner approved separate refund request/approval/initiation/execution facts; traceable partial refunds; credits distinct from cash refunds; and separate reversal/chargeback events.
+- [x] Owner approved reconciliation against authoritative provider/bank records and applicable location cash collections, with mismatches investigated rather than silently corrected.
+- [x] Confirmed verified full settlement of the amount currently due remains the default dispatch prerequisite; DEC-030 exceptions do not alter payment status or bypass unrelated holds.
+- [x] Recorded DEC-041 and reconciled the decisions log, shared workflows, domain/lifecycle contracts, owner decision register, issue register, and cross-domain acceptance direction in this documentation-only proposal.
+- [ ] Review and merge the Milestone 2 Part 3 documentation-only PR.
+- [ ] Keep partial-payment eligibility, methods/limits/evidence, refund authority/timelines, cancellation fees, credit rules, late-payment disposition, reconciliation cadence/ownership/tolerances, chargeback procedure, dispatch-exception eligibility/limits/evidence, and detailed tests open.
+- [ ] Continue platform-wide SDD reconciliation, source traceability, acceptance-test specification, and production-readiness evidence planning. Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
+
+**Evidence boundary:** DEC-041 records owner-approved high-level business policy only. This proposal changes documentation only; no application source, schema, Firebase configuration/rules, API, permission, provider integration, deployment, runtime behaviour, or test result is changed or verified. No service-specific rates, payment limits, refund thresholds, credit expiry, reconciliation schedule, provider choice, or technical implementation is approved.

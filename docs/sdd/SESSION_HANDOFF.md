@@ -4,7 +4,7 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 
 ## Verified repository state
 
-- Latest verified `main`: `6e643827fc8ef91d0e63493703198808363a90ed` — PR #44 merged.
+- Latest verified `main` at the start of this proposal: `df6341953f459456b13e2efbf274ad581b2e765f` — PR #47 (DEC-040) merged. PR #48 / DEC-041 is the current documentation-only proposal and remains pending owner review.
 - PR #43 corrected post-PR #42 continuity metadata; it was documentation-only.
 - The PR #42 readiness assessment remains accepted as a readiness/navigation baseline only; it does not approve executable tests, test execution, implementation, or release.
 - Active application-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). PRs #40–#44 changed SDD documentation only; they do not establish runtime behaviour.
@@ -12,17 +12,17 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 
 ## Accepted policy and product hierarchy
 
-- D-01–D-15 high-level owner outcomes are accepted under DEC-022–DEC-036. DEC-037 records the logistics-first product hierarchy. DEC-038 records the owner-approved independent shipment booking confirmation, information, lifecycle, handover-deadline, and responsibility policy. DEC-039 records the owner-approved pricing input/calculation boundaries.
+- D-01–D-15 high-level owner outcomes are accepted under DEC-022–DEC-036. DEC-037 records the logistics-first product hierarchy. DEC-038 records the owner-approved independent shipment booking policy. DEC-039 records pricing input/calculation boundaries. DEC-040 records measurement-adjustment and service-resolution boundaries (PR #47 merged). DEC-041 records payment and financial-settlement boundaries (current proposal).
 - DEC-018 already records the accepted lean launch scope: independent shipment booking; advance booking and staff-created walk-in intake; lean PUDO location management; shared hybrid delivery pricing; advance online payment and payment at intake; Operations-reviewed route proposals and route-leg assignments; flexible proof of delivery; and controlled failed-delivery resolution.
 - DEC-037 is now owner-accepted: VeriLyft is fundamentally a logistics and shipment-management platform. Independent shipment booking is the primary customer entry point. Storefront commerce is an attached, secondary service.
 - Storefront orders and independent shipments remain distinct business concepts and order sources. Storefront orders requiring delivery enter the same operational fulfilment system used by independent shipments; do not create separate competing fulfilment processes or assume a particular schema.
 - DEC-018 exclusions remain: advanced route optimization, full fleet management, separate Driver Portal/application, enterprise workflow engine, and advanced analytics are deferred unless explicitly changed.
 - PM-01–PM-12 staff permission policies are accepted; technical permission design remains open.
 - Stage 5.2 booking-party authority BP-01–BP-22 is accepted and consolidated in merged PR #36.
-- Stage 5.3 pricing/measurement/quote/adjustment/financial-outcome policy areas are accepted and consolidated in merged PR #37. Detailed formulas/rates, inputs, units/conversion, rounding/effective dates, taxes/fees/discounts, discrepancy thresholds, approval limits, and adjustment-rejection service resolution remain open.
+- Stage 5.3 pricing/measurement/quote/adjustment/financial-outcome policy areas are accepted and consolidated in merged PR #37, with subsequent refinements DEC-039–DEC-041. Detailed formulas/rates, units/conversion, rounding/effective dates, taxes/fees/discounts, discrepancy thresholds, authority limits, service-resolution eligibility, payment/refund limits, and reconciliation procedures remain open.
 - Milestone 1 independent shipment booking policy is owner-approved as DEC-038: valid quote acceptance by the authenticated booking party confirms the booking; service-specific booking information and business-arranged bookings are supported; payment, intake/custody, and fulfilment remain separate; each service communicates a separate handover deadline; missed handover may close as unfulfilled with financial history preserved; customer/Support/Operations/Admin responsibilities are bounded. Its documentation-only consolidation was merged in PR #45.
 
-## Current stage — Milestone 2 Part 1 approved; pricing/payment SDD reconciliation continues
+## Current stage — Milestone 2 Part 1 and Part 2 merged; Part 3 payment/settlement proposal pending review
 
 Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. This is not approval of executable test specifications, test execution, implementation, or release.
 
@@ -33,16 +33,19 @@ Stage 5.5:
 4. PR #43 reconciled the post-PR #42 continuity metadata.
 5. DEC-037 records the owner's logistics-first product hierarchy and shared fulfilment principle.
 6. DEC-038 records the owner-approved independent shipment booking confirmation, information, lifecycle, handover-deadline, and responsibility policy; it was merged in PR #45.
-7. DEC-039 records the owner-approved pricing input/calculation boundaries: service-specific models and configured inputs, server-authoritative calculation, transparent applicable charges, preserved quote history, and no invented rates/formulas. Its documentation-only consolidation is pending review/merge.
+7. DEC-039 records the owner-approved pricing input/calculation boundaries and was merged in PR #46.
+8. DEC-040 records measurement-adjustment and customer-resolution policy and was merged in PR #47.
+9. DEC-041 records payment completion, partial settlement, refund/credit, reconciliation, and dispatch boundaries; its documentation-only consolidation is pending review in the current PR.
 
 The readiness assessment's source findings remain valid: independent shipment booking, pricing, custody, routing and related operational capabilities are absent or materially incomplete in the inspected source baseline. That is an implementation gap against the accepted launch scope, not a reason to classify these core capabilities as deferred.
 
 ## Next work
 
-- Review and merge the Milestone 2 Part 1 documentation-only PR after inspecting its full diff.
-- Continue Milestone 2 Part 2 — measurement-based adjustments, customer consent/rejection outcomes, payment-at-intake and advance-payment verification, partial/late payment, refunds/credits/reversals, and reconciliation. Preserve DEC-026–DEC-029 and DEC-039; do not invent values.
+- Review and merge the Milestone 2 Part 3 documentation-only PR after inspecting its full diff.
+- Keep the DEC-041 unresolved financial details open; do not invent service/location limits, refund authority/timelines, credit rules, reconciliation cadence, or exception eligibility.
+- Continue physical operations, logistics execution, exceptions/accountability, and platform-readiness SDD reconciliation.
 - Then proceed through physical intake/measurement/custody, location capability, routing/dispatch/movement, delivery proof/failed-delivery resolution, audit/evidence, notifications/privacy, and production operations.
-- Continue reconciling DEC-018, DEC-037, DEC-038, and DEC-039 through requirement priorities, acceptance scenarios, source traceability, and launch-readiness evidence.
+- Continue reconciling DEC-018 and DEC-037–DEC-041 through requirement priorities, acceptance scenarios, source traceability, and launch-readiness evidence.
 - Preserve storefront catalogue, cart, checkout, customer account and payment requirements as the attached commerce service. Its existing source-backed slices may be specified and regression-tested, but must not displace the core logistics workflow.
 - Keep source facts, designed requirements, implemented behaviour, runtime evidence, and production-readiness evidence distinct. Do not invent unresolved thresholds, formulas, permission limits, proof methods, retention periods, or retry/time-out values.
 - Preserve the active source baseline at `e0f69055` unless a source-changing commit is inspected.
@@ -60,6 +63,13 @@ The readiness assessment's source findings remain valid: independent shipment bo
 
 ## Milestone 2 Part 2 owner approval — DEC-040
 
-The owner approved the measurement-adjustment and customer-resolution direction on 30 October 2026. DEC-040 is being consolidated in a documentation-only PR. Core boundaries: service-configured materiality review; original quote/agreement preserved; explicit customer acceptance (silence is not acceptance); acceptance is not settlement; disputed additional charge held pending review; rejection triggers an authorized service-resolution decision and is not automatic cancellation/refund/credit/charge; continuation under original terms requires safe and commercially feasible fulfilment; alternative service requires separately accepted pricing; cancellation follows its applicable policy; and dispatch cannot proceed under a rejected revised price.
+The owner approved the measurement-adjustment and customer-resolution direction on 30 October 2026. DEC-040 was consolidated and merged in PR #47 (merge commit `df6341953f459456b13e2efbf274ad581b2e765f`). Core boundaries: service-configured materiality review; original quote/agreement preserved; explicit customer acceptance (silence is not acceptance); acceptance is not settlement; disputed additional charge held pending review; rejection triggers an authorized service-resolution decision and is not automatic cancellation/refund/credit/charge; continuation under original terms requires safe and commercially feasible fulfilment; alternative service requires separately accepted pricing; cancellation follows its applicable policy; and dispatch cannot proceed under a rejected revised price.
 
-Next: review and merge the Part 2 documentation-only PR, then continue remaining Milestone 2 payment/settlement details (payment-at-intake and advance-payment verification, partial/late payment, refunds/credits/reversals, and reconciliation). Keep exact thresholds, units/conversion, evidence, approval limits/separation of duties, service-resolution eligibility, customer response periods, and runtime acceptance tests open. Preserve the complete platform-wide SDD approval gate; no application code is authorized.
+Next: Part 2 is complete. Part 3 payment/settlement policy is recorded as DEC-041 and is pending review in the current documentation-only PR. Keep exact thresholds, units/conversion, evidence, approval limits/separation of duties, service-resolution eligibility, customer response periods, and runtime acceptance tests open. Preserve the complete platform-wide SDD approval gate; no application code is authorized.
+
+
+## Milestone 2 Part 3 owner approval — DEC-041
+
+The owner approved the payment and financial-settlement refinement on 30 October 2026. DEC-041 is being consolidated in a documentation-only PR. Preserve both advance online payment and payment at intake subject to service/location configuration; quote acceptance is booking confirmation, not payment; electronic settlement requires authoritative confirmation; cash requires attributable receipt/equivalent evidence and reconciliation; partial payment is permitted only where a service explicitly allows it and does not by itself satisfy the normal dispatch gate; underpayment/overpayment require authorized resolution; pending/failed/retry/late-success outcomes remain distinct; refund request/approval/initiation/execution are distinct; partial refunds, credits, reversals and chargebacks preserve traceable history; reconciliation mismatches are investigated; and verified full settlement of the amount currently due remains the default dispatch prerequisite. DEC-030 exceptions do not change payment status or bypass unrelated holds.
+
+Next: review and merge the Part 3 documentation-only PR. Keep service/location payment configuration, partial-payment eligibility, methods/limits/evidence, refund authority/timelines, cancellation fees, credit expiry/use/transfer, late-payment disposition, reconciliation cadence/ownership/tolerances, chargeback handling, and dispatch-exception eligibility/limits/evidence unresolved pending further specification. Continue platform-wide SDD reconciliation and obtain explicit owner approval of the complete SDD before implementation. No application-code change is authorized.

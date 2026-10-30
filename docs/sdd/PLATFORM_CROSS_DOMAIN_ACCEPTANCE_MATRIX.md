@@ -271,3 +271,24 @@ Before these scenarios can be marked executable, define verification and consent
 ### D-06 acceptance refinement — DEC-040
 
 Acceptance evidence must eventually demonstrate that: a non-material discrepancy leaves accepted terms unchanged; potentially material/payment-impacting discrepancies enter required review; adjustment proposals preserve and reference the original quote/agreement; customer acceptance is explicit and silence is not acceptance; acceptance does not itself settle payment; disputes hold the disputed additional charge; rejection invokes an authorized service-resolution decision without automatically cancelling/refunding/crediting/charging; continuation under original terms is allowed only where safe and commercially feasible; alternative service requires separately accepted pricing; cancellation follows its own policy; and dispatch is blocked under a rejected revised price. Exact thresholds, evidence, authority/eligibility, response periods, technical contracts, and runtime evidence remain open. No implementation is authorized.
+
+
+### DEC-041 payment and financial-settlement acceptance direction
+
+The following outcomes must be represented in later executable acceptance scenarios. These are policy-derived requirements, not evidence of implemented or tested behaviour.
+
+| Acceptance family | Required observable outcome |
+|---|---|
+| Booking versus payment | Quote acceptance confirms booking but does not establish payment; booking, payment, intake/custody, cancellation, and dispatch remain distinct. |
+| Advance payment | A browser redirect or customer claim cannot establish success; settlement requires authoritative provider/bank/approved-source confirmation. |
+| Payment at intake | Only methods enabled for the location may be used; cash has attributable receipt/equivalent evidence and is included in reconciliation; payment collection does not itself prove custody acceptance. |
+| Partial payment | Partial payment is accepted only for a service that explicitly permits it; received and outstanding amounts remain distinguishable; partial settlement alone does not pass the normal dispatch gate. |
+| Underpayment/overpayment | Both require authorized resolution; neither is silently discarded, overwritten, or automatically converted into refund/credit. |
+| Pending/failed/retry | Pending and failed attempts do not count as settlement; retry and replay cannot duplicate financial effects. |
+| Late success | A late successful payment is linked to its original transaction, reconciled, and does not automatically reactivate an expired/cancelled booking/order/shipment. |
+| Refund/credit/reversal/chargeback | Request, approval, initiation and confirmed refund execution are distinguishable; partial refund is authorized and linked to its origin; credit is distinct from cash refund; reversal/chargeback preserve original history. |
+| Reconciliation | Provider/bank records and applicable location cash collections are reconciled; mismatches are investigated with attributable outcomes, not silently corrected. |
+| Dispatch gate | Verified full settlement of the amount currently due is required by default; partial, pending, failed, or unverified payment does not satisfy the gate. A DEC-030 exception is separately authorized and does not mutate payment status or bypass unrelated holds. |
+| Financial accountability | Consequential financial actions preserve actor, timestamp, reason, transaction/reference and applicable evidence; duplicate/replayed provider events do not duplicate financial effects. |
+
+Before these scenarios can be marked executable, specify service/location payment configuration, partial-payment eligibility, method-specific evidence, cash/transaction limits, refund/credit authority and timelines, late-payment disposition, reconciliation cadence/ownership/tolerances, chargeback handling, DEC-030 exception eligibility/limits/evidence, technical idempotency/recovery contracts, and safe test fixtures. No implementation or runtime evidence is implied.
