@@ -4,7 +4,7 @@
 **Last updated:** 30 October 2026  
 **Scope:** Conceptual domain boundaries, lifecycle transition rules, service/API contract expectations, and authorization/security invariants  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, PLATFORM_SHARED_WORKFLOWS.md, SDD_COMPLETENESS_AUDIT.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-024, DEC-025, DEC-026, DEC-027, DEC-030, DEC-031
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-036
 
 ## 1. Purpose and guardrails
 
@@ -72,7 +72,7 @@ The following are conceptual objects/record responsibilities, not proposed Fires
 - A location has explicit service capabilities and authorization boundaries; location type alone must not imply an unapproved capability.
 - An audit record may reference an action, decision, target, actor, reason, and evidence reference. It should not store secrets or duplicate sensitive payloads unnecessarily.
 
-### 3.2 Relationships requiring owner decision
+### 3.2 Relationships requiring further specification
 
 1. When an independent booking becomes a shipment/consignment.
 2. Whether each storefront delivery creates a shipment record or uses a more limited fulfilment association.
@@ -392,7 +392,7 @@ Read-only source inspection should answer these questions before proposing colle
 2. Which current route handlers and shared helpers create/update those records, and where are server-side authorization checks applied?
 3. What payment-provider verification, signature validation, amount/currency checks, and idempotency protections already exist?
 4. What transaction/batch patterns currently protect stock, cancellation, payment verification, and other concurrent changes?
-5. How is guest order access currently represented, verified, and stored? What is the unresolved guest-order claiming requirement?
+5. How is guest order access currently represented, verified, and stored, and what source/runtime work is required to implement accepted DEC-035 recovery and optional claiming?
 6. Which shipping status fields and tracking routes currently exist, and how do they differ from the proposed independent-shipment lifecycle?
 7. Which admin auth helpers and route guards exist, and are all Admin APIs protected consistently?
 8. What Cloudinary upload configuration, authorization, validation, and error handling currently exist?
@@ -407,7 +407,7 @@ Record source paths and dated test evidence in the audit/issue tracker. A code p
 
 Before implementation planning can rely on this document:
 
-- [ ] Owner decisions affecting identities, staff roles, pricing, payment, PUDO capabilities, dispatch, delivery, finance, and disclosure are recorded or explicitly left blocked.
+- [x] High-level owner decisions affecting identities, staff roles, pricing, payment, PUDO capabilities, dispatch, delivery, finance, notifications, guest recovery, audit/disclosure, and launch priorities are recorded in DEC-022–DEC-036.
 - [ ] Conceptual objects and relationships are reviewed, including the boundary between storefront order, independent booking, shipment, route leg, movement, payment attempt, and financial event.
 - [ ] Every launch-essential lifecycle has allowed transitions, preconditions, responsible actors, exception outcomes, and audit/evidence requirements.
 - [ ] Each mutating API/service contract has authorization, validation, concurrency, idempotency, failure, and observability expectations.
@@ -421,19 +421,20 @@ Before implementation planning can rely on this document:
 ## 11. Dependencies and unresolved owner questions
 
 This draft does not resolve:
-1. The nine role/actor decisions in PLATFORM_ACTORS_AND_RESPONSIBILITIES.md.
-2. Booking eligibility, guest booking, identity verification, and sender/receiver/payer/booking-party authority.
-3. Booking-to-shipment creation/linkage and storefront order-to-delivery representation.
-4. Allowed lifecycle transitions, cancellation/expiry rules, return/redelivery outcomes, and state ownership.
-5. Pricing formulas, quote validity, discrepancy thresholds, adjustment approvals, and settlement methods.
-6. Payment-at-intake methods, late/duplicate/contradictory events, refunds/credits, reconciliation, and separation of duties.
-7. PUDO location capabilities and partner/staff permissions.
-8. Route assignment authority, physical movement evidence, proof of delivery, and failed-delivery resolution.
-9. Dispatch exception authority and any required second-person approval.
-10. Audit event catalogue, evidence retention, legal disclosure, notification recipients/channels, and access policy.
-11. Technical contract choices that depend on read-only source inspection and existing architecture.
+1. Exact staff permission assignments, action-level authority, partner access, and second-person approval cases under DEC-022/DEC-025.
+2. Booking-to-shipment creation/linkage, parcel cardinality, business accounts, consent, and change authority under DEC-023/DEC-024.
+3. Allowed lifecycle transitions, cancellation/expiry rules, return/redelivery outcomes, and state ownership.
+4. Pricing formulas, units, quote expiry, discrepancy thresholds, adjustment consent/approval, and settlement methods under DEC-026/DEC-027.
+5. Payment-at-intake configuration, transaction/cash limits, refund/credit execution, late-payment disposition, reconciliation, and separation of duties under DEC-028/DEC-029.
+6. Location capability assignment, partner access, physical intake/custody evidence, and collection verification under DEC-025/DEC-028.
+7. Route constraints, assignment authority, movement milestones/evidence, delivery proof by service, and failed-delivery resolution under DEC-030–DEC-032.
+8. Notification event/channel/recipient/field matrix, preferences/consent, retries/deduplication, and failure ownership under DEC-034.
+9. Guest recovery challenge/token mechanics, eligibility, support exceptions, and detailed acceptance tests under DEC-035.
+10. Audit event catalogue, retention schedule, reviewer access, legal-hold/disclosure procedure, and evidence integrity under DEC-033.
+11. Requirement-level P0/P1/deferred mapping, test/evidence scenarios, production environment, operational ownership, and release sign-off under DEC-036.
+12. Technical contract choices that depend on read-only source inspection and existing architecture.
 
-**Next step:** review this conceptual model and contract checklist. Once accepted and owner decisions are recorded, inspect the existing source read-only and map each conceptual responsibility to the current implementation before proposing minimal compatible technical changes. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
+**Next step:** reconcile this conceptual model with accepted decisions, inspect existing source read-only, map each requirement to implementation evidence or a documented gap, and define testable acceptance scenarios. Application-code implementation remains blocked until the complete platform-wide SDD is reviewed and explicitly approved.
 
 ## Measurement discrepancy and adjustment contract — DEC-027
 

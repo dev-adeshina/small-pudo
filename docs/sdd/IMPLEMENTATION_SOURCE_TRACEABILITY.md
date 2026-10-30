@@ -22,8 +22,8 @@ Use this document to separate:
 |---|---|---|---|
 | Storefront order creation | `app/api/orders/route.ts` | Allows guest checkout; optionally verifies a Firebase ID token and requires verified email for account checkout. Validates customer/delivery/item input, merges duplicate product IDs, reads current product data, calculates prices server-side, checks active state/stock, and atomically decrements stock and creates an order. | A concrete storefront-order path exists. It is not an independent shipment-booking workflow. |
 | Order record / item snapshot | `app/api/orders/route.ts`, `lib/types/order.ts`, `lib/firebase/orders.ts`, `app/checkout/page.tsx` | The active checkout posts to `/api/orders`, where the server validates product/stock and creates the order transactionally. `lib/firebase/orders.ts` still exports a legacy client-side `createOrder` helper, but checkout's import of it is commented out. The helper attempts direct client writes to `orders`, which the current Firestore rules deny. | Treat the server route as the inspected checkout path; do not reactivate the legacy helper without an explicit design decision and rules/security review. Preserve order-time item facts; do not mistake the existing order's shipping object for a complete shipment/consignment or route-leg model. |
-| Guest order access | `app/api/orders/route.ts`, `app/api/orders/[orderId]/track/route.ts`, `app/api/orders/[orderId]/cancel/route.ts` | A random access token is generated for an order; only its SHA-256 hash is stored. Tracking/cancellation compare a supplied token-derived hash using constant-time comparison. Cancellation only permits pending/unpaid orders and restores stock in a Firestore transaction. | The guest capability token is an access credential, not a customer account or general authorization role. Recovery/claiming remains unresolved. |
-| Customer order access | `app/api/account/orders/route.ts`, `app/api/account/orders/[orderId]/route.ts`, `app/api/orders/[orderId]/track/route.ts` | Customer endpoints verify Firebase ID tokens, require verified email, and derive order ownership from the token UID and stored `users/{uid}` document reference. Tracking distinguishes account ownership from guest-token access. | Customer authentication and record entitlement are separate checks. Guest order claiming remains an explicit open policy. |
+| Guest order access | `app/api/orders/route.ts`, `app/api/orders/[orderId]/track/route.ts`, `app/api/orders/[orderId]/cancel/route.ts` | A random access token is generated for an order; only its SHA-256 hash is stored. Tracking/cancellation compare a supplied token-derived hash using constant-time comparison. Cancellation only permits pending/unpaid orders and restores stock in a Firestore transaction. | The guest capability token is an access credential, not a customer account or general authorization role. DEC-035 accepts separate secure recovery and optional claiming; this source snapshot does not show that policy implemented. |
+| Customer order access | `app/api/account/orders/route.ts`, `app/api/account/orders/[orderId]/route.ts`, `app/api/orders/[orderId]/track/route.ts` | Customer endpoints verify Firebase ID tokens, require verified email, and derive order ownership from the token UID and stored `users/{uid}` document reference. Tracking distinguishes account ownership from guest-token access. | Customer authentication and record entitlement are separate checks. DEC-035 accepts optional claiming only after authenticated account context plus a separate ownership challenge; implementation and runtime evidence remain to be established. |
 | Payment initialization | `app/api/payments/initialize/route.ts` | Requires the order access token, checks pending order/payment state, reuses an already stored checkout URL when present, sends provider requests server-side, checks the returned reference and checkout host, and rechecks state transactionally before saving the reference/URL. | Provider initialization is not payment settlement. Concurrent initializations and external-success/local-save failure need focused recovery testing and a defined idempotency contract. |
 | Payment verification | `app/api/payments/verify/route.ts` | Looks up an order by saved payment reference and verifies directly with Paystack. Checks reference, success state, amount, NGN currency, and transaction ID. Uses a transaction to update current order state, avoids normal fulfilment for cancelled orders, flags review-required mismatches/late payment, and treats already-paid verification as a replay. | Provider verification is authoritative evidence for the payment result; order/fulfilment status remains distinct. The endpoint's requester entitlement and response exposure should be reviewed against the approved API contract. |
 | Payment webhook | `app/api/payments/webhook/route.ts` | Verifies the HMAC-SHA512 signature against the raw body; handles `charge.success`; validates core event fields; matches a stored reference; creates a deterministic event key in `paymentWebhookEvents`; processes event and order in a transaction; checks amount/currency; flags late payment or status conflicts. | Some webhook replay protection exists in source. Runtime duplicate/concurrency/late-event scenarios remain unverified; a webhook-event record is not a general ledger or full financial-event model. |
@@ -51,7 +51,7 @@ Use this document to separate:
 This snapshot is derived from source. It is not a complete approved product lifecycle and does not prove the paths have passed current runtime tests.
 
 ### Independent shipment booking and parcel operations
-The inspected source inventory does not show an implemented end-to-end independent booking lifecycle. The domain draft still needs owner decisions for the booking-to-shipment gate, parcel cardinality, quote versions/adjustments, route-leg relationships, custody evidence, and financial settlement relationships. Do not fill those gaps by treating an order as a shipment or inventing statuses.
+The inspected source inventory does not show an implemented end-to-end independent booking lifecycle. Accepted owner decisions now establish high-level policy for booking eligibility, party access, pricing/quote preservation, intake/custody capabilities, payment-at-intake, adjustments, dispatch, routing, delivery, audit, notifications, guest recovery, and launch evidence. Detailed lifecycle relationships, parcel cardinality, quote/route relationships, custody evidence, settlement contracts, and exact permissions remain specification work. Do not fill those gaps by treating an order as a shipment or inventing statuses.
 
 ## 4. Key mismatches and follow-up work
 
@@ -78,22 +78,27 @@ The inspected source inventory does not show an implemented end-to-end independe
 
 ## 6. Still unresolved — do not infer
 
-- Final staff roles, scope boundaries, and approval authority.
-- Whether guest orders can be claimed/recovered into customer accounts.
-- Booking confirmation and booking-to-shipment/consignment creation gate.
-- Parcel/booking cardinality and relationships to quotes, route legs, movements, and deliveries.
-- Pricing formula, material-discrepancy thresholds, approval limits, and additional-payment/refund/credit procedures.
-- Required proof of delivery, failed-delivery outcomes, evidence access/retention, and legal holds.
-- Payment retry/expiry policy, provider-success/local-failure reconciliation, and settlement relationships.
-- Audit event catalogue and retention.
-- Current deployed configuration and runtime/browser evidence.
+The following are detailed design, source-verification, or evidence questions—not undecided high-level D-01–D-15 owner choices:
+
+- Exact staff action/permission matrix, staff assignment, second-person approval thresholds, and partner access.
+- Booking-to-shipment/consignment creation gate, parcel cardinality, order/shipment relationships, and change authority by type/lifecycle stage.
+- Pricing formulas/units/rate configuration, discrepancy thresholds, adjustment consent/outcomes, and settlement mechanics.
+- Mandatory proof methods by service, failed-delivery resolution authority, attempt limits, returns/holding/refusal/dispute handling.
+- Payment expiry/recovery worker behaviour, provider-success/local-failure reconciliation, refund/credit execution and operational ownership.
+- Notification event/recipient/channel/field matrix, consent/preferences, retry/deduplication semantics, and failure ownership.
+- Guest recovery challenge format/lifetime, rate limits, token rotation/revocation mechanics, eligibility, and support exception procedure.
+- Audit event/evidence catalogue, retention periods, reviewer matrix, legal-hold procedure, evidence integrity, and disclosure workflow.
+- Requirement-level P0/P1/deferred mapping, detailed P0 acceptance evidence, and current deployed configuration/runtime verification.
+
+DEC-022–DEC-036 record accepted high-level owner policies. Do not relabel these details as pending owner decisions unless a genuinely new owner choice is required.
 
 ## 7. Recommended next steps
 
-1. Confirm whether `pudo.zip` is in scope for the active VeriLyft source-of-truth review; inspect it separately only if the owner confirms it is relevant.
-2. Resolve the open owner decisions in `DECISIONS.md` and the domain/workflow drafts, especially booking identity/acceptance, quote validity/adjustments, custody, route legs, delivery evidence, financial settlement, and audit retention.
-3. Define acceptance criteria and the required test matrix for the current implementation and launch-scope gaps.
-4. Complete and approve the platform-wide SDD before application-code changes.
-5. Only after approval, propose the smallest compatible implementation plan and a separate runtime verification plan.
+1. Confirm whether the root `pudo.zip` archive is in scope; it was not unpacked or audited in the source pass recorded here.
+2. Refresh the read-only source inventory against accepted DEC-022–DEC-036 policies, searching for reusable helpers/data before declaring a capability absent.
+3. Map each requirement to source evidence, a gap, or an explicit not-inspected/not-verified state.
+4. Define requirement-level P0/P1/deferred classification and detailed acceptance/evidence scenarios.
+5. Obtain explicit approval of the complete platform-wide SDD before any application-code changes.
+6. Only after approval, propose a minimal compatible implementation plan and a separate safe-environment runtime verification plan.
 
 **No application code or runtime behaviour was changed during this inspection.**

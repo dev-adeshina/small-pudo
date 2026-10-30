@@ -1,10 +1,10 @@
 # VeriLyft Shared Platform Workflows
 
 **Document status:** Draft for owner review — not approved for implementation  
-**Last updated:** 29 October 2026  
+**Last updated:** 30 October 2026  
 **Scope:** Cross-domain business workflows and invariants for storefront fulfilment and independent parcel shipments  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, ADMIN_REQUIREMENTS.md, ADMIN_PORTAL.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022, DEC-023, DEC-024, DEC-025, DEC-026, DEC-027
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-036
 
 ## 1. Purpose, status, and boundaries
 
@@ -16,7 +16,7 @@ Use these evidence labels consistently:
 
 - **Accepted constraint:** supported by an accepted decision or owner-confirmed launch requirement.
 - **Proposed workflow:** a sequence offered for review; it is not an approved detailed business policy.
-- **Open policy:** a value, rule, authority, or outcome that requires an owner decision.
+- **Open specification:** a value, rule, authority, or outcome not yet sufficiently detailed to implement; it may remain open under an accepted high-level owner decision.
 - **Implementation evidence:** facts established from source or dated tests; record them separately in the progress/audit documents.
 
 ## 2. Cross-workflow invariants
@@ -56,7 +56,7 @@ Use these evidence labels consistently:
 - What are the allowed order/payment transitions for cancellation, expiry, duplicate callbacks, and a late successful payment?
 - Which delivery methods require physical intake or PUDO custody records, if any?
 - What customer notifications are sent at each verified event, through which channel, and with what retry/deduplication policy?
-- How are guest orders recovered if the customer loses the access token? Guest-order claiming remains open under VLY-004.
+- How will DEC-035 be implemented: challenge format/lifetime, request limits, token rotation/revocation, post-fulfilment eligibility, account closure, and support exception procedure? The high-level recovery/claiming policy is accepted; technical details remain open.
 
 ### Acceptance criteria to define
 
@@ -349,9 +349,9 @@ Verified payment is required by default before dispatch. DEC-030 accepts only na
 ### Open policy / design questions
 
 - Which milestones trigger messages, who receives them, and which channels are used?
-- Which shipment/customer details may be disclosed in email, SMS, Telegram, or tracking links?
+- What exact event/recipient/channel/field matrix, contact verification, consent/preferences, retry limits, deduplication keys, retention, and persistent-failure ownership implement DEC-034?
 - What retry, deduplication, retention, and failure-escalation rules apply?
-- How are lost/revoked guest access tokens handled? Guest-order claiming remains unresolved.
+- How will lost/revoked guest access credentials be recovered under DEC-035, and which events trigger customer notification under DEC-034?
 
 ### Acceptance criteria to define
 
@@ -410,38 +410,37 @@ The following cases require explicit outcomes in the detailed lifecycle and acce
 | Notification fails or is duplicated | Retry/deduplication, observability, fallback and privacy |
 | Government disclosure request | Request validation, approval, disclosure scope, evidence access and audit |
 
-## 14. Owner decisions and dependency register
+## 14. Accepted owner decisions and remaining workflow specification
 
-This draft deliberately does not resolve the following:
+All 15 high-level owner decisions are accepted and recorded in DEC-022–DEC-036. This section tracks detail needed to turn accepted policies into complete workflows; it is not a list of pending owner decisions.
 
-1. **Actor and staff-role boundaries:** DEC-022 accepts the minimal hybrid staff model and DEC-025 accepts separate per-location capabilities for walk-in intake, measurement, custody, payment recording, and release. Exact staff assignment, partner access, second-person approval thresholds, Finance boundaries, and external-party access remain open in §6 of PLATFORM_ACTORS_AND_RESPONSIBILITIES.md.
-2. **Shipper eligibility and identity:** guest booking is excluded by DEC-023; DEC-024 accepts distinct booking-party/sender/receiver/payer/handover roles and payment-only payer access by default. Exact verification points, consent, change/cancellation authority by type and lifecycle stage, and business-account handling remain open.
-3. **Lifecycle/state transitions:** allowed states and transitions for booking, intake, shipment, route leg, dispatch, delivery, failed delivery, cancellation, and returns.
-4. **Pricing policy:** DEC-026 accepts service-specific fixed/calculated pricing, shared rules where inputs overlap, and service-configured quote validity. Exact formulas, units, distance source/bands, effective dates, rounding, taxes/fees/discounts, expiry/re-quote behaviour, and adjustment thresholds remain unresolved.
-5. **Payment and settlement:** payment-at-intake methods, late/duplicate/contradictory events, refunds/credits/additional charges, reconciliation, and separation of duties.
-6. **PUDO capability model:** which locations support which services and which actors may record each physical event.
-7. **Transport and proof:** provider assignment rules, movement evidence, mandatory proof of delivery, identity checks, evidence retention, and failed-delivery resolution.
-8. **Dispatch exceptions:** eligible circumstances, approval authority, second-person review, required evidence, and limits.
-9. **Notifications:** event catalogue, recipients, channels, minimum fields, retry/deduplication, and operational ownership.
-10. **Audit and disclosure:** required event types, evidence/retention rules, legal-request approval, disclosure scope, and review controls.
-11. **Technical contracts:** conceptual entity relationships, record identifiers, APIs/services, authorization enforcement, idempotency keys, integration failure/retry, and compatibility with existing Firebase data/routes. These must be reconciled with source after workflow policies are reviewed.
+1. **Staff/actor authorization (DEC-022, DEC-025):** action-level permission matrix, staff assignment/revocation, partner access, and second-person approval thresholds.
+2. **Booking and party authority (DEC-023, DEC-024):** identity/verification checkpoints, business-account handling, sender/receiver consent, change permissions by type and lifecycle stage, and booking-to-shipment creation/linkage.
+3. **Lifecycle transitions:** allowed states, transition guards, actor/authority, rejection paths, expiry, cancellation, returns, and out-of-order event handling across orders, bookings, shipments, route legs, movements, payments, and delivery.
+4. **Pricing and adjustment (DEC-026, DEC-027):** formulas, units, distance/rate sources, effective dates, rounding, fees/taxes/discounts, quote expiry/re-quote, discrepancy thresholds, customer consent, and approval/refusal/dispute outcomes.
+5. **Payment and settlement (DEC-028, DEC-029):** configured methods/providers, transaction/cash limits, receipt/evidence format, refund/credit limits, late-payment disposition, reconciliation cadence/ownership, and separation of duties.
+6. **Physical operations (DEC-025, DEC-028, DEC-030–DEC-032):** location capability assignment, measurement requirements, collection verification, route constraints/capacity, movement milestone/evidence catalogue, delivery proof by service, and failed-delivery resolution authority.
+7. **Notifications (DEC-034):** event/timing/channel/recipient/field matrix, preferences/consent, contact verification, retry limits, deduplication semantics, retention, and persistent-failure ownership. Telegram remains deferred and gated as accepted.
+8. **Audit/evidence/disclosure (DEC-033):** event catalogue, retention periods, reviewer matrix, correction/redaction authority, deletion/anonymization, legal-hold procedure, evidence integrity, and government-request disclosure steps.
+9. **Guest-order recovery/claiming (DEC-035):** challenge form/lifetime, rate limits, credential rotation/revocation, eligibility, account closure, support exceptions, and acceptance tests.
+10. **Launch baseline (DEC-036):** requirement-level P0/P1/deferred mapping, detailed acceptance evidence, production-like environment, blocker ownership, and release sign-off.
 
 ## 15. Review and acceptance checklist
 
 The shared workflow specification is ready to inform implementation planning only when:
 
-- [ ] Owner decisions affecting these flows are recorded in DECISIONS.md, or remain explicitly blocked with an owner question.
+- [x] All 15 high-level owner decisions affecting these flows are recorded in DEC-022–DEC-036.
 - [ ] Each launch-essential workflow has a defined trigger, actor/owner, start/end conditions, transitions, and terminal/exception outcomes.
 - [ ] Order, independent booking, shipment, route leg/movement, payment, and financial events have unambiguous conceptual relationships.
 - [ ] Quote creation, preservation, discrepancy review, and settlement rules are implementable without invented policy.
 - [ ] Authorization and audit requirements are defined for every consequential action.
 - [ ] External integration success, failure, retries, duplicate/late events, and recovery are specified.
 - [ ] Each launch-essential scenario has observable acceptance criteria and a verification approach.
-- [ ] Deferred scope remains explicit, including a separate Driver Portal and Telegram.
+- [x] Deferred scope remains explicit, including a separate Driver Portal; Telegram remains deferred under DEC-034.
 - [ ] Current source is inspected read-only before proposing schema, API, route, or service changes.
 - [ ] README.md, SPEC.md, DECISIONS.md, ISSUES.md, PROGRESS.md, and SESSION_HANDOFF.md agree on the current baseline and next task.
 
-**Next step:** review this shared workflow draft, then resolve owner decisions in dependency order. Do not begin application-code implementation until the complete platform-wide SDD has been reviewed and approved.
+**Next step:** complete requirement-level priority mapping, source traceability, detailed acceptance scenarios, and evidence planning. Do not begin application-code implementation until the complete platform-wide SDD has been reviewed and explicitly approved.
 
 ## D-06 reconciliation — DEC-027: measurement discrepancy and adjustment approval
 

@@ -1,6 +1,6 @@
 # VeriLyft Platform Owner Decision Register
 
-**Document status:** Working register for owner decisions; recommendations are not approved policy  
+**Document status:** Decision register for D-01–D-15; all high-level owner outcomes are accepted and recorded. Detailed implementation policy remains open where explicitly identified.  
 **Last updated:** 30 October 2026  
 **Related baseline:** PR #13 merged; `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`  
 **Implementation gate:** No application-code changes until the platform-wide SDD is reconciled and explicitly approved.

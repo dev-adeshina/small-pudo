@@ -3,11 +3,11 @@
 **Audit date:** 29 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Reviewed baseline:** `main` at `cccad3c4eebe398c8369d5ce90ea05ee551589cf`  
-**Purpose:** Identify documentation coverage, gaps, stale statements, and unresolved decisions before further application-code changes.
+**Purpose:** Preserve the historical first-pass audit and track current platform-wide SDD reconciliation, specification gaps, and evidence requirements before application-code changes.
 
 ## 1. Scope and evidence limits
 
-The initial audit reviewed the `docs/sdd/` files on `main` at the historical baseline recorded above. This document has since been updated to track reconciliation status; it is not a complete source-code audit, deployed-system test, or assertion that a feature is implemented. Reported implementation/test claims remain attributed to project records until independently rechecked.
+The initial audit reviewed `docs/sdd/` at the historical baseline recorded above. Sections 2–8 preserve that historical assessment and must not be read as the current work order without the latest addendum. This is not a complete source-code audit, deployed-system test, or assertion that a feature is implemented. Reported claims remain attributed to project records until independently rechecked.
 
 The owner’s current working direction is to complete and reconcile the platform-wide SDD before resuming application-code changes. Read-only source inspection may be used to document current reality, but this audit does not authorize application-code changes.
 
@@ -177,3 +177,32 @@ Before marking the platform SDD complete:
 2. Resolve or explicitly defer all launch-critical owner decisions in `DECISIONS.md` and the domain/workflow drafts.
 3. Produce a cross-domain acceptance matrix tying each approved workflow to roles, lifecycle transitions, API/provider contracts, audit/evidence, failure recovery, and verification criteria.
 4. Obtain explicit owner approval of the reconciled platform-wide SDD. No application-code changes are authorized before that approval.
+
+
+## 10. Current reconciliation checkpoint — 30 October 2026
+
+- Latest verified `main` head: `3b940a5b0e41691da6de74a4333ab1f6443ab67a` (PR #29 / DEC-036 merged).
+- All 15 tracked high-level owner decisions D-01–D-15 are accepted and recorded as DEC-022–DEC-036. The owner-decision queue is complete; detailed permissions, transitions, policy values, and evidence requirements remain open where recorded.
+- Source inventory baseline: `c56be9b121e6007e1e99c6df2d3984e709771a92`. Comparison through latest main shows intervening commits changed SDD documentation only, not application source. The inventory remains a source snapshot, to be reconciled and refreshed through read-only inspection.
+- PRs #15–#29 recorded policy/documentation changes only; they do not establish application implementation, runtime verification, or production readiness.
+
+### Reconciliation defects identified
+
+1. README described the owner register as unresolved and said the P0/P1/deferred approach still awaited owner review; DEC-036 accepts the high-level approach, while requirement-level mapping remains open.
+2. PROGRESS retained a D-02-era main-head pointer, described guest-order claiming as undecided, and directed work to earlier owner decisions.
+3. SESSION_HANDOFF omitted accepted DEC-034–DEC-036 and the completed 15-decision milestone.
+4. IMPLEMENTATION_SOURCE_TRACEABILITY described guest recovery/claiming as an undecided owner policy; DEC-035 now establishes the high-level policy, but source implementation remains unproven.
+5. Issues, actor/workflow/lifecycle documents, and the cross-domain matrix retained stale next-owner-decision language.
+6. Cross-domain matrix Section 5 listed already accepted owner decisions as unresolved; it must track detailed specification and verification dependencies instead.
+7. Actor-model draft status remains appropriate: accepted high-level policy does not complete the action-level permission matrix or approve every role/portal boundary.
+
+### Current sequence
+
+1. Reconcile every SDD document, including SPEC, Admin requirements/design/audit, decisions, issues, progress, handoff, actor model, workflows, lifecycle contracts, acceptance matrix, and source traceability.
+2. Build requirement-level P0/P1/deferred mapping aligned with DEC-018 and DEC-036; do not silently downgrade accepted launch scope.
+3. Refresh read-only source traceability and map requirements to source evidence, gaps, or explicit not-inspected/not-verified states.
+4. Define detailed transitions, authorization boundaries, exception outcomes, acceptance scenarios, and evidence requirements for every P0 requirement.
+5. Assess production configuration, deployment, monitoring, backup/restore, incident response, rollback, and release-blocker ownership.
+6. Obtain explicit owner approval of the complete reconciled platform-wide SDD before application-code changes.
+
+**Current gate:** Owner decisions are complete, but the platform-wide SDD is not yet complete or approved. No application-code implementation is authorized.
