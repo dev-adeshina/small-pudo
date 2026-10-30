@@ -106,12 +106,16 @@ The order below follows dependencies: authority and booking semantics first; com
 
 ### D-07 — Supported payment-at-intake methods and evidence
 
-- **Status:** Owner decision required.
-- **Confirmed:** Payment at intake is in launch scope; verified payment is the default dispatch prerequisite.
-- **Decision needed:** Which methods are accepted at intake (for example, provider-confirmed digital payment, bank transfer, or cash if the business supports it)? What evidence proves each method, and who can record and verify it?
-- **Recommendation:** Define each method and its verification source explicitly. A staff note alone should not count as verified settlement unless an accepted policy defines the control and evidence.
-- **Dependencies:** Intake workflow, receipts, payment state, dispatch authorization, financial visibility, and reconciliation.
-- **Record after decision:** Method list, verification rules, receipt/evidence requirements, and role permissions.
+- **Status:** Owner decision accepted; recorded as DEC-028 on 30 October 2026.
+- **Accepted choice:** Option A — configured payment methods with evidence-based confirmation. Each location may accept only explicitly enabled methods. Payment records distinguish method and preserve amount, currency, applicable transaction reference/receipt, collecting staff member, location, and time.
+- **Verification:** Electronic payments require confirmation from an authoritative provider, bank, or approved reconciliation source; screenshots, verbal claims, and unsupported staff notes are insufficient. Cash requires an attributable receipt or equivalent record and reconciliation.
+- **Separation of facts:** Recording payment does not establish physical custody. Booking, payment, and custody remain distinct facts.
+- **History:** Failed, reversed, refunded, disputed, and corrected outcomes retain traceable history; no silent overwrite or erasure.
+- **Still unresolved:** Exact location-enabled methods/providers, limits, receipt format, cash-handling/reconciliation procedures, second-person controls, method-specific evidence, exception handling, and detailed acceptance tests.
+- **Dependencies:** D-01, D-04–D-06, D-08, D-09, D-12, dispatch gates, financial visibility, and reconciliation.
+- **Acceptance direction:** Reject methods not enabled for the location; do not mark electronic payments verified without authoritative evidence; retain attributable cash evidence; and never infer custody from payment.
+- **Implementation boundary:** Business policy only. No schema, endpoint, provider integration, permission implementation, or application-code change is authorized.
+
 
 ### D-08 — Cancellation, late payment, refunds, credits, and reconciliation
 
@@ -198,6 +202,6 @@ For each D-01–D-15 item:
 
 ## 5. Current recommended next decision
 
-Proceed to **D-06: Measurement discrepancy and adjustment approval**. D-01 through D-05 have high-level owner decisions recorded, but action-level staff permissions, exact pricing formulas, quote expiry behaviour, measurement thresholds, financial approval limits, and runtime acceptance evidence remain open. Define when intake measurements may trigger a proposed adjustment and who must review or approve it before it affects an existing quote/payment.
+Proceed to **D-08: Cancellation, late payment, refunds, credits, and reconciliation**. D-07 is now accepted as DEC-028; D-08 depends on the payment evidence and event-history rules just established. D-01 through D-05 have high-level owner decisions recorded, but action-level staff permissions, exact pricing formulas, quote expiry behaviour, measurement thresholds, financial approval limits, and runtime acceptance evidence remain open. Define when intake measurements may trigger a proposed adjustment and who must review or approve it before it affects an existing quote/payment.
 
 **No decision in this register is approved merely by appearing here.**

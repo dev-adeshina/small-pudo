@@ -444,3 +444,12 @@ The shared workflow specification is ready to inform implementation planning onl
 The owner accepted a configurable, evidence-based policy distinguishing routine measurement variation from material discrepancies. Preserve original quoted inputs and separately record actual intake measurements with actor, location, time, and applicable evidence/reason. A discrepancy may create a proposed adjustment linked to the original quote, but the proposal must not silently overwrite accepted commercial terms or be treated as an approved charge or settled financial event.
 
 Material discrepancies and adjustments affecting an existing payment require review under configured authority. Exact numeric thresholds, units and service-specific measurement requirements, approval limits, second-person rules, customer notification/consent, and outcomes for acceptance/dispute/refusal remain open. No application implementation or runtime test is authorized by this decision.
+
+
+## D-07 reconciliation — DEC-028: configured payment-at-intake methods and evidence
+
+At intake, a location may accept only payment methods explicitly enabled for that location. The payment record must distinguish the method and preserve amount, currency, applicable transaction reference or receipt, responsible collecting/recording staff member, location, and time. Method-specific evidence requirements must be defined before implementation.
+
+Electronic payment is verified only through an authoritative provider, bank, or approved reconciliation source. A customer screenshot, verbal claim, or unsupported staff note is not sufficient proof of settlement. Cash collection requires an attributable receipt or equivalent record and reconciliation. Cash-handling procedures, limits, receipt format, and mandatory second-person controls remain open.
+
+Payment, booking, and physical custody are separate facts: a payment record alone does not establish parcel custody. Failed, reversed, refunded, disputed, and corrected payment outcomes must retain traceable history rather than silently overwriting prior events. No application implementation or runtime test is authorized by this decision.
