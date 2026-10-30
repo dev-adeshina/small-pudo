@@ -142,7 +142,7 @@ Required guards:
 - Adjustment proposals identify changed facts and reason and link to the original quote; they do not overwrite it or constitute settlement.
 - A disputed additional charge remains held pending review; a rejected adjustment follows the service-resolution policy and does not automatically imply a refund, credit, or cancellation.
 
-Open policy: exact formulas/rates and service mapping, input sources, units and conversion rules, rounding, effective dates, tax/fee/discount treatment, accepted-quote expiry edge cases, booking-confirmation point, required measurements, numeric discrepancy thresholds, approval limits/separation of duties, and detailed consequences if the customer rejects an adjustment.
+Open policy: exact formulas/rates and service mapping, input sources, units and conversion rules, rounding, effective dates, tax/fee/discount treatment, quote-validity durations, required measurements, numeric discrepancy thresholds, approval limits/separation of duties, and detailed consequences if the customer rejects an adjustment. DEC-038 resolves the booking-confirmation point and accepted-quote expiry policy.
 
 ### 4.3 Payment and financial-event lifecycle
 
