@@ -1,6 +1,6 @@
 # VeriLyft Issues, Risks, and Open Questions
 
-**Last updated:** 29 October 2026  
+**Last updated:** 30 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Admin requirements baseline:** PR #2 merged into `main` on 28 October 2026 (`fbb56ce`). The consolidated P0/P1/deferred baseline still requires owner review.
 
@@ -235,3 +235,10 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Accepted:** Cancellation is not a refund; late payments after cancellation/expiry are recorded and reconciled without automatic reactivation; refund request and execution are distinct; credits, additional payments, reversals, and chargebacks remain separate traceable events; provider/bank reconciliation mismatches are investigated; consequential financial actions retain actor/time/reason/reference/evidence; duplicate/replayed provider events must not duplicate financial effects; operational, cancellation, payment, and refund states remain distinct.
 - **Still open:** Refund authority/limits/timelines, cancellation fees, partial-refund policy, credit expiry/use, late-payment disposition, reconciliation frequency/ownership, exception handling, and detailed tests.
 - **Next action:** Continue to D-09 dispatch exception authority. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+
+### D-09 dispatch exception authority — DEC-030
+
+- **Status:** High-level owner policy accepted on 30 October 2026 (Option A: narrow, controlled dispatch exceptions).
+- **Accepted:** Verified payment remains the default dispatch prerequisite; exceptions are limited to explicitly defined operational circumstances under an approved policy; only staff with explicitly assigned permission may approve; the requester must not automatically approve their own request; material exceptions require a second approver; exceptions preserve payment status and cannot bypass unrelated safety, custody, identity, legal, or other operational holds; parcel/shipment, reason, requester, approver(s), timestamp, supporting evidence, and outcome must be attributable.
+- **Still open:** Eligible circumstances, exact permission assignment, materiality/second-approval rules, monetary or operational limits, category-specific evidence, pre-dispatch revocation, and detailed acceptance tests.
+- **Next action:** Continue to D-10 routing, route-leg assignment, and movement evidence. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
