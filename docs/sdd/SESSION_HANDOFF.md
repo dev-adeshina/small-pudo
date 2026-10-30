@@ -4,10 +4,10 @@ Continue the existing **VeriLyft — Beyond Borders** project in `dev-adeshina/s
 
 ## Current verified state
 
-- Latest verified `main` head: `3b940a5b0e41691da6de74a4333ab1f6443ab67a` (PR #29 / DEC-036).
+- Latest verified `main` head before this proposal: `c9d9342cfc9dcef2c7d5704074d83927c5f5099c` (PR #30 merged). This documentation proposal is on `docs/requirement-level-priority-baseline` and must be reviewed/merged by the owner before it becomes main.
 - All 15 tracked high-level owner decisions (D-01–D-15; DEC-022–DEC-036) are accepted. The decision queue is complete, but the platform-wide SDD is not yet complete or approved.
 - Source inspection baseline: `c56be9b121e6007e1e99c6df2d3984e709771a92`. Comparison through latest main showed intervening commits changed SDD documentation only, not application source. Treat source traceability as a read-only snapshot to be reconciled and refreshed.
-- Current task: **Stage 1 — SDD-wide consistency reconciliation**. Follow `PROGRESS.md`.
+- Current task: **Stage 2 — requirement-level launch priority reconciliation**. Proposed mapping is in `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`; review it with `DECISIONS.md` DEC-018/DEC-036, `ADMIN_REQUIREMENTS.md`, and `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`.
 
 ## Read first
 
@@ -40,12 +40,11 @@ Read `README.md`, `SPEC.md`, `DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.m
 
 ## Remaining sequence
 
-1. Complete Stage 1: reconcile stale statements and continuity pointers across the SDD.
-2. Complete requirement-level P0/P1/deferred mapping, preserving DEC-018 and DEC-036.
-3. Refresh read-only source traceability and map each requirement to source evidence, a gap, or an explicit unverified/not-inspected state.
-4. Define detailed cross-domain acceptance scenarios and evidence requirements.
-5. Assess production-readiness evidence and unresolved release blockers.
-6. Present the complete reconciled SDD for explicit owner approval.
-7. Only after approval, plan focused implementation work.
+1. Review/merge the requirement-level priority proposal only after owner approval.
+2. Refresh read-only source traceability against the current source head and map each P0/Conditional P0 requirement to source evidence, a gap, or an explicit unverified/not-inspected state.
+3. Define detailed cross-domain acceptance scenarios and evidence requirements.
+4. Assess production-readiness evidence and unresolved release blockers.
+5. Reconcile all SDD documents and present the complete baseline for explicit owner approval.
+6. Only after approval, plan focused implementation work.
 
 Do not restart the completed 15-decision sequence. Start by verifying the live `main` head and PR state, then continue from `PROGRESS.md`. Never merge on the owner's behalf.
