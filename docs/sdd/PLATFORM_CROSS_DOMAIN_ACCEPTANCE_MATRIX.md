@@ -186,3 +186,16 @@ These are policy-derived acceptance directions, not evidence that runtime behavi
 - [ ] Preserve original delivery evidence and event history for authorized dispute review.
 
 These are policy-derived acceptance directions, not runtime test results. Mandatory methods, OTP policy, attempt limits, resolution authority, holding duration, failure catalogue, loss/damage/refusal/dispute handling, and detailed tests remain unresolved.
+
+
+## D-12 / DEC-033 audit and evidence acceptance direction
+
+- [ ] Record consequential actions with attributable actor, action, affected resource, timestamp, applicable reason, and supporting evidence.
+- [ ] Distinguish physical actor from staff recorder; do not treat an audit entry/status update alone as proof of physical custody, movement, or delivery.
+- [ ] Preserve original consequential records and evidence; corrections/redactions are separately authorized, attributable, and traceable.
+- [ ] Restrict audit/evidence review to explicitly authorized users; audit sensitive access and disclosure.
+- [ ] Apply approved category-specific retention/deletion/anonymization rules and prevent routine deletion while an applicable legal hold is active.
+- [ ] Record government-request authority, request/legal basis, scope, approval, and disclosure details; do not grant unrestricted platform access.
+- [ ] Keep evidence source attribution and distinguish later additions, corrections, and redactions from originals.
+
+These are policy-derived acceptance directions, not runtime test results. Retention periods, event/evidence catalogue, access matrix, two-person approval cases, deletion/legal-hold procedures, disclosure procedure, evidence integrity requirements, and detailed tests remain unresolved.
