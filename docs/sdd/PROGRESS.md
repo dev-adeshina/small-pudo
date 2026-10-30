@@ -637,3 +637,20 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, endpoints, token format, notification provider, permissions, deployed configuration, runtime behaviour, or tests were changed/run.
+
+
+## 24. Owner decision D-15 — 30 October 2026 (DEC-036)
+
+- [x] Owner accepted Option A: evidence-based launch with a clearly bounded P0 scope.
+- [x] Confirmed explicit P0/P1/deferred classification; P0 requirements are launch blockers and require demonstrable acceptance evidence.
+- [x] Confirmed P1 deferral is allowed only when it does not compromise essential workflows, safety, security, financial integrity, legal obligations, or approved service scope; deferred features are not represented as available.
+- [x] Confirmed P0 must support DEC-018 and reconciled essential requirements; the current domain-level candidate list is not an exhaustive requirement-level classification.
+- [x] Confirmed source presence, rendered pages, schema presence, and passing type/build checks alone do not establish launch readiness.
+- [x] Confirmed readiness evidence must cover applicable functional, security/authorization, financial, operational/physical-event, and production/recovery dimensions, with designed/implemented/tested/production-like-verified/owner-accepted states distinguished.
+- [x] Confirmed unverified P0 requirements and material launch-critical gaps block release absent resolution or separately approved lawful exception.
+- [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff in this documentation proposal.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Reconcile requirement-level P0/P1/deferred classification, detailed acceptance scenarios/evidence, production-like environment, blocker ownership, runbooks, backup/restore, monitoring, incident response, and dated sign-off.
+- [ ] Obtain explicit owner approval of the complete platform-wide SDD before any application-code changes.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, deployment configuration, runtime behaviour, production environment, or tests were changed/run. This decision does not certify current launch readiness.
