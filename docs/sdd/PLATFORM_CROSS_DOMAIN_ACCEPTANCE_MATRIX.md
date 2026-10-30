@@ -229,3 +229,19 @@ These are policy-derived acceptance directions, not runtime test results. Final 
 - [ ] Require separately approved verification, authorization, and audit procedures for any future support-assisted recovery or exceptional transfer.
 
 These are policy-derived acceptance directions, not runtime test results. Challenge format/lifetime, rate limits, post-fulfilment eligibility, account deletion consequences, exceptional transfer/support procedure, token mechanics, retention, and detailed denial/replay/cross-account tests remain unresolved.
+
+
+## D-15 / DEC-036 launch-priority and readiness acceptance direction
+
+- [ ] Trace every approved launch requirement to an explicit P0, P1, deferred, or not-applicable classification; do not silently downgrade DEC-018 launch scope.
+- [ ] Confirm P0 covers the owner-approved lean launch scope and essential safety, security, financial, operational, legal, and customer-access requirements.
+- [ ] For every P0 requirement, define a concrete acceptance scenario and required evidence for relevant success, failure, authorization, replay/concurrency, and recovery paths.
+- [ ] Record evidence date, environment, scope, result, and the requirement/criterion it supports.
+- [ ] Distinguish designed, implemented, tested, production-like verified, and owner-accepted-for-launch states.
+- [ ] Do not accept source presence, page rendering, schema presence, passing type checks, or a successful happy path as sufficient launch evidence.
+- [ ] Confirm applicable security/privacy/server-side authorization, authoritative payment/financial integrity, attributable operational/physical-event evidence, and production configuration/deployment/monitoring/backup/recovery/incident/rollback evidence.
+- [ ] Identify each P0 release blocker, accountable owner, resolution evidence, and any separately approved lawful exception.
+- [ ] Explicitly list P1 and deferred scope; retain DEC-018 deferrals unless the owner approves a change.
+- [ ] Complete a dated release checklist and obtain explicit owner sign-off after the full platform-wide SDD and evidence baseline are reconciled.
+
+These are governance-derived acceptance directions, not evidence that the current application has passed them. Requirement-level priorities, detailed scenarios, evidence artifacts, production-like environment, operational ownership, runbooks, and final sign-off remain open.
