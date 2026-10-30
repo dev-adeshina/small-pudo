@@ -1,10 +1,10 @@
 # VeriLyft Domain Relationships, Lifecycle Boundaries, and API/Security Contracts
 
 **Document status:** Draft for owner review — not approved for implementation  
-**Last updated:** 29 October 2026  
+**Last updated:** 30 October 2026  
 **Scope:** Conceptual domain boundaries, lifecycle transition rules, service/API contract expectations, and authorization/security invariants  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, PLATFORM_SHARED_WORKFLOWS.md, SDD_COMPLETENESS_AUDIT.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-024, DEC-025, DEC-026, DEC-027
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-024, DEC-025, DEC-026, DEC-027, DEC-030
 
 ## 1. Purpose and guardrails
 
@@ -205,7 +205,9 @@ Required guards:
 - Exception approval does not change payment state.
 - Assignment alone is not dispatch or proof of handover.
 
-Open policy: exception eligibility, authority, second-person approval, limits, required evidence, and other dispatch-blocking holds.
+**Accepted dispatch-exception policy (DEC-030):** Verified payment remains the default prerequisite. Only explicitly defined operational circumstances may qualify for a narrow exception under an approved policy; no generic convenience override or unrestricted staff discretion is permitted. Only staff with explicitly assigned dispatch-exception permission may approve, the requester must not automatically approve their own request, and material exceptions require a second approver. An exception never changes payment status and cannot bypass unrelated safety, custody, identity, legal, or other operational holds. Preserve the parcel/shipment, reason, requester, approver(s), timestamp, supporting evidence, and decision/outcome.
+
+Open policy: eligible circumstances; exact staff responsibility/permission assignment; which cases are material and require second approval; monetary/operational limits; category-specific evidence; whether approval may be revoked before dispatch; and detailed denial/rejected-transition tests.
 
 ### 4.7 Delivery and failed-delivery lifecycle
 
@@ -450,3 +452,7 @@ Payment recording does not prove physical custody. Booking, payment, and custody
 ## Financial event and settlement boundaries — DEC-029
 
 Financial history must distinguish the original payment, later additional payments, refund requests, executed refunds, customer credits, reversals, and chargebacks. Preserve the original event and append attributable subsequent outcomes rather than rewriting history. Cancellation, payment, refund, credit, and operational shipment/order lifecycles are separate conceptual responsibilities. A late payment after cancellation/expiry is reconciled to its original transaction and cannot silently reactivate the cancelled booking/order/shipment. Duplicate or replayed provider events must be idempotent with respect to financial effects. Reconciliation against authoritative provider/bank records is an investigation/control process; mismatches are not silently treated as settled. These are business boundaries, not a proposed schema or ledger implementation. Detailed approval, retention, and exception rules remain open.
+
+## Dispatch exception control — DEC-030
+
+The default payment gate remains in force. A narrowly defined exception does not establish payment success and does not release unrelated operational holds. The requester cannot automatically approve their own exception; material cases require a second approver. Exact eligibility, permission assignment, materiality, limits, evidence categories, and revocation remain owner-policy details. No schema, endpoint, or implementation is approved.
