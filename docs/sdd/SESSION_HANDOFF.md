@@ -1,109 +1,77 @@
 # New-session handoff prompt
 
-Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
+Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`.
 
-## Verified repository state
+## Current verified repository state
 
-- Latest verified `main` before the current proposal: PR #50 / DEC-043 merged on 30 October 2026 at `06d485f351246b5304227d79d5e03eeed0c1b9c1`. The current documentation-only proposal records owner-approved DEC-044 on branch `docs/dec-044-custody-exceptions` and is pending owner review.
-- PR #43 corrected post-PR #42 continuity metadata; it was documentation-only.
-- The PR #42 readiness assessment remains accepted as a readiness/navigation baseline only; it does not approve executable tests, test execution, implementation, or release.
-- Active application-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). PRs #40–#44 changed SDD documentation only; they do not establish runtime behaviour.
-- Application-code changes remain prohibited until the complete platform-wide SDD is reconciled and explicitly approved.
+- Current `main` baseline: PR #52 is merged; merge commit `61b8b65777d98950b6a4b6c5c311490e064f3d47`.
+- PR #52 records Milestone 3 completion in `PROGRESS.md` and `SESSION_HANDOFF.md`.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Comparison through PR #52 found only SDD documentation changes after that source baseline. This does not verify runtime behaviour or production readiness.
+- The current Milestone 4 continuity-baseline proposal is on branch `docs/milestone-4-continuity-baseline`; it is not merged unless a later repository check confirms that it is.
+- Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
+- No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
-## Accepted policy and product hierarchy
+## Product hierarchy and accepted policy
 
-- D-01–D-15 high-level owner outcomes are accepted under DEC-022–DEC-036. DEC-037 records the logistics-first product hierarchy. DEC-038 records the owner-approved independent shipment booking policy. DEC-039 records pricing input/calculation boundaries. DEC-040 records measurement-adjustment and service-resolution boundaries (PR #47 merged). DEC-041 records payment and financial-settlement boundaries (current proposal).
-- DEC-018 already records the accepted lean launch scope: independent shipment booking; advance booking and staff-created walk-in intake; lean PUDO location management; shared hybrid delivery pricing; advance online payment and payment at intake; Operations-reviewed route proposals and route-leg assignments; flexible proof of delivery; and controlled failed-delivery resolution.
-- DEC-037 is now owner-accepted: VeriLyft is fundamentally a logistics and shipment-management platform. Independent shipment booking is the primary customer entry point. Storefront commerce is an attached, secondary service.
-- Storefront orders and independent shipments remain distinct business concepts and order sources. Storefront orders requiring delivery enter the same operational fulfilment system used by independent shipments; do not create separate competing fulfilment processes or assume a particular schema.
-- DEC-018 exclusions remain: advanced route optimization, full fleet management, separate Driver Portal/application, enterprise workflow engine, and advanced analytics are deferred unless explicitly changed.
-- PM-01–PM-12 staff permission policies are accepted; technical permission design remains open.
-- Stage 5.2 booking-party authority BP-01–BP-22 is accepted and consolidated in merged PR #36.
-- Stage 5.3 pricing/measurement/quote/adjustment/financial-outcome policy areas are accepted and consolidated in merged PR #37, with subsequent refinements DEC-039–DEC-041. Detailed formulas/rates, units/conversion, rounding/effective dates, taxes/fees/discounts, discrepancy thresholds, authority limits, service-resolution eligibility, payment/refund limits, and reconciliation procedures remain open.
-- Milestone 1 independent shipment booking policy is owner-approved as DEC-038: valid quote acceptance by the authenticated booking party confirms the booking; service-specific booking information and business-arranged bookings are supported; payment, intake/custody, and fulfilment remain separate; each service communicates a separate handover deadline; missed handover may close as unfulfilled with financial history preserved; customer/Support/Operations/Admin responsibilities are bounded. Its documentation-only consolidation was merged in PR #45.
+VeriLyft is a logistics-first shipment-management platform. Independent shipment booking is the primary customer entry point; storefront commerce is an attached, secondary service. A storefront order requiring delivery enters the same operational fulfilment system as an independently booked shipment. Storefront orders, independent shipments, and transport movements remain distinct business concepts; do not assume a technical schema from that distinction.
 
-## Historical stage record — Milestone 2 Part 1 and Part 2; superseded by later merged decisions
+The following owner-policy outcomes are accepted at the levels recorded in the authoritative SDD documents:
 
-Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. This is not approval of executable test specifications, test execution, implementation, or release.
+- DEC-018: accepted lean launch scope and exclusions.
+- DEC-022–DEC-036: D-01–D-15 high-level owner decisions.
+- DEC-037: logistics-first product hierarchy and shared fulfilment boundary.
+- DEC-038: independent shipment booking confirmation, service information, handover deadline, cancellation, and responsibility boundaries.
+- DEC-039: service-specific pricing model/input/calculation boundaries.
+- DEC-040: measurement-adjustment and customer-resolution boundaries.
+- DEC-041: payment, settlement, refund/credit, reconciliation, and dispatch boundaries.
+- DEC-042: physical intake, custody, measurement, and location-operation boundaries.
+- DEC-043: location capability, service/action eligibility, and actor-authority boundaries.
+- DEC-044: custody transfer integrity and physical exception resolution.
+- PM-01–PM-12: accepted staff permission policies; detailed technical permission design remains open.
+- BP-01–BP-22: accepted booking-party authority policies; operational and technical contracts remain open.
 
-Stage 5.5:
-1. PR #40 corrected continuity records, duplicate issue identifiers, and stale approval/status statements; first-pass DEC-022–DEC-036 policy alignment was recorded.
-2. PR #41 consolidated the A-01–A-20 and ADM-R01–ADM-R54 dependency/traceability register as a navigation baseline.
-3. PR #42 assessed all 45 P0 and 6 Conditional P0 requirements, the 80 scenario outlines, source-backed candidates, missing capabilities, policy/contract blockers, and conditional activation gates. This is a readiness/navigation baseline only; no requirement is approved for execution.
-4. PR #43 reconciled the post-PR #42 continuity metadata.
-5. DEC-037 records the owner's logistics-first product hierarchy and shared fulfilment principle.
-6. DEC-038 records the owner-approved independent shipment booking confirmation, information, lifecycle, handover-deadline, and responsibility policy; it was merged in PR #45.
-7. DEC-039 records the owner-approved pricing input/calculation boundaries and was merged in PR #46.
-8. DEC-040 records measurement-adjustment and customer-resolution policy and was merged in PR #47.
-9. DEC-041 records payment completion, partial settlement, refund/credit, reconciliation, and dispatch boundaries; its documentation-only consolidation is pending review in the current PR.
+Milestones 1–3 are complete at the owner-approved policy/documentation level. Their completion does not mean all operational procedures, technical contracts, executable tests, or runtime evidence are complete.
 
-The readiness assessment's source findings remain valid: independent shipment booking, pricing, custody, routing and related operational capabilities are absent or materially incomplete in the inspected source baseline. That is an implementation gap against the accepted launch scope, not a reason to classify these core capabilities as deferred.
+## Current work — Milestone 4
 
-## Next work
+**Milestone:** Platform-wide SDD Reconciliation and Implementation Readiness.
 
-- Review and merge the Milestone 2 Part 3 documentation-only PR after inspecting its full diff.
-- Keep the DEC-041 unresolved financial details open; do not invent service/location limits, refund authority/timelines, credit rules, reconciliation cadence, or exception eligibility.
-- Continue physical operations, logistics execution, exceptions/accountability, and platform-readiness SDD reconciliation.
-- Then proceed through physical intake/measurement/custody, location capability, routing/dispatch/movement, delivery proof/failed-delivery resolution, audit/evidence, notifications/privacy, and production operations.
-- Continue reconciling DEC-018 and DEC-037–DEC-041 through requirement priorities, acceptance scenarios, source traceability, and launch-readiness evidence.
-- Preserve storefront catalogue, cart, checkout, customer account and payment requirements as the attached commerce service. Its existing source-backed slices may be specified and regression-tested, but must not displace the core logistics workflow.
-- Keep source facts, designed requirements, implemented behaviour, runtime evidence, and production-readiness evidence distinct. Do not invent unresolved thresholds, formulas, permission limits, proof methods, retention periods, or retry/time-out values.
-- Preserve the active source baseline at `e0f69055` unless a source-changing commit is inspected.
-- Obtain explicit owner approval of the complete platform-wide SDD before implementation.
+The initial read-only baseline inventory is complete. The first focused work item aligns the continuity documents with PR #52, the approved DEC-038–DEC-044 sequence, and the completed Milestone 3 record. Review the actual current PR/main state before proceeding.
 
-## Working rules
+### Milestone 4 sequence
 
-- Preserve the existing Next.js App Router, TypeScript, Firebase Auth/Firestore/Firebase Admin, Paystack, Cloudinary, and current component/service/type/style patterns.
+1. Establish and maintain one authoritative documentation/repository baseline.
+2. Reconcile accepted decisions across all SDD documents; identify contradictions, stale references, omissions, and unresolved dependencies without silently reopening accepted policy.
+3. Trace requirements and policy to the existing application source read-only; distinguish present, partial, absent, not inspected, and not verified.
+4. Complete workflow, actor/permission, lifecycle, data/API/security, integration, and exception contracts.
+5. Turn approved requirements into detailed, executable acceptance-test specifications and evidence requirements. The existing P0 readiness assessment/catalogue is a navigation/design baseline, not approval to execute tests.
+6. Assess production readiness: environment/configuration, security, deployment, monitoring, backup/restore, incident response, rollback, recovery, and release evidence.
+7. Present the complete reconciled SDD for explicit owner approval before any application-code changes.
+
+## Important unresolved boundaries
+
+Do not invent or silently settle:
+- Service-specific pricing formulas, rates, inputs, units, conversion, rounding, fees, taxes, thresholds, quote validity, or adjustment limits.
+- Payment method/service eligibility, partial-payment limits, cash controls, refund authority/timelines, credit rules, reconciliation cadence, chargeback handling, or dispatch exceptions.
+- Intake checklists, measurement procedures, handover proof, confirmation/dispute/correction authority, second-approver rules, custody hold limits, missing/damaged parcel investigation ownership, liability, insurance, compensation, or customer entitlements.
+- Location/service/action capability catalogue, Admin assignment granularity, staff permission scopes, partner arrangements, queued-work handling, or temporary closure procedures.
+- Exact status vocabulary, data representation, collections, fields, APIs, security rules, idempotency/recovery contracts, retention periods, or executable acceptance cases.
+- Notification event/recipient/channel details, privacy rules, retries, failure ownership, or evidence retention.
+- Production operational thresholds, monitoring, backup/restore proof, incident ownership, rollback, and release exception authority.
+
+Use `ISSUES.md`, `DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, and `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md` as the relevant navigation sources. Preserve unresolved details as open work.
+
+## Working protocol
+
+- Read `README.md`, `PROGRESS.md`, `ISSUES.md`, `DECISIONS.md`, and this handoff before proposing changes.
+- Read the relevant workflow, lifecycle, actor, requirement, acceptance, and source-traceability documents for each domain.
+- Inspect the current repository/source read-only when implementation facts are needed. State the exact inspected commit.
+- Preserve the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, Cloudinary, and existing component/service/type/style patterns.
 - Do not invent parallel architecture, collections, fields, routes, services, status enums, roles, or permissions.
-- Keep accepted policy, source facts, test evidence, and production-readiness evidence distinct.
-- Keep changes focused and documentation-only while the SDD is incomplete. Use branches and PRs; the owner reviews and merges every PR.
-- Never claim tests were run unless they actually were.
-- Do not restart the completed D-01–D-15, PM-01–PM-12, Stage 5.2, Stage 5.3, or Milestone 1 decision sequences.
+- Keep intended behaviour, owner-approved policy, source presence, implemented behaviour, runtime verification, and production-readiness evidence distinct.
+- Keep PRs focused and documentation-only while the complete SDD remains unapproved. The owner reviews and merges every PR.
+- Never claim a test, build, browser check, deployment check, or production verification was performed unless it actually was.
+- Preserve historical roadmap/checkpoint entries as history; use `PROGRESS.md` for the current work pointer.
+- Do not reopen completed D-01–D-15, PM-01–PM-12, BP-01–BP-22, or Milestones 1–3 absent genuine contradictory evidence.
 
-
-## Milestone 2 Part 2 owner approval — DEC-040
-
-The owner approved the measurement-adjustment and customer-resolution direction on 30 October 2026. DEC-040 was consolidated and merged in PR #47 (merge commit `df6341953f459456b13e2efbf274ad581b2e765f`). Core boundaries: service-configured materiality review; original quote/agreement preserved; explicit customer acceptance (silence is not acceptance); acceptance is not settlement; disputed additional charge held pending review; rejection triggers an authorized service-resolution decision and is not automatic cancellation/refund/credit/charge; continuation under original terms requires safe and commercially feasible fulfilment; alternative service requires separately accepted pricing; cancellation follows its applicable policy; and dispatch cannot proceed under a rejected revised price.
-
-Next: Part 2 is complete. Part 3 payment/settlement policy is recorded as DEC-041 and is pending review in the current documentation-only PR. Keep exact thresholds, units/conversion, evidence, approval limits/separation of duties, service-resolution eligibility, customer response periods, and runtime acceptance tests open. Preserve the complete platform-wide SDD approval gate; no application code is authorized.
-
-
-## Milestone 2 Part 3 owner approval — DEC-041
-
-The owner approved the payment and financial-settlement refinement on 30 October 2026. DEC-041 is being consolidated in a documentation-only PR. Preserve both advance online payment and payment at intake subject to service/location configuration; quote acceptance is booking confirmation, not payment; electronic settlement requires authoritative confirmation; cash requires attributable receipt/equivalent evidence and reconciliation; partial payment is permitted only where a service explicitly allows it and does not by itself satisfy the normal dispatch gate; underpayment/overpayment require authorized resolution; pending/failed/retry/late-success outcomes remain distinct; refund request/approval/initiation/execution are distinct; partial refunds, credits, reversals and chargebacks preserve traceable history; reconciliation mismatches are investigated; and verified full settlement of the amount currently due remains the default dispatch prerequisite. DEC-030 exceptions do not change payment status or bypass unrelated holds.
-
-Next: review and merge the Part 3 documentation-only PR. Keep service/location payment configuration, partial-payment eligibility, methods/limits/evidence, refund authority/timelines, cancellation fees, credit expiry/use/transfer, late-payment disposition, reconciliation cadence/ownership/tolerances, chargeback handling, and dispatch-exception eligibility/limits/evidence unresolved pending further specification. Continue platform-wide SDD reconciliation and obtain explicit owner approval of the complete SDD before implementation. No application-code change is authorized.
-
-## Milestone 3 Part 1 owner approval — DEC-042
-
-The owner approved the high-level physical intake and custody approach on 30 October 2026. DEC-042 is consolidated in the Milestone 3 Part 1 documentation-only PR.
-
-Preserve the distinction between advance-booked intake and staff-created walk-in intake; require an active location with explicit capability and an authorized actor for consequential actions; distinguish refusal before custody, accepted custody, and physical receipt retained under a hold; record custody whenever physical possession exists; keep booking, accepted terms, custody, payment, dispatch, and delivery separate; apply service-specific inspection and evidence requirements; preserve declared and actual measurements separately; attribute custody and transfers to the relevant parcel, actors, location, time, outcome and evidence/reason; identify external event sources; ensure inactive locations cannot accept new work while parcels already held remain accounted for; and treat each physical handover as a distinct event.
-
-Next: review and merge the Milestone 3 Part 1 documentation-only PR. Keep service-specific inspection/prohibited-item checklists, measurement/conversion, identity/acknowledgement/receipt methods, evidence/retention, staff/partner authority and second-person controls, capability assignment, hold ownership/review/maximum duration, transfer proof/correction, exception resolution, liability/compensation/insurance, technical contracts, and executable acceptance tests open. Continue platform-wide SDD reconciliation and preserve the explicit owner-approval gate before application-code changes.
-
-No application-code change is authorized.
-
-## Milestone 3 Part 2 owner approval — DEC-043
-
-The owner approved the PUDO location capability and operational-authority approach on 30 October 2026. DEC-043 is consolidated in the Milestone 3 Part 2 documentation-only PR.
-
-Preserve explicit service-and-action configuration at each location; keep outgoing intake, walk-in intake creation, measurement, custody acceptance, payment collection/recording, parcel collection/release, and custody handover distinct; and require both an active supported location capability and independently assigned actor authority. Designated Admin users may configure capabilities only within assigned authority; location editing, activation/deactivation, capability administration, and staff permission assignment remain distinct responsibilities. Capability changes must be attributable and auditable. Revocation/unavailability blocks new work but does not erase or abandon parcels already in custody or silently transfer responsibility. External partners, collection-centre operators, carriers, and drivers retain the no-direct-login launch boundary. Automated operating hours, capacity calculations, and availability scheduling remain outside the lean initial location model.
-
-Next: review and merge the Milestone 3 Part 2 documentation-only PR. Keep the service/location/action matrix, exact capability catalogue, Admin authority granularity, staff permission scopes, partner arrangements, queued-work handling, temporary closure procedure, audit retention, technical contracts, and executable acceptance tests open. After merge, proceed to Milestone 3 Part 3 — custody transfers and physical exceptions. Continue platform-wide SDD reconciliation and preserve the explicit owner-approval gate before application-code changes.
-
-No application-code change is authorized.
-
-
-
-## Milestone 3 Part 3 owner approval — DEC-044
-
-The owner approved the high-level custody-transfer and physical-exception approach on 30 October 2026. DEC-044 is consolidated in the documentation-only PR #51, merged on 30 October 2026 at `817bf60cd1d1ef15d060215131f2228bb24552a9`.
-
-Preserve the central invariant: recorded custody reflects established physical possession. A route assignment, dispatch authorization/record, arrival, or attempted handover does not automatically transfer custody. Every physical handover is distinct; completion requires actual handover and receiving-party possession. Record applicable source/previous custodian, intended recipient/destination, actual receiver, physical handover actor, recording staff member if different, time/location, outcome, evidence/source, and reason. Preserve prior custody history.
-
-Failed, disputed, and incompletely documented handovers remain distinct from completed transfers. Preserve last confirmed custody and competing reports. If possession changed but documentation is incomplete, investigate rather than invent confirmation. Missing parcels require a controlled investigation preserving discovery context, last confirmed custody/location, movement history, and available evidence. Damaged parcels require attributable discovery/condition evidence and surrounding custody history; last custodian alone does not prove fault. Incorrect location assignments preserve the original assignment; administrative correction is not physical transfer. Prolonged holds retain identifiable custody, reason, and accountable ownership. Corrections preserve original events/evidence, and unresolved exceptions are not silently closed. No automatic liability, refund, credit, compensation, insurance, or customer outcome is implied.
-
-**Still unresolved:** Service-specific handover proof methods; who may confirm/dispute/correct transfers; second-approver rules; missing-parcel investigation ownership; damage assessment/liability procedures; hold ownership/review/maximum periods; evidence retention; compensation/insurance/refund/credit/customer entitlements; exact lifecycle/status vocabulary; technical data/API/security contracts; and executable acceptance tests.
-
-**Merge confirmation:** PR #51 has been reviewed and merged; the owner reconfirmed approval. Milestone 3 Parts 1–3 are complete at the owner-approved policy/documentation level.\n\n**Next:** Continue platform-wide SDD reconciliation, read-only source traceability, acceptance-test specification, and production-readiness evidence planning. Keep the service-specific proof, authority, investigation, hold, evidence-retention, financial/legal, technical-contract, and executable-test questions listed above open. Obtain explicit owner approval of the complete platform-wide SDD before any application-code changes. No application-code change is authorized.
+**Implementation gate:** No application-code change until the owner explicitly approves the complete reconciled platform-wide SDD.
