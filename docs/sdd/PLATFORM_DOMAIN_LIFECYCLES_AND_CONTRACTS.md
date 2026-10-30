@@ -1,6 +1,6 @@
 # VeriLyft Domain Relationships, Lifecycle Boundaries, and API/Security Contracts
 
-**Document status:** Draft for owner review — not approved for implementation  
+**Document status:** Draft lifecycle/contract specification — accepted owner policies incorporated; detailed contracts and full SDD approval remain open  
 **Last updated:** 30 October 2026  
 **Scope:** Conceptual domain boundaries, lifecycle transition rules, service/API contract expectations, and authorization/security invariants  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, PLATFORM_SHARED_WORKFLOWS.md, SDD_COMPLETENESS_AUDIT.md  
@@ -10,7 +10,7 @@
 
 This document follows the actor/responsibility and shared-workflow drafts. It translates those concepts into a preliminary domain model and contract checklist without prescribing implementation details that depend on unresolved policy or source inspection.
 
-It is not a Firestore schema, API specification ready for coding, migration plan, or authorization implementation. It does not define collection names, document fields, status enum values, route paths, request/response JSON, indexes, token formats, or deployment boundaries. Existing source and data must be inspected read-only before any technical proposal is approved.
+Owner-policy outcomes under DEC-022–DEC-036, PM-01–PM-12, and BP-01–BP-22 are accepted at the levels recorded in their authoritative decision documents. The lifecycle relationships, transition tables, detailed operational parameters, and API/security contracts in this document remain draft specification work. It is not a Firestore schema, API specification ready for coding, migration plan, or authorization implementation. It does not define collection names, document fields, status enum values, route paths, request/response JSON, indexes, token formats, or deployment boundaries. Existing source and data must be inspected read-only before any technical proposal is approved.
 
 Use these labels:
 
