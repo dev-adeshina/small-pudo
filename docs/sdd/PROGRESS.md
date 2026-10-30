@@ -584,3 +584,21 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, permissions, notifications, deployed configuration, runtime behaviour, or tests were changed/run.
+
+
+## 21. Owner decision D-12 — 30 October 2026 (DEC-033)
+
+- [x] Owner accepted Option A: accountable, evidence-based recordkeeping.
+- [x] Confirmed consequential actions require attributable records identifying actor, action, affected resource, timestamp, applicable reason, and supporting evidence.
+- [x] Confirmed physical actor and staff recorder must remain distinguishable; audit entries/status updates alone do not prove physical events.
+- [x] Confirmed original consequential records/evidence are preserved and corrections/redactions remain separately authorized, attributable, and traceable.
+- [x] Confirmed retention/deletion must be category- and purpose-appropriate, with applicable legal holds respected; exact periods remain unresolved.
+- [x] Confirmed audit/evidence access is restricted to explicitly authorized reviewers and sensitive access/disclosure is auditable.
+- [x] Confirmed government requests remain basic and controlled, require recorded authority/basis/scope/review/disclosure, and do not grant unrestricted platform access.
+- [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff in this documentation proposal.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Continue to D-13: customer notifications and Telegram boundary.
+- [ ] Keep retention periods, full event/evidence catalogue, reviewer matrix, two-person approval cases, deletion/anonymization, legal-hold authority, disclosure workflow, evidence integrity requirements, and acceptance tests unresolved.
+- [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, permissions, audit implementation, retention jobs, disclosure integration, deployed configuration, runtime behaviour, or tests were changed/run.
