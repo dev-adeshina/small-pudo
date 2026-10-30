@@ -4,7 +4,7 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 
 ## Verified repository state
 
-- Latest verified `main` at the start of this proposal: `df6341953f459456b13e2efbf274ad581b2e765f` — PR #47 (DEC-040) merged. PR #48 / DEC-041 is the current documentation-only proposal and remains pending owner review.
+- Latest verified `main` before the current proposal: PR #50 / DEC-043 merged on 30 October 2026 at `06d485f351246b5304227d79d5e03eeed0c1b9c1`. The current documentation-only proposal records owner-approved DEC-044 on branch `docs/dec-044-custody-exceptions` and is pending owner review.
 - PR #43 corrected post-PR #42 continuity metadata; it was documentation-only.
 - The PR #42 readiness assessment remains accepted as a readiness/navigation baseline only; it does not approve executable tests, test execution, implementation, or release.
 - Active application-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). PRs #40–#44 changed SDD documentation only; they do not establish runtime behaviour.
@@ -22,7 +22,7 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 - Stage 5.3 pricing/measurement/quote/adjustment/financial-outcome policy areas are accepted and consolidated in merged PR #37, with subsequent refinements DEC-039–DEC-041. Detailed formulas/rates, units/conversion, rounding/effective dates, taxes/fees/discounts, discrepancy thresholds, authority limits, service-resolution eligibility, payment/refund limits, and reconciliation procedures remain open.
 - Milestone 1 independent shipment booking policy is owner-approved as DEC-038: valid quote acceptance by the authenticated booking party confirms the booking; service-specific booking information and business-arranged bookings are supported; payment, intake/custody, and fulfilment remain separate; each service communicates a separate handover deadline; missed handover may close as unfulfilled with financial history preserved; customer/Support/Operations/Admin responsibilities are bounded. Its documentation-only consolidation was merged in PR #45.
 
-## Current stage — Milestone 2 Part 1 and Part 2 merged; Part 3 payment/settlement proposal pending review
+## Historical stage record — Milestone 2 Part 1 and Part 2; superseded by later merged decisions
 
 Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. This is not approval of executable test specifications, test execution, implementation, or release.
 
