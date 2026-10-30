@@ -3,11 +3,11 @@
 **Last updated:** 30 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Latest verified main head:** `832378948a003b5848029758a05050632e9d5373` — PR #42 merged. The Stage 5.5 P0/Conditional P0 test-specification readiness assessment is now merged and accepted as a readiness/navigation baseline only. The active-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32); PRs #40–#42 changed SDD documentation only. This does not prove runtime behaviour.
+**Latest verified main head:** `46752f7bdfd9b9127a036a7db7eedfaf21a97363` — PR #43 merged. PR #43 corrected post-PR #42 continuity metadata; PRs #40–#43 changed SDD documentation only. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). This does not prove runtime behaviour.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
-**Current phase:** Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. Stage 5.5 continuity/policy reconciliation (PR #40), dependency/traceability register (PR #41), and P0/Conditional P0 test-specification readiness assessment (PR #42) are merged. The readiness assessment is accepted as a navigation/readiness baseline only—not as approval of executable tests, implementation, or release. No P0/Conditional P0 is approved for execution; detailed contracts, executable test specifications, runtime/production evidence and complete platform-wide SDD approval remain open. The next step is to confirm initial launch scope and identify capabilities that must remain disabled or use an approved manual fallback. No application-code changes are authorized until the complete SDD is reconciled and explicitly approved.
+**Current phase:** Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. Stage 5.5 continuity/policy reconciliation (PR #40), dependency/traceability register (PR #41), and P0/Conditional P0 test-specification readiness assessment (PR #42) are merged. The readiness assessment is accepted as a navigation/readiness baseline only—not as approval of executable tests, implementation, or release. No P0/Conditional P0 is approved for execution; detailed contracts, executable test specifications, runtime/production evidence and complete platform-wide SDD approval remain open. The accepted launch scope in DEC-018 includes the lean independent-shipment and logistics capabilities; DEC-037 now confirms logistics as the primary business workflow and storefront commerce as an attached service. The next step is to reconcile the logistics-first workflow hierarchy across the SDD, then resolve detailed contracts and case-level specifications. Do not classify core logistics capabilities as deferred merely because they are absent from the inspected source. No application-code changes are authorized until the complete SDD is reconciled and explicitly approved.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -21,10 +21,10 @@
 
 ## 1. Current position
 
-### Current milestone — Stage 5.5 readiness baseline accepted; initial launch-scope decision next
+### Current milestone — Stage 5.5 readiness baseline accepted; logistics-first product hierarchy confirmed
 
-- **Owner decision register:** 15 of 15 tracked decisions (D-01–D-15) have accepted high-level outcomes, recorded as DEC-022–DEC-036. Detailed policy values, permissions, transitions, and evidence requirements remain open where identified in the decision records.
-- **Latest verified main head:** `832378948a003b5848029758a05050632e9d5373` (PR #42 merged).
+- **Owner decision register:** 15 of 15 tracked D-01–D-15 decisions have accepted high-level outcomes, recorded as DEC-022–DEC-036. DEC-037 separately records the owner's accepted product hierarchy: logistics/independent shipment booking is primary; storefront commerce is attached. Detailed policy values, permissions, transitions, and evidence requirements remain open where identified in the decision records.
+- **Latest verified main head:** `46752f7bdfd9b9127a036a7db7eedfaf21a97363` (PR #43 merged).
 - **Source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed source pass recorded in PR #32). The comparison through PR #42 shows documentation-only changes; no later application-source change requires a new source baseline. Source presence remains distinct from runtime verification.
 - **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), P0 acceptance-scenario/evidence catalogue draft (PR #33), booking-party authority consolidation (PR #36), Stage 5.3 pricing/measurement/quote-policy consolidation (PR #37), Stage 5.4 consolidation (PR #39), Stage 5.5 continuity/policy reconciliation (PR #40), dependency/traceability register (PR #41), and the intervening continuity updates are merged.
 - **Merged documentation:** PR #36, `docs: consolidate booking-party authority decisions`, is merged. `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` records BP-01–BP-22 accepted under DEC-023/DEC-024. PM-01–PM-12 remain accepted in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`.
@@ -224,6 +224,13 @@ avoid changing category IDs or product data unnecessarily.
 - [ ] Keep Telegram separate from customer-facing order management.
 
 ## 5. Session log
+
+### 30 October 2026 — Owner confirms logistics-first product hierarchy
+
+- Owner confirmed that VeriLyft is fundamentally a logistics and shipment-management platform; independent shipment booking is the primary customer entry point.
+- Storefront commerce is an attached service. Storefront orders requiring delivery enter the same operational fulfilment system as independent shipments, while remaining a distinct order source/business concept.
+- This clarifies and reinforces the already accepted DEC-018 lean launch scope; it does not defer core logistics capabilities or imply that they are already implemented or verified.
+- Recorded as DEC-037 and reconciled in the product specification, shared workflows, decision register, progress tracker, and handoff. Application-code changes remain gated on complete SDD approval.
 
 ### 30 October 2026 — PR #42 merge and Stage 5.5 readiness baseline
 
