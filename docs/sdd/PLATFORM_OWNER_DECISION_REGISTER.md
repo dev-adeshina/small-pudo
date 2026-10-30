@@ -1,7 +1,7 @@
 # VeriLyft Platform Owner Decision Register
 
 **Document status:** Working register for owner decisions; recommendations are not approved policy  
-**Last updated:** 29 October 2026  
+**Last updated:** 30 October 2026  
 **Related baseline:** PR #13 merged; `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`  
 **Implementation gate:** No application-code changes until the platform-wide SDD is reconciled and explicitly approved.
 
@@ -117,14 +117,20 @@ The order below follows dependencies: authority and booking semantics first; com
 - **Implementation boundary:** Business policy only. No schema, endpoint, provider integration, permission implementation, or application-code change is authorized.
 
 
-### D-08 — Cancellation, late payment, refunds, credits, and reconciliation
+### DEC-029 — Cancellation, late payment, refunds, credits, and reconciliation
 
-- **Status:** Owner decision required; related runtime verification is separately tracked under VLY-005.
-- **Decision needed:** Define outcomes for payment success after cancellation/expiry or stock/capacity release; duplicate or contradictory provider events; partial payment; refund/credit/additional charge; chargeback/reversal; and reconciliation mismatch. Identify initiation, approval, and exception owners.
-- **Recommendation:** Keep provider payment outcomes, operational order/shipment status, and later financial adjustments distinct. Specify safe outcomes for each case before implementing changes.
-- **Dependencies:** D-05–D-07, dispatch rules, financial reporting, audit, and test scenarios.
-- **Record after decision:** Transition table, financial-event catalogue, authority/approval matrix, reconciliation ownership, and replay/late-event tests.
-- **Separate verification:** Passing source review or a written rule does not prove webhook, stock, or provider behaviour; VLY-005 runtime tests remain required.
+- **Date:** 30 October 2026.
+- **Decision:** Accepted Option A — explicit financial events with controlled transitions and reconciliation.
+- Cancellation of a booking/order/shipment does not itself mean a payment was refunded. Cancellation state and refund state remain distinct.
+- A payment received after cancellation or expiry is recorded and reconciled against its original transaction; it does not silently reactivate the cancelled booking/order/shipment.
+- A refund request and an executed refund are distinct. Refund initiation and approval must follow authorized controls and retain reason and applicable evidence; exact approval limits remain unresolved.
+- Customer credit is distinct from a cash refund and must remain traceable to its originating transaction. Additional payments are separate events and must not overwrite the original payment.
+- Reversals and chargebacks preserve the original transaction/event history and record their own outcomes.
+- Reconcile internal payment records against authoritative provider/bank records. Mismatches require investigation rather than an assumed success or silent correction.
+- Consequential financial actions retain actor, timestamp, reason, transaction/reference, and applicable evidence. Duplicate or replayed provider events must not create duplicate financial effects.
+- Operational order/shipment status, cancellation status, payment status, and refund status remain separate. Verified payment does not by itself authorize dispatch; the DEC-018 default dispatch gate and authorized, reasoned, auditable exception policy remain in force.
+- **Still unresolved:** Refund approval limits and separation of duties; refund timelines; cancellation fees; partial-refund policy; credit expiry/use rules; late-payment disposition; reconciliation frequency and exception ownership; and detailed evidence and acceptance tests.
+- **Implementation boundary:** Business policy only. No schema, endpoint, provider integration, permission implementation, or application-code change is authorized.
 
 ### D-09 — Dispatch exception authority
 
