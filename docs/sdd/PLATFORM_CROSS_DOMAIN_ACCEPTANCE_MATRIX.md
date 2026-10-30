@@ -308,3 +308,18 @@ The following acceptance direction supplements A-09 (physical intake, measuremen
 - **Exception handling:** Missing/damaged parcels, disputed/failed handovers, incorrect location assignments, and prolonged holds enter controlled resolution; no automatic liability or financial outcome is inferred.
 
 **Still required before executable tests:** Service-specific checklist and prohibited-item rules; identity/acknowledgement/receipt methods; evidence/retention; actor/partner authority and second-person controls; hold ownership and time limits; transfer correction authority; exception outcomes; and technical/source/runtime evidence. DEC-042 is policy direction only.
+
+## A-10 refinement — DEC-043 location capability and authority scenarios
+
+The following acceptance direction supplements A-10 and DEC-025/DEC-042. These are required scenarios, not evidence of implementation.
+
+- **Service/action eligibility:** Reject new work where the location is inactive, the relevant service is not enabled, or the specific action capability is absent. A location label/type must not satisfy these checks.
+- **Independent actor authorization:** Reject an actor lacking the assigned permission for the requested action/scope even when the location supports it. Reject work at an unsupported location even when the actor has broad staff/Admin access.
+- **No capability inheritance:** Enabling measurement must not silently enable custody acceptance, payment collection, release, outgoing intake, or handover. Verify each action independently.
+- **Configuration authority:** Only designated Admin users with the relevant assigned authority may grant, change, or revoke capabilities. Editing a location, activating it, assigning staff permissions, and configuring capabilities must not be treated as interchangeable authority.
+- **Configuration accountability:** Capability changes preserve actor, affected location, changed capability/configuration, time, and applicable reason; historical operational records remain unchanged.
+- **Revocation continuity:** Revoking a capability or making a location unavailable prevents new work requiring it, while parcels already held remain visible and accounted for. No silent custody reassignment or implied physical transfer is accepted.
+- **External physical actors:** Partner/collection-centre/carrier/driver actions remain distinguishable from internal staff recording events; no direct partner/driver login is assumed at launch.
+- **Lean launch scope:** No automated hours, capacity, or availability scheduling is assumed.
+
+**Still required before executable tests:** Approved service/location/action matrix; exact capability catalogue; Admin authority and staff permission scopes; partner arrangements; queued-work and temporary closure procedures; audit retention; technical/source/runtime evidence. DEC-043 is policy direction only.
