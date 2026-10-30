@@ -3,11 +3,11 @@
 **Last updated:** 30 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Current live main head at start of this task:** `a90ffb8e4915f4f3b1d27dbb31f47bd2ed8c74e3` — live `main` head at the start of this D-02 documentation task; PR #15's D-01 hybrid staff-model reconciliation is merged. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; previous comparisons found the intervening commits changed SDD documentation only, not application source.
+**Current live main head at start of this reconciliation:** `3b940a5b0e41691da6de74a4333ab1f6443ab67a` — PR #29 / DEC-036 merged. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison through the current head shows intervening commits changed SDD documentation only, not application source.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
-**Current phase:** Complete and reconcile the platform-wide SDD before application-code changes. PR #5 established the first-pass audit and PR #6 merged the continuity-document reconciliation. PR #7 merged the actor/responsibility model and PR #8 merged the shared-workflow draft into the documentation baseline. PR #9 merged the domain/lifecycle/API/security draft. PR #13 (cross-domain acceptance matrix) is merged. The current workstream is dependency-ordered owner-decision review and platform-wide SDD reconciliation; no application-code changes are authorized.
+**Current phase:** Stage 1 — platform-wide SDD consistency reconciliation after completion of all 15 high-level owner decisions. PR #29 / DEC-036 is merged. Reconcile stale decision-state wording, active-task pointers, cross-document policy references, and source/evidence baselines. Then complete requirement-level P0/P1/deferred mapping, source traceability, acceptance scenarios, and production-readiness evidence. No application-code changes are authorized until the complete SDD is explicitly approved.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -21,26 +21,24 @@
 
 ## 1. Current position
 
-### Active SDD milestone — owner decision register and reconciliation
+### Current milestone — all owner decisions accepted; full SDD reconciliation underway
 
-- PR #13, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, and PR #14, `PLATFORM_OWNER_DECISION_REGISTER.md`, are merged to `main`.
-- Owner selected **Option C** for D-01 on 29 October 2026: minimal hybrid staff model, recorded in DEC-022. PR #15 containing the documentation reconciliation is merged.
-- D-01 is no longer an open high-level model choice. Exact action permissions, approval thresholds, and workflow-specific separation of duties remain unresolved.
-- Owner selected **Option B** for D-02 on 29 October 2026: independent shipment booking is limited to registered, authenticated customers at launch; recorded in DEC-023.
-- Owner accepted D-03's recommended party/access policy on 29 October 2026: booking party, sender, receiver, payer, and handover person may differ; payer access defaults to payment confirmation/receipt only; booking/payment alone do not grant collection or full shipment-detail access; change authority is defined by change type and lifecycle stage. Recorded in DEC-024 in the current documentation PR.
-- Guest shipment booking is excluded at launch; ordinary storefront guest checkout remains unchanged.
-- Application-code work remains blocked until the platform-wide SDD is reconciled and explicitly approved.
+- **Owner decision register:** 15 of 15 tracked decisions (D-01–D-15) have accepted high-level outcomes, recorded as DEC-022–DEC-036. Detailed policy values, permissions, transitions, and evidence requirements remain open where identified in the decision records.
+- **Latest verified main head:** `3b940a5b0e41691da6de74a4333ab1f6443ab67a` (PR #29 / DEC-036).
+- **Source inspection baseline:** `c56be9b121e6007e1e99c6df2d3984e709771a92`. Comparison through latest main shows intervening commits changed SDD documentation only; source traceability remains a read-only snapshot and must be reconciled with accepted policy.
+- **Current stage:** Reconcile all SDD documents so accepted policy, unresolved specification detail, source facts, reported tests, and current work status agree.
+- **Next stages:** Requirement-level P0/P1/deferred mapping; targeted read-only source verification; detailed acceptance scenarios and evidence plan; production-readiness assessment; explicit owner approval of the complete SDD.
+- **Implementation gate:** No application-code changes until the complete platform-wide SDD has been reconciled and explicitly approved.
 
+VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, and Cloudinary application. Preserve its architecture and existing patterns; do not invent parallel services, collections, fields, routes, or permission models.
 
-VeriLyft remains the existing Next.js App Router ecommerce and delivery application using TypeScript, Firebase Authentication, Firestore/Firebase Admin, Paystack, Cloudinary, and the shared cart context. Continue the current architecture; do not rebuild it or introduce a parallel data/auth layer.
+### Evidence discipline
 
-The live `main` head verified before the current documentation PR is `a90ffb8e4915f4f3b1d27dbb31f47bd2ed8c74e3` (includes the merged PR #15 reconciliation). The source traceability inventory was inspected at `c56be9b121e6007e1e99c6df2d3984e709771a92`; a comparison against current `main` confirms that the 20 intervening commits changed SDD documentation only, not application source. The historical audit comparison baseline `cccad3c4eebe398c8369d5ce90ea05ee551589cf` remains historical, not current. Admin Portal design PR #1 and requirements/audit PR #2 are merged. PR #4 (category product-count compatibility) remains open/unmerged.
-
-Customer authentication, profile, customer-scoped order history/details, guest tracking, and guest tracking email have implementation evidence recorded below. Guest-order claiming remains undecided. The admin dashboard, catalogue, orders, and Cloudinary upload foundations exist, but current authorization behaviour, authorized/denied image uploads, and payment/stock edge cases still need runtime verification.
-
-**Latest runtime checkpoint (28 October 2026, user-reported):** `npx tsc --noEmit` exited successfully. `npm run dev` started Next.js 16.4.2 and reported `Ready in 936ms`. This confirms the type check and development-server startup only; it does not establish browser authorization, API security, upload success, or production-build status for the current checkout.
-
-**Working rule:** complete and reconcile the platform-wide SDD before application-code work. Read-only source inspection is allowed to establish current implementation facts. Keep approved intended behaviour, source-level implementation facts, and dated test/deployment evidence distinct. PR #6 and PR #7 are merged. The actor/responsibility, shared-workflow, and domain/lifecycle documents are in the documentation baseline, with owner decisions still open. The cross-domain acceptance matrix was merged in PR #13. The current workstream is the owner decision register and reconciliation—not application-code changes.
+- Accepted policy comes from `DECISIONS.md`.
+- Implementation facts come from inspected source at a stated commit.
+- Verified behaviour requires dated test/runtime/deployment evidence with environment and scope.
+- Launch readiness requires DEC-036 evidence; source presence or a passing build alone is insufficient.
+- Historical roadmap/checkpoint sections below are retained as history, not the current task pointer.
 
 ## 2. Feature tracker
 
@@ -74,7 +72,7 @@ Customer authentication, profile, customer-scoped order history/details, guest t
 | Customer order history | [x] | `app/api/account/orders/route.ts`; customer-scoped order retrieval and dashboard display tested. |
 | Customer-owned order association | [x] | Authenticated orders are associated server-side with the verified Firebase UID; existing guest checkout is preserved. |
 | Customer order-detail page | [x] | `app/account/orders/[orderId]/page.tsx` and `app/api/account/orders/[orderId]/route.ts`; build and browser tests passed, including cross-customer access rejection. |
-| Secure guest-order recovery/claiming | [?] | Decide whether and how guest orders can be claimed by an authenticated customer. |
+| Secure guest-order recovery/claiming | [~] | DEC-035 accepts secure recovery through proof of control of the original checkout email and optional account claiming through a separate ownership challenge. Technical design, source reconciliation, and runtime evidence remain open. |
 | Admin manual shipping updates | [~] | Shipping fields and admin order operations exist; regression-test current transitions. |
 | Guest order tracking API | [x] | `app/api/orders/[orderId]/track/route.ts`; guest access uses the order access token. |
 | Customer-facing delivery tracking UI | [~] | `app/track-order/`; guest tracking page and email link have been tested. Continue regression testing. |
@@ -87,7 +85,7 @@ Customer authentication, profile, customer-scoped order history/details, guest t
 | Development dependency audit | [~] | A `braces` advisory remains in the development tooling dependency tree. Do not force a breaking downgrade; reassess when a compatible upstream fix is available. |
 | Full end-to-end regression | [ ] | Run after the current authentication, image-upload, and storefront changes are verified. |
 
-## 3. Current work — preserve and verify
+## 3. Historical implementation checkpoint — 28 October 2026
 
 ### A. Working-tree checkpoint
 
@@ -132,7 +130,7 @@ change check to return incorrect results. Inspect the full helper and its
 call sites before correcting it. Preserve existing Firestore records and
 avoid changing category IDs or product data unnecessarily.
 
-## 4. Roadmap
+## 4. Historical roadmap — retain for context, not current work order
 
 ### Phase 1 — Core ecommerce and audit
 
@@ -615,7 +613,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Confirmed duplicate prevention per event/recipient/channel, bounded retries, attributable attempt/outcome history, and operational visibility of persistent failures without silent fallback.
 - [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff in this documentation proposal.
 - [ ] Review and merge the focused documentation-only PR.
-- [ ] Continue to D-14: guest-order recovery or claiming.
+- [x] Continue to D-14: guest-order recovery and claiming.
 - [ ] Keep event/timing/channel matrix, consent/preferences/contact verification, templates/fields, retry limits, deduplication semantics, failure ownership, retention, Telegram audience/purpose, and acceptance tests unresolved.
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
@@ -632,7 +630,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Confirmed challenge expiry, replay/abuse protection, non-disclosing failure responses, credential confidentiality, and separation from commercial/fulfilment state.
 - [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issue tracker, progress, and handoff in this documentation proposal.
 - [ ] Review and merge the focused documentation-only PR.
-- [ ] Continue to D-15: launch priority and production-readiness evidence.
+- [x] Continue to D-15: launch priority and production-readiness evidence.
 - [ ] Keep challenge format/lifetime, rate limits, post-fulfilment eligibility, account deletion consequences, exceptional transfer/support procedure, token storage/rotation mechanics, retention, and detailed denial/replay/cross-account tests unresolved.
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
@@ -654,3 +652,19 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Obtain explicit owner approval of the complete platform-wide SDD before any application-code changes.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, deployment configuration, runtime behaviour, production environment, or tests were changed/run. This decision does not certify current launch readiness.
+
+
+## 25. Owner decision register completed — 30 October 2026
+
+- [x] D-13 / DEC-034 merged in PR #27 (merge commit `024b38bf3aa22dd078a2ad4e9668c6a524a4a809`).
+- [x] D-14 / DEC-035 merged in PR #28 (merge commit `0ea8ce9374a1a8f1bdcb599426a08114c76fbc5b`).
+- [x] D-15 / DEC-036 merged in PR #29 (merge commit `3b940a5b0e41691da6de74a4333ab1f6443ab67a`).
+- [x] All 15 tracked owner-decision slots have accepted high-level outcomes. This is not a measure of total SDD completion, implementation completion, or production readiness.
+- [ ] Reconcile every SDD document against DEC-022–DEC-036 and remove stale decision-state statements.
+- [ ] Complete requirement-level P0/P1/deferred classification against DEC-018 and accepted domain policies.
+- [ ] Refresh source-to-requirement traceability without changing application code.
+- [ ] Define detailed acceptance scenarios and evidence sources for every P0 requirement.
+- [ ] Assess production configuration, deployment, monitoring, backup/restore, incident response, and rollback evidence.
+- [ ] Obtain explicit owner approval of the complete reconciled platform-wide SDD before application-code changes.
+
+**Current active task:** Stage 1 SDD consistency reconciliation. No application code changed or tests run in this documentation task.
