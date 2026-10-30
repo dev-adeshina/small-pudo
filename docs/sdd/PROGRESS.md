@@ -543,9 +543,26 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Confirmed exceptions do not change payment status or bypass unrelated safety, custody, identity, legal, or other operational holds.
 - [x] Confirmed attributable evidence must preserve the parcel/shipment, reason, requester, approver(s), timestamp, supporting evidence, and outcome.
 - [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff in this documentation proposal.
-- [ ] Review and merge the focused documentation-only PR.
-- [ ] Continue to D-10: routing, route-leg assignment, and movement evidence.
-- [ ] Keep eligible circumstances, permission assignment, materiality/second-approval rules, monetary or operational limits, category-specific evidence, and pre-dispatch revocation unresolved.
+- [x] Review and merge the focused documentation-only PR #23; D-09 / DEC-030 is merged.
+- [x] Proceed to D-10: routing, route-leg assignment, and movement evidence.
+- [x] Keep eligible circumstances, permission assignment, materiality/second-approval rules, monetary or operational limits, category-specific evidence, and pre-dispatch revocation unresolved.
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, permissions, deployed configuration, or runtime behaviour changed or was tested.
+
+
+## 19. Owner decision D-10 — 30 October 2026 (DEC-031)
+
+- [x] Owner accepted Option A: controlled, evidence-based movement.
+- [x] Confirmed route proposal, approval, route-leg assignment, dispatch, physical handover, and arrival confirmation are distinct; proposal/assignment is not proof of physical movement.
+- [x] Confirmed Operations manages launch-time proposals and assignments; assignment changes require explicitly assigned authority and preserve prior decisions, actor, and reason.
+- [x] Confirmed movement evidence distinguishes the physical actor from the staff recorder when staff record provider/driver events on their behalf.
+- [x] Confirmed delays, missed handovers, missing parcels, damage, and disputed custody transfers remain explicit exceptions, not silently successful movement.
+- [x] Confirmed Driver Portal remains deferred; no provider/driver direct access is implied.
+- [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff in this documentation proposal.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Continue to D-11: delivery proof and failed-delivery resolution.
+- [ ] Keep route constraints, exact permission assignments, two-person approvals, mandatory milestones/evidence, provider/resource/capacity rules, correction authority, detailed exception outcomes, and acceptance tests unresolved.
+- [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, permissions, provider integration, deployed configuration, runtime behaviour, or tests were changed/run.
