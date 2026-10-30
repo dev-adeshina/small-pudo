@@ -88,7 +88,7 @@ Use these evidence labels consistently:
 - **Resolved by DEC-024:** booking party, sender, receiver/collection recipient, payer, and handover person may differ; payer visibility defaults to payment confirmation/receipt only; payment does not grant full shipment-detail access; booking does not authorize collection; change permissions must be defined by change type and lifecycle stage.
 - Can one customer account act as both storefront customer and shipper? The actor model permits this, but account identity and booking-record relationships must still be verified in the detailed design.
 - What registration, contact, or identity verification beyond sign-in is required, and at which booking/intake/collection checkpoints? Do not assume an additional verification method before it is decided.
-- Which change types can the booking party complete directly, when is sender/receiver consent required, and which changes require authorized staff? How does this vary before intake, after intake, after dispatch, or after payment?
+- How should the accepted BP-01–BP-22 authority policy be translated into the complete change-type/lifecycle matrix, including exact verification, consent, staff-review, and exception evidence?
 - What sender, receiver, payer, booking-party, and handover-person information is required, and when must each identity be verified?
 - How long is a quote valid, what makes a booking accepted, and when is a reference/label/receipt issued?
 - Which payment methods are supported at intake and how are they verified and recorded?
