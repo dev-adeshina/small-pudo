@@ -215,7 +215,7 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Decision:** At launch, only registered, authenticated customers may create an independent shipment booking. Guest shipment booking is out of scope for the initial launch.
 - **Authorization invariant:** The server must enforce authenticated customer identity and customer-scoped booking access. Unauthenticated users cannot create bookings or retrieve booking details, and one customer cannot access or amend another customer's booking without separately verified entitlement.
 - **Scope boundary:** This decision applies only to independent shipment booking. It does not change the provisional guest-checkout rule for storefront purchases and does not resolve guest-order recovery/claiming (VLY-004).
-- **Still unresolved:** Additional contact/identity verification checkpoints, minimum sender/receiver/payer details, business-account handling, quote validity, booking acceptance, amendment/cancellation authority, and corresponding runtime acceptance tests.
+- **Still unresolved:** Additional contact/identity verification checkpoints, minimum sender/receiver/payer details, business-account handling, quote validity, booking acceptance, and corresponding runtime acceptance tests. Amendment/cancellation authority is addressed by BP-01–BP-05 in `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`; detailed procedures and implementation remain open.
 - **Rationale:** Begin launch with an accountable customer identity for independent bookings while keeping the storefront guest-purchase path separate.
 - **Status:** Owner-approved eligibility rule; detailed workflow policy, source reconciliation, and implementation remain open.
 
