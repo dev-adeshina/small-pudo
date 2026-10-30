@@ -214,7 +214,7 @@ Until those are supplied, the requirement remains **not verified** and cannot be
 
 ## 8. Current evidence position
 
-This priority reconciliation is based on the SDD and the read-only source-traceability inventory. The traceability inventory was inspected at source baseline `c56be9b121e6007e1e99c6df2d3984e709771a92`; PR #30 and the documentation-only commits through `c9d9342cfc9dcef2c7d5704074d83927c5f5099c` did not change application source according to the documented baseline comparison.
+This priority reconciliation is based on the SDD and the read-only source-traceability inventory. PR #32 refreshed the active-source inspection at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge). The repository comparison from the earlier source snapshot through PR #39 contains documentation changes only, so this remains the current inspected application-source baseline. It does not establish runtime behaviour or replace a future source inspection after any application-code change.
 
 This work did **not** independently:
 - inspect the current application source at the new main head;
@@ -228,13 +228,13 @@ Therefore, no requirement is upgraded to implemented, tested, production-verifie
 
 ## 9. Review and approval checklist
 
-- [ ] Owner accepts the proposed classification of all 20 cross-domain areas.
-- [ ] Owner accepts the ADM-R01–ADM-R54 priority reconciliation, including the P1/conditional P0 adjustments.
-- [ ] Owner confirms the operational manual fallback for any P1 or conditional capability not enabled at launch.
-- [ ] Every P0 and Conditional P0 has an approved detailed specification and acceptance scenario.
-- [ ] Requirement-to-source mapping and current source baseline are refreshed.
+- [x] Owner accepts the classification of all 20 cross-domain areas (PR #31 owner-reviewed and merged).
+- [x] Owner accepts the ADM-R01–ADM-R54 priority reconciliation, including the P1/Conditional P0 adjustments (PR #31 owner-reviewed and merged).
+- [x] Owner confirms the lean/manual launch boundary for P1 and non-enabled conditional capabilities through the merged priority baseline.
+- [ ] Every P0 and Conditional P0 has an approved detailed specification and executable acceptance scenario.
+- [x] Requirement-to-source mapping is refreshed at the inspected application-source baseline `e0f69055`; later merges through PR #39 are documentation-only.
 - [ ] Required runtime and production-like evidence is linked to each acceptance criterion.
 - [ ] All release blockers, owners and approved exceptions are explicit.
 - [ ] The complete platform SDD is reconciled and explicitly approved before application-code changes resume.
 
-**Current status: Proposed requirement-level priority baseline; owner review pending. Not an implementation authorization or launch-readiness declaration.**
+**Current status:** Owner-reviewed and merged requirement-level priority baseline (PR #31). Detailed P0 specifications, runtime/production evidence, blocker ownership, and complete platform-wide SDD approval remain open. This is not implementation authorization or launch-readiness approval.
