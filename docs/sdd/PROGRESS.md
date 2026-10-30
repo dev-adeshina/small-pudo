@@ -3,11 +3,11 @@
 **Last updated:** 30 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Latest verified main head before current proposal:** `7f69a67844ac7c42f1ec6bd7b29c67cd524a1966` — PR #33 merged. Current documentation proposal branch: `docs/staff-action-permission-matrix`. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison through the current head shows intervening commits changed SDD documentation only, not application source.
+**Latest verified main head:** `06fc1485019073f573047783c7773546a23e789b` — PR #34 merged. Current documentation proposal branch: `docs/resolve-staff-permission-decisions`. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison through the current head shows intervening commits changed SDD documentation only, not application source.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
-**Current phase:** Stage 5.1 — staff action-level permission and approval-boundary specification. PR #33 is merged at `7f69a67844ac7c42f1ec6bd7b29c67cd524a1966`. Current proposal branch: `docs/staff-action-permission-matrix`. The new `PLATFORM_STAFF_PERMISSION_MATRIX.md` is a draft for owner review; PM-01–PM-12 remain open. No application-code changes are authorized until the complete platform-wide SDD is reconciled and explicitly approved.
+**Current phase:** Stage 5.1 owner-policy decisions PM-01–PM-12 accepted; documentation reconciliation is in progress. PR #34 merged at `06fc1485019073f573047783c7773546a23e789b`. Current proposal branch: `docs/resolve-staff-permission-decisions`. The accepted outcomes are recorded in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`; detailed technical permission design and full SDD approval remain open. No application-code changes are authorized until the complete platform-wide SDD is reconciled and explicitly approved.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -21,14 +21,14 @@
 
 ## 1. Current position
 
-### Current milestone — P0 acceptance catalogue merged; staff permission specification underway
+### Current milestone — staff permission owner decisions accepted; SDD reconciliation underway
 
 - **Owner decision register:** 15 of 15 tracked decisions (D-01–D-15) have accepted high-level outcomes, recorded as DEC-022–DEC-036. Detailed policy values, permissions, transitions, and evidence requirements remain open where identified in the decision records.
-- **Latest verified main head:** `7f69a67844ac7c42f1ec6bd7b29c67cd524a1966` (PR #33).
+- **Latest verified main head:** `06fc1485019073f573047783c7773546a23e789b` (PR #34).
 - **Source inspection baseline:** `c56be9b121e6007e1e99c6df2d3984e709771a92`. Comparison through latest main shows intervening commits changed SDD documentation only; source traceability remains a read-only snapshot and must be reconciled with accepted policy.
 - **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), and P0 acceptance-scenario/evidence catalogue draft (PR #33) are merged.
-- **Current proposal:** `PLATFORM_STAFF_PERMISSION_MATRIX.md` on `docs/staff-action-permission-matrix`; PM-01–PM-12 require owner resolution.
-- **Next stages:** Owner review of staff permissions; resolve remaining policy dependencies in DEC-022–DEC-036; reconcile lifecycle/API/data/security contracts against source; assess production readiness; obtain explicit approval of the complete SDD.
+- **Current proposal:** `PLATFORM_STAFF_PERMISSION_DECISIONS.md` and reconciled `PLATFORM_STAFF_PERMISSION_MATRIX.md` on `docs/resolve-staff-permission-decisions`; all PM-01–PM-12 are accepted, with detailed implementation parameters still open.
+- **Next stages:** Complete documentation reconciliation for accepted PM-01–PM-12; resolve remaining policy dependencies in DEC-022–DEC-036; reconcile lifecycle/API/data/security contracts against source; assess production readiness; obtain explicit approval of the complete SDD.
 - **Implementation gate:** No application-code changes until the complete platform-wide SDD has been reconciled and explicitly approved.
 
 VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, and Cloudinary application. Preserve its architecture and existing patterns; do not invent parallel services, collections, fields, routes, or permission models.
@@ -725,3 +725,18 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 **Evidence boundary:** Documentation-only. The catalogue is test design, not test execution. No application code was changed and no tests were run. No production data, deployed secrets/configuration, provider dashboards, physical parcel operations or root archive were inspected. Source baseline remains `c6dd28cd5450b598b19a19afa12a7331440320f0`.
 
 **Current active task:** Stage 4 — owner review and refinement of P0/Conditional P0 acceptance scenarios and evidence requirements. Application-code changes remain blocked by the complete SDD approval gate.
+
+
+## 29. Staff permission owner decisions accepted — 30 October 2026
+
+- [x] Verified PR #34 reviewed and merged to `main` at `06fc1485019073f573047783c7773546a23e789b`.
+- [x] Discussed PM-01–PM-12 with the owner and received explicit agreement to each recommendation.
+- [x] Recorded the accepted policy outcomes in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`.
+- [x] Reconciled `PLATFORM_STAFF_PERMISSION_MATRIX.md` so PM-01–PM-12 are no longer shown as unanswered owner decisions.
+- [x] Accepted permission administration by designated Admin users only; action-level permission grants; independently configured location capabilities; designated Admin pricing authority; second-approval boundaries for consequential financial, measurement, and operational exceptions; separate audit view/export/disclosure permissions; no direct partner/driver login at launch; Management reporting permissions rather than a separate operational role; limited Support responsibility; and controlled emergency access.
+- [ ] Review and merge the documentation-only decision/reconciliation PR.
+- [ ] Reconcile actor/responsibility, workflow, lifecycle, authorization, acceptance, traceability, and continuity documents with the accepted PM outcomes.
+- [ ] Specify remaining technical details without inventing thresholds, claims, schemas, or implementation.
+- [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
+
+**Evidence boundary:** Documentation-only policy capture based on the owner's explicit decisions. No application source, Firebase configuration/rules, data schema, APIs, permissions, deployment, runtime behaviour, or tests were changed/run. Acceptance of PM-01–PM-12 does not constitute complete SDD approval, implementation authorization, or production readiness.

@@ -4,7 +4,7 @@ Continue the existing **VeriLyft — Beyond Borders** project in `dev-adeshina/s
 
 ## Current verified state
 
-- Latest verified `main` head: `7f69a67844ac7c42f1ec6bd7b29c67cd524a1966` (PR #33 merged 30 October 2026).
+- Latest verified `main` head: `06fc1485019073f573047783c7773546a23e789b` (PR #34 merged 30 October 2026).
 - All 15 tracked high-level owner decisions (D-01–D-15; DEC-022–DEC-036) are accepted. The decision queue is complete, but the platform-wide SDD is not yet complete or approved.
 - Refreshed source inspection baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (PR #32 changed SDD documentation only). `IMPLEMENTATION_SOURCE_TRACEABILITY.md` maps A-01–A-20 and ADM-R01–ADM-R54 against the active source tree at that exact source commit.
 - Current task: **Stage 5.1 — owner review of the proposed staff action-level permission matrix** in `PLATFORM_STAFF_PERMISSION_MATRIX.md`, on branch `docs/staff-action-permission-matrix`. PR #31 priority baseline, PR #32 source traceability, and PR #33 P0 acceptance catalogue are merged. The complete platform-wide SDD remains unapproved.
@@ -49,3 +49,13 @@ Read `README.md`, `SPEC.md`, `DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.m
 7. Only after complete SDD approval, plan focused implementation work.
 
 Do not restart the completed 15-decision sequence. Start by verifying the live `main` head and PR state, then continue from `PROGRESS.md`. Never merge on the owner's behalf.
+
+
+## Staff permission owner-decision update — 30 October 2026
+
+- PR #34 merged at `06fc1485019073f573047783c7773546a23e789b`.
+- Owner explicitly accepted all twelve recommendations PM-01–PM-12. See `PLATFORM_STAFF_PERMISSION_DECISIONS.md` for the authoritative outcomes.
+- `PLATFORM_STAFF_PERMISSION_MATRIX.md` now records the PM decisions as resolved at policy level.
+- Key outcomes: designated Admin permission administrators; individual action-level grants; independently configured location capabilities; designated Admin pricing authority; second approvals for consequential financial, measurement, and operational exceptions; separate audit viewing/export/disclosure permissions; no partner/driver login at launch; Management reporting permissions; limited Support responsibility; controlled time-limited emergency access.
+- Do not treat these decisions as a finalized technical permission model. Permission catalogue, claims/schema, server-side enforcement design, exact thresholds/materiality, emergency duration, and workflow-specific evidence still require SDD reconciliation.
+- No application-code changes are authorized until the complete platform-wide SDD is reconciled and explicitly approved.

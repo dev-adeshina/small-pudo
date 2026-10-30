@@ -9,6 +9,7 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 - `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and historical roadmap (not the current work order).
 - `SDD_COMPLETENESS_AUDIT.md` — platform-wide documentation coverage, inconsistencies, gaps, and the proposed SDD completion sequence.
 - `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` — platform actor catalogue, accepted responsibility boundaries, portal/module distinction, and remaining role/permission design questions.
+- `PLATFORM_STAFF_PERMISSION_DECISIONS.md` — owner-accepted outcomes for PM-01–PM-12; policy decisions are accepted, while detailed technical permission design remains open.
 - `PLATFORM_STAFF_PERMISSION_MATRIX.md` — proposed action-level staff permission, location-capability, approval, and separation-of-duties matrix; draft for owner review, not implementation approval.
 - `PLATFORM_STAFF_PERMISSION_MATRIX.md` — proposed action-level staff permission, location-capability, approval, and separation-of-duties matrix; draft for owner review, not implementation approval.
 - `PLATFORM_SHARED_WORKFLOWS.md` — draft cross-domain workflows for storefront fulfilment, independent shipment booking, intake/custody, pricing, payments, routing, dispatch, delivery, notifications, and audit/evidence.

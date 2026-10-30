@@ -134,3 +134,21 @@ The proposed action-level staff authorization baseline is maintained in `PLATFOR
 ## Stage 5.1 — action-level permission specification
 
 The proposed action-level staff authorization baseline is maintained in `PLATFORM_STAFF_PERMISSION_MATRIX.md`. It translates DEC-022 and related workflow decisions into a draft matrix without creating technical roles, claims, schemas, or implementation authority. The matrix remains subject to owner review; its open PM-01–PM-12 decisions must be resolved before the staff permission model is considered complete.
+
+
+## 9. Owner decision update — staff permissions and launch responsibility boundaries
+
+The actor catalogue above contains earlier unresolved statements that predate the owner's resolution of PM-01–PM-12. For the launch policy baseline, the later accepted decisions in `PLATFORM_STAFF_PERMISSION_DECISIONS.md` supersede those earlier unresolved statements:
+
+- **Staff permission administration:** only designated Admin users may grant/change/revoke permissions; Admin status alone is insufficient.
+- **Permission assignment:** action-level permissions, optionally grouped into permission sets, with relevant location scope.
+- **Location capabilities:** designated Admin users configure each capability independently; staff require both assigned permission and active location capability.
+- **Pricing:** designated Admin users control pricing/rate configuration; accepted quotes retain their original terms/rate version.
+- **Partner and driver access:** no direct platform login at launch; internal staff record operational events and identify physical actors.
+- **Management:** no separate operational role at launch; explicitly assigned reporting/oversight permissions only.
+- **Support:** a defined launch responsibility with limited customer/order access and escalation boundaries; no separate portal.
+- **Emergency access:** controlled, justified, minimum-scope, time-limited, audited, reviewed, and revoked.
+
+Second-approval policy is accepted for consequential financial, measurement, and operational exceptions as specified in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`. Exact materiality/monetary thresholds, permission catalogue, technical assignment/enforcement model, Support visibility, Management reporting scope, and emergency-access parameters remain open.
+
+This addendum resolves owner-policy questions only. It does not approve technical roles, Firebase claims, Firestore rules, schemas, APIs, portals, or implementation. The complete platform-wide SDD remains subject to reconciliation and explicit owner approval before application-code changes.
