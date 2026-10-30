@@ -892,7 +892,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Owner approved DEC-025's lean capability-based location model, auditable capability changes, and inactive-location continuity for parcels already in custody.
 - [x] Owner approved controlled exception handling for missing/damaged parcels, disputed/failed handovers, incorrect assignments, and prolonged holds, without inventing automatic liability or financial outcomes.
 - [x] Recorded DEC-042 and reconciled the decisions log, shared workflow, domain/lifecycle contract, owner decision register, cross-domain acceptance direction, issue register, and continuity records in this documentation-only proposal.
-- [ ] Review and merge the Milestone 3 Part 1 documentation-only PR.
+- [x] Review and merge the Milestone 3 Part 1 documentation-only PR (completed in the subsequent approved/merged milestone sequence).
 - [ ] Keep service checklists, prohibited-item rules, identity/acknowledgement/receipt methods, evidence retention, staff/partner authority, hold limits, transfer correction, exception outcomes, liability/compensation/insurance, technical contracts, and executable tests open.
 - [ ] Continue platform-wide SDD reconciliation, read-only source traceability, acceptance-test specification, and production-readiness evidence planning. Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
@@ -907,7 +907,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Owner approved attributable/auditable capability changes and continuity for parcels already held when a capability is revoked or a location becomes unavailable.
 - [x] Owner retained the no-direct-login launch boundary for external partners/drivers and excluded automated operating-hours, capacity, and availability scheduling from the lean initial location model.
 - [x] Recorded DEC-043 and reconciled decisions, shared workflow, lifecycle/contract draft, owner decision register, acceptance matrix, issue register, and session handoff in a documentation-only proposal.
-- [ ] Review and merge the Milestone 3 Part 2 documentation-only PR.
+- [x] Review and merge the Milestone 3 Part 2 documentation-only PR (PR #50; merge commit `06d485f351246b5304227d79d5e03eeed0c1b9c1`).
 - [ ] Keep the service/location/action matrix, exact capability catalogue, Admin authority granularity, staff permission scopes, partner arrangements, queued-work handling, temporary closure procedure, audit retention, technical contracts, and executable tests open.
 - [ ] Continue platform-wide SDD reconciliation, read-only source traceability, acceptance-test specification, and production-readiness evidence planning. Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
