@@ -250,3 +250,11 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Accepted:** Route proposal, approval, route-leg assignment, dispatch, physical handover, and arrival confirmation are distinct; proposal/assignment is not proof of movement; Operations manages launch-time proposals and assignments; route changes require explicitly assigned authority and preserve history, actor, and reason; movement evidence distinguishes physical actor from staff recorder when staff enter provider/driver events; delays, missed handovers, missing parcels, damage, and disputed custody transfers remain explicit exceptions; Driver Portal remains deferred.
 - **Still open:** Route constraints, exact permissions and any two-person approvals, mandatory milestones/evidence, provider/resource/capacity rules, correction authority, detailed exception outcomes, and acceptance tests.
 - **Next action:** Continue to D-11 delivery proof and failed-delivery resolution. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+
+
+### D-11 delivery proof and failed-delivery resolution — DEC-032
+
+- **Status:** High-level owner policy accepted on 30 October 2026 (Option A: evidence-based delivery with controlled outcomes).
+- **Accepted:** Attempt, successful delivery, failed delivery, customer collection, and return are distinct; successful delivery requires approved service-appropriate evidence and a staff status update alone is insufficient; recipient authority follows DEC-024; proof methods remain flexible by service; failed attempts retain reasons; reattempt, return, holding, refusal, cancellation, and financial adjustments require explicit authority; significant notifications respect party entitlements; disputed delivery preserves original evidence/history.
+- **Still open:** Mandatory methods by service, OTP requirement, attempt limits, resolution authority, holding duration, failure-reason catalogue, loss/damage/refusal/dispute handling, customer-contact details, and detailed acceptance tests.
+- **Next action:** Continue to D-12 audit, evidence retention, correction, and disclosure. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.

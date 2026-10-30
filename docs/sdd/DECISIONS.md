@@ -328,3 +328,19 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Still unresolved:** Mandatory route-planning inputs/constraints; exact approval/change/revocation/reassignment permissions; any two-person approval requirements; mandatory milestones and event-specific evidence; provider/resource and capacity rules; correction authority; delay/loss/damage/dispute resolution; and detailed acceptance tests.
 - **Acceptance direction:** Proposals cannot authorize dispatch; assignments cannot prove movement; movement events must reference the correct shipment and route leg; third-party physical actors and staff recorders are distinguishable; assignment history remains traceable; and exceptions are not silently marked successful.
 - **Implementation boundary:** Business policy only. No schema, endpoint, permission implementation, provider integration, or application-code change is authorized.
+
+
+### DEC-032 — Evidence-based delivery with controlled outcomes
+
+- **Date:** 30 October 2026.
+- **Decision:** Accepted Option A — evidence-based delivery with controlled outcomes.
+- Treat a delivery attempt, successful delivery, failed delivery, customer collection, and return as distinct outcomes. An unsuccessful attempt is not completed delivery.
+- Successful delivery requires approved evidence appropriate to the service and delivery context. A staff member changing a status to delivered, without the required evidence, is insufficient proof.
+- Verify that the person receiving the parcel is authorized to receive it. The sender, payer, booking customer, and receiver are not interchangeable by default; apply the separately accepted party and collection-entitlement boundaries in DEC-024.
+- Keep proof methods flexible by service. Candidate evidence may include recipient confirmation, OTP, signed acknowledgement, or attributable staff evidence, but this decision does not make any one method universally mandatory.
+- Record failed attempts and their reason as distinct outcomes. Reattempt, return, holding, refusal, cancellation, and any financial adjustment must follow an explicitly authorized resolution procedure; none is implied automatically by a failed attempt.
+- Notify relevant parties of significant delivery outcomes using only information they are authorized to receive.
+- Preserve original delivery evidence and event history when a delivery is disputed; do not silently overwrite or erase the evidence.
+- **Still unresolved:** Mandatory proof methods by service; whether OTP is mandatory, optional, or service-dependent; number of attempts; authority for reattempt, return, holding, refusal, cancellation, and financial adjustments; holding duration; failure-reason catalogue; loss/damage/refusal/dispute handling; customer-contact details; and detailed acceptance tests.
+- **Acceptance direction:** An attempt cannot be recorded as successful delivery without the approved evidence; an unauthorized recipient cannot be treated as entitled; failed delivery remains distinct from completed delivery; resolution actions require authority and attributable history; disputes preserve original evidence.
+- **Implementation boundary:** Business policy only. No schema, endpoint, permission implementation, notification integration, or application-code change is authorized. The platform-wide SDD implementation gate remains in force.
