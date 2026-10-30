@@ -172,3 +172,17 @@ These are policy-derived acceptance directions, not evidence that runtime behavi
 - [ ] Verify launch operations do not depend on a Driver Portal or imply provider/driver direct access.
 
 These are policy-derived acceptance directions, not evidence that runtime behaviour has passed. Route constraints, authority assignments, two-person approvals, mandatory evidence, capacity/provider rules, correction authority, and detailed exception outcomes remain unresolved.
+
+
+## D-11 / DEC-032 delivery proof acceptance direction
+
+- [ ] Distinguish delivery attempt, successful delivery, failed delivery, customer collection, and return.
+- [ ] Require approved service-appropriate evidence for successful delivery; a staff status update alone is insufficient.
+- [ ] Verify recipient authority under DEC-024; booking, sender, or payer status alone does not grant collection entitlement.
+- [ ] Apply proof methods according to approved service policy; OTP and other examples are not universally mandatory.
+- [ ] Retain failed-attempt reasons; do not treat an unsuccessful attempt as completed delivery.
+- [ ] Require authority and attributable history for reattempt, return, holding, refusal, cancellation, and financial adjustments.
+- [ ] Limit significant outcome notifications to information each recipient is authorized to receive.
+- [ ] Preserve original delivery evidence and event history for authorized dispute review.
+
+These are policy-derived acceptance directions, not runtime test results. Mandatory methods, OTP policy, attempt limits, resolution authority, holding duration, failure catalogue, loss/damage/refusal/dispute handling, and detailed tests remain unresolved.
