@@ -224,13 +224,16 @@ These decisions are accepted at the design level only. They do not mean the corr
 
 - **Decision date:** 29 October 2026.
 - **Decision:** The booking party, sender, receiver/collection recipient, payer, and person physically handing over the parcel may be different people. One person may occupy multiple roles, but each relationship must be explicit wherever it affects authority, liability, access, notifications, payment attribution, intake, or collection.
-- **Change authority:** Do not infer blanket edit authority from any one relationship. Permissions must be defined by change type and shipment lifecycle stage. The booking party may initiate permitted requests. Receiver/collection changes must follow the applicable verification and approval policy; changes affecting a shipment after intake or dispatch require the approved staff-mediated/controlled workflow. The exact change matrix, consent requirements, verification checkpoints, and permissions remain open.
+- **Change authority:** BP-01–BP-05 establish pre-intake booking-party change and cancellation rights, sender/receiver requests through Support, and controlled escalation when the booking party is unavailable. After physical intake, changes are staff-mediated.
+- **Collection authority:** BP-06–BP-08 establish receiver verification, booking-party/receiver nomination rules, alternative-collector verification, and a hold/review process for conflicting collection instructions. Booking and payment alone do not authorize collection.
+- **Transfer and continuity:** BP-10–BP-13 establish authenticated, accepted booking-party transfers; preserve financial history and obligations; controlled withdrawal; and verified legal-representative handling for death or incapacity.
+- **Delegated access and account security:** BP-14–BP-17 establish limited, explicit, expiring, revocable, non-transferable access and protective handling of suspected account compromise.
+- **Privacy, disputes, and appeals:** BP-18–BP-22 establish controlled deletion/anonymisation boundaries, record disputes and amendments, configurable dispute-resolution targets, independent appeal review, and narrowly limited further review.
 - **Payer privacy:** Payment alone grants the payer payment confirmation/receipt information only by default. It does not grant full shipment-detail access. Additional visibility requires a separately approved entitlement and minimum-data rule.
-- **Physical authority:** Booking does not itself authorize parcel collection. Payment does not itself authorize access to private shipment details. Handover and collection identities/evidence must satisfy the approved intake/collection policy.
 - **Notification boundary:** Send each party only notifications and minimum fields appropriate to their approved relationship; payer notifications do not automatically disclose full shipment details.
-- **Rationale:** Support legitimate third-party booking/payment while avoiding accidental disclosure or unauthorized shipment changes and collection.
-- **Still unresolved:** Exact verification checkpoints; detailed permissions for each change type and lifecycle stage; sender/receiver consent rules; collection-proof requirements; notification event/recipient/field matrix; and implementation/runtime acceptance tests.
-- **Status:** Owner-approved policy direction; detailed workflow contracts and implementation remain open. No schema or application-code change is authorized by this decision.
+- **Rationale:** Support legitimate third-party booking/payment while preventing unauthorized changes, disclosure, transfer, or parcel release.
+- **Still unresolved:** Identity/consent methods; detailed change-type and lifecycle gates; evidence and exception standards; financial-responsibility transfer procedure; delegated-access catalogue/duration; retention/anonymisation rules; notification fields/channels; dispute targets and reviewer/appeal procedures; and implementation/runtime acceptance tests. See `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` (BP-01–BP-22).
+- **Status:** Owner-approved detailed policy direction; operational/technical contracts, source reconciliation, and implementation remain open. No schema or application-code change is authorized by this decision.
 
 
 ### DEC-025 — Capability-based staff actions and lean PUDO location records
