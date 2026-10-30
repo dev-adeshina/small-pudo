@@ -134,12 +134,15 @@ The order below follows dependencies: authority and booking semantics first; com
 
 ### D-09 — Dispatch exception authority
 
-- **Status:** Owner decision required.
-- **Confirmed:** Verified payment is required by default; exceptions must be authorized, justified, and audited without changing payment state.
-- **Decision needed:** Which circumstances qualify, which role may approve, whether a second approver is required, what limits apply, and what evidence is mandatory?
-- **Recommendation:** Keep the default block. Do not introduce a generic override that bypasses payment or other operational holds.
+- **Status:** Owner decision accepted at the high-level policy level; recorded as DEC-030 on 30 October 2026.
+- **Accepted choice:** Option A — narrow, controlled dispatch exceptions. Verified payment remains the default dispatch prerequisite. Exceptions are permitted only for explicitly defined operational circumstances under an approved policy; they are not a generic convenience override or unrestricted staff discretion.
+- **Authorization boundary:** Only staff with explicitly assigned dispatch-exception permission may approve an exception. The requester must not automatically approve their own request. Material exceptions require a second approver; which circumstances are material and the exact separation-of-duties rules remain unresolved.
+- **State and hold integrity:** An exception never changes payment status or represents an unverified payment as successful. It cannot bypass unrelated safety, custody, identity, legal, or other operational holds.
+- **Evidence:** Preserve the affected parcel/shipment, reason, requesting actor, approving actor(s), timestamp, supporting evidence, and decision/outcome.
+- **Still unresolved:** Eligible circumstances; exact staff responsibility/permission assignment; which cases require two-person approval; monetary or operational limits; category-specific mandatory evidence; and whether an approval may be revoked before dispatch.
 - **Dependencies:** D-01, D-07–D-08, route assignment, handover evidence, and audit.
-- **Record after decision:** Eligibility, approvers, limits, mandatory reason/evidence, and rejected-transition tests.
+- **Acceptance direction:** Keep normal dispatch blocked when payment is unverified; deny generic or unauthorized overrides; prevent self-approval; require second approval for material exceptions once defined; preserve payment state and unrelated holds; and retain attributable evidence.
+- **Implementation boundary:** Business policy only. No schema, endpoint, permission implementation, or application-code change is authorized.
 
 ### D-10 — Routing, route-leg assignment, and movement evidence
 

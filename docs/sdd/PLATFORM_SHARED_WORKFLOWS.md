@@ -269,9 +269,9 @@ Use these evidence labels consistently:
 
 **Purpose:** Decide whether a shipment/fulfilment unit may leave a location for a transport leg.
 
-### Accepted constraint
+### Accepted constraints — DEC-018 and DEC-030
 
-Verified payment is required by default before dispatch. An exception requires explicit authorization, an approved business policy, a recorded reason, and an audit trail. An exception does not change the payment state.
+Verified payment is required by default before dispatch. DEC-030 accepts only narrow, controlled exceptions for explicitly defined operational circumstances under an approved policy; it rejects a generic convenience override or unrestricted staff discretion. Only staff with explicitly assigned dispatch-exception permission may approve. The requester must not automatically approve their own request, and material exceptions require a second approver. An exception never changes payment status and cannot bypass unrelated safety, custody, identity, legal, or other operational holds. Record the affected parcel/shipment, reason, requesting actor, approving actor(s), timestamp, supporting evidence, and decision/outcome.
 
 ### Proposed sequence
 
@@ -284,16 +284,20 @@ Verified payment is required by default before dispatch. An exception requires e
 
 ### Open policy / design questions
 
-- Which roles can authorize an unpaid-dispatch exception, under what limits and circumstances?
-- Is approval by a second person required, and must it be separate from the initiator?
-- What additional holds must block dispatch?
-- What evidence is mandatory at dispatch/handover?
+- Which operational circumstances qualify for an exception?
+- Which staff responsibility receives the explicit dispatch-exception permission, and what exact separation-of-duties rules apply?
+- Which cases are material and therefore require a second approver?
+- What monetary or operational limits apply, and can an approval be revoked before dispatch?
+- What supporting evidence is mandatory for each eligible exception category?
+- What additional holds must block dispatch, and what evidence is mandatory at dispatch/handover?
 - What operational and customer communication follows a blocked dispatch?
 
 ### Acceptance criteria to define
 
 - Normal dispatch is blocked until the approved prerequisites are met.
-- Exception use is narrowly authorized, justified, and audited.
+- Only explicitly authorized staff may approve a defined exception; the requester cannot automatically approve their own request.
+- Material exceptions require a second approver under the policy to be defined.
+- Exception use is justified and audited, and cannot bypass unrelated operational holds.
 - An exception never marks a payment as paid.
 - Dispatch, assignment, and physical handover are distinguishable events.
 
@@ -458,3 +462,7 @@ Payment, booking, and physical custody are separate facts: a payment record alon
 ## Financial event and reconciliation policy — DEC-029
 
 The shared booking, storefront, intake, and fulfilment workflows must preserve cancellation, payment, refund, credit, and operational lifecycle as separate facts. Cancellation is not a refund. Late payment after cancellation/expiry is recorded and reconciled against the original transaction without reactivating the cancelled record. Refund request and execution are distinct; credits, additional payments, reversals, and chargebacks remain separately traceable events. Reconciliation compares internal records with authoritative provider/bank evidence; mismatches are investigated. Duplicate/replayed provider events must not create duplicate financial effects. Consequential financial actions retain actor, time, reason, reference, and applicable evidence. Verified payment remains the default dispatch prerequisite under DEC-018; payment alone does not authorize dispatch. Exact approval limits, timelines, fees, partial-refund/credit rules, late-payment disposition, reconciliation cadence, and exception ownership remain unresolved.
+
+## Dispatch exception policy — DEC-030
+
+Dispatch remains blocked by default while required payment is unverified. Only explicitly defined operational circumstances may qualify for a narrow exception under an approved policy. Explicitly assigned dispatch-exception permission is required; the requester must not automatically approve their own request, and material exceptions require a second approver. Exceptions preserve payment state and cannot bypass unrelated safety, custody, identity, legal, or other operational holds. Record the parcel/shipment, reason, requester, approver(s), timestamp, supporting evidence, and outcome. Eligible circumstances, permission assignment, materiality, limits, category-specific evidence, and pre-dispatch revocation remain unresolved.
