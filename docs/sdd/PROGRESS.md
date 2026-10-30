@@ -824,8 +824,8 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Received explicit owner approval of the booking lifecycle: separate quote validity from a service-specific handover deadline; communicate the deadline before acceptance and in confirmation; preserve accepted terms; handle missed handover as a possible unfulfilled outcome with payment/audit history preserved; keep cancellation/refunds/intake as distinct outcomes.
 - [x] Received explicit owner approval of customer, Support, Operations, Admin, staff-assisted booking, walk-in intake, and external-actor responsibility boundaries.
 - [x] Consolidated the approved policy as DEC-038 and reconciled the shared workflow, actor model, lifecycle contract, decision register, issue tracker, progress, and session handoff in this documentation-only proposal.
-- [ ] Review and merge the Milestone 1 documentation-only PR.
-- [ ] Continue Milestone 2 — pricing and payments, preserving DEC-026/DEC-027/DEC-029 and resolving remaining service-specific pricing, quote, payment, adjustment, and financial-outcome details.
+- [x] Review and merge PR #45, the Milestone 1 documentation-only consolidation.
+- [x] Continue to Milestone 2 — pricing and payments after PR #45; preserve DEC-026/DEC-027/DEC-029 and resolve remaining service-specific pricing, quote, payment, adjustment, and financial-outcome details.
 - [ ] Continue platform-wide SDD reconciliation, source traceability, acceptance-test specification, and production-readiness evidence planning.
 - [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
