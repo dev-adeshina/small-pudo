@@ -284,3 +284,19 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Rationale:** Allow practical location-level flexibility while ensuring that payment verification is based on reliable evidence and remains distinct from physical custody.
 - **Status:** Owner-approved high-level policy; detailed procedures, source reconciliation, acceptance tests, and implementation remain open.
 
+
+
+### DEC-029 — Cancellation, late payment, refunds, credits, and reconciliation
+
+- **Date:** 30 October 2026.
+- **Decision:** Accepted Option A — explicit financial events with controlled transitions and reconciliation.
+- Cancellation of a booking/order/shipment does not itself mean a payment was refunded. Cancellation state and refund state remain distinct.
+- A payment received after cancellation or expiry is recorded and reconciled against its original transaction; it does not silently reactivate the cancelled booking/order/shipment.
+- A refund request and an executed refund are distinct. Refund initiation and approval must follow authorized controls and retain reason and applicable evidence; exact approval limits remain unresolved.
+- Customer credit is distinct from a cash refund and must remain traceable to its originating transaction. Additional payments are separate events and must not overwrite the original payment.
+- Reversals and chargebacks preserve the original transaction/event history and record their own outcomes.
+- Reconcile internal payment records against authoritative provider/bank records. Mismatches require investigation rather than an assumed success or silent correction.
+- Consequential financial actions retain actor, timestamp, reason, transaction/reference, and applicable evidence. Duplicate or replayed provider events must not create duplicate financial effects.
+- Operational order/shipment status, cancellation status, payment status, and refund status remain separate. Verified payment does not by itself authorize dispatch; the DEC-018 default dispatch gate and authorized, reasoned, auditable exception policy remain in force.
+- **Still unresolved:** Refund approval limits and separation of duties; refund timelines; cancellation fees; partial-refund policy; credit expiry/use rules; late-payment disposition; reconciliation frequency and exception ownership; and detailed evidence and acceptance tests.
+- **Implementation boundary:** Business policy only. No schema, endpoint, provider integration, permission implementation, or application-code change is authorized.

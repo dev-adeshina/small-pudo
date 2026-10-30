@@ -522,3 +522,15 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's acceptance of the recommended policy. No application source, schema, pricing implementation, deployed configuration, or runtime behaviour changed or was tested.
+
+
+## Owner decision D-08 — 30 October 2026 (DEC-029)
+
+- [x] Owner accepted Option A: explicit financial events with controlled transitions and reconciliation.
+- [x] Reconciled cancellation versus refund, late payment after cancellation/expiry, refund request versus execution, customer credits, additional payments, reversals/chargebacks, provider/bank reconciliation, attributable evidence, and duplicate-event protection across the SDD.
+- [x] Preserved the distinction between operational order/shipment status, cancellation status, payment status, and refund status; verified payment remains the default dispatch prerequisite under DEC-018.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Continue to D-09: dispatch exception authority.
+- [ ] Keep approval limits, refund timelines, fees, partial refunds, credit expiry/use, late-payment disposition, reconciliation cadence/ownership, and detailed tests unresolved.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, provider integration, deployed configuration, or runtime behaviour changed or was tested. The platform-wide SDD implementation gate remains in force.

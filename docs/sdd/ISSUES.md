@@ -227,3 +227,11 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Accepted:** Use configurable, service-appropriate thresholds; preserve quoted and actual intake measurements separately; retain actor/location/time and applicable evidence; link proposals to the original quote; require review for material discrepancies and adjustments affecting existing payments; keep proposed adjustments separate from approved charges and settled financial events.
 - **Still open:** Numeric thresholds, units and service-specific measurement requirements, staff approval limits, second-person rules, customer notification/consent, and explicit acceptance/dispute/refusal outcomes.
 - **Next action:** Resolve D-07 payment-at-intake methods and evidence, then continue the dependency-ordered owner decisions. Keep the platform-wide SDD approval gate in force; no application code changed or tested for this policy decision.
+
+
+### D-08 cancellation, late payment, refunds, credits, and reconciliation — DEC-029
+
+- **Status:** High-level owner policy accepted on 30 October 2026 (Option A: explicit financial events with controlled transitions and reconciliation).
+- **Accepted:** Cancellation is not a refund; late payments after cancellation/expiry are recorded and reconciled without automatic reactivation; refund request and execution are distinct; credits, additional payments, reversals, and chargebacks remain separate traceable events; provider/bank reconciliation mismatches are investigated; consequential financial actions retain actor/time/reason/reference/evidence; duplicate/replayed provider events must not duplicate financial effects; operational, cancellation, payment, and refund states remain distinct.
+- **Still open:** Refund authority/limits/timelines, cancellation fees, partial-refund policy, credit expiry/use, late-payment disposition, reconciliation frequency/ownership, exception handling, and detailed tests.
+- **Next action:** Continue to D-09 dispatch exception authority. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
