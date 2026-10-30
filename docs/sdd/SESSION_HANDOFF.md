@@ -56,3 +56,10 @@ The readiness assessment's source findings remain valid: independent shipment bo
 - Keep changes focused and documentation-only while the SDD is incomplete. Use branches and PRs; the owner reviews and merges every PR.
 - Never claim tests were run unless they actually were.
 - Do not restart the completed D-01–D-15, PM-01–PM-12, Stage 5.2, Stage 5.3, or Milestone 1 decision sequences.
+
+
+## Milestone 2 Part 2 owner approval — DEC-040
+
+The owner approved the measurement-adjustment and customer-resolution direction on 30 October 2026. DEC-040 is being consolidated in a documentation-only PR. Core boundaries: service-configured materiality review; original quote/agreement preserved; explicit customer acceptance (silence is not acceptance); acceptance is not settlement; disputed additional charge held pending review; rejection triggers an authorized service-resolution decision and is not automatic cancellation/refund/credit/charge; continuation under original terms requires safe and commercially feasible fulfilment; alternative service requires separately accepted pricing; cancellation follows its applicable policy; and dispatch cannot proceed under a rejected revised price.
+
+Next: review and merge the Part 2 documentation-only PR, then continue remaining Milestone 2 payment/settlement details (payment-at-intake and advance-payment verification, partial/late payment, refunds/credits/reversals, and reconciliation). Keep exact thresholds, units/conversion, evidence, approval limits/separation of duties, service-resolution eligibility, customer response periods, and runtime acceptance tests open. Preserve the complete platform-wide SDD approval gate; no application code is authorized.
