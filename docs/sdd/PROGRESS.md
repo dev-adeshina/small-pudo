@@ -897,3 +897,18 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Continue platform-wide SDD reconciliation, read-only source traceability, acceptance-test specification, and production-readiness evidence planning. Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
 **Evidence boundary:** DEC-042 records owner-approved high-level business policy only. This proposal changes documentation only; no application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed or verified. No technical structure, status enum, service-specific checklist, evidence-retention schedule, staff permission implementation, liability rule, or application-code change is approved.
+
+## 39. Milestone 3 Part 2 — PUDO location capabilities policy approved — 30 October 2026
+
+- [x] Reconciled DEC-025's lean location capability model with DEC-042's active-location, action-capability, custody-continuity, and actor-authorization guards.
+- [x] Owner approved independent service/action capability configuration; location labels/types do not imply operational capabilities.
+- [x] Owner approved independent checks for location capability and staff permission; both are required for consequential actions.
+- [x] Owner approved designated Admin configuration authority while distinguishing location editing, activation/deactivation, capability administration, and staff permission assignment.
+- [x] Owner approved attributable/auditable capability changes and continuity for parcels already held when a capability is revoked or a location becomes unavailable.
+- [x] Owner retained the no-direct-login launch boundary for external partners/drivers and excluded automated operating-hours, capacity, and availability scheduling from the lean initial location model.
+- [x] Recorded DEC-043 and reconciled decisions, shared workflow, lifecycle/contract draft, owner decision register, acceptance matrix, issue register, and session handoff in a documentation-only proposal.
+- [ ] Review and merge the Milestone 3 Part 2 documentation-only PR.
+- [ ] Keep the service/location/action matrix, exact capability catalogue, Admin authority granularity, staff permission scopes, partner arrangements, queued-work handling, temporary closure procedure, audit retention, technical contracts, and executable tests open.
+- [ ] Continue platform-wide SDD reconciliation, read-only source traceability, acceptance-test specification, and production-readiness evidence planning. Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
+
+**Evidence boundary:** DEC-043 records owner-approved high-level business policy only. This proposal changes documentation only; no application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed or verified. No automated hours/capacity system, technical structure, status enum, or application-code change is approved.

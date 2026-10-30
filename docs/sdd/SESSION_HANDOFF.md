@@ -83,3 +83,13 @@ Preserve the distinction between advance-booked intake and staff-created walk-in
 Next: review and merge the Milestone 3 Part 1 documentation-only PR. Keep service-specific inspection/prohibited-item checklists, measurement/conversion, identity/acknowledgement/receipt methods, evidence/retention, staff/partner authority and second-person controls, capability assignment, hold ownership/review/maximum duration, transfer proof/correction, exception resolution, liability/compensation/insurance, technical contracts, and executable acceptance tests open. Continue platform-wide SDD reconciliation and preserve the explicit owner-approval gate before application-code changes.
 
 No application-code change is authorized.
+
+## Milestone 3 Part 2 owner approval — DEC-043
+
+The owner approved the PUDO location capability and operational-authority approach on 30 October 2026. DEC-043 is consolidated in the Milestone 3 Part 2 documentation-only PR.
+
+Preserve explicit service-and-action configuration at each location; keep outgoing intake, walk-in intake creation, measurement, custody acceptance, payment collection/recording, parcel collection/release, and custody handover distinct; and require both an active supported location capability and independently assigned actor authority. Designated Admin users may configure capabilities only within assigned authority; location editing, activation/deactivation, capability administration, and staff permission assignment remain distinct responsibilities. Capability changes must be attributable and auditable. Revocation/unavailability blocks new work but does not erase or abandon parcels already in custody or silently transfer responsibility. External partners, collection-centre operators, carriers, and drivers retain the no-direct-login launch boundary. Automated operating hours, capacity calculations, and availability scheduling remain outside the lean initial location model.
+
+Next: review and merge the Milestone 3 Part 2 documentation-only PR. Keep the service/location/action matrix, exact capability catalogue, Admin authority granularity, staff permission scopes, partner arrangements, queued-work handling, temporary closure procedure, audit retention, technical contracts, and executable acceptance tests open. After merge, proceed to Milestone 3 Part 3 — custody transfers and physical exceptions. Continue platform-wide SDD reconciliation and preserve the explicit owner-approval gate before application-code changes.
+
+No application-code change is authorized.
