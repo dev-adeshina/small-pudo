@@ -1,8 +1,8 @@
 # P0 and Conditional P0 Test-Specification Readiness Assessment
 
-**Document status:** Stage 5.5 readiness assessment — proposed for owner review  
+**Document status:** Stage 5.5 readiness assessment — owner-reviewed and merged in PR #42; accepted as a readiness/navigation baseline only  
 **Prepared:** 30 October 2026  
-**Repository baseline:** `main` after PR #41 merge `93f389cf16b9f1e40bbe414426ccc490d1221865`  
+**Repository baseline:** `main` after PR #42 merge `832378948a003b5848029758a05050632e9d5373`  
 **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32)  
 **Inputs:** `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`, `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`, `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ISSUES.md`, and accepted DEC/PM/BP policy records.
 
@@ -226,4 +226,4 @@ A case is not ready for execution until all applicable items are true:
 - [ ] Individual P0/Conditional P0 test specifications are authored and approved.
 - [ ] Non-production environment is approved and evidenced before test execution.
 
-**Current status:** Readiness assessment proposed for owner review. No executable test specification was approved, no test was executed, no application code was changed, and no release or implementation approval is implied.
+**Current status:** Owner-reviewed and merged in PR #42 as the Stage 5.5 readiness/navigation baseline only. The assessment does not approve any executable test specification, test execution, application-code implementation, or release. The initial launch-scope decision, blocker sequence, case-level specifications, and non-production environment approval remain open. No test was executed and no application code was changed.
