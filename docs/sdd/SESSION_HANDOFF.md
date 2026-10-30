@@ -1,43 +1,50 @@
 # New-session handoff prompt
 
-Continue the existing **VeriLyft — Beyond Borders** project in `dev-adeshina/small-pudo`.
+Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 
-## Current verified repository state
+## Repository baseline
 
-- Latest verified `main` head: `beb2d03e88df7894a8805af79a9d68fd74cc143f` — PR #35 merged on 30 October 2026 at 15:17:11 UTC.
-- Current documentation proposal: PR #36, `docs: consolidate booking-party authority decisions`, on `docs/stage-5-2-booking-party-authority`; open for owner review.
-- The active work is documentation-only. No application-code changes are authorized until the complete platform-wide SDD is reconciled and explicitly approved.
-- The source traceability inventory remains pinned to `c56be9b121e6007e1e99c6df2d3984e709771a92`; documentation-only merges after that source baseline do not independently prove runtime behaviour.
+- Latest verified `main`: `574f23787030c4b5374e6ac02ce82b69e1ece1a4` (PR #36 merged 30 October 2026, 18:36:18 UTC).
+- Stage 5.3 documentation proposal is being prepared on `docs/stage-5-3-pricing-measurement-quote-policy`; PR creation is pending.
+- Source traceability remains pinned to `c56be9b121e6007e1e99c6df2d3984e709771a92`. Later documentation merges do not prove runtime behaviour.
+- Work remains documentation-only. Do not change application code until the complete platform-wide SDD is reconciled and explicitly approved.
 
-## Current owner-policy position
+## Accepted owner policies
 
-- D-01–D-15 have accepted high-level outcomes recorded as DEC-022–DEC-036.
-- PM-01–PM-12 staff permission policies are accepted and recorded in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`; technical permission design remains open.
-- Stage 5.2 booking-party authority policies BP-01–BP-22 are accepted under DEC-023/DEC-024 and consolidated in `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`.
-- Accepted booking policies cover pre-intake changes/cancellation; sender/receiver requests through Support; booking-party unavailability; collection and alternative collectors; disputed collection authority; party-specific notifications; booking transfer and financial responsibility; withdrawal; death/legal incapacity; delegated access, expiry, and non-transferability; account compromise; deletion/retention; record disputes; resolution targets; appeals and further review.
-- Acceptance is policy-level only. Verification/consent methods, exact lifecycle/change matrix, evidence standards, exception authority, transfer-liability procedure, delegated-access action/duration, notification fields, retention/legal-hold rules, and dispute/appeal operating parameters remain open.
+- D-01–D-15 are accepted as high-level outcomes under DEC-022–DEC-036.
+- PM-01–PM-12 staff permission policies are accepted; technical permission design remains open.
+- Stage 5.2 booking-party authority BP-01–BP-22 is accepted under DEC-023/DEC-024; PR #36 is merged.
+- Stage 5.3 owner-approved policies:
+  1. Each service explicitly uses fixed, calculated, or hybrid pricing.
+  2. Pricing inputs are approved categories configured per service; storefront delivery and independent shipment booking share pricing rules wherever inputs overlap.
+  3. Measurement requirements and units are service-specific; declared and actual measurements remain separate and attributable.
+  4. Quote lifecycle includes draft, issued, accepted, rejected, expired, superseded, and cancelled. Acceptance is explicit; unaccepted expiry requires a fresh quote; historical quote versions are preserved.
+  5. Adjustments preserve the original agreement, require review where material/payment-impacting, and require customer consent before collecting additional charges. Disputed additional charges are held pending review.
+  6. Financial outcomes remain distinct, including charges, additional payments, over/underpayments, failed attempts, refund requests/execution, credits, reversals, late payments, and reconciliation.
+- DEC-026 and DEC-027 are refined; DEC-029 is reconciled with quote/adjustment outcomes.
+- Still open: formulas/rates, input sources, units/conversion, rounding/effective dates, taxes/fees/discounts, expiry treatment of already accepted quotes, numeric measurement thresholds, approval limits, and service resolution after adjustment rejection.
+- Policy acceptance is not implementation approval, complete SDD approval, or production-readiness evidence.
 
 ## Read first
 
-Read `README.md`, `SPEC.md`, `DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_MATRIX.md`, `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `SDD_COMPLETENESS_AUDIT.md`, `ISSUES.md`, and `PROGRESS.md`. For Admin details, also read `ADMIN_REQUIREMENTS.md`, `ADMIN_REQUIREMENTS_AUDIT.md`, and `ADMIN_PORTAL.md`.
+Read `README.md`, `SPEC.md`, `DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_MATRIX.md`, `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `SDD_COMPLETENESS_AUDIT.md`, `ISSUES.md`, and `PROGRESS.md`.
 
-## Working principles
+## Working rules
 
-- Preserve the existing Next.js App Router, TypeScript, Firebase Auth/Firestore/Firebase Admin, Paystack, Cloudinary, and existing component/service/type/style patterns.
-- Do not rebuild the application or invent parallel architecture, collections, fields, routes, services, status enums, roles, or permissions.
-- Keep accepted policy, source facts, reported tests, independently verified behaviour, and production-readiness evidence distinct.
-- Read-only source inspection is allowed. Do not modify application code until the complete platform-wide SDD is reconciled and explicitly approved.
-- Keep changes focused and documentation-only while completing the SDD. Use branches and PRs; the owner reviews and merges every PR.
-- Never claim tests were run unless they actually were; state environment, scope, and evidence.
+- Preserve the existing Next.js App Router, TypeScript, Firebase Auth/Firestore/Firebase Admin, Paystack, Cloudinary, and current component/service/type/style patterns.
+- Do not invent parallel architecture, collections, fields, routes, services, status enums, roles, or permissions.
+- Keep accepted policy, source facts, test evidence, and production-readiness evidence distinct.
+- Keep changes focused and documentation-only. The owner reviews and merges every PR.
+- Never claim tests were run unless they actually were.
 
 ## Next sequence
 
-1. Verify the live `main` head and the status of the Stage 5.2 documentation PR; inspect its complete diff and review feedback.
-2. After the owner reviews and merges the Stage 5.2 PR, proceed to **Stage 5.3 — pricing, measurements, and quote adjustments** (DEC-026/DEC-027).
-3. Continue reconciling detailed policy and technical dependencies across DEC-022–DEC-036, workflows, lifecycle/API/security contracts, acceptance criteria, source traceability, and evidence planning.
-4. Confirm whether repository-root `pudo.zip` is authoritative and within active VeriLyft source scope; it has not been inspected.
+1. Complete and review the Stage 5.3 documentation-only PR; do not merge it on the owner's behalf.
+2. Reconcile remaining DEC-022–DEC-036 dependencies across workflows, lifecycle/API/security contracts, acceptance criteria, source traceability, and evidence planning.
+3. Specify remaining pricing/measurement details without inventing formulas, units, thresholds, or approval limits.
+4. Confirm whether repository-root `pudo.zip` is authoritative and within active VeriLyft scope; it has not been inspected.
 5. Obtain safe non-production runtime evidence for source-present P0 paths and assess production configuration, monitoring, backup/restore, incident response, rollback, and release sign-off.
 6. Present the complete reconciled platform-wide SDD for explicit owner approval.
-7. Only after that approval, plan focused application implementation.
+7. Only then plan focused application implementation.
 
-Never merge on the owner's behalf. Do not restart the completed D-01–D-15 or PM-01–PM-12 decision sequences.
+Do not restart the completed D-01–D-15 or PM-01–PM-12 decision sequences.
