@@ -7,7 +7,7 @@
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
-**Current phase:** Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. Stage 5.5 continuity/policy reconciliation (PR #40), dependency/traceability register (PR #41), and P0/Conditional P0 test-specification readiness assessment (PR #42) are merged. The readiness assessment is accepted as a navigation/readiness baseline only—not as approval of executable tests, implementation, or release. No P0/Conditional P0 is approved for execution; detailed contracts, executable test specifications, runtime/production evidence and complete platform-wide SDD approval remain open. The accepted launch scope in DEC-018 includes the lean independent-shipment and logistics capabilities; DEC-037 now confirms logistics as the primary business workflow and storefront commerce as an attached service. Milestone 1 independent shipment booking policy is now owner-approved as DEC-038 and is being consolidated in a documentation-only PR. Next is Milestone 2 — pricing and payments, followed by the remaining workflow/lifecycle contracts and case-level specifications. Do not classify core logistics capabilities as deferred merely because they are absent from the inspected source. No application-code changes are authorized until the complete SDD is reconciled and explicitly approved.
+**Current phase:** Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. Stage 5.5 continuity/policy reconciliation (PR #40), dependency/traceability register (PR #41), and P0/Conditional P0 test-specification readiness assessment (PR #42) are merged. The readiness assessment is accepted as a navigation/readiness baseline only—not as approval of executable tests, implementation, or release. No P0/Conditional P0 is approved for execution; detailed contracts, executable test specifications, runtime/production evidence and complete platform-wide SDD approval remain open. The accepted launch scope in DEC-018 includes the lean independent-shipment and logistics capabilities; DEC-037 now confirms logistics as the primary business workflow and storefront commerce as an attached service. Milestone 1 independent shipment booking policy is owner-approved as DEC-038 and merged in PR #45. Milestone 2 Part 1 pricing input/calculation boundaries are owner-approved as DEC-039 and are being consolidated in a documentation-only PR. Next is Milestone 2 — pricing and payments, followed by the remaining workflow/lifecycle contracts and case-level specifications. Do not classify core logistics capabilities as deferred merely because they are absent from the inspected source. No application-code changes are authorized until the complete SDD is reconciled and explicitly approved.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -21,7 +21,7 @@
 
 ## 1. Current position
 
-### Current milestone — Milestone 1 independent shipment booking policy accepted; SDD reconciliation continues
+### Current milestone — Milestone 2 pricing and payments; Part 1 boundaries approved, documentation consolidation in progress
 
 - **Owner decision register:** 15 of 15 tracked D-01–D-15 decisions have accepted high-level outcomes, recorded as DEC-022–DEC-036. DEC-037 records the accepted logistics-first product hierarchy. DEC-038 records the accepted independent-booking confirmation, information, handover-deadline, cancellation, and customer/staff responsibility policy. Detailed service values, permissions, technical transitions, and evidence requirements remain open where identified.
 - **Latest verified main head:** `6e643827fc8ef91d0e63493703198808363a90ed` (PR #44 merged).
@@ -830,3 +830,18 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
 **Evidence boundary:** DEC-038 records owner-approved business policy only. This proposal changes SDD documentation only; no application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed/run. No exact service handover duration, pricing formula, verification provider, status enum, data field, or technical implementation is approved. The complete SDD and production-readiness gates remain open.
+
+## 35. Milestone 2 Part 1 — pricing input and calculation boundaries approved — 30 October 2026
+
+- [x] Reviewed DEC-019, DEC-026–DEC-029, shared pricing/quote workflows, lifecycle contracts, payment-at-intake policy, financial-event policy, and related acceptance criteria.
+- [x] Received explicit owner approval of service-specific fixed/calculated/hybrid pricing and configured inputs only; no universal formula/input set.
+- [x] Received explicit owner approval that trusted server-side validation/calculation is authoritative; browser/client values are inputs, not final prices; staff-assisted pricing uses the same approved rule authority.
+- [x] Received explicit owner approval that applicable charge components and total must be transparent and that taxes, surcharges, discounts, and other fees must not be silently assumed zero or silently added.
+- [x] Confirmed preservation of quote input snapshots, itemized charges, total, currency, rule/rate version, and effective context; later rate changes cannot silently alter historical issued/accepted quotes or completed payments.
+- [x] Recorded the policy as DEC-039 and reconciled the shared workflow, lifecycle contract, owner decision register, issue register, and cross-domain acceptance matrix in this documentation-only proposal.
+- [ ] Review and merge the Milestone 2 Part 1 documentation-only PR.
+- [ ] Continue Milestone 2 Part 2: measurement-based adjustment decisions, customer consent/rejection outcomes, payment-at-intake and advance-payment verification, partial/late payment, refunds/credits/reversals, and reconciliation.
+- [ ] Continue platform-wide SDD reconciliation, source traceability, acceptance-test specification, and production-readiness evidence planning.
+- [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
+
+**Evidence boundary:** DEC-039 records owner-approved business policy only. The proposal is documentation-only; no application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed/run. No numeric rates, formulas, units, distance sources, thresholds, tax/fee rules, or technical implementation are approved. The complete SDD and production-readiness gates remain open.
