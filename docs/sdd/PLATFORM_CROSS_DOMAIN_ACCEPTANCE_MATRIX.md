@@ -244,3 +244,21 @@ These are policy-derived acceptance directions, not runtime test results. Challe
 - [ ] Complete a dated release checklist and obtain explicit owner sign-off after the full platform-wide SDD and evidence baseline are reconciled.
 
 These are governance-derived acceptance directions, not evidence that the current application has passed them. Requirement-level priorities, detailed scenarios, evidence artifacts, production-like environment, operational ownership, runbooks, and final sign-off remain open.
+
+## Booking-party authority acceptance direction — DEC-023 / DEC-024
+
+Owner policy BP-01–BP-22 is recorded in `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`. The following acceptance families must be incorporated into executable scenarios during later test design; they are not evidence of implemented or tested behaviour.
+
+| Acceptance family | Required observable outcome |
+|---|---|
+| Booking-party changes | Authenticated booking party can initiate only permitted pre-intake changes; price/service changes require revised quote acceptance; sender/receiver/collection changes enforce applicable verification and review. |
+| Party request boundaries | Sender/receiver requests through Support do not mutate a booking without booking-party authorization or a documented approved exception. Payer association alone grants no edit/cancel authority. |
+| Post-intake control | Post-intake changes are staff-mediated; post-intake/dispatch booking transfers require designated Admin review. |
+| Cancellation and transfer | Cancellation is distinct from refund. Transfer requires a new authenticated party's explicit acceptance and preserves original financial/payment/audit history and liability attribution. |
+| Collection authorization | Receiver and nominated alternative collectors are verified before release. Conflicting collection instructions place release on hold until an authorized decision. Booking or payment alone cannot release a parcel. |
+| Delegated access | Access is limited to explicitly authorized data/actions, expires, can be revoked, cannot be sub-delegated, and cannot expose unrelated customer records. |
+| Security and exceptional authority | Compromise, death/incapacity, and booking-party unavailability trigger verification/review; no automatic transfer, cancellation, refund, or release occurs solely on an unverified report. |
+| Privacy and disputes | Deletion requests respect physical lifecycle, financial reconciliation, retention/legal hold, and audit obligations. Disputed values preserve originals; appeals and further review follow BP-19–BP-22. |
+| Notifications | Booking party, sender, receiver, payer, and alternative collector receive only role-appropriate minimum information, subject to consent/preferences. |
+
+Before these scenarios can be marked executable, define verification and consent evidence, exact change/lifecycle matrix, exception authority, transfer-liability acceptance, delegated-access actions/duration, retention rules, notification fields, dispute severity/targets, reviewer eligibility, appeal procedure, and test environment.
