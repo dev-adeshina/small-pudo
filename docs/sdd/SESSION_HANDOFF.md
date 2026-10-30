@@ -4,10 +4,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #52 is merged; merge commit `61b8b65777d98950b6a4b6c5c311490e064f3d47`.
-- PR #52 records Milestone 3 completion in `PROGRESS.md` and `SESSION_HANDOFF.md`.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Comparison through PR #52 found only SDD documentation changes after that source baseline. This does not verify runtime behaviour or production readiness.
-- The current Milestone 4 continuity-baseline proposal is on branch `docs/milestone-4-continuity-baseline`; it is not merged unless a later repository check confirms that it is.
+- Current `main` baseline: PR #53 is merged; merge commit `d17b6440a8c9aca4a07b3797ae4bc1b24520e95c`.
+- PR #52 records Milestone 3 completion; PR #53 reconciles the Milestone 4 continuity baseline.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Comparison through PR #53 found only SDD documentation changes after that source baseline. This does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -36,12 +35,12 @@ Milestones 1–3 are complete at the owner-approved policy/documentation level. 
 
 **Milestone:** Platform-wide SDD Reconciliation and Implementation Readiness.
 
-The initial read-only baseline inventory is complete. The first focused work item aligns the continuity documents with PR #52, the approved DEC-038–DEC-044 sequence, and the completed Milestone 3 record. Review the actual current PR/main state before proceeding.
+Milestone 4 Step 1 is complete following PR #53. Step 2A has inventoried all 23 Markdown SDD documents and recorded missing decision references and stale Admin metadata in `PLATFORM_DECISION_DOCUMENT_RECONCILIATION.md`. Corrective cross-document reconciliation remains active; do not treat the inventory as full SDD approval.
 
 ### Milestone 4 sequence
 
-1. Establish and maintain one authoritative documentation/repository baseline.
-2. Reconcile accepted decisions across all SDD documents; identify contradictions, stale references, omissions, and unresolved dependencies without silently reopening accepted policy.
+1. Establish and maintain one authoritative documentation/repository baseline — complete through PR #53.
+2. Reconcile accepted decisions across all SDD documents; identify contradictions, stale references, omissions, and unresolved dependencies without silently reopening accepted policy — Step 2A inventory complete; corrective reconciliation remains open.
 3. Trace requirements and policy to the existing application source read-only; distinguish present, partial, absent, not inspected, and not verified.
 4. Complete workflow, actor/permission, lifecycle, data/API/security, integration, and exception contracts.
 5. Turn approved requirements into detailed, executable acceptance-test specifications and evidence requirements. The existing P0 readiness assessment/catalogue is a navigation/design baseline, not approval to execute tests.
