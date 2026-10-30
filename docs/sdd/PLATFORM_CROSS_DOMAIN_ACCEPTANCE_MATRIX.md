@@ -135,3 +135,15 @@ Acceptance evidence must eventually show that quotes are reproducible from prese
 Acceptance evidence must eventually demonstrate that quoted measurements and actual intake measurements are preserved separately; each measurement event is attributable to actor, location, and time with required evidence; and any proposed adjustment links to the original quote without silently mutating it. Routine variation and material discrepancy must be handled according to a configured, service-appropriate policy. Material/payment-impacting adjustments must be reviewed by authorized staff, and a proposal or dispute must not be represented as an approved/settled financial event.
 
 Numeric thresholds, measurement units/service requirements, approval limits, second-person rules, customer consent/notification, and acceptance/dispute/refusal outcomes remain unresolved. No application implementation or runtime test is authorized by this decision.
+
+
+## D-08 / DEC-029 accepted financial controls
+
+- [ ] Verify cancellation does not automatically produce a refund and that cancellation, operational status, payment status, and refund status remain distinct.
+- [ ] Verify late provider success after cancellation/expiry is recorded and reconciled without silently reactivating the cancelled record.
+- [ ] Verify refund request is not represented as an executed refund; credits, additional payments, reversals, and chargebacks remain separately attributable.
+- [ ] Verify duplicate/replayed provider events do not create duplicate financial effects and mismatches enter investigation/reconciliation.
+- [ ] Verify consequential financial actions retain actor, timestamp, reason, reference, and applicable evidence.
+- [ ] Verify dispatch still requires verified payment by default; any exception follows explicit authorization, reason, and audit requirements.
+
+These are policy-derived acceptance directions, not evidence that current runtime behaviour has passed. Refund limits/timelines, cancellation fees, partial refunds, credit rules, late-payment disposition, reconciliation cadence, and exception ownership remain unresolved.
