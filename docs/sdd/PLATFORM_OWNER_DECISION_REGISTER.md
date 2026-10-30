@@ -1,6 +1,6 @@
 # VeriLyft Platform Owner Decision Register
 
-**Document status:** Decision register for D-01–D-15; all high-level owner outcomes are accepted and recorded. Detailed implementation policy remains open where explicitly identified.  
+**Document status:** D-01–D-15 high-level owner outcomes are accepted and recorded; additional owner-approved detailed policies are cross-referenced below. Detailed implementation policy remains open where identified.  
 **Last updated:** 30 October 2026  
 **Related baseline:** PR #13 merged; `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`  
 **Implementation gate:** No application-code changes until the platform-wide SDD is reconciled and explicitly approved.
@@ -248,3 +248,24 @@ For each D-01–D-15 item:
 All 15 owner-decision slots (D-01–D-15) now have high-level owner outcomes recorded. This closes the current owner-decision queue only; it does not mean the platform-wide SDD is complete, every requirement is specified, the application is implemented, or launch readiness has been demonstrated. Continue with full-document reconciliation, read-only source traceability, requirement-level priority classification, acceptance-scenario definition, and evidence planning. Obtain explicit owner approval of the complete reconciled SDD before any application-code changes.
 
 **No decision in this register is approved merely by appearing here.**
+
+
+## 6. Additional owner-accepted detailed policy — DEC-038
+
+DEC-038 records the owner's approval of the independent shipment booking confirmation, information, lifecycle, and responsibility policy. It refines DEC-018, DEC-023, DEC-024, DEC-026, DEC-027, DEC-029, DEC-033, DEC-034, DEC-037, and BP-01–BP-22; it does not create or reopen a D-01–D-15 decision slot.
+
+Accepted:
+- Explicit acceptance of a valid quotation by the authenticated booking party confirms the independent shipment booking and accepted commercial terms.
+- Booking information is service-specific and proportionate: origin, destination, selected service, parcel description, and only necessary eligibility/pricing inputs.
+- Booking party, sender, receiver/collection recipient, payer, and physical handover person may differ.
+- A registered customer may arrange a business shipment, identifying the business and their relationship, without assuming a separate business-account system at launch.
+- Payment, physical intake/custody, and logistics fulfilment remain distinct from booking confirmation.
+- Unaccepted quote expiry requires a fresh quote; accepted quote expiry does not silently cancel or rewrite the confirmed booking.
+- Each service has a separately configured handover period/deadline, communicated before acceptance and included in booking confirmation. Missing the deadline may result in an unfulfilled outcome while preserving booking/payment/audit history; financial resolution is separate.
+- Pre-intake booking-party changes/cancellation and post-intake staff-mediated handling follow BP-01–BP-05 and the relevant authority policies.
+- Support, Operations, Admin, staff-assisted booking, walk-in intake, and external actors retain the responsibility boundaries recorded in DEC-038.
+
+Still unresolved:
+- Service-specific handover durations/configuration; service eligibility/capacity; quote validity and pricing detail; business identity/relationship representation; identity/contact/consent verification; payment-at-intake and late-payment rules; booking reference and status vocabulary; missed-handover/refused-intake financial and service outcomes; complete permissions, data/API contracts, evidence, and acceptance tests.
+
+DEC-038 is business policy only. It does not approve implementation, schemas, fields, APIs, routes, status enums, identity providers, permission claims, or code changes. The complete platform-wide SDD must still be reconciled and explicitly approved before application-code work.
