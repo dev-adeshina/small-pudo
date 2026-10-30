@@ -13,13 +13,11 @@
 
 ## 1. Product overview
 
-VeriLyft is an e-commerce application built with Next.js, TypeScript,
-Firebase/Firestore, Firebase Authentication, and Paystack. It supports
-product discovery, cart management, checkout, order creation, payment
-handling, admin catalogue management, and an initial admin
-shipping/fulfilment workflow.
+VeriLyft is a logistics and shipment-management platform built on the existing Next.js, TypeScript, Firebase/Firestore, Firebase Authentication, and Paystack application. Independent shipment booking is the primary customer entry point for the core business. The platform's central purpose is to support the commercial and operational lifecycle of shipments, including booking, pricing/quotes, payment, physical intake and custody, location capability, routing, dispatch, delivery, and exception resolution, subject to the detailed contracts and evidence gates in the SDD.
 
-Historical roadmap note: this overview was written before the customer-account and tracking milestones recorded in `PROGRESS.md`. Treat the dated progress tracker and current source/test evidence as the status record, not the original near-term objective. The current owner-approved working direction is to complete and reconcile the platform-wide SDD before further application-code changes.
+Storefront commerce is an attached, secondary service. Customers may also discover products, place storefront orders, and pay online. A storefront order requiring delivery enters the same operational fulfilment system used by independently booked shipments. Storefront orders, shipment records, and transport movements remain distinct business concepts; this product hierarchy does not prescribe their technical representation.
+
+**Scope authority:** DEC-018 records the already accepted lean launch capabilities and exclusions. DEC-037 clarifies that logistics is the primary business workflow and storefront commerce is attached. Neither decision establishes that the corresponding capabilities are already implemented, tested, or production-ready. The complete platform-wide SDD must still be reconciled and explicitly approved before application-code changes.
 
 ### Product principles
 
@@ -79,18 +77,33 @@ Customer visits VeriLyft
   → Later: customer delivery tracking
 ```
 
-### Target fulfilment flow (later phase)
+### Primary logistics flow — independent shipment
 
 ``` text
-Paid order
-  → Admin processes order
-  → Ready for shipping
-  → Admin records courier/provider and tracking information
-  → Shipped
-  → Delivered
-  → Customer can see progress in VeriLyft
-  → Later: Telegram notifications / coordination
+Customer starts an independent shipment booking
+  → Service and quote/pricing process
+  → Booking/payment path (advance payment or payment at intake)
+  → Physical intake, measurement and custody
+  → Operations reviews route proposal and manages route-leg assignments
+  → Dispatch, movement and handover
+  → Delivery/collection outcome and proof
+  → Controlled failed-delivery or exception resolution
 ```
+
+This is the primary business workflow under DEC-018 and DEC-037. The sequence is a product-level overview, not an approved detailed lifecycle, status model, or technical contract. Exact actors, transitions, evidence, pricing inputs, permissions, and exception outcomes remain governed by the relevant open SDD specifications.
+
+### Attached storefront order fulfilment flow
+
+``` text
+Customer browses products
+  → Cart and checkout
+  → Storefront order and payment
+  → Order is passed into the shared operational fulfilment system
+  → Shipment/transport operations follow the applicable shared workflow
+  → Customer can see order and delivery progress in VeriLyft
+```
+
+A storefront order and an independent shipment remain distinct sources/business records. This shared-fulfilment principle does not approve duplicate records or a particular schema/API representation.
 
 Telegram is a planned operational integration, not the primary customer
 interface. It must not be treated as a substitute for customer order
