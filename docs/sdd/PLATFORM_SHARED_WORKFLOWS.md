@@ -581,3 +581,21 @@ Apply these boundaries to Workflow D (pricing, quote adjustment, and settlement)
 - Verified full settlement of the amount currently due remains the normal dispatch prerequisite. Partial, pending, failed, or unverified payment does not satisfy it. A DEC-030 exception may operate only under its separately approved eligibility, authority, limit, and evidence policy; it never changes payment status or bypasses unrelated holds.
 - No exact service eligibility for partial payments, method/provider catalogue, cash/transaction limits, refund authority/timelines, cancellation fees, credit expiry/use, late-payment disposition, reconciliation cadence/ownership/tolerances, chargeback procedure, or exception categories are established by this refinement. Those remain open for separate specification and approval.
 - DEC-041 is business policy only. It does not approve technical data representation, collections, fields, routes, APIs, permissions, payment providers, or implementation.
+
+## Workflow C addendum — DEC-042 physical intake and custody policy
+
+The following owner-approved boundaries refine the proposed sequence and open questions in Workflow C. They do not approve technical states, fields, or contracts.
+
+- Keep intake against an existing confirmed booking distinct from the authorized staff-created walk-in path. Walk-in intake is not staff-assisted customer booking.
+- Before each consequential operation, verify active location, explicit service/action capability, parcel and booking/intake identity, and relevant handover authority. A location label, staff login, or Admin status is not a substitute for configured capability and assigned authorization.
+- Apply the relevant service-specific inspection and measurement checklist. Preserve declared and actual measurements separately under DEC-027/DEC-040. Capture condition observations and supporting evidence where required by service or dispute; avoid unnecessary photography or personal-data collection.
+- Distinguish refusal before custody, accepted custody, and physical receipt retained under a hold. If the location physically possesses a parcel while review is pending, record custody and the hold; the parcel is not thereby eligible for onward processing or dispatch.
+- Record physical custody independently from booking confirmation, accepted commercial terms, payment settlement, dispatch, and delivery. Intake/custody does not automatically create cancellation, refund, credit, or payment success.
+- Attribute custody to the parcel, relevant handover person, receiving actor, location, time, outcome, and applicable evidence/reason. For an externally performed event, identify the reported source and do not imply personal observation by recording staff.
+- Keep DEC-025's lean location record and capability-based approach. Capability changes are attributable/auditable. An inactive location cannot accept new work, but existing parcels in its custody remain accounted for until authorized resolution or transfer.
+- Treat each staff, location, carrier, or collection-point handover as a distinct physical event. An attempted handover is not completed custody transfer; preserve previous custody history.
+- Missing/damaged parcels, disputed/failed handovers, incorrect location assignment, and prolonged holds require controlled exception handling. No liability, compensation, insurance, or automatic financial outcome is implied.
+
+**Remaining open:** Service-specific inspection/prohibited-item checklist; measurement and conversion detail; identity/acknowledgement/receipt method; evidence and retention; actor/partner authority and second-person approval; capability configuration procedure; hold ownership/review/maximum duration; transfer proof/correction authority; exception resolution; and detailed acceptance tests.
+
+DEC-042 is high-level business policy only. It does not approve technical data representation, status values, fields, collections, endpoints, permissions, or application-code changes.
