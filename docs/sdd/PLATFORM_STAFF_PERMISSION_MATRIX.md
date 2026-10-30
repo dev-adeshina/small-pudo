@@ -1,9 +1,9 @@
 # VeriLyft Staff Action-Level Permission Matrix
 
-**Status:** Draft for owner review — proposed policy specification; not implementation approval  
+**Status:** Owner policy decisions PM-01–PM-12 accepted; detailed action-level design remains open — not implementation approval  
 **Date:** 30 October 2026  
-**Repository baseline:** `main` after PR #33 merge, commit `7f69a67844ac7c42f1ec6bd7b29c67cd524a1966`  
-**Related:** `DECISIONS.md` (DEC-022, DEC-025–DEC-033, DEC-036), `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, `ADMIN_REQUIREMENTS.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`
+**Repository baseline:** `main` after PR #34 merge, commit `06fc1485019073f573047783c7773546a23e789b`  
+**Related:** `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `DECISIONS.md` (DEC-022, DEC-025–DEC-033, DEC-036), `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, `ADMIN_REQUIREMENTS.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`
 
 ## 1. Purpose and boundary
 
@@ -74,7 +74,7 @@ To avoid inventing a large role hierarchy, the preferred direction is:
 6. Enforce the same authorization decision at the server boundary regardless of whether the action originates from a page, API, background job, or direct client attempt.
 7. Do not grant direct driver/provider/partner access at launch without a separately approved access model.
 
-**Not yet decided:** assignment by named staff member, responsibility grouping, location membership, or a combination; who may grant each permission; temporary grants; emergency access; and whether permission changes require a second approver.
+**Owner decisions accepted:** PM-01–PM-12 are recorded in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`. The technical assignment model, permission catalogue, temporary-grant mechanics, administrator appointment/recovery, and whether privileged grants require second approval remain to be specified.
 
 ## 5. Accepted approval and separation-of-duties controls
 
@@ -96,22 +96,26 @@ The following are **not approved** and must not be silently treated as policy:
 - automatic escalation based only on a role title;
 - self-approval restrictions for workflows other than the accepted dispatch-exception restriction, unless the relevant workflow policy establishes them.
 
-## 6. Owner decisions required to finalize this matrix
+## 6. Owner decisions — resolved at policy level
 
-| ID | Decision needed | Recommended starting position | Why it matters |
-|---|---|---|---|
-| PM-01 | Who may grant/revoke staff permissions? | Restrict to a small set of explicitly authorized Admin responsibility holders; decide separately whether privileged grants need second approval | Prevents self-elevation and uncontrolled access |
-| PM-02 | How are permissions assigned? | Individual staff grants, optionally grouped for convenience, with location/service scope where relevant; avoid broad Admin/Operations bundles | Least privilege without a large role hierarchy |
-| PM-03 | Who configures PUDO location capabilities? | Explicitly authorized Admin/location-configuration authority; operators cannot expand their own capabilities | Prevents location type from granting extra powers |
-| PM-04 | Who configures pricing and approves rate changes? | Separate quote use from rate-rule administration; assign rate changes explicitly and decide whether review is required | Protects accepted quotes and commercial controls |
-| PM-05 | Which financial actions require two-person approval? | Define requester/approver separation for high-impact adjustments; set amount/risk limits before implementation | Prevents unreviewed financial effects |
-| PM-06 | Which measurement adjustments require second approval? | Review material discrepancies and adjustments affecting existing payment; define threshold and whether reviewer must differ from proposer | Applies DEC-027 consistently |
-| PM-07 | Which route/dispatch/delivery actions require second approval? | Keep dispatch-exception separation as accepted; add second approval only to defined material route/delivery exceptions | Balances control and operational friction |
-| PM-08 | Who may access/export audit evidence and approve disclosures? | Restrict to explicitly assigned reviewers; require a separate authorized decision before external disclosure | Protects sensitive customer/shipment evidence |
-| PM-09 | Do collection-centre partners or drivers receive direct login at launch? | No direct access by default; Operations/staff record physical events until a separate access model is approved | Preserves launch boundary |
-| PM-10 | Is Management a distinct role or reporting permission set? | Defer role decision; grant only specifically approved dashboard/report access if needed | Avoids broad personal/financial data access |
-| PM-11 | Is a distinct Support responsibility required at launch? | Keep support with explicitly authorized existing staff until scope and visibility are defined | Avoids inventing a support role/workflow |
-| PM-12 | What is the emergency-access process? | No unrestricted emergency access by default; if needed, define narrow scope, expiry, reason, notification, and retrospective review | Makes urgent access accountable |
+The owner has explicitly accepted all twelve recommendations PM-01–PM-12. The accepted outcomes are authoritative in `PLATFORM_STAFF_PERMISSION_DECISIONS.md` and are summarized here:
+
+| ID | Accepted outcome |
+|---|---|
+| PM-01 | Only designated Admin users may grant/change/revoke staff permissions; Admin status alone is insufficient; changes are audited and recovery is controlled. |
+| PM-02 | Individual action-level permissions, optionally grouped for convenience, with relevant location/operational scope; permissions do not imply one another. |
+| PM-03 | Designated Admin users configure independent location capabilities; an action requires both staff permission and active location capability. |
+| PM-04 | Designated Admin users control pricing/rates; preserve rate history and accepted quote terms; measurement permissions do not grant pricing authority. |
+| PM-05 | Second approval for consequential financial actions; routine payment recording, receipt issuance, and reconciliation do not automatically require it; requester cannot self-approve. |
+| PM-06 | Routine measurement needs no second approval; material discrepancies/payment-impacting adjustments require review and applicable second approval; proposer cannot self-approve. |
+| PM-07 | Second approval for consequential operational exceptions; routine routing/movement/delivery does not automatically require it; requester cannot self-approve. |
+| PM-08 | Viewing, exporting, and external disclosure are separate permissions; authorized reviewers only; external disclosure requires legal-basis/scope review and audit. |
+| PM-09 | No direct partner or driver login at launch; internal staff record operations and identify physical actors. |
+| PM-10 | No distinct Management operational role at launch; assign reporting/oversight permissions only. |
+| PM-11 | Support is a defined launch responsibility, not a separate portal; limited access and escalation boundaries apply. |
+| PM-12 | Controlled break-glass access: justified, minimum-scope, time-limited, audited, reviewed, revoked, and not a silent bypass of controls. |
+
+**Important:** Acceptance resolves the owner-policy questions, not every technical or operational parameter. Exact thresholds, permission catalogue, assignment mechanics, reviewer eligibility, emergency-access duration, and workflow-specific evidence remain open. See the decision record for the complete accepted wording and outstanding design dependencies.
 
 ## 7. Acceptance requirements for eventual implementation
 
@@ -134,6 +138,6 @@ These are test-design requirements, not implementation evidence or authorization
 
 This matrix depends on DEC-022 for the hybrid responsibility model; DEC-025 for location capabilities; DEC-027–DEC-030 for adjustment, payment, refund, and dispatch controls; DEC-031–DEC-032 for route, movement, delivery and failed-delivery authority; DEC-033 for audit/evidence/disclosure; and DEC-036 for P0 acceptance and release evidence.
 
-It does not finalize financial limits or second-approval thresholds; Finance deployment/authority; Management and Support boundaries; partner/driver access; Firebase claims, Firestore rules, data structures, APIs, or implementation; or the technical relationship between existing Admin authorization and future action-level permissions.
+It does not finalize financial limits or second-approval thresholds; Finance deployment/authority; technical permission representation; Firebase claims, Firestore rules, data structures, APIs, or implementation; or the technical relationship between existing Admin authorization and future action-level permissions. PM-09–PM-11 resolve the launch-level partner/driver, Management, and Support policy boundaries, while detailed access and reporting specifications remain open.
 
 These matters must be resolved and reconciled with current source before the complete SDD can be approved. No application-code changes are authorized by this draft.
