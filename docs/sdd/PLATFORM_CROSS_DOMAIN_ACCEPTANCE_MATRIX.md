@@ -199,3 +199,18 @@ These are policy-derived acceptance directions, not runtime test results. Mandat
 - [ ] Keep evidence source attribution and distinguish later additions, corrections, and redactions from originals.
 
 These are policy-derived acceptance directions, not runtime test results. Retention periods, event/evidence catalogue, access matrix, two-person approval cases, deletion/legal-hold procedures, disclosure procedure, evidence integrity requirements, and detailed tests remain unresolved.
+
+
+## D-13 / DEC-034 customer notification acceptance direction
+
+- [ ] Trigger customer/staff notifications only from meaningful, verified business events.
+- [ ] Verify notification queueing, sending, provider acceptance, delivery/read evidence, retries, and failure do not mutate or independently establish order, payment, shipment, dispatch, custody, or delivery state.
+- [ ] Select recipients per event using DEC-024/DEC-032 party relationships and explicit entitlements; booking customer, sender, receiver, and payer are not interchangeable.
+- [ ] Verify payer notifications default to relevant payment/receipt/refund/financial outcomes and do not disclose full shipment details merely because the payer paid.
+- [ ] Minimize message fields; ensure links to further detail preserve authenticated access controls.
+- [ ] Apply event-specific channel policy: email where configured, optional configured SMS subject to applicable consent/contact verification, and in-platform messages for authenticated experiences.
+- [ ] Prevent duplicate sends for the same business event, recipient, and channel; apply bounded retries and retain attributable attempt/outcome information.
+- [ ] Surface persistent notification failures for operational follow-up without silently substituting an unapproved channel.
+- [ ] Keep Telegram deferred; verify any future paid-order Telegram notification cannot precede authorized Admin **Assign For Delivery** approval and separately approved Telegram purpose/audience/disclosure policy.
+
+These are policy-derived acceptance directions, not runtime test results. Final event/channel matrix, timing, consent/preferences/contact verification, message templates/fields, retry limits, deduplication semantics, failure ownership, retention, and detailed tests remain unresolved.
