@@ -1,6 +1,6 @@
 # VeriLyft P0 Acceptance Scenarios and Evidence Catalogue
 
-**Status:** Draft for owner review — test-design baseline only; not implementation or release approval  
+**Status:** Owner-reviewed scenario refinements — test-design baseline only; not approved executable test specifications, implementation or release approval  
 **Created:** 30 October 2026  
 **Repository baseline:** `main` at `c6dd28cd5450b598b19a19afa12a7331440320f0` (PR #32 merged)  
 **Authority:** DEC-018, DEC-022–DEC-036 and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
@@ -268,6 +268,33 @@ A screenshot alone is insufficient for transactional, authorization, payment, st
 | A20-04 | Simulated incident or failed release | Exercise incident escalation and rollback | Owner/operator can detect, communicate, contain and rollback using documented steps; data integrity preserved | Incident timeline; alert evidence; rollback result |
 | A20-05 | Final release candidate | Review sign-off pack | Every P0 has approved design, passing evidence and accountable owner; Conditional P0 triggers are either tested before enablement or explicitly disabled; unresolved blockers prevent release approval | Signed requirement/evidence matrix; release decision; blocker register |
 
+## 3.1 Owner-reviewed refinements — 30 October 2026
+
+The owner has reviewed and explicitly approved the policy-level approach for every scenario group A-01–A-20. The refinements below record that approval without converting this catalogue into executable test scripts or closing unresolved policy dependencies.
+
+- **A-01 — Public storefront and catalogue:** Retain the four cases. Catalogue administration must enforce action-specific permission and scope; successful privileged changes must be auditable; product measurement requirements and image-upload reliability/security remain explicit acceptance concerns.
+- **A-02 — Cart and checkout:** Retain the four cases. Cover tampered client values, concurrent final-unit reservations, duplicate submissions and failures on both sides of the order/stock-commit and payment-initialization boundary. Guest and authenticated checkout remain distinct; idempotency and recovery rules remain dependencies.
+- **A-03 — Storefront order lifecycle:** Retain the four cases. Keep order, payment and shipment/dispatch states distinct; test permitted and forbidden transitions, one-time stock restoration, late payment after cancellation/expiry, and dispatch restrictions including only approved DEC-030 exceptions.
+- **A-04 — Customer account and order access:** Retain the four cases. Test cross-customer denial, guest credential validity/replay/expiry, guest recovery and guest-order claims as separate authority paths. Order ID or email alone never grants access; challenge and claim rules remain dependencies.
+- **A-05 — Independent shipment booking:** Retain the four cases. Authenticated booking creation must preserve distinct booking-party, sender, receiver, payer and handover-person relationships. Guest booking remains denied; payer access defaults to payment confirmation/receipt; post-intake/dispatch changes follow DEC-024.
+- **A-06 — Shared pricing and quote acceptance:** Retain the four cases. Equivalent approved inputs under the same rate version must produce reproducible itemized results; accepted historical quotes remain reconstructable; expiry and configured charge components follow approved policy. No formula, rate, unit or rounding rule is invented here.
+- **A-07 — Payment initialization and confirmation:** Retain the four cases. Server-side verification of reference, purpose, amount and currency is authoritative; forged/mismatched events cannot settle; duplicate webhooks have one financial effect; provider success with local persistence failure remains recoverable.
+- **A-08 — Refunds, adjustments and reconciliation:** Retain the four cases. Refund request, approval and provider execution remain separate; consequential financial actions require the approved authority and second-person approval; cancellation is not refund; mismatches and late payments remain visible and traceable.
+- **A-09 — Physical intake, measurement and custody:** Retain the four cases. Booking is not physical receipt; intake requires both staff permission and location capability; declared/quoted inputs remain distinct from actual measurements; discrepancies are not approved charges; custody exceptions and duplicate intake remain controlled.
+- **A-10 — Location and service capability:** Retain the three cases. Services and operational actions must be supported by explicitly configured location capabilities; staff permission and location capability are independent requirements; a location label does not imply an unconfigured capability.
+- **A-11 — Routing and route proposals:** Retain the four cases. Proposal, review/approval, assignment, dispatch and physical movement remain distinct; route inputs/version and decisions are preserved; stale proposals and resource conflicts cannot silently overwrite newer decisions; self-approval is controlled where policy requires.
+- **A-12 — Dispatch, movement and handover:** Retain the four cases. Normal dispatch requires approved assignment, verified payment and no blocking hold; DEC-030 exceptions cannot bypass unrelated holds; consequential exceptions follow approval separation; wrong, duplicate, delayed or missed handovers do not fabricate movement.
+- **A-13 — Delivery attempt and outcome:** Retain the four cases. Attempt and confirmed delivery remain distinct; successful delivery requires the approved proof and receiver-authority checks; failed attempts do not automatically trigger delivery, return, refund or redelivery; collection and return remain separate outcomes.
+- **A-14 — Notifications and Telegram:** Retain the four cases. Notifications require a verified business event and approved recipient/channel/field mapping; delivery is not proof of business state; retries and persistent failures remain controlled; Telegram cannot send before the Admin “Assign For Delivery” gate and still requires separate purpose/audience/disclosure approval.
+- **A-15 — Admin and Operations access:** Retain the four cases. Authentication establishes identity, not operational authority. Pages and APIs independently enforce server-side authentication and action-specific permission, scope and location capability; revoked/expired authorization denies subsequent actions; sensitive approvals and audit attribution follow DEC-022.
+- **A-16 — Audit and evidence:** Retain the four cases. Audit history must support reconstruction; audit viewing, export, disclosure and mutation are restricted; corrections/redactions preserve distinguishable originals and approvals; retention and legal holds prevent unauthorized deletion or release.
+- **A-17 — Support, exceptions and manual override:** Retain the four cases. Exceptions are controlled alternatives, not bypasses; requester/approver separation applies where required; financial and physical facts cannot be falsified through generic status edits; Support access remains limited to explicitly authorized scope.
+- **A-18 — Operational dashboard and reporting:** Retain the four cases. The P0 dashboard must provide accurate, reproducible, permission-aware metrics and clearly identify stale/unavailable data. Orders, shipments, payments, refunds and movements must not be conflated or double-counted. Advanced reporting remains P1.
+- **A-19 — Customer communications and privacy:** Retain the four cases. A party's relationship to a transaction does not automatically grant all transaction information; contact verification and recipient entitlement govern disclosure; guest credentials protect tracking access; Support/government requests require approved authority, scope and audit.
+- **A-20 — Production configuration and operational readiness:** Retain the five cases. Secure configuration, deployment verification, backup/restore, incident response/rollback and final release sign-off are separate evidence obligations. A successful build or deployment is not production-readiness proof.
+
+These are owner-approved scenario-design refinements only. They do not resolve the policy dependencies listed in Section 6, authorize test execution, establish passing evidence, approve implementation, or constitute complete SDD or release approval.
+
 ## 4. Conditional P0 trigger register
 
 | Requirement group | Trigger that makes it mandatory | Minimum evidence before enabling |
@@ -334,4 +361,4 @@ At the baseline above, the source-traceability pass identifies source foundation
 
 This catalogue is **test design**, not test execution. No scenarios in this document are claimed passed. No tests were run to create this document. No production data, deployed secrets/configuration, provider dashboards, physical parcel operations or root `pudo.zip` archive were inspected. The source baseline remains the PR #32 merge commit until a later source-changing commit is inspected.
 
-**Stage 4 status:** Draft scenario and evidence catalogue prepared for owner review. Complete SDD approval and application-code changes remain blocked.
+**Stage 5.4 status:** Owner review and policy-level approval of A-01–A-20 are complete; approved refinements are recorded in Section 3.1. The catalogue remains test design only. Complete SDD approval, test execution and application-code changes remain separately gated.
