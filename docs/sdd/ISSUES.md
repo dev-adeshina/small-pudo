@@ -1,8 +1,8 @@
 # VeriLyft Issues, Risks, and Open Questions
 
-**Last updated:** 30 October 2026  
+**Last updated:** 31 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
-**Owner decisions:** D-01–D-15 (DEC-022–DEC-036) have accepted high-level outcomes. DEC-036 accepts the P0/P1/deferred launch approach; requirement-level classification and evidence mapping remain open.
+**Owner decisions:** D-01–D-15 (DEC-022–DEC-036), DEC-037–DEC-044, PM-01–PM-12, and BP-01–BP-22 have accepted owner-policy outcomes at their recorded levels. Detailed operational procedures, technical contracts, acceptance-test specifications, runtime evidence, and production readiness remain open.
 
 This is the current issue register. Older archive-based observations have been reconciled where current implementation or later test evidence supersedes them. Source presence is not the same as runtime verification.
 
@@ -183,9 +183,9 @@ Specify these details, trace them to existing source, and support them with acce
 
 - **Status:** OPEN
 - **Priority:** Blocking for new application-code implementation under the current owner-approved working direction.
-- **Evidence:** PRs #7–#10 established the actor, workflow, lifecycle/API/security, and source-traceability drafts. PR #40 reconciled continuity and issue status, and the Stage 5.5 dependency register now consolidates A-01–A-20 and ADM-R01–ADM-R54 against accepted policy, actors, workflows, lifecycle references, and inspected source status.
-- **Limit:** The register is a navigation/traceability aid, not approval of detailed technical contracts, executable test specifications, runtime evidence, or production readiness. The root `pudo.zip` archive and production environment remain uninspected.
-- **Next action:** Review the dependency register; confirm whether root `pudo.zip` belongs to the active source scope; complete detailed workflow/lifecycle/security contracts and P0 test specifications; reconcile all source, issue and acceptance evidence. Application-code implementation remains blocked until the complete platform-wide SDD is explicitly approved.
+- **Evidence:** PRs #7–#10 established the actor, workflow, lifecycle/API/security, and source-traceability drafts. PR #40 reconciled continuity and issue status; PR #41 consolidated the A-01–A-20 and ADM-R01–ADM-R54 dependency register; PR #42 established a P0/Conditional P0 test-specification readiness baseline. PRs #45–#51 recorded owner-approved DEC-038–DEC-044 policy refinements, and PR #52 recorded Milestone 3 completion. A read-only baseline pass against PR #52 merge commit `61b8b65777d98950b6a4b6c5c311490e064f3d47` identified stale continuity metadata now being reconciled.
+- **Limit:** The register is a navigation/traceability aid, not approval of detailed technical contracts, executable test specifications, runtime evidence, or production readiness. The active source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; comparison through PR #52 found documentation-only intervening changes. The root `pudo.zip` archive and production environment remain uninspected.
+- **Next action:** Complete Milestone 4 in dependency order: reconcile the continuity baseline; compare all accepted decisions across the complete SDD; refresh read-only source traceability (including an explicit scope decision on root `pudo.zip`); complete detailed workflow/lifecycle/security contracts and executable acceptance-test specifications; and plan production-readiness evidence. Application-code implementation remains blocked until the complete platform-wide SDD is explicitly approved.
 - **Acceptance:** Every launch-essential workflow has an agreed owner, lifecycle, permissions, data relationships, API/integration expectations, exception handling, and acceptance/test criteria; unresolved technical questions and scope limits are explicit; continuity documents agree; no application code is changed to close this issue.
 
 ### VLY-020 — Shared platform workflow specification and implementation contracts remain open
@@ -214,8 +214,8 @@ Specify these details, trace them to existing source, and support them with acce
 
 - `IMPLEMENTATION_SOURCE_TRACEABILITY.md` records the current read-only source inventory and distinguishes source presence from runtime evidence.
 - PR #3 is merged; its source change is present, but browser regression verification remains open under VLY-013.
-- PR #4 remains open/unmerged; do not describe its proposed compatibility fix as part of `main`.
-- Current baseline inspected: `c56be9b121e6007e1e99c6df2d3984e709771a92`.
+- PR #4 is closed without merge; do not describe its proposed compatibility fix as part of `main`.
+- Historical source checkpoint: `c56be9b121e6007e1e99c6df2d3984e709771a92`. The current active source-inspection baseline is `e0f69055d33dd9399c23e1d793f359468229c856`; the PR #52 comparison identified no later application-source change.
 - Application-code implementation remains blocked by VLY-019 until the platform-wide SDD is reconciled and approved.
 
 ## Maintenance rule
@@ -358,3 +358,12 @@ The owner has approved the high-level rejection-resolution boundary: customer re
 - **Risk:** Operational records may falsely imply custody transfer; physical possession may become unaccounted for; missing/damaged parcels may be attributed incorrectly; corrections may erase evidence; or physical exceptions may trigger unsupported financial/liability outcomes.
 - **Next action:** Reconcile DEC-044 against current source read-only; specify service-specific proof, authority, exception ownership/resolution, hold controls, lifecycle/API/security contracts, and acceptance scenarios. Preserve the platform-wide SDD approval gate.
 - **Evidence boundary:** DEC-044 is owner-approved high-level business policy only. This documentation update changes no application source, schema, Firebase rules/configuration, APIs, permissions, deployment, runtime behaviour, or tests.
+
+
+## Milestone 4 continuity baseline update — 31 October 2026
+
+- **Verified repository baseline:** PR #52 merged at `61b8b65777d98950b6a4b6c5c311490e064f3d47`.
+- **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`; comparison through PR #52 found intervening documentation-only changes. Runtime and production behaviour remain unverified by this comparison.
+- **Milestone status:** Milestones 1–3 are complete at the owner-approved policy/documentation level. DEC-038–DEC-044 are merged in PRs #45–#51; PR #52 records Milestone 3 completion.
+- **Current next action:** Reconcile all accepted decisions against the complete SDD; identify stale references, omissions, genuine contradictions, and open dependencies; then complete read-only source traceability, executable acceptance-test specifications, and production-readiness evidence planning.
+- **Implementation gate:** VLY-019 remains open and blocks application-code implementation until the complete platform-wide SDD is explicitly approved by the owner.

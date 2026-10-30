@@ -2,7 +2,7 @@
 
 ## Spec-driven development documentation
 
-This folder is the continuity and implementation guide for the existing VeriLyft Next.js + TypeScript + Firebase ecommerce and delivery project.
+This folder is the continuity and specification guide for VeriLyft — Beyond Borders, a logistics-first shipment-management platform built on the existing Next.js, TypeScript, Firebase/Firestore, Firebase Authentication, Firebase Admin, Paystack, and Cloudinary application. Storefront commerce is an attached, secondary service; it is not the primary platform workflow.
 
 ### Documents
 
@@ -57,6 +57,14 @@ Use each source for the kind of fact it can establish:
 
 When sources conflict, do not silently favour code or documentation. Record the discrepancy, identify whether it concerns intended behaviour, implementation, or verification, and resolve it explicitly. The current repository is the evidence for what exists; the approved SDD is the authority for what the system is intended to do.
 
-### Important status caveat
+### Current Milestone 4 status
 
-All 15 tracked owner decisions (D-01–D-15; DEC-022–DEC-036), PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party policies have accepted owner-policy outcomes at their recorded levels. The requirement-level P0/P1/Conditional P0/Deferred baseline is owner-reviewed and merged (PR #31). The A-01–A-20 scenario-design refinements are owner-approved and merged (PR #39), but the catalogue is not executable test specifications or test evidence. The refreshed active-source inventory is pinned to `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32); later merges through PR #39 are documentation-only. Stage 5.5 is reconciling continuity, accepted policy, dependencies, and requirement traceability. Detailed technical contracts, reproducible P0 test specifications, runtime/production verification, and complete platform-wide SDD approval remain outstanding. Requirements do not prove implementation. `PROGRESS.md` is the current work pointer; verify source and actual test/deployment evidence before claiming a feature is implemented, tested, or launch-ready.
+The latest verified `main` baseline for the current Milestone 4 continuity work is PR #52 merge commit `61b8b65777d98950b6a4b6c5c311490e064f3d47`. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; comparison through PR #52 found documentation-only changes after that source baseline. This is a source-history comparison, not runtime or production verification.
+
+Milestones 1–3 are complete at the owner-approved policy/documentation level: DEC-038 through DEC-044 are recorded in the SDD, with the relevant documentation PRs merged through PR #51. PR #52 reconciled the Milestone 3 completion record. The 15 high-level owner decisions D-01–D-15, staff permission policies PM-01–PM-12, and booking-party authority policies BP-01–BP-22 remain accepted at their recorded policy levels.
+
+Milestone 4 is now the active workstream: platform-wide SDD reconciliation and implementation-readiness assessment. The initial continuity baseline has identified stale progress, handoff, audit, and issue-register references. Reconcile these records before proceeding to domain-by-domain decisions, source traceability, acceptance-test specifications, and production-readiness evidence planning.
+
+**Implementation gate:** No application-code changes are authorized until the complete platform-wide SDD has been reconciled and explicitly approved by the owner. Policy approval, documentation presence, source presence, passing builds, and readiness catalogues are not interchangeable with executable test approval or production evidence. Preserve the distinction between intended behaviour, current source facts, runtime verification, and production readiness.
+
+See `PROGRESS.md` for the active work pointer, `SESSION_HANDOFF.md` for the current session instructions, `ISSUES.md` for unresolved work, and `SDD_COMPLETENESS_AUDIT.md` for the platform-wide reconciliation plan.

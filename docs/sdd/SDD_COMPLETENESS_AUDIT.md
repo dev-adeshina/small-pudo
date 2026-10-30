@@ -206,3 +206,34 @@ Before marking the platform SDD complete:
 6. Obtain explicit owner approval of the complete reconciled platform-wide SDD before application-code changes.
 
 **Current gate:** Owner decisions are complete, but the platform-wide SDD is not yet complete or approved. No application-code implementation is authorized.
+
+
+## 11. Milestone 4 baseline reconciliation — 31 October 2026
+
+### Repository and source baseline
+
+- Latest verified `main` baseline reviewed for this work: PR #52 merge commit `61b8b65777d98950b6a4b6c5c311490e064f3d47`.
+- Active application-source inspection baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). A commit comparison through PR #52 found intervening documentation-only changes; no later application-source change was identified. This is not runtime, deployment, or production verification.
+- Milestones 1–3 are complete at the owner-approved policy/documentation level. DEC-038–DEC-044 are recorded through merged documentation PRs #45–#51; PR #52 reconciles Milestone 3 completion.
+- The initial SDD inventory covers the foundation, governance, actors/authority, workflows, lifecycle/contracts, requirement traceability, acceptance/evidence, and Admin Portal documents. The continuity set for this first Milestone 4 proposal is `README.md`, `PROGRESS.md`, `SESSION_HANDOFF.md`, this audit, and `ISSUES.md`.
+
+### Findings from the baseline pass
+
+1. `PROGRESS.md` opening metadata and current milestone still pointed to PR #44/PR #45 and Milestone 2, despite later merged DEC-039–DEC-044 decisions and Milestone 3 completion.
+2. `SESSION_HANDOFF.md` still treated PR #50 as the latest merge, DEC-041 as pending, and Milestone 3 Part 1/2/3 review steps as future work.
+3. `README.md` still described the project as an ecommerce and delivery project and its status caveat stopped at DEC-036, PR #39, and Stage 5.5.
+4. The audit's earlier checkpoint and recommended sequence did not include the DEC-037–DEC-044 decisions, Milestone 3 completion, PR #52, or the current Milestone 4 work order.
+5. `ISSUES.md` still framed VLY-019 around the earlier Stage 5.5 dependency register and source-scope question without recording the new continuity baseline. Its historical source checkpoint also described PR #4 as open, whereas PR #4 is closed without merge.
+6. Workflow, lifecycle, actor, requirement, and acceptance documents contain later decision additions but still require a systematic cross-document reference/status pass. This first proposal does not attempt to reconcile all those domain documents.
+
+### Milestone 4 work sequence
+
+1. **Continuity baseline:** align the README, progress tracker, session handoff, completeness audit, and issue register with the verified PR #52 baseline and the merged DEC-038–DEC-044 policy sequence.
+2. **Decision and document reconciliation:** compare all accepted decisions against every SDD document; identify stale references, missing policy incorporation, genuine contradictions, and unresolved technical/operational dependencies.
+3. **Requirement/source traceability:** perform read-only source inspection at an explicit commit and map requirements to current source evidence, gaps, and verification status. Reassess whether root `pudo.zip` is within active scope before treating it as source evidence.
+4. **Workflow and contract completion:** specify remaining actor/permission, lifecycle, data/API/security, integration, exception, and evidence contracts without inventing technical representation or policy values.
+5. **Acceptance-test specification:** translate approved requirements into detailed reproducible cases, safe test data, expected outcomes, and evidence requirements. Existing scenario catalogues/readiness assessments are not executed tests.
+6. **Production-readiness assessment:** define and assess deployment, environment, security, monitoring, backup/restore, incident response, rollback, recovery, and release evidence.
+7. **Owner approval gate:** present the complete reconciled platform-wide SDD for explicit owner approval. No application-code changes before approval.
+
+**Current gate:** The continuity baseline has been inspected and a focused documentation-only reconciliation has been prepared. The complete platform-wide SDD remains incomplete and unapproved. Milestone 3 policy completion does not authorize implementation. No application-code changes are authorized.
