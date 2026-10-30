@@ -2,7 +2,7 @@
 
 **Last updated:** 30 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
-**Admin requirements baseline:** PR #2 merged into `main` on 28 October 2026 (`fbb56ce`). The consolidated P0/P1/deferred baseline still requires owner review.
+**Owner decisions:** D-01–D-15 (DEC-022–DEC-036) have accepted high-level outcomes. DEC-036 accepts the P0/P1/deferred launch approach; requirement-level classification and evidence mapping remain open.
 
 This is the current issue register. Older archive-based observations have been reconciled where current implementation or later test evidence supersedes them. Source presence is not the same as runtime verification.
 
@@ -27,12 +27,13 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Next action:** Test unpaid expiry, retry, cancellation, duplicate webhook, late successful payment after cancellation, and stock restoration.
 - **Acceptance:** Repeated events cannot double-process payment or stock; every state transition has a defined outcome.
 
-### VLY-007 — Telegram delivery integration not implemented
+### VLY-007 — Telegram delivery integration deferred under DEC-034
 
 - **Status:** DEFERRED
 - **Priority:** Medium
 - **Evidence:** Telegram delivery notifications are not implemented.
-- **Next action:** Define triggers, minimum necessary fields, destination access, retries, and duplicate-notification protection after core operational flows are designed.
+- **Policy update:** DEC-034 accepts event-driven notifications with role-based recipient/data access, bounded retries, deduplication, and failure visibility. Telegram remains deferred; any future paid-order Telegram notification requires Admin **Assign For Delivery** approval and a separately approved purpose/audience/disclosure policy.
+- **Next action:** Define the detailed event/channel/recipient/field matrix and notification operational ownership. Do not implement Telegram merely because the gate is documented.
 - **Constraint:** Paid orders should initially be sent only after an administrator approves delivery assignment. Keep credentials server-side and avoid unnecessary customer data.
 
 ### VLY-009 — Security boundary verification is incomplete
@@ -85,12 +86,12 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Next action:** Review PR #4 against the current schema and existing records; verify the intended behaviour before merging or changing data.
 - **Acceptance:** Product counts and category slug-change protection work with the current schema and any explicitly supported legacy records; no unnecessary data migration.
 
-### VLY-015 — Admin Portal page specifications and priority baseline remain in review
+### VLY-015 — Admin Portal page specifications and requirement-level launch classification remain open
 
 - **Status:** OPEN
 - **Priority:** High before broad Admin implementation
-- **Evidence:** Admin Portal design PR #1 is merged. Requirements inventory and source-level validation from PR #2 are merged into `main`; the consolidated priority baseline and detailed page specifications still need formal review. The owner-confirmed launch operating model is recorded, but the full P0/P1/deferred baseline and page-by-page specifications are not all formally approved.
-- **Next action:** Reconcile SDD documents, review/approve the priority baseline, then design each missing workflow before coding it.
+- **Evidence:** Admin Portal design PR #1 is merged. Requirements inventory and source-level validation from PR #2 are merged into `main`; the consolidated priority baseline and detailed page specifications still need formal review. The owner has accepted DEC-036's high-level evidence-based P0/P1/deferred approach. Requirement-level classification and page-by-page acceptance specifications remain to be reconciled and explicitly approved as part of the complete SDD.
+- **Next action:** Complete requirement-level P0/P1/deferred mapping, reconcile page requirements with accepted platform policies, and define evidence criteria before implementation.
 - **Acceptance:** Each requirement is labelled proposed/approved/implemented/tested accurately; no new collection, route, field, type, or workflow is introduced without source inspection and an explicit need.
 
 ### VLY-016 — Shipment/PUDO/pricing operational implementation is not present in the inspected Admin routes
@@ -152,33 +153,21 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Evidence:** Cloudinary was selected because of the Firebase free-tier/storage constraints, and the current code includes the integration.
 - **Decision reference:** DEC-008 in `DECISIONS.md`.
 
-## Product decisions still open
+## Accepted owner policies and remaining specification work
 
-1. **Guest-order recovery/claiming (DEC-035):** High-level policy accepted; technical design, token lifecycle, verification controls, eligibility, support exceptions, and runtime acceptance evidence remain open.
-2. **Shipment lifecycle and transition permissions:** Define actual launch states, allowed transitions, exception handling, and minimum evidence before implementing shipment workflows.
-3. **Pricing policy values:** Define formulas, distance bands, material-discrepancy thresholds, review/approval limits, and permitted settlement methods.
-4. **Proof of delivery:** The business accepts flexible proof methods; define mandatory evidence by delivery type and access/retention rules.
-5. **Returns:** If not supported in the initial release, document the temporary manual procedure.
-6. **Staff permissions:** DEC-022 accepts the minimal hybrid staff model. The current allowlist/admin-claim design does not prove that workflow-specific permissions, sensitive-action approval boundaries, and audit evidence are implemented. Define the action matrix and verify every privileged API/rule before implementation or acceptance.
-7. **Admin priority baseline:** Review the P0/P1/deferred inventory in `ADMIN_REQUIREMENTS.md`; operating-model choices are recorded as owner-confirmed, but formal baseline approval remains pending.
+All 15 tracked high-level owner decisions are accepted and recorded in DEC-022–DEC-036. The following are unresolved details or verification tasks, not pending D-01–D-15 decisions:
 
+1. **Guest-order recovery/claiming (DEC-035):** challenge format/lifetime, rate limits, token rotation/revocation, post-fulfilment eligibility, account closure, support exception procedure, and runtime evidence.
+2. **Shipment lifecycle:** booking-to-shipment gate, parcel cardinality, detailed transitions, amendment/cancellation authority, route-leg relationships, and return outcomes.
+3. **Pricing and adjustments (DEC-026–DEC-027):** formulas, units, distance/rate configuration, fees/taxes/discounts, discrepancy thresholds, consent, approval limits, and dispute/refusal outcomes.
+4. **Physical operations (DEC-025, DEC-028, DEC-030–DEC-032):** staff assignment, partner access, measurement requirements, payment evidence, collection verification, route constraints, mandatory movement/delivery evidence, and exception-resolution authority.
+5. **Financial operations (DEC-028–DEC-030):** payment method/provider configuration, refund limits/timelines, credit rules, late-payment disposition, reconciliation cadence/ownership, and approval thresholds.
+6. **Notifications (DEC-034):** event timing, recipient/channel/field matrix, consent/preferences, contact verification, retry/deduplication semantics, retention, and persistent-failure ownership.
+7. **Audit/evidence (DEC-033):** event catalogue, retention schedule, reviewer/access matrix, correction/redaction controls, deletion/anonymization, legal-hold authority, evidence integrity, and disclosure procedure.
+8. **Staff and actor permissions (DEC-022, DEC-025):** action-level permission matrix, assignment, sensitive-action approval limits, second-person cases, and partner/external access.
+9. **Launch readiness (DEC-036):** requirement-level P0/P1/deferred mapping, concrete acceptance scenarios/evidence, production-like environment, blocker ownership, backup/restore, monitoring, incident response, rollback, and dated sign-off.
 
-### D-04 policy reconciliation — DEC-025
-
-- **Status:** High-level owner decision accepted; detailed operational controls remain open.
-- **Accepted:** Per-location capabilities and lean location records. Walk-in intake creation, measurement, custody acceptance, payment recording, and parcel release are separate capabilities; actions require server-side authorization and consequential events retain actor/location/time plus applicable evidence.
-- **Still open:** Staff capability assignment, collection-centre partner access, measurement/discrepancy rules, payment-at-intake methods/evidence, collection verification, and second-person approval requirements.
-- **Next action:** Carry DEC-025 into the consolidated SDD and define detailed acceptance tests only after the remaining dependent decisions and source validation are complete.
-- **Boundary:** Documentation-only decision; no application code, schema, route, permission implementation, or runtime behaviour was changed or tested.
-
-### D-05 pricing policy reconciliation — DEC-026
-
-- **Status:** High-level owner decision accepted; detailed commercial rules remain open.
-- **Accepted:** Select fixed or calculated pricing by service; share the approved rule set across storefront delivery and independent shipment booking wherever inputs overlap; configure quote validity by service; preserve accepted quote inputs, itemized charges, total, currency, and applicable rate/rule version/effective context.
-- **Possible calculated inputs:** Origin/destination or distance band, parcel weight, dimensions/volumetric weight, service class/delivery speed, and configured minimum charge, as applicable to the selected service.
-- **Still open:** Exact formulas, units, service mapping, distance source/bands, rounding, rate effective dates, expiry/re-quote behaviour, taxes/fees/discounts, and adjustment thresholds/approval.
-- **Next action:** Resolve D-06 measurement discrepancy and adjustment approval before defining detailed repricing and runtime acceptance scenarios.
-- **Boundary:** Documentation-only decision; no application code, schema, route, pricing implementation, or runtime behaviour was changed or tested.
+Specify these details, trace them to existing source, and support them with acceptance/evidence plans before implementation. Do not reopen accepted high-level decisions unless new evidence reveals a genuine conflict.
 
 ### VLY-019 — Platform-wide SDD completeness and reconciliation
 
