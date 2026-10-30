@@ -1,6 +1,6 @@
 # VeriLyft Architecture and Product Decision Log
 
-**Last updated:** 29 October 2026
+**Last updated:** 30 October 2026
 
 This file records accepted constraints and provisional defaults so
 future sessions do not invent a different architecture. Items marked
@@ -300,3 +300,16 @@ These decisions are accepted at the design level only. They do not mean the corr
 - Operational order/shipment status, cancellation status, payment status, and refund status remain separate. Verified payment does not by itself authorize dispatch; the DEC-018 default dispatch gate and authorized, reasoned, auditable exception policy remain in force.
 - **Still unresolved:** Refund approval limits and separation of duties; refund timelines; cancellation fees; partial-refund policy; credit expiry/use rules; late-payment disposition; reconciliation frequency and exception ownership; and detailed evidence and acceptance tests.
 - **Implementation boundary:** Business policy only. No schema, endpoint, provider integration, permission implementation, or application-code change is authorized.
+
+### DEC-030 — Narrow, controlled dispatch exceptions
+
+- **Date:** 30 October 2026.
+- **Decision:** Accepted Option A — narrow, controlled dispatch exceptions.
+- Verified payment remains the default prerequisite before dispatch. Exceptions are allowed only for explicitly defined operational circumstances under an approved policy; they are not a generic convenience override or unrestricted staff discretion.
+- Only staff with explicitly assigned dispatch-exception permission may approve an exception. A requester must not automatically approve their own request.
+- Material exceptions require a second approver. Which circumstances are material and the exact separation-of-duties rules remain unresolved.
+- An exception never changes payment status or represents an unverified payment as successful. It cannot bypass unrelated safety, custody, identity, legal, or other operational holds.
+- Preserve the affected parcel/shipment, reason, requesting actor, approving actor(s), timestamp, supporting evidence, and decision/outcome.
+- **Still unresolved:** Eligible circumstances; exact staff responsibility/permission assignment; which cases require two-person approval; monetary or operational limits; category-specific mandatory evidence; and whether approval may be revoked before dispatch.
+- **Acceptance direction:** Deny generic or unauthorized overrides; prevent self-approval; require second approval for material exceptions once defined; preserve payment state and unrelated holds; and retain attributable evidence.
+- **Implementation boundary:** Business policy only. No schema, endpoint, permission implementation, or application-code change is authorized.
