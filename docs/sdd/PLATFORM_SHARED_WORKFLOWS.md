@@ -2,15 +2,15 @@
 
 **Document status:** Draft workflow specification — accepted owner policies incorporated; detailed workflows and implementation contracts remain open  
 **Last updated:** 30 October 2026  
-**Scope:** Cross-domain business workflows and invariants for storefront fulfilment and independent parcel shipments  
+**Scope:** Primary independent-shipment logistics workflows and attached storefront-order fulfilment, including their shared operational fulfilment boundary  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, ADMIN_REQUIREMENTS.md, ADMIN_PORTAL.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-036
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-037
 
 ## 1. Purpose, status, and boundaries
 
 This document turns the accepted launch operating model into a first-pass, platform-wide workflow description. It identifies the major participants, sequence, decision gates, records that must remain distinct, exceptions, and open policy questions. It does not assert that these workflows or all related screens/services already exist in the application.
 
-Owner-policy outcomes under DEC-022–DEC-036, PM-01–PM-12, and BP-01–BP-22 are accepted at the levels recorded in their authoritative decision documents. The workflow sequences, detailed operational parameters, technical contracts, and evidence plans in this document remain draft work and are not implementation authorization. This document does not prescribe Firestore collections, field names, API routes, enum values, or a migration. Existing source must be inspected before any future technical proposal.
+Owner-policy outcomes under DEC-022–DEC-037, PM-01–PM-12, and BP-01–BP-22 are accepted at the levels recorded in their authoritative decision documents. The workflow sequences, detailed operational parameters, technical contracts, and evidence plans in this document remain draft work and are not implementation authorization. This document does not prescribe Firestore collections, field names, API routes, enum values, or a migration. Existing source must be inspected before any future technical proposal.
 
 Use these evidence labels consistently:
 
@@ -21,7 +21,7 @@ Use these evidence labels consistently:
 
 ## 2. Cross-workflow invariants
 
-1. **Storefront order and independent shipment are distinct business concepts.** A storefront purchase may need delivery fulfilment, while an independent shipment can be booked without a storefront purchase. Do not assume one record represents both.
+1. **Logistics is the primary business workflow; storefront commerce is attached.** Independent shipment booking is the primary customer entry point. Storefront purchases are a secondary order source and, when delivery is required, enter the same operational fulfilment system. Storefront orders and independent shipments remain distinct business concepts; do not assume one record represents both.
 2. **Booking is not physical intake.** A booking or accepted quote does not prove that a parcel has been received, measured, or placed in custody.
 3. **Payment is not operational progress.** Payment status, storefront order status, shipment status, and individual transport-movement status must remain distinguishable.
 4. **Quote preservation matters.** Retain the accepted quote and the inputs/rates used for it. A later rate change must not silently rewrite an earlier quote or completed payment.
