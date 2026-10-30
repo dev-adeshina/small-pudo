@@ -1,6 +1,6 @@
 # VeriLyft Progress Tracker
 
-**Last updated:** 29 October 2026
+**Last updated:** 30 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
 **Current live main head at start of this task:** `a90ffb8e4915f4f3b1d27dbb31f47bd2ed8c74e3` — live `main` head at the start of this D-02 documentation task; PR #15's D-01 hybrid staff-model reconciliation is merged. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; previous comparisons found the intervening commits changed SDD documentation only, not application source.
@@ -534,3 +534,18 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Keep approval limits, refund timelines, fees, partial refunds, credit expiry/use, late-payment disposition, reconciliation cadence/ownership, and detailed tests unresolved.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, provider integration, deployed configuration, or runtime behaviour changed or was tested. The platform-wide SDD implementation gate remains in force.
+
+## Owner decision D-09 — 30 October 2026 (DEC-030)
+
+- [x] Owner accepted Option A: narrow, controlled dispatch exceptions.
+- [x] Confirmed verified payment remains the default dispatch prerequisite; exceptions are limited to explicitly defined operational circumstances under an approved policy, not generic convenience or unrestricted staff discretion.
+- [x] Confirmed only explicitly authorized staff may approve; requesters must not automatically approve their own requests; material exceptions require a second approver.
+- [x] Confirmed exceptions do not change payment status or bypass unrelated safety, custody, identity, legal, or other operational holds.
+- [x] Confirmed attributable evidence must preserve the parcel/shipment, reason, requester, approver(s), timestamp, supporting evidence, and outcome.
+- [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff in this documentation proposal.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Continue to D-10: routing, route-leg assignment, and movement evidence.
+- [ ] Keep eligible circumstances, permission assignment, materiality/second-approval rules, monetary or operational limits, category-specific evidence, and pre-dispatch revocation unresolved.
+- [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, permissions, deployed configuration, or runtime behaviour changed or was tested.
