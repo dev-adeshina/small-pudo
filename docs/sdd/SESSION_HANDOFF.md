@@ -22,7 +22,7 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 - Stage 5.3 pricing/measurement/quote/adjustment/financial-outcome policy areas are accepted and consolidated in merged PR #37. Detailed formulas/rates, inputs, units/conversion, rounding/effective dates, taxes/fees/discounts, discrepancy thresholds, approval limits, and adjustment-rejection service resolution remain open.
 - Milestone 1 independent shipment booking policy is owner-approved as DEC-038: valid quote acceptance by the authenticated booking party confirms the booking; service-specific booking information and business-arranged bookings are supported; payment, intake/custody, and fulfilment remain separate; each service communicates a separate handover deadline; missed handover may close as unfulfilled with financial history preserved; customer/Support/Operations/Admin responsibilities are bounded. Its documentation-only consolidation PR is pending review/merge.
 
-## Current stage — Milestone 1 accepted; proceed to pricing and payments while continuing SDD reconciliation
+## Current stage — Milestone 2 Part 1 approved; pricing/payment SDD reconciliation continues
 
 Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. This is not approval of executable test specifications, test execution, implementation, or release.
 
@@ -54,4 +54,4 @@ The readiness assessment's source findings remain valid: independent shipment bo
 - Keep accepted policy, source facts, test evidence, and production-readiness evidence distinct.
 - Keep changes focused and documentation-only while the SDD is incomplete. Use branches and PRs; the owner reviews and merges every PR.
 - Never claim tests were run unless they actually were.
-- Do not restart the completed D-01–D-15, PM-01–PM-12, Stage 5.2, or Stage 5.3 decision sequences.
+- Do not restart the completed D-01–D-15, PM-01–PM-12, Stage 5.2, Stage 5.3, or Milestone 1 decision sequences.
