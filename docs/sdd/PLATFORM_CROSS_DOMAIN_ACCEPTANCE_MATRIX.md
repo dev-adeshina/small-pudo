@@ -147,3 +147,15 @@ Numeric thresholds, measurement units/service requirements, approval limits, sec
 - [ ] Verify dispatch still requires verified payment by default; any exception follows explicit authorization, reason, and audit requirements.
 
 These are policy-derived acceptance directions, not evidence that current runtime behaviour has passed. Refund limits/timelines, cancellation fees, partial refunds, credit rules, late-payment disposition, reconciliation cadence, and exception ownership remain unresolved.
+
+## D-09 / DEC-030 dispatch exception controls
+
+- [ ] Verify dispatch remains blocked by default while required payment is unverified.
+- [ ] Verify generic convenience overrides and exceptions outside explicitly approved operational circumstances are denied.
+- [ ] Verify only staff with explicitly assigned dispatch-exception permission can approve; authentication or general Admin/Operations access alone is insufficient.
+- [ ] Verify the requester cannot automatically approve their own exception and that material exceptions require a second approver once materiality rules are defined.
+- [ ] Verify an exception does not change payment status or represent unverified payment as successful.
+- [ ] Verify exceptions cannot bypass unrelated safety, custody, identity, legal, or other operational holds.
+- [ ] Verify the parcel/shipment, reason, requester, approver(s), timestamp, supporting evidence, and decision/outcome remain attributable and reviewable.
+
+These are policy-derived acceptance directions, not evidence that runtime behaviour has passed. Eligible circumstances, permission assignment, materiality/second-approval rules, monetary or operational limits, category-specific evidence, and pre-dispatch revocation remain unresolved.
