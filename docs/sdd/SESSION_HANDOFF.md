@@ -7,7 +7,7 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 - Latest verified `main`: `6e643827fc8ef91d0e63493703198808363a90ed` — PR #44 merged.
 - PR #43 corrected post-PR #42 continuity metadata; it was documentation-only.
 - The PR #42 readiness assessment remains accepted as a readiness/navigation baseline only; it does not approve executable tests, test execution, implementation, or release.
-- Active application-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). PRs #40–#43 changed SDD documentation only; they do not establish runtime behaviour.
+- Active application-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). PRs #40–#44 changed SDD documentation only; they do not establish runtime behaviour.
 - Application-code changes remain prohibited until the complete platform-wide SDD is reconciled and explicitly approved.
 
 ## Accepted policy and product hierarchy
@@ -32,6 +32,7 @@ Stage 5.5:
 3. PR #42 assessed all 45 P0 and 6 Conditional P0 requirements, the 80 scenario outlines, source-backed candidates, missing capabilities, policy/contract blockers, and conditional activation gates. This is a readiness/navigation baseline only; no requirement is approved for execution.
 4. PR #43 reconciled the post-PR #42 continuity metadata.
 5. DEC-037 records the owner's logistics-first product hierarchy and shared fulfilment principle.
+6. DEC-038 records the owner-approved independent shipment booking confirmation, information, lifecycle, handover-deadline, and responsibility policy; its documentation-only consolidation is pending review/merge.
 
 The readiness assessment's source findings remain valid: independent shipment booking, pricing, custody, routing and related operational capabilities are absent or materially incomplete in the inspected source baseline. That is an implementation gap against the accepted launch scope, not a reason to classify these core capabilities as deferred.
 
