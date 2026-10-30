@@ -3,11 +3,11 @@
 **Last updated:** 30 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Current live main head at start of this reconciliation:** `3b940a5b0e41691da6de74a4333ab1f6443ab67a` — PR #29 / DEC-036 merged. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison through the current head shows intervening commits changed SDD documentation only, not application source.
+**Latest verified main head before current proposal:** `c9d9342cfc9dcef2c7d5704074d83927c5f5099c` — PR #30 merged. Current documentation proposal branch: `docs/requirement-level-priority-baseline`. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison through the current head shows intervening commits changed SDD documentation only, not application source.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
-**Current phase:** Stage 1 — platform-wide SDD consistency reconciliation after completion of all 15 high-level owner decisions. PR #29 / DEC-036 is merged. Reconcile stale decision-state wording, active-task pointers, cross-document policy references, and source/evidence baselines. Then complete requirement-level P0/P1/deferred mapping, source traceability, acceptance scenarios, and production-readiness evidence. No application-code changes are authorized until the complete SDD is explicitly approved.
+**Current phase:** Stage 2 — requirement-level launch priority reconciliation. PR #30 is merged; all 15 high-level owner decisions are accepted. A proposed platform-wide P0/P1/Conditional P0/deferred matrix has been drafted on `docs/requirement-level-priority-baseline` for owner review. After approval/merge, refresh source traceability, define detailed P0 acceptance scenarios/evidence, assess production readiness, and obtain explicit approval of the complete SDD. No application-code changes are authorized until that complete approval.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -21,13 +21,13 @@
 
 ## 1. Current position
 
-### Current milestone — all owner decisions accepted; full SDD reconciliation underway
+### Current milestone — requirement-level launch priority baseline drafted; full SDD reconciliation underway
 
 - **Owner decision register:** 15 of 15 tracked decisions (D-01–D-15) have accepted high-level outcomes, recorded as DEC-022–DEC-036. Detailed policy values, permissions, transitions, and evidence requirements remain open where identified in the decision records.
-- **Latest verified main head:** `3b940a5b0e41691da6de74a4333ab1f6443ab67a` (PR #29 / DEC-036).
+- **Latest verified main head:** `c9d9342cfc9dcef2c7d5704074d83927c5f5099c` (PR #30).
 - **Source inspection baseline:** `c56be9b121e6007e1e99c6df2d3984e709771a92`. Comparison through latest main shows intervening commits changed SDD documentation only; source traceability remains a read-only snapshot and must be reconciled with accepted policy.
-- **Current stage:** Reconcile all SDD documents so accepted policy, unresolved specification detail, source facts, reported tests, and current work status agree.
-- **Next stages:** Requirement-level P0/P1/deferred mapping; targeted read-only source verification; detailed acceptance scenarios and evidence plan; production-readiness assessment; explicit owner approval of the complete SDD.
+- **Current stage:** Proposed requirement-level priority matrix drafted in `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`; it maps A-01–A-20 and ADM-R01–ADM-R54 while preserving unresolved detail and evidence gaps.
+- **Next stages:** Owner review/merge of the priority matrix; targeted read-only source refresh; detailed P0 acceptance scenarios/evidence; production-readiness assessment; explicit owner approval of the complete SDD.
 - **Implementation gate:** No application-code changes until the complete platform-wide SDD has been reconciled and explicitly approved.
 
 VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, and Cloudinary application. Preserve its architecture and existing patterns; do not invent parallel services, collections, fields, routes, or permission models.
@@ -668,3 +668,19 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Obtain explicit owner approval of the complete reconciled platform-wide SDD before application-code changes.
 
 **Current active task:** Stage 1 SDD consistency reconciliation. No application code changed or tests run in this documentation task.
+
+
+## 26. Requirement-level launch priority baseline — 30 October 2026
+
+- [x] Verified PR #30 merged to `main` at `c9d9342cfc9dcef2c7d5704074d83927c5f5099c`.
+- [x] Read DEC-018 and DEC-036, the Admin requirements inventory, the 20-row cross-domain acceptance matrix, issue register, source traceability, and continuity documents.
+- [x] Added `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` on branch `docs/requirement-level-priority-baseline`.
+- [x] Mapped all 20 cross-domain areas A-01–A-20 and all 54 Admin requirements ADM-R01–ADM-R54; retained ADM-P01–ADM-P15 as P1 and recorded explicit deferred scope.
+- [x] Distinguished P0, Conditional P0, P1, and Deferred; priority is separate from design, source, verification, and release status.
+- [x] Kept unresolved detailed policies and evidence requirements open; no claim of implementation or launch readiness.
+- [ ] Owner review/approval and merge of the documentation-only proposal.
+- [ ] Refresh source traceability against the current source head and map each P0/Conditional P0 requirement to source/gap/evidence.
+- [ ] Define detailed acceptance scenarios and evidence artifacts for all P0/Conditional P0 requirements.
+- [ ] Assess production-like configuration, monitoring, backup/restore, incident response, rollback and release sign-off.
+
+**Evidence boundary:** Documentation-only work. No application source, schema, permissions, provider configuration, deployment, runtime behaviour, or tests changed/run. The matrix is proposed, not approved for implementation or release.
