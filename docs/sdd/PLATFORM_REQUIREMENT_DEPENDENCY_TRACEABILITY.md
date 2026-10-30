@@ -1,8 +1,8 @@
 # VeriLyft Requirement Dependency and Traceability Register
 
-**Document status:** Stage 5.5 consolidated traceability baseline — proposed for owner review  
+**Document status:** Stage 5.5 consolidated traceability baseline — owner-reviewed and merged in PR #41  
 **Prepared:** 30 October 2026  
-**Repository baseline:** `main` after PR #40 merge `712d32da11a5740fdbc4e2a0b826adab42ed352b`  
+**Repository baseline:** `main` after PR #41 merge `93f389cf16b9f1e40bbe414426ccc490d1221865`  
 **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32)  
 **Authority:** Derived from the owner-approved priority matrix, A-01–A-20 catalogue, DEC-022–DEC-036, PM-01–PM-12, BP-01–BP-22, and the current actor/workflow/lifecycle drafts. This register is a traceability aid, not a new source of product policy or implementation authorization.
 
@@ -187,11 +187,11 @@ Before a P0/Conditional P0 scenario can be approved for execution, its test spec
 
 ## 9. Review and acceptance checklist
 
-- [ ] Confirm the A-01–A-20 crosswalk and requirement links are complete and accurately transcribed.
-- [ ] Confirm DEC/PM/BP dependency mapping without reopening accepted policy.
-- [ ] Confirm actor, workflow and lifecycle references are the intended authoritative locations.
-- [ ] Confirm P0 / Conditional P0 / P1 boundaries and activation triggers.
-- [ ] Confirm source-status summaries against the active-source inspection baseline.
-- [ ] Approve the register as a navigation/traceability baseline only; this does not approve technical design, test execution, implementation or production release.
+- [x] Owner reviewed the A-01–A-20 crosswalk and ADM-R01–ADM-R54 requirement links in PR #41.
+- [x] Owner reviewed DEC/PM/BP dependency mapping without reopening accepted policy in PR #41.
+- [x] Owner reviewed actor, workflow and lifecycle references as draft navigation anchors in PR #41.
+- [x] Owner reviewed P0 / Conditional P0 / P1 boundaries and activation triggers in PR #41.
+- [x] Source-status summaries remain tied to the active-source inspection baseline; PR #41 changed documentation only.
+- [x] Register accepted as a navigation/traceability baseline only; technical design, test execution, implementation and production release remain unapproved.
 
-**Current status:** Proposed for owner review. No tests were run and no application code was changed.
+**Current status:** Owner-reviewed and merged in PR #41 as a traceability/navigation baseline. No tests were run and no application code was changed.
