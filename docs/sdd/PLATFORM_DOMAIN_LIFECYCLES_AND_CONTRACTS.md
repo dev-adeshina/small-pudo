@@ -109,7 +109,7 @@ Required guards:
 - Changes to an accepted quote must preserve prior accepted commercial facts.
 - Booking cancellation must not silently erase payment, custody, or audit history.
 
-Open policy: eligibility, guest/account rules, quote validity, booking confirmation point, cancellation rights/fees, expiry, and what happens when a paid booking never reaches intake.
+Open specification: quote validity, booking confirmation point, cancellation fees/refund consequences, expiry, and what happens when a paid booking never reaches intake. Eligibility and the owner-policy direction for amendment/cancellation authority are addressed by DEC-023 and BP-01–BP-05; exact verification and lifecycle procedures remain to be specified.
 
 ### 4.2 Quote and adjustment lifecycle
 
@@ -501,3 +501,24 @@ The release baseline distinguishes P0 launch blockers, P1 important follow-up wo
 For each P0 requirement, retain evidence appropriate to its risk: functional end-to-end success and failure paths; security, privacy, and server-side authorization; authoritative payment verification, financial replay/idempotency and reconciliation where applicable; attributable operational actions and physical custody/movement/delivery evidence where applicable; and production configuration, deployment, monitoring, backup/restore, incident response, and rollback where applicable. Distinguish designed, implemented, tested, verified in a production-like environment, and owner-accepted for launch. Record evidence date, environment, scope, and linked acceptance criterion. Source presence, page rendering, schema presence, and passing type/build checks alone do not prove readiness.
 
 Unverified P0 requirements and material security, financial, operational-control, or critical production/recovery gaps block release absent resolution or separately approved lawful exception. Requirement-level priority mapping, evidence artifacts/scenarios, production-like environment, blocker ownership/exception authority, runbooks, backup/restore proof, monitoring thresholds, incident ownership, and final sign-off remain unresolved. This is a governance contract, not a certification of current readiness or an implementation approval.
+
+## Booking-party authority and lifecycle contract — DEC-023 / DEC-024
+
+The owner has accepted BP-01–BP-22 in `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`. These are policy constraints for the conceptual booking and authorization lifecycles, not a schema or API specification.
+
+### Required conceptual guards
+
+1. Booking changes and cancellation before physical intake may be initiated by the authenticated booking party only within the accepted BP policy; sender/receiver/payer association alone grants no direct edit/cancel authority.
+2. Price/service changes require a revised quote and customer acceptance. Sender/receiver/collection changes require the appropriate verification/consent and applicable staff review.
+3. Sender/receiver requests received by Support are requests, not authorized mutations. The booking party authorizes them unless a documented, approved exception applies.
+4. Post-intake amendments are staff-mediated. Booking-party transfer after intake or dispatch requires designated Admin review.
+5. Cancellation, transfer, withdrawal, deletion/anonymisation, and refund are distinct operations. None silently erases booking, financial, custody, or audit history.
+6. Collection authorization is independently verified. A parcel is held from release while collection authority is disputed; booking-party status or payer status is not proof of collection entitlement.
+7. Transfer preserves the booking's financial history and obligations. A new booking party accepts personal financial responsibility only through explicit acceptance; original liability attribution remains reconstructable.
+8. Delegated access is explicit, limited, time-bounded, revocable, and non-transferable. Delegation does not confer ownership or unlisted operational actions.
+9. Suspected account compromise may trigger protective restrictions, but must not unnecessarily prevent essential physical custody/safety operations.
+10. Dispute, appeal, and further-review decisions preserve original records and evidence; corrections are separately attributable amendments.
+
+### Remaining contract questions
+
+The BP policy record leaves verification mechanisms, consent evidence, exact lifecycle gates, financial-responsibility transfer mechanics, delegated action/expiry values, retention/legal-hold interaction, notification fields, dispute severity/targets, reviewer eligibility, and appeal submission/decision procedure to detailed specification. Every mutation contract must still define actor, target, preconditions, authorization, resulting state, side effects, audit/evidence, idempotency/concurrency behaviour, and failure response. No collection, field, endpoint, token format, permission claim, or implementation is approved.

@@ -88,7 +88,7 @@ Use these evidence labels consistently:
 - **Resolved by DEC-024:** booking party, sender, receiver/collection recipient, payer, and handover person may differ; payer visibility defaults to payment confirmation/receipt only; payment does not grant full shipment-detail access; booking does not authorize collection; change permissions must be defined by change type and lifecycle stage.
 - Can one customer account act as both storefront customer and shipper? The actor model permits this, but account identity and booking-record relationships must still be verified in the detailed design.
 - What registration, contact, or identity verification beyond sign-in is required, and at which booking/intake/collection checkpoints? Do not assume an additional verification method before it is decided.
-- Which change types can the booking party complete directly, when is sender/receiver consent required, and which changes require authorized staff? How does this vary before intake, after intake, after dispatch, or after payment?
+- How should the accepted BP-01–BP-22 authority policy be translated into the complete change-type/lifecycle matrix, including exact verification, consent, staff-review, and exception evidence?
 - What sender, receiver, payer, booking-party, and handover-person information is required, and when must each identity be verified?
 - How long is a quote valid, what makes a booking accepted, and when is a reference/label/receipt issued?
 - Which payment methods are supported at intake and how are they verified and recorded?
@@ -509,3 +509,17 @@ The initial release uses an explicit P0/P1/deferred baseline. P0 requirements ar
 A requirement's presence in source, a rendered page, a route, a schema, or a passing type/build check is not proof of launch readiness. Readiness evidence must be appropriate to risk and address functional end-to-end success/failure paths, server-side authorization and privacy, financial correctness and authoritative verification/reconciliation where applicable, operational accountability and physical-event evidence where applicable, and production configuration/deployment/monitoring/backup/recovery/incident/rollback readiness where applicable. Designed, implemented, tested, verified in a production-like environment, and owner-accepted for launch are separate states. Evidence must identify date, environment, scope, and relevant acceptance criterion.
 
 Unverified P0 requirements, launch-affecting security or authorization defects, financial-integrity failures, missing mandatory operational controls, and unavailable critical production/recovery capabilities block release until resolved or covered by a separately approved lawful exception. Exact requirement-level priorities, scenarios/evidence, environment, blocker ownership, exception authority, runbooks, backup/restore proof, monitoring thresholds, incident ownership, and dated sign-off remain open. This policy does not certify current production readiness or authorize implementation.
+
+## Booking-party authority policy reconciliation — DEC-023 / DEC-024
+
+The owner has accepted BP-01–BP-22 in `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`. That record supersedes earlier open-policy wording in Workflow B to the extent it now resolves who may initiate changes/cancellation, how sender/receiver requests are handled, collection authority, transfers, delegated access, privacy, disputes, and appeals.
+
+Workflow B must now carry these accepted rules:
+- The authenticated booking party may initiate permitted changes and cancellation before physical intake; price/service changes require an updated quote and customer acceptance.
+- Sender/receiver changes require appropriate verification/consent and staff review where identity, collection authority, security, or liability may be affected.
+- Sender/receiver requests go through Support; the booking party authorizes the change unless an approved exception is established.
+- After physical intake, changes are staff-mediated. Transfers after intake or dispatch require designated Admin review.
+- Collection authority is verified independently from booking and payment. Disputed collection instructions place parcel release on hold until authority is established.
+- Party notifications, delegated access, deletion, disputes, and appeals follow the BP policy record.
+
+The following remain open specification rather than unanswered owner-policy choices: verification/consent methods; complete change-type and lifecycle matrix; evidence and exception standards; exact transfer/withdrawal financial procedure; delegated-access action catalogue and duration; notification event/field/channel matrix; retention/anonymisation/legal-hold rules; dispute severity/targets, reviewer eligibility, and appeal procedure details. No technical representation or implementation is approved by this reconciliation.
