@@ -438,3 +438,10 @@ This draft does not resolve:
 Conceptual contract: retain the original quote and its accepted inputs/rate context; separately record actual intake measurements and their actor, location, time, and required evidence; and link any proposed adjustment to the original quote. The measurement record, proposal, approval decision, payment, additional charge, credit, and refund are distinct facts and must not be collapsed into one status.
 
 Material discrepancies and adjustments affecting an existing payment must follow the configured review/authority policy. Routine-versus-material thresholds must be service-appropriate and configurable; exact units, values, approval limits, customer consent/notification rules, and refusal/dispute outcomes remain unresolved. A proposal or unresolved dispute is not authorization to mutate the accepted quote or represent a financial event as settled. No schema, API, or implementation details are approved here.
+
+
+## Payment-at-intake contract — DEC-028
+
+Conceptual contract: a location can accept only explicitly enabled payment methods. A payment record distinguishes the method and retains amount, currency, applicable transaction reference/receipt, responsible staff actor, location, and timestamp. Electronic settlement requires authoritative provider, bank, or approved reconciliation evidence; screenshots, verbal claims, and unsupported staff notes are not proof. Cash requires an attributable receipt or equivalent record and reconciliation.
+
+Payment recording does not prove physical custody. Booking, payment, and custody are independent facts with separate evidence. Failed, reversed, refunded, disputed, and corrected payment outcomes retain traceable history; corrections must not silently erase or overwrite prior financial events. Exact providers/methods, limits, cash procedures, second-person controls, method-specific evidence, and technical representation remain unresolved. No schema, API, or implementation details are approved here.
