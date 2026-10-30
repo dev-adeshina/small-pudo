@@ -86,24 +86,23 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Next action:** Review PR #4 against the current schema and existing records; verify the intended behaviour before merging or changing data.
 - **Acceptance:** Product counts and category slug-change protection work with the current schema and any explicitly supported legacy records; no unnecessary data migration.
 
-### VLY-015 — Requirement-level launch priority baseline merged; source mapping merged; acceptance evidence design in progress
+### VLY-015 — Requirement priorities, source mapping, and P0 evidence design established; detailed specifications remain open
 
-- **Status:** IN PROGRESS — priority baseline and source mapping merged; detailed acceptance/evidence catalogue drafted
-- **Priority:** Blocking for implementation planning until P0 acceptance evidence and full SDD approval are complete
-- **Evidence:** PR #31 reviewed and merged to `main` at `e0f69055d33dd9399c23e1d793f359468229c856`. `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` now records the owner-reviewed P0, Conditional P0, P1 and Deferred mapping for A-01–A-20 and ADM-R01–ADM-R54.
-- **Limit:** Priority acceptance is not approval of the complete platform SDD, technical design, implementation, testing, or production readiness. Detailed policies, contracts, acceptance scenarios and operational evidence remain open.
-- **Current source evidence:** Refreshed read-only source traceability at the PR #31 baseline maps all A-01–A-20 and ADM-R01–ADM-R54 to source presence, partial coverage, or no active source found in the inspected tree. Storefront checkout/orders and Paystack paths have source foundations; independent shipment/PUDO/intake/custody/pricing/routing/movement/delivery-proof/general audit/refund/reconciliation capabilities were not found in active source. Runtime and production evidence remain unverified.
-- **Next action:** Owner-review `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`; resolve its policy dependencies and confirm whether root `pudo.zip` is in scope; then produce approved test specifications and collect runtime/production evidence.
-- **Acceptance:** Every P0/Conditional P0 has an approved contract, source status, repeatable acceptance scenario, evidence source and actual verification state; no requirement is labelled implemented/tested/ready without supporting evidence.
+- **Status:** IN PROGRESS — priority baseline and source mapping merged; A-01–A-20 catalogue owner review complete; executable test specifications and full SDD approval remain open
+- **Priority:** Blocking for implementation planning and launch evidence approval
+- **Evidence:** PR #31 merged at `e0f69055d33dd9399c23e1d793f359468229c856`; the owner-reviewed priority matrix maps A-01–A-20 and ADM-R01–ADM-R54 to P0, Conditional P0, P1, or Deferred. PR #32 refreshed the read-only source mapping at that active-source baseline. PR #39 merged the owner-approved A-01–A-20 scenario-design refinements.
+- **Limit:** These approvals do not approve the complete platform SDD, detailed technical contracts, executable test specifications, implementation, test execution, or production readiness. The source inventory is not runtime evidence.
+- **Current source evidence:** The active-source inventory maps A-01–A-20 and ADM-R01–ADM-R54 to source presence, partial coverage, or no active source found. Storefront checkout/orders and Paystack paths have source foundations; independent shipment/PUDO/intake/custody/pricing/routing/movement/delivery-proof/general audit/refund/reconciliation capabilities were not found in the inspected active source. No application-source changes are recorded between the inspected source baseline and PR #39; runtime and production evidence remain unverified.
+- **Next action:** Complete Stage 5.5 policy/dependency and requirement traceability reconciliation; confirm whether root `pudo.zip` is in scope; then approve reproducible P0/Conditional P0 test specifications before any non-production execution.
+- **Acceptance:** Every P0/Conditional P0 has an approved contract, source status, repeatable test specification, evidence source and actual verification state; no requirement is labelled implemented/tested/ready without supporting evidence.
 
-### VLY-017 — P0 acceptance scenarios and evidence catalogue require owner review
+### VLY-017 — P0 acceptance scenario catalogue owner review completed
 
-- **Status:** OPEN — draft prepared; owner review pending
-- **Priority:** Blocking for implementation approval and launch evidence planning
-- **Evidence:** `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md` drafts scenario outlines for all 20 cross-domain areas A-01–A-20 and maps ADM-R01–ADM-R54. It defines required case records, evidence classes, universal pass rules, conditional-P0 activation gates, and unresolved policy dependencies.
-- **Limit:** These are test-design scenarios, not executed tests or final approved test scripts. Numeric limits, formulas, proof methods, permission boundaries, retention, retries and other unresolved DEC-022–DEC-036 details remain explicit blockers. No tests were run.
-- **Next action:** Review scenario scope and wording; resolve policy dependencies in the authoritative SDD documents; approve test specifications before any execution. Then gather runtime evidence in safe non-production environments and production-readiness evidence separately.
-- **Acceptance:** Each P0/Conditional P0 has an approved, reproducible test specification with preconditions, actor, action, expected state and non-state changes, replay/failure behavior, evidence artifacts, cleanup and accountable reviewer. Conditional P0 activation gates are verified before enabling triggers.
+- **Status:** RESOLVED — owner review and policy/scenario-design approval completed; PR #39 merged on 30 October 2026.
+- **Priority:** Historical blocker for catalogue owner review; executable specification and evidence gates remain tracked under VLY-015 and VLY-019–VLY-021.
+- **Evidence:** The owner explicitly approved all A-01–A-20 sections at the policy/scenario-design level. PR #39 merged the approved refinements into `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md` and updated the continuity records.
+- **Limit:** The catalogue remains test design, not executable test scripts or test results. Numeric limits, formulas, proof methods, permission boundaries, retention, retries and other unresolved DEC-022–DEC-036 details remain specification dependencies. No tests were run and implementation/release are not approved.
+- **Resolution:** Owner review of the catalogue's scenario-design approach is complete. Continue with the consolidated dependency register and reproducible test specifications under the remaining SDD gates.
 
 ### VLY-016 — Shipment/PUDO/pricing operational implementation is not present in the inspected Admin routes
 
@@ -116,7 +115,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Next action:** Complete the remaining owner decisions and reconcile the platform-wide SDD, then design the smallest compatible data and workflow representation after SDD approval.
 - **Acceptance:** Shipment, order, payment, and transport-movement identities/lifecycles remain distinct; booking creation and customer-scoped access are server-authorized; no schema changes occur before review.
 
-### VLY-017 — Privileged-action audit trail and minimum evidence handling need review
+### VLY-023 — Privileged-action audit trail and minimum evidence handling need review
 
 - **Status:** OPEN
 - **Priority:** High for operational/legal readiness
