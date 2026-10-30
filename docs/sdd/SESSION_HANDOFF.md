@@ -4,36 +4,43 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 
 ## Verified repository state
 
-- Latest verified `main`: `832378948a003b5848029758a05050632e9d5373` — PR #42 merged.
-- The PR #42 readiness assessment is merged and accepted as a readiness/navigation baseline only; it does not approve executable tests, test execution, implementation, or release.
-- Active-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Changes through PR #42 are documentation-only; they do not establish runtime behaviour.
+- Latest verified `main`: `46752f7bdfd9b9127a036a7db7eedfaf21a97363` — PR #43 merged.
+- PR #43 corrected post-PR #42 continuity metadata; it was documentation-only.
+- The PR #42 readiness assessment remains accepted as a readiness/navigation baseline only; it does not approve executable tests, test execution, implementation, or release.
+- Active application-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). PRs #40–#43 changed SDD documentation only; they do not establish runtime behaviour.
 - Application-code changes remain prohibited until the complete platform-wide SDD is reconciled and explicitly approved.
 
-## Accepted policy and completed documentation stages
+## Accepted policy and product hierarchy
 
 - D-01–D-15 high-level owner outcomes are accepted under DEC-022–DEC-036.
+- DEC-018 already records the accepted lean launch scope: independent shipment booking; advance booking and staff-created walk-in intake; lean PUDO location management; shared hybrid delivery pricing; advance online payment and payment at intake; Operations-reviewed route proposals and route-leg assignments; flexible proof of delivery; and controlled failed-delivery resolution.
+- DEC-037 is now owner-accepted: VeriLyft is fundamentally a logistics and shipment-management platform. Independent shipment booking is the primary customer entry point. Storefront commerce is an attached, secondary service.
+- Storefront orders and independent shipments remain distinct business concepts and order sources. Storefront orders requiring delivery enter the same operational fulfilment system used by independent shipments; do not create separate competing fulfilment processes or assume a particular schema.
+- DEC-018 exclusions remain: advanced route optimization, full fleet management, separate Driver Portal/application, enterprise workflow engine, and advanced analytics are deferred unless explicitly changed.
 - PM-01–PM-12 staff permission policies are accepted; technical permission design remains open.
 - Stage 5.2 booking-party authority BP-01–BP-22 is accepted and consolidated in merged PR #36.
-- Stage 5.3's six pricing/measurement/quote/adjustment/financial-outcome policy areas are accepted and consolidated in merged PR #37. DEC-026, DEC-027, and DEC-029 were reconciled across the owner register, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff.
-- Stage 5.3 policy acceptance does not settle detailed formulae/rates, input sources, units/conversion, rounding/effective dates, taxes/fees/discounts, expiry treatment of already accepted quotes, numeric discrepancy thresholds, approval limits, or adjustment-rejection service resolution.
+- Stage 5.3 pricing/measurement/quote/adjustment/financial-outcome policy areas are accepted and consolidated in merged PR #37. Detailed formulas/rates, inputs, units/conversion, rounding/effective dates, taxes/fees/discounts, quote expiry treatment, discrepancy thresholds, approval limits, and adjustment-rejection service resolution remain open.
 
-## Current stage — Stage 5.5 readiness baseline accepted; launch scope next
+## Current stage — reconcile logistics-first product hierarchy and unblock detailed specifications
 
-Stage 5.4 is complete. The owner explicitly approved the policy/scenario-design approach for all 20 sections A-01–A-20, and PR #39 merged the refinements into `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`. This is not approval of executable test specifications, test execution, implementation, or release.
+Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. This is not approval of executable test specifications, test execution, implementation, or release.
 
-Stage 5.5 proceeds in four controlled steps:
-1. **Completed in PR #40:** Correct continuity records, duplicate issue identifiers, and stale approval/status statements.
-2. **First-pass alignment recorded in PR #40:** Reconcile DEC-022–DEC-036 against actor, shared-workflow, lifecycle, and cross-domain acceptance documents. Accepted policies remain accepted; unresolved technical contracts remain open.
-3. **Completed in PR #41:** Consolidated dependency/traceability register for A-01–A-20 and ADM-R01–ADM-R54, accepted as a navigation baseline only.
-4. **Completed in PR #42:** `PLATFORM_P0_TEST_SPECIFICATION_READINESS.md` assesses all 45 P0 and 6 Conditional P0 requirements, the 80 scenario outlines, source-backed test-specification candidates, missing capabilities, policy/contract blockers, and conditional activation gates. The owner-reviewed assessment is accepted as a readiness/navigation baseline only. No requirement is approved for execution.
+Stage 5.5:
+1. PR #40 corrected continuity records, duplicate issue identifiers, and stale approval/status statements; first-pass DEC-022–DEC-036 policy alignment was recorded.
+2. PR #41 consolidated the A-01–A-20 and ADM-R01–ADM-R54 dependency/traceability register as a navigation baseline.
+3. PR #42 assessed all 45 P0 and 6 Conditional P0 requirements, the 80 scenario outlines, source-backed candidates, missing capabilities, policy/contract blockers, and conditional activation gates. This is a readiness/navigation baseline only; no requirement is approved for execution.
+4. PR #43 reconciled the post-PR #42 continuity metadata.
+5. DEC-037 records the owner's logistics-first product hierarchy and shared fulfilment principle.
 
-Do not invent unresolved thresholds, formulas, permission limits, proof methods, retention periods, or retry/time-out values. Before any test execution, each P0/Conditional P0 needs an approved, reproducible test specification with preconditions, actor, action, expected state and non-state changes, replay/failure behaviour, evidence artifacts, cleanup, and accountable reviewer. Production-readiness evidence is a separate workstream.
+The readiness assessment's source findings remain valid: independent shipment booking, pricing, custody, routing and related operational capabilities are absent or materially incomplete in the inspected source baseline. That is an implementation gap against the accepted launch scope, not a reason to classify these core capabilities as deferred.
 
-Other unresolved gates:
-- Confirm whether repository-root `pudo.zip` belongs to the active VeriLyft source-of-truth scope; it has not been inspected.
-- **Next decision:** Confirm the intended initial launch scope and explicitly classify each capability as (a) included at launch, (b) disabled/not offered at launch, or (c) supported through an approved manual fallback. Begin with service scope and do not assume independent-shipment operations are launch-enabled.
-- After launch scope is approved, sequence the detailed blockers/contracts and author individual reproducible test specifications; preserve the active source baseline at `e0f69055` unless a source-changing commit is inspected.
-- Define production-like environment, blocker ownership, deployment/rollback, backup/restore proof, monitoring/alerts, incident response, and dated release sign-off.
+## Next work
+
+- Reconcile DEC-018 and DEC-037 through the remaining SDD documents, especially workflow/lifecycle boundaries, requirement priorities, acceptance scenarios, and the launch-readiness assessment.
+- Resolve logistics-first contracts in dependency order: booking-party and booking eligibility; pricing/quote/payment; physical intake, measurements and custody; location capability; routing, dispatch and movement; delivery proof and failed-delivery resolution; audit/evidence; notifications/privacy; and production operations.
+- Preserve storefront catalogue, cart, checkout, customer account and payment requirements as the attached commerce service. Its existing source-backed slices may be specified and regression-tested, but must not displace the core logistics workflow.
+- Keep source facts, designed requirements, implemented behaviour, runtime evidence, and production-readiness evidence distinct. Do not invent unresolved thresholds, formulas, permission limits, proof methods, retention periods, or retry/time-out values.
+- Preserve the active source baseline at `e0f69055` unless a source-changing commit is inspected.
 - Obtain explicit owner approval of the complete platform-wide SDD before implementation.
 
 ## Working rules
@@ -43,5 +50,4 @@ Other unresolved gates:
 - Keep accepted policy, source facts, test evidence, and production-readiness evidence distinct.
 - Keep changes focused and documentation-only while the SDD is incomplete. Use branches and PRs; the owner reviews and merges every PR.
 - Never claim tests were run unless they actually were.
-
-Do not restart the completed D-01–D-15, PM-01–PM-12, Stage 5.2, or Stage 5.3 decision sequences.
+- Do not restart the completed D-01–D-15, PM-01–PM-12, Stage 5.2, or Stage 5.3 decision sequences.
