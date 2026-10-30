@@ -3,7 +3,7 @@
 **Last updated:** 30 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Latest verified main head:** `6e643827fc8ef91d0e63493703198808363a90ed` — PR #44 merged, establishing the logistics-first product hierarchy. PRs #40–#44 changed SDD documentation only. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). This does not prove runtime behaviour. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). This does not prove runtime behaviour.
+**Latest verified main head:** `6e643827fc8ef91d0e63493703198808363a90ed` — PR #44 merged, establishing the logistics-first product hierarchy. PRs #40–#44 changed SDD documentation only. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). This does not prove runtime behaviour.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
@@ -23,7 +23,7 @@
 
 ### Current milestone — Milestone 1 independent shipment booking policy accepted; SDD reconciliation continues
 
-- **Owner decision register:** 15 of 15 tracked D-01–D-15 decisions have accepted high-level outcomes, recorded as DEC-022–DEC-036. DEC-037 separately records the owner's accepted product hierarchy: logistics/independent shipment booking is primary; storefront commerce is attached. Detailed policy values, permissions, transitions, and evidence requirements remain open where identified in the decision records.
+- **Owner decision register:** 15 of 15 tracked D-01–D-15 decisions have accepted high-level outcomes, recorded as DEC-022–DEC-036. DEC-037 records the accepted logistics-first product hierarchy. DEC-038 records the accepted independent-booking confirmation, information, handover-deadline, cancellation, and customer/staff responsibility policy. Detailed service values, permissions, technical transitions, and evidence requirements remain open where identified.
 - **Latest verified main head:** `6e643827fc8ef91d0e63493703198808363a90ed` (PR #44 merged).
 - **Source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed source pass recorded in PR #32). The comparison through PR #42 shows documentation-only changes; no later application-source change requires a new source baseline. Source presence remains distinct from runtime verification.
 - **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), P0 acceptance-scenario/evidence catalogue draft (PR #33), booking-party authority consolidation (PR #36), Stage 5.3 pricing/measurement/quote-policy consolidation (PR #37), Stage 5.4 consolidation (PR #39), Stage 5.5 continuity/policy reconciliation (PR #40), dependency/traceability register (PR #41), and the intervening continuity updates are merged.
