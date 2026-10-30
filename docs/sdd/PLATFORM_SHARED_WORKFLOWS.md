@@ -599,3 +599,16 @@ The following owner-approved boundaries refine the proposed sequence and open qu
 **Remaining open:** Service-specific inspection/prohibited-item checklist; measurement and conversion detail; identity/acknowledgement/receipt method; evidence and retention; actor/partner authority and second-person approval; capability configuration procedure; hold ownership/review/maximum duration; transfer proof/correction authority; exception resolution; and detailed acceptance tests.
 
 DEC-042 is high-level business policy only. It does not approve technical data representation, status values, fields, collections, endpoints, permissions, or application-code changes.
+
+### Workflow C addendum — location capability and operational authority (DEC-043)
+
+- Before accepting new work, establish that the location is active, explicitly supports the relevant service, and has the distinct capability for the requested action. A location label/type or previously supported service is not sufficient evidence.
+- Check the acting staff member's assigned authority independently from the location's configured capability. Both checks are required for each consequential action; one does not imply the other.
+- Treat outgoing intake, staff-created walk-in intake, measurement, custody acceptance, payment collection/recording, parcel collection/release, and custody handover as distinct capability boundaries. No action capability automatically grants another.
+- Only designated Admin users with the relevant assigned authority may change location capabilities. Location editing, activation/deactivation, capability administration, and staff permission assignment are distinct responsibilities; do not infer unrestricted authority from the Admin label.
+- Record capability grants, changes, and revocations as attributable, auditable configuration events. Preserve prior configuration and operational history.
+- A capability revocation or location unavailability blocks new work requiring that capability. Parcels already physically held remain accounted for; their custody is not erased or transferred by configuration change. Resolve them through authorized handling or a separately recorded physical transfer.
+- External collection-centre, carrier, and driver actors remain distinct from internal staff who record events. No direct partner/driver login is introduced at launch.
+- Do not add automated hours, capacity, or availability scheduling to the lean launch location model under this decision.
+
+**Still open:** Approved service/location/action matrix; exact capability catalogue; designated Admin assignment granularity; staff permission scopes; partner arrangements; handling of queued but not yet received work; temporary closure procedures; audit retention; technical contracts and acceptance tests. DEC-043 is policy direction only and does not approve implementation details.
