@@ -560,3 +560,22 @@ The payment/financial-event lifecycle must preserve these business boundaries:
 8. Verified full settlement of the amount currently due is the normal dispatch prerequisite. Partial, pending, failed, or unverified payment does not satisfy it. Any DEC-030 exception is a separate authorization and does not mutate payment status or bypass unrelated holds.
 
 The detailed service/location configuration, partial-payment eligibility, payment-method evidence, financial approval authority, refund/credit rules, late-payment disposition, reconciliation schedule/ownership/tolerances, chargeback process, idempotency/concurrency contracts, and executable acceptance tests remain open. This refinement does not approve a schema, field, endpoint, status vocabulary, permission model, provider integration, or implementation.
+
+## 4.4A Intake and custody policy refinement — DEC-042
+
+The following owner-approved policy refines the conceptual intake and custody lifecycle in section 4.4. It does not define executable status values or technical contracts.
+
+1. Intake starts from an existing confirmed booking or the distinct authorized staff-created walk-in path. Staff-created walk-in intake is not staff-assisted customer booking.
+2. Before each consequential physical action, verify that the location is active and explicitly supports the requested service/action, that the parcel and relevant booking/intake are identifiable, and that the handover person's relevant authority is established.
+3. Apply only the relevant service-specific inspection, condition, packaging, prohibited-item, identity, measurement, acknowledgement, and evidence requirements. Preserve declared and actual measurements separately using configured service units. Avoid unnecessary photography or personal-data collection.
+4. Distinguish refusal before physical custody, accepted custody, and physical receipt retained under a hold for review. If the location has possession while a matter is unresolved, record that custody and the hold; physical possession must not be left ambiguous.
+5. A held parcel is not automatically eligible for onward processing or dispatch. Intake/custody does not itself prove payment, cancellation, refund, credit, dispatch, or delivery.
+6. Attribute each custody event to the parcel, relevant handover person, receiving actor, location, time, outcome, and applicable evidence/reason. Where an external party performed the event, identify the reported source and do not imply the recording staff member witnessed it.
+7. Each staff, location, carrier, or collection-point handover is a distinct physical event. An attempted handover is not completed transfer; preserve prior custody history.
+8. An inactive location cannot accept new work. Parcels already in its custody remain accounted for until an authorized resolution or transfer is recorded.
+
+**Location capability guard:** DEC-025 remains authoritative for the lean location record and explicitly configured capabilities. Outgoing intake, measurement, custody acceptance, payment collection/recording, parcel collection/release, and custody handover are distinct actions. Location labels, authentication, or Admin status do not imply capability or action authority. Capability changes are attributable and auditable.
+
+**Cross-domain guards:** Measurement-based price changes follow DEC-040; payment and settlement follow DEC-041. Physical custody, accepted commercial terms, payment, dispatch, and delivery remain independently observable facts.
+
+**Still open:** Service-specific inspection/prohibited-item checklists; measurement units/conversion; identity and acknowledgement methods; receipt format; evidence and retention; actor/partner authority and second-person approval; location capability assignment; hold ownership/review/maximum period; transfer proof/correction authority; missing/damaged parcel and failed/disputed handover resolution; liability/compensation/insurance; exact status vocabulary, technical contracts, and acceptance tests.

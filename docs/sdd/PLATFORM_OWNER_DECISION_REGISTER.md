@@ -314,3 +314,23 @@ The owner approved the following payment and financial-resolution boundaries, re
 **Still open:** Service eligibility and conditions for partial payment; enabled methods/providers and transaction/cash limits; evidence/receipt details; refund approval limits, separation of duties, timelines and partial-refund eligibility; cancellation fees; credit expiry/use/transfer; late-payment disposition; reconciliation frequency, ownership, tolerances, escalation and cash handling; chargeback procedure; DEC-030 eligible circumstances/limits/evidence; and detailed acceptance tests.
 
 DEC-041 is high-level business policy only. No technical representation, schema, fields, collections, endpoints, permission implementation, provider choice, or application-code change is approved.
+
+## Additional owner-accepted detailed policy — DEC-042
+
+### Physical intake, custody, and location accountability
+
+The owner approved DEC-042 on 30 October 2026.
+
+- Advance-booked intake and staff-created walk-in intake remain distinct; staff must not impersonate a customer or accept a quotation without approved authority.
+- Consequential physical actions require an active location with the explicitly configured capability and an actor with assigned authorization. Location labels, login, and Admin status do not imply capability.
+- Distinguish refusal before custody, accepted custody, and physical receipt retained under a hold. If a parcel is physically possessed during review, custody and the hold must be recorded; a hold does not authorize onward processing or dispatch.
+- Keep physical custody separate from booking, accepted commercial terms, payment, dispatch, and delivery. DEC-040 governs measurement adjustments; DEC-041 governs payment/settlement.
+- Apply service-specific inspection and evidence requirements; preserve declared/actual measurements separately. Avoid unnecessary photography and personal-data collection.
+- Attribute custody events and transfers to parcel, relevant handover/receiving actors, location, time, outcome, and applicable evidence/reason. Identify external event sources when staff record events they did not personally witness.
+- Preserve DEC-025's lean location model and distinct action capabilities. Deactivation prevents new work but must not make parcels already in custody unaccounted for.
+- Each physical handover is a distinct event; attempted transfer is not completed transfer. Preserve previous custody history.
+- Missing/damaged parcels, disputed/failed handovers, incorrect assignments, and prolonged holds require controlled exception handling.
+
+**Still unresolved:** Service-specific checklists, prohibited-item rules, measurement units/conversions, identity/acknowledgement/receipt methods, evidence retention, staff/partner authority and second-person approval, capability assignment, hold ownership/review periods, transfer proof/correction authority, exception resolution, liability/compensation/insurance, technical contracts, and executable acceptance tests.
+
+DEC-042 records business policy only; it does not approve a schema, fields, collections, endpoints, status vocabulary, permission implementation, or application-code change.

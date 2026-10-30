@@ -879,3 +879,21 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Continue platform-wide SDD reconciliation, source traceability, acceptance-test specification, and production-readiness evidence planning. Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
 **Evidence boundary:** DEC-041 records owner-approved high-level business policy only. This proposal changes documentation only; no application source, schema, Firebase configuration/rules, API, permission, provider integration, deployment, runtime behaviour, or test result is changed or verified. No service-specific rates, payment limits, refund thresholds, credit expiry, reconciliation schedule, provider choice, or technical implementation is approved.
+
+## 38. Milestone 3 Part 1 — physical intake and custody policy approved — 30 October 2026
+
+- [x] Reviewed DEC-025 location capabilities, DEC-027 measurement boundaries, DEC-038 booking/intake separation and actor responsibilities, DEC-040 measurement adjustment, DEC-041 payment/settlement, and the physical intake/custody workflow and A-09/A-10 acceptance direction.
+- [x] Owner approved distinct advance-booked and staff-created walk-in intake paths; walk-in intake is not staff-assisted customer booking.
+- [x] Owner approved active-location, explicitly configured capability, parcel/record identification, and relevant handover-authority checks before consequential physical actions.
+- [x] Owner approved distinguishing refusal before custody, accepted custody, and physical receipt retained under a hold; physical possession during review must be recorded, and held parcels are not automatically eligible for onward processing or dispatch.
+- [x] Owner approved separation of booking, commercial agreement, physical custody, payment settlement, dispatch, and delivery; measurement adjustments remain governed by DEC-040 and payment by DEC-041.
+- [x] Owner approved service-specific inspection/evidence requirements, separate declared and actual measurements, proportionate condition evidence, and avoidance of unnecessary photography/personal-data collection.
+- [x] Owner approved attributable custody events and external-event source identification; distinct physical transfer events; attempted handover is not completed transfer.
+- [x] Owner approved DEC-025's lean capability-based location model, auditable capability changes, and inactive-location continuity for parcels already in custody.
+- [x] Owner approved controlled exception handling for missing/damaged parcels, disputed/failed handovers, incorrect assignments, and prolonged holds, without inventing automatic liability or financial outcomes.
+- [x] Recorded DEC-042 and reconciled the decisions log, shared workflow, domain/lifecycle contract, owner decision register, cross-domain acceptance direction, issue register, and continuity records in this documentation-only proposal.
+- [ ] Review and merge the Milestone 3 Part 1 documentation-only PR.
+- [ ] Keep service checklists, prohibited-item rules, identity/acknowledgement/receipt methods, evidence retention, staff/partner authority, hold limits, transfer correction, exception outcomes, liability/compensation/insurance, technical contracts, and executable tests open.
+- [ ] Continue platform-wide SDD reconciliation, read-only source traceability, acceptance-test specification, and production-readiness evidence planning. Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
+
+**Evidence boundary:** DEC-042 records owner-approved high-level business policy only. This proposal changes documentation only; no application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed or verified. No technical structure, status enum, service-specific checklist, evidence-retention schedule, staff permission implementation, liability rule, or application-code change is approved.

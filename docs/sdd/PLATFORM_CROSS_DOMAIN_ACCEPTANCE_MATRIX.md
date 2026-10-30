@@ -292,3 +292,19 @@ The following outcomes must be represented in later executable acceptance scenar
 | Financial accountability | Consequential financial actions preserve actor, timestamp, reason, transaction/reference and applicable evidence; duplicate/replayed provider events do not duplicate financial effects. |
 
 Before these scenarios can be marked executable, specify service/location payment configuration, partial-payment eligibility, method-specific evidence, cash/transaction limits, refund/credit authority and timelines, late-payment disposition, reconciliation cadence/ownership/tolerances, chargeback handling, DEC-030 exception eligibility/limits/evidence, technical idempotency/recovery contracts, and safe test fixtures. No implementation or runtime evidence is implied.
+
+## A-09/A-10 — DEC-042 physical intake, custody, and location acceptance refinement
+
+The following acceptance direction supplements A-09 (physical intake, measurement and custody) and A-10 (location and service capability). These are scenario requirements, not evidence of implementation.
+
+- **Separate intake paths:** An existing confirmed booking and staff-created walk-in intake are distinguishable; walk-in intake is not misrepresented as staff-assisted customer booking.
+- **Location and actor guard:** Reject consequential actions at inactive or unsupported locations and reject actors without the specific assigned authority, even if authenticated or Admin.
+- **Distinct physical outcomes:** Refusal before custody, accepted custody, and physical receipt retained under a hold are distinguishable. If a parcel is physically held during review, its custody is recorded and the hold prevents normal onward processing/dispatch.
+- **Commercial/financial separation:** Booking, accepted terms, custody, payment, dispatch, and delivery remain separate. A custody event cannot imply settlement, cancellation, refund, credit, or delivery.
+- **Measurement/condition integrity:** Declared and actual measurements remain separate and use applicable service units. Inspection/evidence requirements are service-specific; no unnecessary personal data or photography is collected.
+- **Custody attribution:** Each physical event identifies the parcel, relevant handover/receiving actors, location, time, outcome, and applicable evidence/reason. Externally performed events identify their reported source and do not falsely imply staff observation.
+- **Inactive location continuity:** Deactivation prevents new work but does not remove visibility/accountability for parcels already held there.
+- **Transfer integrity:** Attempted and completed transfers are distinguishable; each completed handover preserves source, recipient/location, actor, time, outcome, and applicable evidence/reason without overwriting prior custody history.
+- **Exception handling:** Missing/damaged parcels, disputed/failed handovers, incorrect location assignments, and prolonged holds enter controlled resolution; no automatic liability or financial outcome is inferred.
+
+**Still required before executable tests:** Service-specific checklist and prohibited-item rules; identity/acknowledgement/receipt methods; evidence/retention; actor/partner authority and second-person controls; hold ownership and time limits; transfer correction authority; exception outcomes; and technical/source/runtime evidence. DEC-042 is policy direction only.
