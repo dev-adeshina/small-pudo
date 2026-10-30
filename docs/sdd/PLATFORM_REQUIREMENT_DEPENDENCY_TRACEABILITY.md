@@ -4,7 +4,7 @@
 **Prepared:** 30 October 2026  
 **Repository baseline:** `main` after PR #41 merge `93f389cf16b9f1e40bbe414426ccc490d1221865`  
 **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32)  
-**Authority:** Derived from the owner-approved priority matrix, A-01–A-20 catalogue, DEC-022–DEC-036, PM-01–PM-12, BP-01–BP-22, and the current actor/workflow/lifecycle drafts. This register is a traceability aid, not a new source of product policy or implementation authorization.
+**Authority:** Derived from the owner-approved priority matrix, A-01–A-20 catalogue, DEC-022–DEC-038, PM-01–PM-12, BP-01–BP-22, and the current actor/workflow/lifecycle drafts. This register is a traceability aid, not a new source of product policy or implementation authorization.
 
 ## 1. Purpose and boundaries
 
@@ -16,8 +16,8 @@ It consolidates links already present in the source SDD; it does not create new 
 
 - **Priority authority:** `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`. P0, Conditional P0, P1 and Deferred classifications are carried forward without reinterpretation.
 - **Scenario authority:** `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`. A-01–A-20 scenario-design refinements were owner-approved and merged in PR #39; these remain scenario outlines, not executable test specifications.
-- **Policy authority:** `DECISIONS.md` (DEC-022–DEC-036), `PLATFORM_STAFF_PERMISSION_DECISIONS.md` (PM-01–PM-12), and `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` (BP-01–BP-22).
-- **Workflow and lifecycle references:** `PLATFORM_SHARED_WORKFLOWS.md` and `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`. These are technical/operational drafts, not implementation-ready contracts.
+- **Policy authority:** `DECISIONS.md` (DEC-022–DEC-038), `PLATFORM_STAFF_PERMISSION_DECISIONS.md` (PM-01–PM-12), and `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` (BP-01–BP-22).
+- **Workflow and lifecycle references:** `PLATFORM_SHARED_WORKFLOWS.md` and `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`. DEC-038 now resolves independent-booking confirmation, service-specific booking information, separate handover deadline, and responsibility boundaries; these remain technical/operational drafts, not implementation-ready contracts.
 - **Source authority:** `IMPLEMENTATION_SOURCE_TRACEABILITY.md`. Source presence is not proof of deployed configuration, runtime behaviour, test success or production readiness.
 - **Traceability direction:** An ADM-R requirement can support multiple A areas; an A area can depend on multiple ADM-R requirements and owner decisions. This is many-to-many, not a one-to-one mapping.
 
