@@ -595,7 +595,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Confirmed government requests remain basic and controlled, require recorded authority/basis/scope/review/disclosure, and do not grant unrestricted platform access.
 - [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff in this documentation proposal.
 - [ ] Review and merge the focused documentation-only PR.
-- [ ] Continue to D-13: customer notifications and Telegram boundary.
+- [x] Continue to D-13: customer notifications and Telegram boundary.
 - [ ] Keep retention periods, full event/evidence catalogue, reviewer matrix, two-person approval cases, deletion/anonymization, legal-hold authority, disclosure workflow, evidence integrity requirements, and acceptance tests unresolved.
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
