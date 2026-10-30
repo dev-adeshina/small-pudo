@@ -28,7 +28,7 @@
 - **Source inspection baseline:** `c56be9b121e6007e1e99c6df2d3984e709771a92`. Comparison through latest main shows intervening commits changed SDD documentation only; source traceability remains a read-only snapshot and must be reconciled with accepted policy.
 - **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), and P0 acceptance-scenario/evidence catalogue draft (PR #33) are merged.
 - **Merged documentation:** PR #36, `docs: consolidate booking-party authority decisions`, is merged. `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` records BP-01–BP-22 accepted under DEC-023/DEC-024. PM-01–PM-12 remain accepted in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`.
-- **Current work:** Reconcile the six owner-approved Stage 5.3 pricing, measurement, quote-management, quote-adjustment, and financial-outcome policies across the authoritative SDD documents. Then continue unresolved policy/technical dependencies, source reconciliation, production-readiness evidence, and explicit approval of the complete SDD.
+- **Current work:** PR #37 contains the documentation-only reconciliation of the six owner-approved Stage 5.3 pricing, measurement, quote-management, quote-adjustment, and financial-outcome policies. After owner review/merge, continue unresolved policy/technical dependencies, source reconciliation, production-readiness evidence, and explicit approval of the complete SDD.
 - **Implementation gate:** No application-code changes until the complete platform-wide SDD has been reconciled and explicitly approved.
 
 VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, and Cloudinary application. Preserve its architecture and existing patterns; do not invent parallel services, collections, fields, routes, or permission models.
@@ -763,7 +763,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Refined DEC-027 to distinguish declared and actual measurements, require explicit service-configured units and attributable measurement evidence, preserve original quotes, require review for material/payment-impacting discrepancies, and require customer acceptance before collecting additional charges.
 - [x] Reconciled DEC-029 financial outcomes: rejected quotes, accepted adjustments, disputed additional charges, over/underpayments, failed attempts, refunds, credits, reversals, late payments, and reconciliation remain distinct and traceable.
 - [x] Updated the owner decision register, shared workflows, lifecycle/contract draft, cross-domain acceptance matrix, issue tracker, progress tracker, and session handoff in this documentation proposal.
-- [ ] Review and merge the focused Stage 5.3 documentation-only PR.
+- [ ] Review and merge PR #37, the focused Stage 5.3 documentation-only PR.
 - [ ] Specify exact formulas/rates, input sources, service mapping, units/conversion, rounding/effective dates, taxes/fees/discounts, accepted-quote expiry edge cases, measurement thresholds, approval limits, and adjustment-rejection service resolution.
 - [ ] Reconcile remaining DEC-022–DEC-036 dependencies, technical contracts, source traceability, P0 acceptance evidence, and production-readiness requirements.
 - [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
