@@ -28,7 +28,7 @@
 - **Source inspection baseline:** `c56be9b121e6007e1e99c6df2d3984e709771a92`. Comparison through latest main shows intervening commits changed SDD documentation only; source traceability remains a read-only snapshot and must be reconciled with accepted policy.
 - **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), and P0 acceptance-scenario/evidence catalogue draft (PR #33) are merged.
 - **Current proposal:** `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` records BP-01–BP-22 accepted under DEC-023/DEC-024; the documentation consolidation PR is being prepared. PM-01–PM-12 remain accepted in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`.
-- **Next stages:** Complete documentation reconciliation for accepted PM-01–PM-12; resolve remaining policy dependencies in DEC-022–DEC-036; reconcile lifecycle/API/data/security contracts against source; assess production readiness; obtain explicit approval of the complete SDD.
+- **Next stages:** Proceed to Stage 5.3 — pricing, measurements, and quote adjustments (DEC-026/DEC-027); resolve remaining policy/technical dependencies in DEC-022–DEC-036; reconcile lifecycle/API/data/security contracts against source; assess production readiness; obtain explicit approval of the complete SDD.
 - **Implementation gate:** No application-code changes until the complete platform-wide SDD has been reconciled and explicitly approved.
 
 VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, and Cloudinary application. Preserve its architecture and existing patterns; do not invent parallel services, collections, fields, routes, or permission models.
