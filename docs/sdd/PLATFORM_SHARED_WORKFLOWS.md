@@ -4,7 +4,7 @@
 **Last updated:** 30 October 2026  
 **Scope:** Primary independent-shipment logistics workflows and attached storefront-order fulfilment, including their shared operational fulfilment boundary  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, ADMIN_REQUIREMENTS.md, ADMIN_PORTAL.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-038
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-039
 
 ## 1. Purpose, status, and boundaries
 
@@ -174,11 +174,11 @@ Use these evidence labels consistently:
 
 ### Accepted constraints (DEC-026/DEC-027)
 
-- Each service explicitly uses an approved fixed, calculated, or hybrid pricing model. A service may combine approved fixed and variable components; not every service uses every model.
+- Each service explicitly uses an approved fixed, calculated, or hybrid pricing model. A service may combine approved fixed and variable components; not every service uses every model. Under DEC-039, each service uses only its configured approved inputs; no universal formula or input set is assumed.
 - Storefront delivery and independent shipment booking share the same approved pricing rule set wherever their inputs overlap. A service may not invent an ad hoc formula outside the approved pricing catalogue/configuration.
 - Each service declares which approved inputs apply. Categories may include origin, destination, distance/approved distance band, weight, dimensions, volumetric weight, service class/delivery speed, minimum charge, and documented special-handling requirements.
-- Only applicable, approved inputs are used. Exact formulas, rates, input sources, service mappings, units, rounding, and effective-date rules remain open.
-- Quote validity is configured by service and communicated to the customer. An unaccepted expired quote requires a fresh quote before proceeding. The effect of expiry on an already accepted quote remains open.
+- Only applicable, approved inputs are used. The customer/browser may provide declared inputs but cannot determine the authoritative final price; trusted server-side validation/calculation applies the approved service configuration. Staff-assisted pricing uses the same rule authority and cannot introduce ad hoc formulas or charges. Quotes disclose applicable charge components and total; taxes, surcharges, discounts, and other fees are never silently presumed zero or silently added. Exact formulas, rates, input sources, service mappings, units, rounding, and effective-date rules remain open.
+- Quote validity is configured by service and communicated to the customer. An unaccepted expired quote requires a fresh quote before proceeding. Under DEC-038, expiry of an already accepted quote does not silently cancel or rewrite the confirmed booking or accepted terms.
 - Recognized quote outcomes are draft, issued, accepted, rejected, expired, superseded, and cancelled. Acceptance is explicit.
 - Preserve quote inputs, itemized charges, total, currency, and pricing-rule/rate version/effective context. Recalculation creates a new quote/revision; prior issued/accepted quotes are not silently overwritten.
 - A quote, accepted commercial agreement, payment, and booking are distinct events.
@@ -202,7 +202,7 @@ Use these evidence labels consistently:
 
 ### Open policy / design questions
 
-- Exact formula catalogue, rates, service mapping, input sources, units, rounding, currency handling, and effective-date rules.
+- Exact formula catalogue, rates, service mapping, input sources, units/conversions, distance sources/bands, rounding, currency handling, minimums, tax/fee/discount applicability, and effective-date rules.
 - Whether taxes, surcharges, discounts, or other fees apply and how they are calculated, displayed, and approved; unknown treatment must not be assumed to be zero.
 - Exact quote-validity durations, handover-deadline configuration, and booking-reference/receipt format. DEC-038 resolves that valid quote acceptance by the authenticated booking party confirms the booking and accepted-quote expiry does not silently cancel or rewrite it.
 - Service-specific required measurements, units, explicit conversion rules, numeric discrepancy thresholds, and evidence requirements.
@@ -211,7 +211,7 @@ Use these evidence labels consistently:
 
 ### Acceptance criteria to define
 
-- Each service uses only its explicitly configured fixed, calculated, or hybrid pricing model and approved inputs.
+- Each service uses only its explicitly configured fixed, calculated, or hybrid pricing model and approved inputs; the trusted server is authoritative for validation and final calculation, and the quote transparently presents applicable charge components and total.
 - Storefront delivery and independent shipment booking reuse the shared approved rule set wherever inputs overlap.
 - Equivalent approved inputs under the same service/rule version produce a reproducible result.
 - Issued and accepted quotes can be reconstructed from preserved inputs, itemized charges, total, currency, and pricing-rule/rate version/effective context.

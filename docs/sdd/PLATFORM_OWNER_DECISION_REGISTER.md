@@ -270,3 +270,18 @@ Still unresolved:
 - Service-specific handover durations/configuration; service eligibility/capacity; quote validity and pricing detail; business identity/relationship representation; identity/contact/consent verification; payment-at-intake and late-payment rules; booking reference and status vocabulary; missed-handover/refused-intake financial and service outcomes; complete permissions, data/API contracts, evidence, and acceptance tests.
 
 DEC-038 is business policy only. It does not approve implementation, schemas, fields, APIs, routes, status enums, identity providers, permission claims, or code changes. The complete platform-wide SDD must still be reconciled and explicitly approved before application-code work.
+
+## 7. Additional owner-accepted detailed policy — DEC-039
+
+DEC-039 records the owner's approval of the pricing input and calculation boundaries. It refines DEC-019 and DEC-026 without reopening D-05 or approving actual rates/formulas.
+
+Accepted:
+- Each service uses only its explicitly approved fixed, calculated, or hybrid pricing model and configured inputs; there is no universal formula or mandatory universal input set.
+- Potential inputs are service-configured and may include origin/destination, distance or approved distance band, weight, dimensions/volumetric weight, service class/delivery speed, configured minimum charge, and documented special handling.
+- The customer/browser may supply declared inputs but cannot determine or authoritatively submit the final price. Trusted server-side validation/calculation applies approved service configuration. Staff-assisted pricing uses the same rule authority and cannot invent ad hoc formulas or charges.
+- Quotes transparently present applicable charge components and total. Taxes, surcharges, discounts, and other fees are not silently presumed zero or silently added; service-specific treatment must be specified.
+- Issued/accepted quote inputs, itemized charges, total, currency, pricing-rule/rate version, and effective context remain historically preserved. Later rate changes do not silently alter an existing quote, accepted agreement, or completed payment.
+
+Still unresolved: exact rates/formulas; units/conversions; distance source/bands; rounding; effective dates; service-to-input mapping; tax/fee/discount applicability and calculation; minimums; special-handling rates; quote validity; and associated executable acceptance tests.
+
+DEC-039 is business policy only. It does not approve pricing tables, configuration formats, fields, collections, routes, APIs, permissions, provider choices, or application-code changes. The complete platform-wide SDD approval gate remains in force.
