@@ -3,11 +3,11 @@
 **Last updated:** 30 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Latest verified main head:** `1d8a44c2da94a8ff351f365e0e5073b292690f6d` — PR #39 merged on 30 October 2026 at 19:59:30 UTC. Current documentation proposal: Stage 5.5 cross-document SDD reconciliation on `docs/stage-5-5-cross-document-reconciliation`. The active-source inspection baseline is `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). Merges through PR #39 changed SDD documentation only; this does not prove runtime behaviour.
+**Latest verified main head:** `712d32da11a5740fdbc4e2a0b826adab42ed352b` — PR #40 merged. Current documentation proposal: Stage 5.5 consolidated dependency/traceability register on `docs/stage-5-5-dependency-traceability`. The active-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32); PR #40 changed SDD documentation only. This does not prove runtime behaviour.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
-**Current phase:** Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. Stage 5.5 cross-document SDD reconciliation is active. The catalogue remains test design, not executable test specifications. Detailed technical design, reproducible P0 test specifications, runtime/production evidence, and complete platform-wide SDD approval remain open. No application-code changes are authorized until the complete SDD is reconciled and explicitly approved.
+**Current phase:** Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. Stage 5.5 is active. PR #40 corrected continuity/issue records and began cross-document policy alignment. The consolidated A-01–A-20 / ADM-R01–ADM-R54 dependency and traceability register is now proposed for review. Detailed technical contracts, reproducible P0 test specifications, runtime/production evidence, and complete platform-wide SDD approval remain open. No application-code changes are authorized until the complete SDD is reconciled and explicitly approved.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -21,16 +21,16 @@
 
 ## 1. Current position
 
-### Current milestone — Stage 5.4 complete; Stage 5.5 cross-document reconciliation in progress
+### Current milestone — Stage 5.5 dependency and traceability consolidation in progress
 
 - **Owner decision register:** 15 of 15 tracked decisions (D-01–D-15) have accepted high-level outcomes, recorded as DEC-022–DEC-036. Detailed policy values, permissions, transitions, and evidence requirements remain open where identified in the decision records.
-- **Latest verified main head:** `1d8a44c2da94a8ff351f365e0e5073b292690f6d` (PR #39 merged on 30 October 2026 at 19:59:30 UTC).
-- **Source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed source pass recorded in PR #32). The comparison from the earlier source snapshot through PR #39 shows documentation-only changes; no later application-source change requires a new source baseline. Source presence remains distinct from runtime verification.
-- **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), P0 acceptance-scenario/evidence catalogue draft (PR #33), booking-party authority consolidation (PR #36), Stage 5.3 pricing/measurement/quote-policy consolidation (PR #37), Stage 5.4 consolidation (PR #39), and the intervening continuity updates are merged.
+- **Latest verified main head:** `712d32da11a5740fdbc4e2a0b826adab42ed352b` (PR #40 merged).
+- **Source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed source pass recorded in PR #32). The comparison through PR #40 shows documentation-only changes; no later application-source change requires a new source baseline. Source presence remains distinct from runtime verification.
+- **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), P0 acceptance-scenario/evidence catalogue draft (PR #33), booking-party authority consolidation (PR #36), Stage 5.3 pricing/measurement/quote-policy consolidation (PR #37), Stage 5.4 consolidation (PR #39), Stage 5.5 continuity/policy reconciliation (PR #40), and the intervening continuity updates are merged.
 - **Merged documentation:** PR #36, `docs: consolidate booking-party authority decisions`, is merged. `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` records BP-01–BP-22 accepted under DEC-023/DEC-024. PM-01–PM-12 remain accepted in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`.
 - **Stage 5.3:** PR #37 is merged. The six owner-approved pricing, measurement, quote-management, quote-adjustment, and financial-outcome policies are consolidated across the SDD.
 - **Stage 5.4 owner review:** All 20 catalogue sections A-01–A-20 received explicit owner approval at the policy/scenario-design level. The approved refinements are consolidated in the merged catalogue through PR #39. The catalogue remains test design, not executable test scripts or passing evidence.
-- **Current work:** Stage 5.5 reconciles continuity records, issue identifiers/statuses, accepted DEC-022–DEC-036 policy against actor/shared-workflow/lifecycle/acceptance documents, and the requirement-to-dependency traceability baseline. VLY-023 (audit/evidence source gap) remains open; the catalogue owner-review issue VLY-017 is resolved.
+- **Current work:** Review the proposed `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md`, which maps all 20 A-areas and 54 ADM requirements to priority, policy dependencies, actors, workflows, lifecycle references and inspected source status. Step 5.5's continuity/duplicate-ID correction is merged in PR #40; first-pass cross-document policy alignment is recorded. VLY-015, VLY-019–VLY-021, and VLY-023 remain open for their respective specification/evidence gates; VLY-017 is resolved.
 - **Implementation gate:** No application-code changes until the complete platform-wide SDD has been reconciled and explicitly approved.
 
 VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, and Cloudinary application. Preserve its architecture and existing patterns; do not invent parallel services, collections, fields, routes, or permission models.
