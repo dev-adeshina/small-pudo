@@ -3,7 +3,7 @@
 **Last updated:** 30 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Latest verified main head before current proposal:** `c9d9342cfc9dcef2c7d5704074d83927c5f5099c` — PR #30 merged. Current documentation proposal branch: `docs/requirement-level-priority-baseline`. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison through the current head shows intervening commits changed SDD documentation only, not application source.
+**Latest verified main head before current proposal:** `7f69a67844ac7c42f1ec6bd7b29c67cd524a1966` — PR #33 merged. Current documentation proposal branch: `docs/staff-action-permission-matrix`. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison through the current head shows intervening commits changed SDD documentation only, not application source.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
