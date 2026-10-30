@@ -4,7 +4,7 @@
 **Last updated:** 30 October 2026  
 **Scope:** Conceptual domain boundaries, lifecycle transition rules, service/API contract expectations, and authorization/security invariants  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, PLATFORM_SHARED_WORKFLOWS.md, SDD_COMPLETENESS_AUDIT.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-024, DEC-025, DEC-026, DEC-027, DEC-030
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-024, DEC-025, DEC-026, DEC-027, DEC-030, DEC-031
 
 ## 1. Purpose and guardrails
 
@@ -456,3 +456,8 @@ Financial history must distinguish the original payment, later additional paymen
 ## Dispatch exception control — DEC-030
 
 The default payment gate remains in force. A narrowly defined exception does not establish payment success and does not release unrelated operational holds. The requester cannot automatically approve their own exception; material cases require a second approver. Exact eligibility, permission assignment, materiality, limits, evidence categories, and revocation remain owner-policy details. No schema, endpoint, or implementation is approved.
+
+
+## Routing and movement control — DEC-031
+
+Route proposal, approval, route-leg assignment, dispatch, physical handover, and arrival confirmation are distinct lifecycle concepts/events. Neither a proposal nor an assignment proves physical movement. Operations manages launch-time proposals and assignments; any approval, alteration, revocation, or reassignment requires explicitly assigned staff authority and preserves prior decisions, actor, and reason. Physical movement milestones must be attributable to the shipment/parcel and route leg and identify event type, location, physical actor where known, recording actor, timestamp, and applicable evidence. If staff enter an event on behalf of a provider/driver, the physical actor and recorder remain distinguishable. Delays, missed handovers, missing parcels, damage, and disputed custody transfers are explicit exceptions for investigation/resolution. Driver Portal remains deferred. Exact route constraints, permissions, two-person approval, milestone/evidence catalogue, capacity/provider rules, correction authority, and exception resolution remain unresolved. This is a business-policy boundary, not a schema or implementation approval.
