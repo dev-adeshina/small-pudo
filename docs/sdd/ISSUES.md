@@ -299,3 +299,13 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Risk:** Incomplete verification, consent, lifecycle, financial-liability, collection, or dispute controls could permit unauthorized booking changes, disclosure, financial responsibility transfer, or parcel release.
 - **Next action:** Define the outstanding dependencies listed in Section 4 of the policy record; reconcile shared workflows, lifecycle/security contracts, actor responsibilities, acceptance scenarios, and current source before any implementation proposal.
 - **Acceptance:** Each accepted policy has a defined actor, trigger, verification/authorization, lifecycle preconditions, evidence, failure/exception outcome, audit history, and testable acceptance criteria. No application code is changed to close this issue.
+
+### Pricing and calculation specification — DEC-039
+
+- **Status:** OWNER BOUNDARIES ACCEPTED (30 October 2026); service-level pricing specification and technical contracts remain OPEN.
+- **Priority:** Blocking for pricing/quote implementation and approval across independent shipment booking and storefront delivery.
+- **Accepted boundary:** Service-specific approved fixed/calculated/hybrid models; configured inputs only; trusted server as authoritative calculator; transparent applicable charge components; preservation of historical quote inputs and rule/rate context; no invented formulas, rates, units, fees, or thresholds.
+- **Still open:** Service catalogue and model assignment; exact input mapping and authoritative input sources; rate/formula catalogue; distance source/bands; units and conversion; rounding; effective dates/versioning detail; taxes, surcharges, discounts, minimums and special-handling treatment; quote validity; measurement discrepancy thresholds; approval limits; and adjustment-rejection service resolution.
+- **Risk:** Client-authoritative totals, undocumented input assumptions, hidden fees, inconsistent service pricing, or mutable historical quotes could create financial disputes and undermine quote reproducibility.
+- **Next action:** Complete the remaining Milestone 2 decisions on measurement-based adjustment and payment/settlement outcomes, then specify service-level pricing and testable contracts without inventing values. Reconcile the shared workflow, lifecycle contract, acceptance matrix, traceability and source evidence before implementation.
+- **Acceptance:** For every service, an authorized reviewer can identify the approved model, applicable inputs and sources, reproducible calculation/rate version, transparent charge breakdown, server-side authority, and preserved historical quote. No application code is changed to close this issue.
