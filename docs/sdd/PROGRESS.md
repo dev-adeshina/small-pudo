@@ -620,3 +620,20 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, permissions, notification provider/integration, deployed configuration, runtime behaviour, or tests were changed/run.
+
+
+## 23. Owner decision D-14 — 30 October 2026 (DEC-035)
+
+- [x] Owner accepted Option A: secure guest-order recovery and optional account claiming.
+- [x] Preserved storefront guest checkout and distinguished guest-order recovery from account claiming.
+- [x] Confirmed recovery requires proof of control of the original checkout email through a verification challenge before issuing a replacement access credential; order reference/email alone is insufficient.
+- [x] Confirmed optional claiming requires authenticated account context plus a separate ownership challenge; server-side entitlement and unclaimed status checks are required.
+- [x] Confirmed an order cannot be claimed by multiple accounts or silently transferred; support-assisted recovery/exceptional transfer requires a separately approved process.
+- [x] Confirmed challenge expiry, replay/abuse protection, non-disclosing failure responses, credential confidentiality, and separation from commercial/fulfilment state.
+- [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issue tracker, progress, and handoff in this documentation proposal.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Continue to D-15: launch priority and production-readiness evidence.
+- [ ] Keep challenge format/lifetime, rate limits, post-fulfilment eligibility, account deletion consequences, exceptional transfer/support procedure, token storage/rotation mechanics, retention, and detailed denial/replay/cross-account tests unresolved.
+- [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, endpoints, token format, notification provider, permissions, deployed configuration, runtime behaviour, or tests were changed/run.

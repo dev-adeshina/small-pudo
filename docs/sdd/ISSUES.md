@@ -10,14 +10,14 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 ## Open / investigating items
 
-### VLY-004 — Guest order recovery/claiming flow undefined
+### VLY-004 — Guest order recovery and optional claiming policy accepted; implementation/evidence open
 
-- **Status:** OPEN
+- **Status:** POLICY ACCEPTED — DEC-035 (30 October 2026); technical design and runtime verification remain OPEN.
 - **Priority:** Medium
-- **Evidence:** Guest order access uses a random access token; the customer order-history feature is implemented, but a secure mechanism for claiming/recovering an existing guest order into an account remains undecided.
-- **Risk:** A customer may lose access if session storage is lost or they switch devices.
-- **Next action:** Decide whether claiming is required and define a proof-of-ownership flow before implementation.
-- **Acceptance:** An order ID alone never grants access; the order is not associated with an account without verified entitlement.
+- **Evidence:** Guest order access currently relies on a random access token; customer order-history functionality exists. The owner accepted secure recovery through proof of control of the original checkout email and optional account claiming through authenticated account context plus a separate ownership challenge. Current source/runtime behaviour has not been revalidated as implementing this policy.
+- **Risk:** A customer may lose access after losing browser storage or changing devices; insufficient verification could expose an order or associate it with the wrong account.
+- **Next action:** During the post-SDD source reconciliation, inspect the existing token lifecycle and email recovery facilities; define challenge format/lifetime, rate limits, credential rotation/revocation, eligibility, support exceptions, and detailed tests before implementation.
+- **Acceptance:** Order ID or email match alone never grants access; recovery requires proof of control of the original checkout email; claiming requires authenticated account context plus a separate ownership challenge; orders cannot be multiply claimed or silently transferred; credentials/challenges expire and resist replay/abuse; failures do not disclose order existence; recovery/claiming do not alter commercial or fulfilment state.
 
 ### VLY-005 — Payment expiry, late events, and stock release need focused verification
 
@@ -154,7 +154,7 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 
 ## Product decisions still open
 
-1. **Guest-order claiming:** Decide whether an existing guest order can be securely claimed by a signed-in customer.
+1. **Guest-order recovery/claiming (DEC-035):** High-level policy accepted; technical design, token lifecycle, verification controls, eligibility, support exceptions, and runtime acceptance evidence remain open.
 2. **Shipment lifecycle and transition permissions:** Define actual launch states, allowed transitions, exception handling, and minimum evidence before implementing shipment workflows.
 3. **Pricing policy values:** Define formulas, distance bands, material-discrepancy thresholds, review/approval limits, and permitted settlement methods.
 4. **Proof of delivery:** The business accepts flexible proof methods; define mandatory evidence by delivery type and access/retention rules.

@@ -214,3 +214,18 @@ These are policy-derived acceptance directions, not runtime test results. Retent
 - [ ] Keep Telegram deferred; verify any future paid-order Telegram notification cannot precede authorized Admin **Assign For Delivery** approval and separately approved Telegram purpose/audience/disclosure policy.
 
 These are policy-derived acceptance directions, not runtime test results. Final event/channel matrix, timing, consent/preferences/contact verification, message templates/fields, retry limits, deduplication semantics, failure ownership, retention, and detailed tests remain unresolved.
+
+
+## D-14 / DEC-035 guest-order recovery and claiming acceptance direction
+
+- [ ] Preserve storefront guest checkout; do not confuse guest shipment-booking eligibility with storefront guest orders.
+- [ ] Deny access based on an order reference alone or an email-address match alone.
+- [ ] Require proof of control of the original checkout email through a challenge delivered to that address before guest-order recovery issues a replacement access credential.
+- [ ] Require authenticated account context plus a separate ownership challenge before optional guest-order claiming.
+- [ ] Verify server-side that the order is eligible and not already claimed; prevent association with multiple accounts and prohibit silent transfer.
+- [ ] Ensure recovery credentials/challenges expire, resist replay and abuse, and prior access credentials are invalidated or rotated after successful recovery.
+- [ ] Ensure failure responses do not disclose whether an order exists and credentials do not leak through logs or ordinary notification content.
+- [ ] Keep recovery and claiming separate from payment, cancellation, fulfilment, shipment, and delivery state transitions.
+- [ ] Require separately approved verification, authorization, and audit procedures for any future support-assisted recovery or exceptional transfer.
+
+These are policy-derived acceptance directions, not runtime test results. Challenge format/lifetime, rate limits, post-fulfilment eligibility, account deletion consequences, exceptional transfer/support procedure, token mechanics, retention, and detailed denial/replay/cross-account tests remain unresolved.
