@@ -602,3 +602,21 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, permissions, audit implementation, retention jobs, disclosure integration, deployed configuration, runtime behaviour, or tests were changed/run.
+
+
+## 22. Owner decision D-13 — 30 October 2026 (DEC-034)
+
+- [x] Owner accepted Option A: controlled, event-driven notifications with role-based information access.
+- [x] Confirmed notifications derive from meaningful, verified business events and cannot change or independently establish underlying order, payment, shipment, dispatch, custody, or delivery state.
+- [x] Confirmed recipient eligibility follows DEC-024/DEC-032 party relationships and entitlements; payer notifications default to relevant financial information, not full shipment details.
+- [x] Confirmed minimum-necessary message disclosure and authenticated access controls for links to further details.
+- [x] Confirmed email as primary where configured, optional explicitly configured SMS subject to applicable consent/contact verification, and in-platform notifications for authenticated experiences.
+- [x] Confirmed Telegram remains deferred; any future paid-order Telegram notification must follow authorized Admin **Assign For Delivery** approval and a separately approved Telegram purpose/audience/disclosure policy.
+- [x] Confirmed duplicate prevention per event/recipient/channel, bounded retries, attributable attempt/outcome history, and operational visibility of persistent failures without silent fallback.
+- [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff in this documentation proposal.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Continue to D-14: guest-order recovery or claiming.
+- [ ] Keep event/timing/channel matrix, consent/preferences/contact verification, templates/fields, retry limits, deduplication semantics, failure ownership, retention, Telegram audience/purpose, and acceptance tests unresolved.
+- [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, permissions, notification provider/integration, deployed configuration, runtime behaviour, or tests were changed/run.
