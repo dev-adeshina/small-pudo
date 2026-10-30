@@ -221,18 +221,25 @@ Specify these details, trace them to existing source, and support them with acce
 
 When new evidence arrives, update the relevant issue in this file and the matching row/session log in `PROGRESS.md`. Record material architecture/product decisions in `DECISIONS.md`. Do not close an issue solely because a source file exists; use actual test results where the acceptance criterion requires runtime behaviour.
 
-### D-06 measurement discrepancy and adjustment approval — DEC-027
+### D-05 pricing models, inputs, and quote management — DEC-026
 
-- **Status:** High-level owner policy accepted; detailed rules remain open.
-- **Accepted:** Use configurable, service-appropriate thresholds; preserve quoted and actual intake measurements separately; retain actor/location/time and applicable evidence; link proposals to the original quote; require review for material discrepancies and adjustments affecting existing payments; keep proposed adjustments separate from approved charges and settled financial events.
-- **Still open:** Numeric thresholds, units and service-specific measurement requirements, staff approval limits, second-person rules, customer notification/consent, and explicit acceptance/dispute/refusal outcomes.
-- **Next action:** Resolve D-07 payment-at-intake methods and evidence, then continue the dependency-ordered owner decisions. Keep the platform-wide SDD approval gate in force; no application code changed or tested for this policy decision.
+- **Status:** High-level owner policy accepted and refined on 30 October 2026; detailed pricing configuration remains open.
+- **Accepted:** Each service explicitly uses fixed, calculated, or hybrid pricing; storefront delivery and independent shipment booking share approved pricing rules wherever inputs overlap; services explicitly configure applicable inputs from the approved categories; quote outcomes include draft, issued, accepted, rejected, expired, superseded, and cancelled; customer acceptance is explicit; an unaccepted expired quote requires a fresh quote; recalculation preserves prior versions; quote, accepted agreement, payment, and booking remain distinct; and historical quote/rate context is preserved.
+- **Still open:** Exact formulas/rates, input sources, service mapping, units, rounding, effective dates, tax/fee/discount treatment, and the effect of expiry on an already accepted quote.
+- **Next action:** Continue the cross-document reconciliation of pricing, measurement, quote, adjustment, and financial-event contracts. No application code changed or tested for this policy decision.
 
+### D-06 measurement standards, discrepancy review, and adjustment approval — DEC-027
+
+- **Status:** High-level owner policy accepted and refined on 30 October 2026; detailed rules remain open.
+- **Accepted:** Use a shared measurement-recording framework with service-specific required measurements and explicitly configured units; preserve declared and actual measurements separately; do not silently overwrite, convert, or reinterpret recorded values; record actual-measurement actor/location/time and applicable evidence; use configurable service-appropriate discrepancy thresholds without inventing numeric values; link proposed adjustments to the original quote and accepted agreement; require review for material discrepancies and adjustments affecting existing payments; notify customers of price-changing adjustments and require explicit acceptance before collecting additional charges; hold disputed additional charges pending review; and keep proposals separate from approved charges and settled financial events.
+- **Still open:** Required measurements and units by service, conversion rules, numeric thresholds, evidence detail, staff approval limits, second-person rules, and operational resolution when a customer rejects an adjustment.
+- **Next action:** Reconcile detailed pricing/measurement contracts and acceptance criteria, then continue remaining SDD dependencies. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
 
 ### D-08 cancellation, late payment, refunds, credits, and reconciliation — DEC-029
 
 - **Status:** High-level owner policy accepted on 30 October 2026 (Option A: explicit financial events with controlled transitions and reconciliation).
 - **Accepted:** Cancellation is not a refund; late payments after cancellation/expiry are recorded and reconciled without automatic reactivation; refund request and execution are distinct; credits, additional payments, reversals, and chargebacks remain separate traceable events; provider/bank reconciliation mismatches are investigated; consequential financial actions retain actor/time/reason/reference/evidence; duplicate/replayed provider events must not duplicate financial effects; operational, cancellation, payment, and refund states remain distinct.
+- **Additional accepted outcomes:** Rejected quotes create no payment obligation from that quote; accepted adjustments record the revised commercial agreement and amount due; disputed additional charges are held pending review; overpayments/underpayments require authorized resolution; failed attempts are not successful settlement; and adjustment rejection does not automatically create a refund, credit, cancellation, or charge.
 - **Still open:** Refund authority/limits/timelines, cancellation fees, partial-refund policy, credit expiry/use, late-payment disposition, reconciliation frequency/ownership, exception handling, and detailed tests.
 - **Next action:** Continue to D-09 dispatch exception authority. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
 
