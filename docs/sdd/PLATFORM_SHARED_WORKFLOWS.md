@@ -509,3 +509,17 @@ The initial release uses an explicit P0/P1/deferred baseline. P0 requirements ar
 A requirement's presence in source, a rendered page, a route, a schema, or a passing type/build check is not proof of launch readiness. Readiness evidence must be appropriate to risk and address functional end-to-end success/failure paths, server-side authorization and privacy, financial correctness and authoritative verification/reconciliation where applicable, operational accountability and physical-event evidence where applicable, and production configuration/deployment/monitoring/backup/recovery/incident/rollback readiness where applicable. Designed, implemented, tested, verified in a production-like environment, and owner-accepted for launch are separate states. Evidence must identify date, environment, scope, and relevant acceptance criterion.
 
 Unverified P0 requirements, launch-affecting security or authorization defects, financial-integrity failures, missing mandatory operational controls, and unavailable critical production/recovery capabilities block release until resolved or covered by a separately approved lawful exception. Exact requirement-level priorities, scenarios/evidence, environment, blocker ownership, exception authority, runbooks, backup/restore proof, monitoring thresholds, incident ownership, and dated sign-off remain open. This policy does not certify current production readiness or authorize implementation.
+
+## Booking-party authority policy reconciliation — DEC-023 / DEC-024
+
+The owner has accepted BP-01–BP-22 in `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`. That record supersedes earlier open-policy wording in Workflow B to the extent it now resolves who may initiate changes/cancellation, how sender/receiver requests are handled, collection authority, transfers, delegated access, privacy, disputes, and appeals.
+
+Workflow B must now carry these accepted rules:
+- The authenticated booking party may initiate permitted changes and cancellation before physical intake; price/service changes require an updated quote and customer acceptance.
+- Sender/receiver changes require appropriate verification/consent and staff review where identity, collection authority, security, or liability may be affected.
+- Sender/receiver requests go through Support; the booking party authorizes the change unless an approved exception is established.
+- After physical intake, changes are staff-mediated. Transfers after intake or dispatch require designated Admin review.
+- Collection authority is verified independently from booking and payment. Disputed collection instructions place parcel release on hold until authority is established.
+- Party notifications, delegated access, deletion, disputes, and appeals follow the BP policy record.
+
+The following remain open specification rather than unanswered owner-policy choices: verification/consent methods; complete change-type and lifecycle matrix; evidence and exception standards; exact transfer/withdrawal financial procedure; delegated-access action catalogue and duration; notification event/field/channel matrix; retention/anonymisation/legal-hold rules; dispute severity/targets, reviewer eligibility, and appeal procedure details. No technical representation or implementation is approved by this reconciliation.
