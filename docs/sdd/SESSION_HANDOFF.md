@@ -98,7 +98,7 @@ No application-code change is authorized.
 
 ## Milestone 3 Part 3 owner approval — DEC-044
 
-The owner approved the high-level custody-transfer and physical-exception approach on 30 October 2026. DEC-044 is consolidated in the Milestone 3 Part 3 documentation-only proposal.
+The owner approved the high-level custody-transfer and physical-exception approach on 30 October 2026. DEC-044 is consolidated in the documentation-only PR #51, merged on 30 October 2026 at `817bf60cd1d1ef15d060215131f2228bb24552a9`.
 
 Preserve the central invariant: recorded custody reflects established physical possession. A route assignment, dispatch authorization/record, arrival, or attempted handover does not automatically transfer custody. Every physical handover is distinct; completion requires actual handover and receiving-party possession. Record applicable source/previous custodian, intended recipient/destination, actual receiver, physical handover actor, recording staff member if different, time/location, outcome, evidence/source, and reason. Preserve prior custody history.
 
@@ -106,4 +106,4 @@ Failed, disputed, and incompletely documented handovers remain distinct from com
 
 **Still unresolved:** Service-specific handover proof methods; who may confirm/dispute/correct transfers; second-approver rules; missing-parcel investigation ownership; damage assessment/liability procedures; hold ownership/review/maximum periods; evidence retention; compensation/insurance/refund/credit/customer entitlements; exact lifecycle/status vocabulary; technical data/API/security contracts; and executable acceptance tests.
 
-**Next:** Review and merge the Milestone 3 Part 3 documentation-only PR. After merge, Milestone 3 Parts 1–3 are complete at the owner-approved policy level. Continue platform-wide SDD reconciliation, read-only source traceability, acceptance-test specification, and production-readiness evidence planning. Obtain explicit owner approval of the complete platform-wide SDD before any application-code changes. No application-code change is authorized.
+**Merge confirmation:** PR #51 has been reviewed and merged; the owner reconfirmed approval. Milestone 3 Parts 1–3 are complete at the owner-approved policy/documentation level.\n\n**Next:** Continue platform-wide SDD reconciliation, read-only source traceability, acceptance-test specification, and production-readiness evidence planning. Keep the service-specific proof, authority, investigation, hold, evidence-retention, financial/legal, technical-contract, and executable-test questions listed above open. Obtain explicit owner approval of the complete platform-wide SDD before any application-code changes. No application-code change is authorized.
