@@ -3,7 +3,7 @@
 **Document status:** Draft actor/technical responsibility model — accepted owner policies incorporated; detailed specification and full SDD approval remain open  
 **Last updated:** 30 October 2026  
 **Scope:** Platform-level human/system actors, responsibility boundaries, and portal/module distinctions  
-**Related decisions:** DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, DEC-021, DEC-022–DEC-036
+**Related decisions:** DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, DEC-021, DEC-022–DEC-038
 
 ## 1. Purpose and status
 
@@ -151,3 +151,18 @@ The owner has accepted detailed policy BP-01–BP-22 in `PLATFORM_BOOKING_PARTY_
 - **Delegated customer:** receives only explicit, limited, time-bounded, revocable, non-transferable access; no sub-delegation.
 
 Verification methods, detailed staff permissions, business-account representation, operational evidence, and technical enforcement remain open. This policy addendum does not approve a separate Support portal, role schema, permission claim, or application implementation.
+
+
+## Independent shipment booking responsibility update — DEC-038
+
+The owner has accepted the independent shipment booking policy recorded in DEC-038. The following responsibilities are accepted at the business-policy level; the detailed permission matrix and technical enforcement remain open.
+
+- **Booking party/customer:** Must provide accurate booking, parcel, and relevant party information; review the quotation and communicated service-specific handover deadline; explicitly accept the valid quotation; choose an allowed payment path; and arrange timely physical handover. The authenticated booking party may initiate permitted pre-intake changes/cancellation under BP-01–BP-03. A customer arranging a business shipment must identify the business and their relationship to it; a separate business-account system is not assumed for launch.
+- **Sender / receiver / payer / handover person:** These are distinct relationships and may be occupied by different people. Their association does not automatically confer booking-edit, cancellation, full shipment-detail, payment, or collection authority. Verification and access follow BP policy and the relevant workflow.
+- **Support:** Helps customers, records and verifies enquiries/change/dispute requests, and routes or escalates them. Support must not assume booking-party authority, independently mutate a booking without the required authorization, approve a refund, alter custody evidence, or release a parcel merely because a request was received.
+- **Operations / authorized location staff:** Prepares and manages operational work; verifies service/location capability; records actual intake, measurements, custody, movement and delivery events only within assigned permissions; and handles post-intake changes through controlled staff-mediated procedures. Booking confirmation is not evidence of physical receipt.
+- **Admin:** Handles designated exceptions, authority disputes, sensitive changes, and approvals only within explicitly assigned permissions. Admin status does not automatically authorize every financial or operational action.
+- **Staff-assisted booking:** Staff may assist a customer, but must not impersonate the customer or accept a quotation on the customer's behalf without an explicitly approved authorization process. A staff-created walk-in intake is distinct from an independent customer booking.
+- **External physical actors:** Drivers, transport providers, and collection-centre operators may perform assigned physical activities. No direct platform login or unrestricted shipment access is implied at launch; authorized internal staff record and verify operational events while identifying the physical actor.
+
+This policy does not approve specific screens, portals, roles, claims, permission sets, data fields, APIs, or application-code changes. The complete platform-wide SDD approval gate remains in force.
