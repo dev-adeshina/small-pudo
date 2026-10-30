@@ -123,7 +123,7 @@ Open specification: service-specific handover durations/configuration; quote val
 ### 4.2 Quote and adjustment lifecycle
 
 Conceptual progression:
-- Validate only the pricing inputs explicitly configured for the selected service.
+- Validate only the pricing inputs explicitly configured for the selected service. The trusted server, not the customer/browser, determines the authoritative final price.
 - Apply that service's approved fixed, calculated, or hybrid pricing model. Calculated/hybrid components use only approved applicable inputs, potentially including origin, destination, distance/approved distance band, weight, dimensions, volumetric weight, service class/delivery speed, minimum charge, and documented special handling.
 - Reuse the shared approved pricing rule set across storefront delivery and independent shipment booking wherever their inputs overlap.
 - Create a quote with preserved inputs, itemized charges, total, currency, pricing-rule/rate version, effective context, and service-configured validity.
@@ -136,13 +136,13 @@ Conceptual progression:
 - Any resulting charge, additional payment, credit, refund, reversal, or reconciliation outcome is processed and verified as a separate financial event.
 
 Required guards:
-- A service cannot use an unapproved model, input, formula, or ad hoc charge.
+- A service cannot use an unapproved model, input, formula, or ad hoc charge. Customer/browser values are inputs only; trusted server-side validation and calculation apply the approved service configuration. Staff-assisted quotes use the same rule authority. Applicable charge components and total must be transparent; taxes, surcharges, discounts, and other fees must be explicitly specified rather than silently assumed zero or added.
 - Current rate changes cannot rewrite a previously issued/accepted quote or completed payment.
 - Quote, accepted commercial agreement, booking, payment, intake, and custody remain separate facts.
 - Adjustment proposals identify changed facts and reason and link to the original quote; they do not overwrite it or constitute settlement.
 - A disputed additional charge remains held pending review; a rejected adjustment follows the service-resolution policy and does not automatically imply a refund, credit, or cancellation.
 
-Open policy: exact formulas/rates and service mapping, input sources, units and conversion rules, rounding, effective dates, tax/fee/discount treatment, quote-validity durations, required measurements, numeric discrepancy thresholds, approval limits/separation of duties, and detailed consequences if the customer rejects an adjustment. DEC-038 resolves the booking-confirmation point and accepted-quote expiry policy.
+Open policy: exact formulas/rates and service mapping, input sources, units and conversion rules, distance sources/bands, rounding, effective dates, tax/fee/discount treatment, minimums, service-specific input configuration, quote-validity durations, required measurements, numeric discrepancy thresholds, approval limits/separation of duties, and detailed consequences if the customer rejects an adjustment. DEC-039 resolves the pricing input, server-authority, and charge-transparency boundaries but supplies no numeric rates or formulas. DEC-038 resolves the booking-confirmation point and accepted-quote expiry policy.
 
 ### 4.3 Payment and financial-event lifecycle
 
