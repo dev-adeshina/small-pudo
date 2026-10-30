@@ -86,15 +86,24 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Next action:** Review PR #4 against the current schema and existing records; verify the intended behaviour before merging or changing data.
 - **Acceptance:** Product counts and category slug-change protection work with the current schema and any explicitly supported legacy records; no unnecessary data migration.
 
-### VLY-015 — Requirement-level launch priority baseline merged; source/evidence mapping in progress
+### VLY-015 — Requirement-level launch priority baseline merged; source mapping merged; acceptance evidence design in progress
 
-- **Status:** IN PROGRESS — priority baseline accepted; evidence mapping active
+- **Status:** IN PROGRESS — priority baseline and source mapping merged; detailed acceptance/evidence catalogue drafted
 - **Priority:** Blocking for implementation planning until P0 acceptance evidence and full SDD approval are complete
 - **Evidence:** PR #31 reviewed and merged to `main` at `e0f69055d33dd9399c23e1d793f359468229c856`. `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` now records the owner-reviewed P0, Conditional P0, P1 and Deferred mapping for A-01–A-20 and ADM-R01–ADM-R54.
 - **Limit:** Priority acceptance is not approval of the complete platform SDD, technical design, implementation, testing, or production readiness. Detailed policies, contracts, acceptance scenarios and operational evidence remain open.
 - **Current source evidence:** Refreshed read-only source traceability at the PR #31 baseline maps all A-01–A-20 and ADM-R01–ADM-R54 to source presence, partial coverage, or no active source found in the inspected tree. Storefront checkout/orders and Paystack paths have source foundations; independent shipment/PUDO/intake/custody/pricing/routing/movement/delivery-proof/general audit/refund/reconciliation capabilities were not found in active source. Runtime and production evidence remain unverified.
-- **Next action:** Define detailed observable acceptance scenarios and evidence artifacts for every P0/Conditional P0 requirement; confirm whether root `pudo.zip` is in scope; then reconcile the complete SDD before implementation planning.
+- **Next action:** Owner-review `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`; resolve its policy dependencies and confirm whether root `pudo.zip` is in scope; then produce approved test specifications and collect runtime/production evidence.
 - **Acceptance:** Every P0/Conditional P0 has an approved contract, source status, repeatable acceptance scenario, evidence source and actual verification state; no requirement is labelled implemented/tested/ready without supporting evidence.
+
+### VLY-017 — P0 acceptance scenarios and evidence catalogue require owner review
+
+- **Status:** OPEN — draft prepared; owner review pending
+- **Priority:** Blocking for implementation approval and launch evidence planning
+- **Evidence:** `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md` drafts scenario outlines for all 20 cross-domain areas A-01–A-20 and maps ADM-R01–ADM-R54. It defines required case records, evidence classes, universal pass rules, conditional-P0 activation gates, and unresolved policy dependencies.
+- **Limit:** These are test-design scenarios, not executed tests or final approved test scripts. Numeric limits, formulas, proof methods, permission boundaries, retention, retries and other unresolved DEC-022–DEC-036 details remain explicit blockers. No tests were run.
+- **Next action:** Review scenario scope and wording; resolve policy dependencies in the authoritative SDD documents; approve test specifications before any execution. Then gather runtime evidence in safe non-production environments and production-readiness evidence separately.
+- **Acceptance:** Each P0/Conditional P0 has an approved, reproducible test specification with preconditions, actor, action, expected state and non-state changes, replay/failure behavior, evidence artifacts, cleanup and accountable reviewer. Conditional P0 activation gates are verified before enabling triggers.
 
 ### VLY-016 — Shipment/PUDO/pricing operational implementation is not present in the inspected Admin routes
 
