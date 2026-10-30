@@ -1,0 +1,337 @@
+# VeriLyft P0 Acceptance Scenarios and Evidence Catalogue
+
+**Status:** Draft for owner review — test-design baseline only; not implementation or release approval  
+**Created:** 30 October 2026  
+**Repository baseline:** `main` at `c6dd28cd5450b598b19a19afa12a7331440320f0` (PR #32 merged)  
+**Authority:** DEC-018, DEC-022–DEC-036 and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
+**Related:** `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
+
+## 1. Purpose and boundaries
+
+This catalogue converts the P0 and Conditional P0 requirements in A-01–A-20 and ADM-R01–ADM-R54 into observable acceptance-scenario outlines and evidence requirements. It is intended to make later test design, execution, review and release sign-off auditable.
+
+It does **not**:
+- approve the complete platform SDD or authorize implementation;
+- define Firestore collections, fields, routes, payloads, enums, token formats, indexes, roles or permission claims;
+- invent numeric limits, pricing formulas, quote periods, retention periods, proof methods, approval thresholds, retry counts or operational timeouts where the accepted decisions leave them open;
+- treat existing source code, a successful build, or a test report without reproducible artifacts as proof of acceptance;
+- authorize tests against production data, live payment methods, real customer communications or physical parcels.
+
+Where a policy parameter is unresolved, the scenario is marked **BLOCKED — policy input required**. It cannot be marked passed until the owner-approved value or rule is recorded in the relevant SDD contract. Conditional P0 scenarios must be completed before their trigger is enabled.
+
+## 2. Test and evidence conventions
+
+### 2.1 Required case record
+
+Every executed case must retain, at minimum:
+
+1. **Case identity:** case ID, requirement IDs, scenario version, execution date/time and environment.
+2. **Build/configuration:** application commit, rules/configuration version, relevant feature flags and provider sandbox/configuration identifiers. Never include secrets.
+3. **Preconditions:** fixture identifiers, starting lifecycle/payment/stock states, configured location/service capabilities and required policy version.
+4. **Actor:** actor class and authorized responsibility; use synthetic identities and redact personal data.
+5. **Action:** exact UI action, API request or simulated provider/physical event, with sensitive values redacted.
+6. **Expected result:** response/result, permitted state transition, explicit denial or review outcome.
+7. **Integrity assertions:** records that must change and records that must remain unchanged; include counts/balances/stock where relevant.
+8. **Audit/evidence:** event/audit references, actor, time, reason, evidence reference and correlation/reference identifiers required by policy.
+9. **Retry/replay:** duplicate, concurrent, delayed or failed-attempt outcome where applicable.
+10. **Result:** pass/fail/blocked/not-run, tester/reviewer, defect link and cleanup confirmation.
+
+A screenshot alone is insufficient for transactional, authorization, payment, stock, audit or custody acceptance. Retain machine-readable responses/log extracts or controlled database/provider evidence as appropriate, with secrets and unnecessary personal data removed.
+
+### 2.2 Evidence classes
+
+- **SRC — Source evidence:** exact commit and source paths showing the relevant guard or behavior. Supports design review only; never substitutes for runtime acceptance.
+- **TEST — Automated evidence:** repeatable test name, test code/commit, command, environment, full result and relevant assertion output.
+- **RUN — Runtime evidence:** dated end-to-end or API test record, request/response, actor, environment and correlated resulting records.
+- **PROVIDER — External-system evidence:** sandbox/provider event or transaction reference and corresponding platform record; redact credentials and payment data.
+- **OPS — Operational evidence:** controlled procedure, location capability/configuration, staff training/assignment, reconciliation or physical handover record.
+- **PROD — Production-readiness evidence:** deployment/configuration verification, monitoring, backup/restore, incident/rollback and release sign-off. This class is not established by source inspection.
+
+### 2.3 Universal pass rules
+
+- A denial must leave protected business records and balances unchanged, except for the explicitly approved security/audit event.
+- A successful action must be attributable to the correct actor and target, and must preserve required history.
+- Duplicate/replayed requests must not create duplicate business or financial effects.
+- A failure must not silently advance a lifecycle or fabricate a successful external/physical event.
+- Payment, order, shipment, custody, movement, delivery and notification states remain distinct.
+- Every test must use the approved policy version and a safe non-production environment unless a separately approved production exercise exists.
+
+## 3. Cross-domain scenario catalogue
+
+### A-01 — Public storefront and catalogue (P0)
+**Requirement links:** ADM-R04–R13  
+**Source baseline:** Catalogue pages/helpers and Firestore rules exist; runtime behavior and the noted category-count mismatch remain unverified.
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A01-01 | Active and inactive products/categories; public visitor | Browse catalogue and open product details | Only intended public fields are exposed; inactive/unavailable items are not presented as purchasable | RUN response/UI capture; fixture records; public-read rules test |
+| A01-02 | Inactive product with known ID; guest and signed-in customer | Attempt checkout through normal UI and direct order API | Server rejects the inactive item; no order is created and no stock is decremented | RUN request/response; before/after stock and order query |
+| A01-03 | Admin, ordinary customer, unverified user and signed-out visitor | Attempt category/product create, edit, activate/deactivate and delete operations | Only authorized Admin action succeeds; denied attempts do not mutate catalogue | TEST + RUN; auth identity/claims (redacted); before/after records |
+| A01-04 | Product belongs to a category using current categoryId data | View category counts and product listing | Count and listing use the same approved relationship; no silent empty or inflated count | RUN query/result and fixture relationship |
+
+### A-02 — Cart and checkout (P0)
+**Requirement links:** ADM-R08, R11, R17, R19, R20  
+**Source baseline:** Cart and server order creation exist; transactional stock reservation is source-mapped.
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A02-01 | Client cart contains altered price, currency, stock, quantity or user ID | Submit checkout request with tampered values | Server uses authoritative catalogue facts or rejects according to approved validation policy; client cannot set authoritative total/ownership | TEST + RUN request/response; order snapshot |
+| A02-02 | Two customers attempt to buy the final unit concurrently | Submit both order requests concurrently | At most one valid reservation/order succeeds; stock never becomes negative; failed attempt leaves no partial order | Concurrency test output; transaction records; before/after stock |
+| A02-03 | Same checkout submission is repeated due to double click/retry | Repeat identical submission | Outcome follows approved idempotency contract; no unintended duplicate order or stock decrement | RUN correlation IDs; order count; stock delta |
+| A02-04 | Failure occurs during order creation/payment initialization boundary | Inject safe test failure at each documented boundary | No orphaned/ambiguous order or reservation; recovery/cancellation behavior follows approved contract | Fault-injection log; order/payment/stock snapshots |
+
+### A-03 — Storefront order lifecycle (P0)
+**Requirement links:** ADM-R14–R20, R35  
+**Source baseline:** Storefront order and payment states exist; complete transition table and runtime matrix remain open.
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A03-01 | Order in each approved lifecycle/payment combination | Attempt every permitted and forbidden transition as customer, Admin and unauthorized actor | Each transition has an explicit actor/guard/result; invalid transitions are denied without partial mutation | Transition table; automated matrix; resulting order snapshots |
+| A03-02 | Customer cancels eligible pending order; repeat cancellation | Cancel once, then replay | Stock restoration occurs at most once; cancellation does not assert that payment was refunded | Before/after stock; order history; duplicate replay result |
+| A03-03 | Payment succeeds after order cancellation/expiry | Deliver delayed provider success in sandbox | Payment is recorded/reconciled against original transaction; order is not silently reactivated; disposition follows approved late-payment policy | PROVIDER event; payment/order state snapshots; review record |
+| A03-04 | Admin attempts dispatch/fulfilment while payment is not verified | Request normal dispatch transition | Dispatch is blocked unless a specifically approved DEC-030 exception applies; payment state remains unchanged | RUN denial; audit/exception record if applicable |
+
+### A-04 — Customer account and order access (P0)
+**Requirement links:** ADM-R01–R04, R14, R19; DEC-035  
+**Source baseline:** Account/order endpoints and guest tracking token source exist; recovery/claim challenge flow not found.
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A04-01 | Customer A and Customer B each own orders | A requests B's order through UI and direct API | Cross-customer access is denied; no protected order data is disclosed | TEST + RUN response; access log |
+| A04-02 | Guest order with valid, invalid, missing and expired access credentials | Request tracking/recovery | Only valid entitled access reveals approved fields; order ID/email alone never grants access | RUN results; token/challenge metadata without secret values |
+| A04-03 | Guest requests recovery using original checkout email | Complete the owner-approved proof-of-control challenge | Recovery grants only the defined entitlement; expired/replayed challenges fail safely | Challenge lifecycle evidence; email delivery sandbox; audit record |
+| A04-04 | Authenticated customer attempts to claim an eligible guest order | Complete separate ownership challenge; replay or attempt second claim | Only one authorized claim succeeds; no silent transfer or multiple claims; commercial/fulfilment state unchanged | Account/order relationship snapshots; challenge and audit records |
+
+### A-05 — Independent shipment booking (P0)
+**Requirement links:** ADM-R21–R24, R28, R30–R32, R36–R39  
+**Source baseline:** No dedicated active shipment booking route/service found in inspected source.
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A05-01 | Registered verified customer; separate booking party, sender, receiver, payer and handover person | Create booking with permitted distinct parties | Booking is created only for authenticated registered customer; party relationships and authority are explicit | Approved booking contract; RUN record and party links |
+| A05-02 | Guest or unauthenticated visitor attempts independent booking | Submit booking request | Request is denied; no booking, quote acceptance or shipment record is created | RUN denial; before/after record query |
+| A05-03 | Payer is not booking party; payer attempts to view shipment details | Authenticate as payer and request shipment | Default access is limited to payment confirmation/receipt; payment does not grant full shipment details | Authorization matrix; RUN responses; access evidence |
+| A05-04 | Booking party requests a change after intake or dispatch | Attempt changes of different approved types/stages | Each change follows DEC-024 change-authority matrix; restricted changes require staff-mediated control; no physical facts are silently overwritten | Change matrix; before/after history; denial/approval evidence |
+
+### A-06 — Shared pricing and quote acceptance (P0)
+**Requirement links:** ADM-R30–R34; DEC-026–027  
+**Source baseline:** No shared shipment pricing/quote service found.
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A06-01 | Approved service, origin/destination and chargeable inputs; fixed and calculated service examples | Calculate quotes through each supported journey | Shared rules produce reproducible itemized totals for equivalent inputs and same rate version | Approved formula/version; input/output vectors; deterministic test |
+| A06-02 | Customer accepts quote, then administrator publishes a new rate | Re-read accepted quote/order | Historical accepted amount and applicable rate context remain reconstructable and unchanged | Quote snapshot; rate-version history; comparison output |
+| A06-03 | Quote passes its configured validity boundary | Attempt acceptance/payment after expiry | Expired quote cannot be accepted silently; re-quote path follows approved policy | Policy validity setting; timestamped RUN; quote states |
+| A06-04 | Quote contains tax, fee, surcharge, discount or minimum charge | Calculate and reconstruct total | Each configured component is explicit and reproducible; no unapproved zero/default assumption | Approved pricing schedule; calculation trace |
+
+### A-07 — Payment initialization and confirmation (P0)
+**Requirement links:** ADM-R15–R17, R20; DEC-028–029  
+**Source baseline:** Paystack initialize/verify/webhook source exists; runtime regression evidence remains outstanding.
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A07-01 | Valid sandbox payment for a known order/purpose | Initialize and complete provider payment | Server verifies reference, purpose, amount and currency against authoritative transaction; only verified result updates payment outcome | PROVIDER transaction; API response; correlated order/payment record |
+| A07-02 | Forged callback, invalid signature or mismatched amount/currency/reference | Submit invalid provider event | Event cannot settle transaction; discrepancy enters approved review path; no stock/dispatch side effect | Signature test; provider payload; unchanged state |
+| A07-03 | Duplicate and concurrent webhook delivery | Replay same provider event and deliver concurrently | One financial effect only; duplicate is acknowledged/handled idempotently | Event IDs; webhook logs; transaction count and payment state |
+| A07-04 | Provider reports success but local persistence fails or times out | Inject controlled failure then retry/reconcile | Outcome remains recoverable and does not create duplicate charge/order effects | PROVIDER record; failure log; recovery/reconciliation record |
+
+### A-08 — Refunds, adjustments and reconciliation (P0)
+**Requirement links:** ADM-R16–R20, R34; DEC-022, DEC-029  
+**Source baseline:** No complete refund/credit/reversal/reconciliation service found.
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A08-01 | Paid transaction; authorized staff requests refund | Request, approve and execute refund through approved roles | Request, approval and provider execution are distinct; amount/currency/reason/reference/actor/outcome retained | Permission matrix; PROVIDER refund; financial event history |
+| A08-02 | Same refund request is replayed or executed concurrently | Submit duplicate request/event | No duplicate refund effect; repeated provider event is idempotent and traceable | Provider transaction list; event IDs; ledger snapshot |
+| A08-03 | Cancellation occurs after payment | Cancel order/booking and inspect payment outcome | Cancellation does not imply refund; refund or credit is a separate authorized event | Order/payment/refund records; customer receipt evidence |
+| A08-04 | Internal record differs from provider/bank record; late payment after cancellation | Run reconciliation case and record resolution | Mismatch is surfaced and assigned; no silent correction/reactivation; original and correcting events remain visible | Reconciliation source statement; exception record; audit history |
+
+### A-09 — Physical intake, measurement and custody (P0)
+**Requirement links:** ADM-R21, R23–R28, R33, R36–R37; DEC-025, DEC-027–028  
+**Source baseline:** No active intake/custody service found.
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A09-01 | Valid booking; location has intake capability; assigned staff has intake permission | Record physical arrival/intake | Booking alone does not mark received; successful intake records parcel, location, physical actor, recorder, time and required evidence | Location capability config; RUN event; custody history |
+| A09-02 | Location lacks intake capability or staff lacks permission | Attempt intake directly through API/UI | Action is denied; no custody state changes | Authorization test; unchanged parcel/custody record |
+| A09-03 | Measure parcel and compare with accepted quote inputs | Record actual measurements within and outside approved threshold | Original quote inputs remain; actual measurements and discrepancy are separately recorded; adjustment proposal is not an approved charge | Measurement units/policy; evidence; quote and adjustment history |
+| A09-04 | Parcel is refused, damaged, missing or duplicate intake is submitted | Record each supported exception/replay | No false received/accepted custody state; duplicate does not create duplicate intake; resolution is attributable | Exception reason/evidence; custody history; replay result |
+
+### A-10 — Location and service capability (P0)
+**Requirement links:** ADM-R36–R38, R52; DEC-025
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A10-01 | Active/inactive locations with explicitly configured capabilities | View available services and attempt unsupported service | Only configured capabilities are offered; inactive location or unsupported operation is blocked | Configuration snapshot; UI/API output |
+| A10-02 | Admin changes a location capability; ordinary staff/partner attempts same | Perform authorized and unauthorized changes | Only authorized configuration change succeeds; actor/time/reason history retained | Permission test; before/after config; audit event |
+| A10-03 | Collection centre has receive/collection capability but no outgoing capability | Attempt outgoing intake/release/dispatch | No capability is inferred from location label; only explicitly enabled operations work | Capability matrix; direct API denial evidence |
+
+### A-11 — Routing and route proposals (P0)
+**Requirement links:** ADM-R38–R40; DEC-031
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A11-01 | Eligible shipment and available network/service inputs | Generate or prepare route proposal | Proposal is distinguishable from approval, assignment and physical movement; input/version is retained | Route proposal; source input/version; status history |
+| A11-02 | Authorized Operations reviews; unauthorized staff/customer attempts approval | Approve, adjust or reject proposal | Only authorized responsibility may decide; decision, actor, time, reason and version are preserved | Permission test; decision history |
+| A11-03 | Stale proposal or capacity/resource conflict | Attempt approval/assignment | Conflict is surfaced; stale proposal cannot silently overwrite newer decision; no dispatch occurs | Conflict fixture; API result; route history |
+| A11-04 | Proposer attempts self-approval where separation is required by approved policy | Attempt approval | Approved separation-of-duties rule is enforced; unresolved rule blocks final test approval | Owner-approved approval matrix; denial evidence |
+
+### A-12 — Dispatch, movement and handover (P0)
+**Requirement links:** ADM-R23–R28, R35, R38–R39; DEC-030–031
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A12-01 | Shipment has approved assignment, verified payment and no blocking holds | Record dispatch and physical handover | Dispatch and handover are distinct, attributable events tied to correct parcel/leg/location | Assignment; payment verification; handover evidence |
+| A12-02 | Payment unverified or unrelated safety/custody/legal hold exists | Attempt dispatch | Normal dispatch is blocked; DEC-030 exception cannot bypass unrelated holds or change payment status | RUN denial; hold record; unchanged payment |
+| A12-03 | Eligible payment exception requested | Request and approve under approved exception categories | Explicit permission; requester does not self-approve; material case has second approver; evidence/reason/outcome retained | Approved exception policy; approval audit; state snapshots |
+| A12-04 | Duplicate, wrong-leg, wrong-parcel, delayed or missed handover event | Submit event/replay | Wrong target/leg denied; duplicate has no duplicate movement effect; missing event remains an exception, not inferred success | Event payload; correlation; custody/movement history |
+
+### A-13 — Delivery attempt and outcome (P0)
+**Requirement links:** ADM-R23–R29; DEC-032
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A13-01 | Shipment reaches delivery stage; approved proof method for service is configured | Record successful delivery with valid proof | Delivery completes only with required proof and receiver-authority checks; attempt and completion remain distinct | Service proof policy; proof reference; recipient relationship; audit |
+| A13-02 | Attempt fails due to approved failure reason | Record failed attempt | Failure does not mark delivered or automatically trigger return, refund or redelivery; case enters defined resolution queue | Attempt record; reason/evidence; unchanged completion state |
+| A13-03 | Wrong/unauthorized recipient or missing/invalid proof | Attempt completion | Completion denied; no delivered state; evidence remains available for authorized review | RUN denial; proof validation result; state snapshot |
+| A13-04 | Customer collection or return is selected | Complete only through approved authorized flow | Collection authority is checked; return is a distinct outcome; no automatic financial consequence | Collection/return policy; identity/authority evidence; lifecycle history |
+
+### A-14 — Notifications and Telegram (P0 / Conditional P0)
+**Requirement links:** ADM-R54; DEC-024, DEC-032, DEC-034  
+**Trigger:** Event-driven customer communications are enabled; Telegram is separately conditional and remains deferred until its gate/policy is approved.
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A14-01 | Verified business event and approved recipient/channel mapping | Trigger notification | Only entitled recipient receives approved minimum fields; notification does not change business state | Event/recipient/field matrix; provider sandbox delivery; message snapshot |
+| A14-02 | Duplicate event, provider timeout or persistent delivery failure | Replay and simulate failure | Deduplication and bounded retry apply; persistent failure is visible and owned; underlying order/shipment state unchanged | Correlation/event IDs; retry log; failure queue |
+| A14-03 | Payer is not booking party; inspect message content | Trigger payment/operational notifications | Payer receives only default payment confirmation/receipt unless separately entitled; no shipment detail leakage | Party-entitlement matrix; redacted message content |
+| A14-04 | Telegram notification proposed for paid order | Attempt send before and after Admin “Assign For Delivery” | No Telegram send before required Admin gate; even after gate, send only if separate purpose/audience/disclosure policy is approved | Feature/config gate; Admin action audit; Telegram sandbox record or denial |
+
+### A-15 — Admin and Operations access (P0)
+**Requirement links:** ADM-R01–R04, R07, R51; DEC-022, DEC-025, DEC-030–033
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A15-01 | Signed-out visitor, ordinary customer, unverified user, authorized Admin | Navigate directly to protected pages and call protected APIs | Each page and API independently enforces server-side authorization; UI hiding is not the control | Automated auth matrix; direct request/response; logs |
+| A15-02 | Staff authenticated but lacks action-specific permission | Call sensitive action API directly | Denied even when page is bypassed; protected record unchanged | Permission matrix; API denial; unchanged data |
+| A15-03 | Token expired/revoked or role/capability removed | Repeat protected action | Access denied safely; customer session is not unnecessarily destroyed; no partial action | Token/claim fixture; response; session state |
+| A15-04 | Admin/Operations performs permitted and prohibited actions | Exercise action matrix across locations and responsibilities | Shared routine actions work only when granted; sensitive actions/approvals follow DEC-022 and preserve actor/location/time/reason | Owner-approved action matrix; automated role matrix; audit records |
+
+### A-16 — Audit and evidence (P0)
+**Requirement links:** ADM-R07, R24, R48–R51; DEC-022, DEC-033
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A16-01 | Consequential catalogue, permission, booking, intake, payment, adjustment, dispatch, movement or delivery action | Perform action and reconstruct history | Reviewer can identify actor/system, action, target, time, outcome, reason and evidence reference as required | Audit event set; correlation; reviewer reconstruction |
+| A16-02 | Ordinary user or unauthorized staff attempts read/edit/delete audit evidence | Request protected evidence access or mutation | Access denied; original evidence/history remains intact | Authorization tests; before/after evidence hash/record |
+| A16-03 | Authorized correction/redaction is required | Correct or redact under approved policy | Original and correction remain distinguishable; actor, reason, time and approval recorded; no silent overwrite | Original/correction chain; approval; redaction log |
+| A16-04 | Legal hold or retention expiry applies | Attempt routine deletion/release | Hold blocks routine deletion; release requires authorized decision; deletion/anonymization follows approved retention policy | Retention schedule; hold record; deletion evidence |
+
+### A-17 — Support, exceptions and manual override (P0)
+**Requirement links:** ADM-R07, R18, R28–R35, R46–R50; DEC-022, DEC-029–033
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A17-01 | Normal workflow blocked by a documented exception | Request resolution/override | Only explicitly permitted exception path is available; actor, reason, scope, approver and outcome retained | Exception catalogue; permission matrix; audit |
+| A17-02 | Requester attempts own approval or bypasses second approval | Submit direct API request | Self-approval and missing required second approval are denied; no business state change | Approval policy; API denial; state snapshot |
+| A17-03 | Staff attempts to correct payment/custody/delivery fact through generic status edit | Submit correction | Financial or physical fact cannot be falsified; controlled correction is a separate attributable event | Audit chain; original/new values; approval evidence |
+| A17-04 | Support investigates disputed or missing evidence | Open case and request evidence | Access limited to authorized scope; investigation outcome and disclosure are recorded; no unrestricted Admin access | Reviewer permission; case history; access log |
+
+### A-18 — Operational dashboard and reporting (P0 minimum; advanced reports P1)
+**Requirement links:** ADM-R41–R43, R45; ADM-R40/R44/R53 are P1 under the priority matrix where applicable.
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A18-01 | Known synthetic orders, shipments, payments and movement records with controlled timestamps | Load minimum operational dashboard | Every P0 metric has approved definition, source, scope and time window; displayed values reproduce from source records | Metric dictionary; fixture set; query/result export |
+| A18-02 | Query fails or data is stale/unavailable | Simulate service/query failure | Dashboard indicates unavailable/stale state; no demo or fabricated fallback values are presented as live | Fault-injection output; UI capture; logs |
+| A18-03 | Role with restricted data access opens dashboard | Load metrics | Only role-entitled aggregate/detail data is exposed; no unauthorized personal/financial details | Role matrix; API response; UI capture |
+| A18-04 | Financial totals and operational counts include linked/duplicate records | Recalculate metrics | Orders, shipments, payment events, refunds and movements are not conflated or double-counted | Metric formula; fixture ledger; reproducible calculation |
+
+### A-19 — Customer communications and privacy (P0)
+**Requirement links:** ADM-R04, R14–R19, R54; DEC-024, DEC-032–034
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A19-01 | Booking party, sender, receiver, payer and handover person are distinct | Each party requests page/API/message information | Each sees only the approved information for their relationship; payer default remains receipt/confirmation only | Approved entitlement matrix; role-based RUN output |
+| A19-02 | Contact detail changes, recipient mismatch or notification bounce | Trigger event/notification | Contact verification and consent policy is enforced; failures do not disclose to unverified replacement address | Contact change history; provider response; failure record |
+| A19-03 | Guest tracking credential is absent, invalid, expired or revoked | Request order/shipment details | No access from order ID alone; only allowed fields are exposed to valid entitlement | Access tests; redacted response; token lifecycle evidence |
+| A19-04 | Support or government disclosure request is submitted | Review and respond under DEC-033 | Request itself grants no access; legal basis, scope, reviewer, approval, recipient and disclosed records are recorded | Request record; approval; disclosure manifest/audit |
+
+### A-20 — Production configuration and operational readiness (P0)
+**Requirement links:** ADM-R01–R04, R13, R20, R45, R48–R52, R54; DEC-036
+
+| Case | Scenario and setup | Action | Required observable result | Evidence |
+|---|---|---|---|---|
+| A20-01 | Production-like environment with required secrets/configuration absent or invalid | Start service or invoke dependent integration | Fails safely and observably; no secret exposed to client/log; no false success | Config validation test; redacted logs; deployment check |
+| A20-02 | Release candidate with configured auth, Firestore rules, payment webhook and image provider | Execute release smoke/security suite | Deployed config matches approved baseline; auth/rules/webhook/provider checks pass | Deployment manifest; rules version; provider sandbox/smoke reports |
+| A20-03 | Backup exists; isolated restore target prepared | Restore backup and validate critical records/relationships | Restore procedure meets owner-approved recovery objectives; record counts/integrity checked; no production overwrite | Backup job; restore log; reconciliation report |
+| A20-04 | Simulated incident or failed release | Exercise incident escalation and rollback | Owner/operator can detect, communicate, contain and rollback using documented steps; data integrity preserved | Incident timeline; alert evidence; rollback result |
+| A20-05 | Final release candidate | Review sign-off pack | Every P0 has approved design, passing evidence and accountable owner; Conditional P0 triggers are either tested before enablement or explicitly disabled; unresolved blockers prevent release approval | Signed requirement/evidence matrix; release decision; blocker register |
+
+## 4. Conditional P0 trigger register
+
+| Requirement group | Trigger that makes it mandatory | Minimum evidence before enabling |
+|---|---|---|
+| A-05 independent shipment booking and related A-06/A-09–A-13 operations | Independent shipment booking or corresponding parcel network capability is enabled | Registered-customer eligibility, party/access matrix, quote/booking, intake/custody, dispatch, movement and delivery scenarios pass for enabled service/location |
+| ADM-R12 product shipping measurements | A supported service's approved price/eligibility rule depends on product parcel measurements | Defined units, measurement source, required fields, validation and pricing test vectors |
+| ADM-R29 returns | Return-to-sender/return service is offered or operationally accepted | Return eligibility, authority, custody, customer communication and financial consequences approved and tested |
+| A-14 Telegram | Telegram channel is enabled | Admin “Assign For Delivery” gate plus separate approved purpose, audience, disclosure fields, consent and failure policy; pre-gate denial test |
+| ADM-R46–R47 government-request handling | A government/public-authority request is received | Controlled intake/review/authority/legal-basis/scope/approval/disclosure/audit procedure and access tests |
+| ADM-R49 retention-hold release | A legal/investigation retention hold is placed | Hold, authorized release, audit and deletion-blocking scenarios |
+| ADM-R50 appeal evidence | An appeal process or appeal evidence handling is activated | Appeal evidence scope, reviewer authorization, correction/disclosure and retention scenarios |
+
+A conditional requirement cannot be called passed solely because its trigger is currently disabled. The release record must identify the trigger, prove it is disabled, assign an owner, and define the evidence gate that must pass before activation.
+
+## 5. Admin requirement traceability index
+
+This index links the existing ADM requirement IDs to the scenario groups. The authoritative requirement wording and priority remain in `ADMIN_REQUIREMENTS.md` and `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`.
+
+| Admin requirement | Scenario groups |
+|---|---|
+| ADM-R01–R04 | A-01, A-04, A-15, A-20 |
+| ADM-R05–R08 | A-01, A-03, A-15–A-17 |
+| ADM-R09–R13 | A-01, A-02, A-20 |
+| ADM-R14–R20 | A-02–A-04, A-07–A-08, A-15, A-19 |
+| ADM-R21–R29 | A-05, A-09, A-11–A-13, A-17 |
+| ADM-R30–R35 | A-06–A-08, A-12, A-17 |
+| ADM-R36–R40 | A-05, A-10–A-12 |
+| ADM-R41–R45 | A-18, A-20 |
+| ADM-R46–R50 | A-16–A-17, A-19–A-20 |
+| ADM-R51–R54 | A-14–A-16, A-19–A-20 |
+
+P1 requirements ADM-R40 (network overview), ADM-R44 (date-range controls) and ADM-R53 (basic operational reporting, as classified in the priority matrix) must not be silently promoted into launch blockers by this catalogue. The minimum P0 operational dashboard must still meet ADM-R41/R42 and the owner-approved A-18 scope. Confirm any apparent priority/requirement wording conflicts before final approval.
+
+## 6. Policy dependencies that block final test approval
+
+The following values/rules must be resolved in the owning SDD sections before the corresponding case can be marked fully executable:
+
+1. **DEC-022 / A-15–A-17:** action-level Admin/Operations permission matrix; partner/station access; sensitive action limits; second-person approval categories; requester/approver separation.
+2. **DEC-023–024 / A-04–A-05 / A-19:** customer verification checkpoints; party relationship and consent model; per-change authority by lifecycle stage; business-account handling; payer disclosure fields; collection authority.
+3. **DEC-026–027 / A-06 / A-09:** formulas, units, distance source/bands, service mapping, minimum charge, taxes/fees/surcharges/discounts, rounding, rate effective dates, quote validity, discrepancy thresholds and adjustment outcomes.
+4. **DEC-028–029 / A-07–A-08:** payment-at-intake methods and evidence; cash/electronic confirmation; partial/additional payment; late-payment disposition; refund/credit/reversal authority, limits and provider reconciliation ownership/tolerance.
+5. **DEC-030 / A-03 / A-12:** eligible dispatch exception categories, explicit permission, materiality definition, second approver, evidence and limits; unrelated holds.
+6. **DEC-031 / A-11–A-12:** route proposal inputs, assignment authority, capacity model, mandatory milestones, physical actor vs recorder evidence, correction and reassignment rules.
+7. **DEC-032 / A-13:** approved proof methods by service, recipient identity/authority, failure reason catalogue, attempt limits, holding/return/refusal/dispute outcomes.
+8. **DEC-033 / A-16–A-17 / A-19:** event catalogue, evidence sensitivity/access, retention periods, legal hold/release, correction/redaction, government disclosure review and integrity controls.
+9. **DEC-034 / A-14 / A-19:** event/recipient/channel/field matrix, contact verification, consent, retry/deduplication, failure ownership and Telegram gate policy.
+10. **DEC-035 / A-04 / A-19:** challenge format/lifetime, rate limits, revocation, eligible order conditions, account-claim transfer rules and support exception.
+11. **DEC-036 / A-18 / A-20:** P0 metric definitions; production environment; monitoring/alert ownership; recovery objectives; backup/restore cadence; incident response; rollback and release sign-off authority.
+
+## 7. Execution plan and acceptance governance
+
+1. Owner reviews this catalogue and resolves any scenario wording that changes the accepted business policy.
+2. Each policy dependency is completed in its authoritative lifecycle/workflow/decision document; this catalogue references rather than duplicates policy values.
+3. Each scenario is converted into automated tests, controlled API/browser tests, provider-sandbox tests or operational exercises appropriate to its risk.
+4. Tests execute in isolated development/staging/sandbox environments using synthetic data and controlled fixtures.
+5. Failures are recorded as issues linked to requirement IDs and exact evidence; fixes require their own approved implementation workflow after the complete SDD gate.
+6. Re-run impacted scenarios and relevant regression families after any change; retain prior result history.
+7. Requirement owners review evidence and sign off individually; unresolved P0s block launch. Conditional P0s block activation of their trigger.
+8. Production readiness is a separate evidence gate. Passing functional tests alone does not establish operational readiness.
+
+## 8. Current evidence position and explicit non-claims
+
+At the baseline above, the source-traceability pass identifies source foundations for storefront catalogue/checkout, customer access, Admin allowlist guards, Paystack payment integration and basic storefront fulfilment. It identifies material gaps for independent shipment, PUDO, intake/custody, shared shipment pricing/quotes, route/movement, delivery proof, general audit, refunds/credits and reconciliation. The Admin dashboard contains demo values rather than verified live operational metrics.
+
+This catalogue is **test design**, not test execution. No scenarios in this document are claimed passed. No tests were run to create this document. No production data, deployed secrets/configuration, provider dashboards, physical parcel operations or root `pudo.zip` archive were inspected. The source baseline remains the PR #32 merge commit until a later source-changing commit is inspected.
+
+**Stage 4 status:** Draft scenario and evidence catalogue prepared for owner review. Complete SDD approval and application-code changes remain blocked.
