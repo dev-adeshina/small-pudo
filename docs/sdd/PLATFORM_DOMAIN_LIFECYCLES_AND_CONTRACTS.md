@@ -4,7 +4,7 @@
 **Last updated:** 30 October 2026  
 **Scope:** Conceptual domain boundaries, lifecycle transition rules, service/API contract expectations, and authorization/security invariants  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, PLATFORM_SHARED_WORKFLOWS.md, SDD_COMPLETENESS_AUDIT.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-038
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-039
 
 ## 1. Purpose and guardrails
 
