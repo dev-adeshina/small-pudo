@@ -566,3 +566,21 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
 
 **Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, permissions, provider integration, deployed configuration, runtime behaviour, or tests were changed/run.
+
+
+## 20. Owner decision D-11 — 30 October 2026 (DEC-032)
+
+- [x] Owner accepted Option A: evidence-based delivery with controlled outcomes.
+- [x] Confirmed delivery attempt, successful delivery, failed delivery, customer collection, and return are distinct outcomes; unsuccessful attempt is not completed delivery.
+- [x] Confirmed successful delivery requires approved evidence appropriate to service/context; a staff status update alone is insufficient proof.
+- [x] Confirmed recipient authorization must be verified under DEC-024; sender, payer, booking customer, and receiver are not interchangeable by default.
+- [x] Confirmed proof methods remain flexible by service; recipient confirmation, OTP, signed acknowledgement, and attributable staff evidence are examples, not universal requirements.
+- [x] Confirmed failed attempts retain reasons; reattempt, return, holding, refusal, cancellation, and financial adjustment require explicit authority and are not automatic outcomes.
+- [x] Confirmed significant notifications respect party entitlements and original evidence/history is preserved for disputes.
+- [x] Reconciled the owner decision register, decisions log, shared workflows, lifecycle contracts, cross-domain acceptance matrix, issues, progress, and handoff in this documentation proposal.
+- [ ] Review and merge the focused documentation-only PR.
+- [ ] Continue to D-12: audit, evidence retention, correction, and disclosure.
+- [ ] Keep mandatory proof methods, OTP policy, attempt limits, resolution authority, holding duration, failure catalogue, loss/damage/refusal/dispute handling, customer-contact details, and acceptance tests unresolved.
+- [ ] Preserve the platform-wide SDD approval gate; no application-code changes are authorized.
+
+**Evidence boundary:** Documentation-only proposal based on the owner's explicit acceptance. No application source, schema, permissions, notifications, deployed configuration, runtime behaviour, or tests were changed/run.
