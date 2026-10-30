@@ -109,7 +109,7 @@ Required guards:
 - Changes to an accepted quote must preserve prior accepted commercial facts.
 - Booking cancellation must not silently erase payment, custody, or audit history.
 
-Open policy: eligibility, guest/account rules, quote validity, booking confirmation point, cancellation rights/fees, expiry, and what happens when a paid booking never reaches intake.
+Open specification: quote validity, booking confirmation point, cancellation fees/refund consequences, expiry, and what happens when a paid booking never reaches intake. Eligibility and the owner-policy direction for amendment/cancellation authority are addressed by DEC-023 and BP-01–BP-05; exact verification and lifecycle procedures remain to be specified.
 
 ### 4.2 Quote and adjustment lifecycle
 
