@@ -334,3 +334,20 @@ The owner approved DEC-042 on 30 October 2026.
 **Still unresolved:** Service-specific checklists, prohibited-item rules, measurement units/conversions, identity/acknowledgement/receipt methods, evidence retention, staff/partner authority and second-person approval, capability assignment, hold ownership/review periods, transfer proof/correction authority, exception resolution, liability/compensation/insurance, technical contracts, and executable acceptance tests.
 
 DEC-042 records business policy only; it does not approve a schema, fields, collections, endpoints, status vocabulary, permission implementation, or application-code change.
+
+## Additional owner-accepted detailed policy — DEC-043
+
+### PUDO location capabilities and operational authority
+
+The owner approved DEC-043 on 30 October 2026.
+
+- Locations must be explicitly configured for the relevant service and requested operational action. Capabilities are independent; outgoing intake, walk-in intake creation, measurement, custody acceptance, payment collection/recording, parcel collection/release, and custody handover do not imply one another.
+- Location capability and staff authorization are separate checks. The location must support the action, and the actor must independently have assigned authority for that action and scope.
+- Designated Admin users configure capabilities only within assigned authority. Location editing, activation/deactivation, capability administration, and staff permission assignment are distinct responsibilities; Admin status alone is not unrestricted authority.
+- Capability changes are attributable and auditable. Revocation/unavailability blocks new work but does not erase or abandon parcels already in custody or silently transfer responsibility.
+- Preserve the no-direct-login launch boundary for external collection-centre operators, carriers, and drivers; distinguish physical actors from internal staff recording events.
+- Keep the lean DEC-025 location model. Automated hours, capacity calculations, and availability scheduling are not introduced by this decision.
+
+**Still unresolved:** Service/location/action matrix, exact capability catalogue, designated Admin assignment granularity, staff permission scopes, partner arrangements, queued-work treatment, temporary closure procedure, audit retention, technical contracts, and executable acceptance tests.
+
+DEC-043 is high-level business policy only; it does not approve schema, fields, collections, endpoints, status values, permission implementation, or application-code changes.
