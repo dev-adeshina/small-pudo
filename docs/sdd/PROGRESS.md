@@ -684,3 +684,23 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Assess production-like configuration, monitoring, backup/restore, incident response, rollback and release sign-off.
 
 **Evidence boundary:** Documentation-only work. No application source, schema, permissions, provider configuration, deployment, runtime behaviour, or tests changed/run. The matrix is proposed, not approved for implementation or release.
+
+
+## 27. Requirement-level priority accepted and source traceability refreshed — 30 October 2026
+
+- [x] Verified PR #31 reviewed and merged to `main` at `e0f69055d33dd9399c23e1d793f359468229c856`.
+- [x] Confirmed current `main` head is the PR #31 merge commit; this is the source-inspection baseline for this stage.
+- [x] Updated the priority matrix to record the owner-reviewed and merged P0/Conditional P0/P1/Deferred baseline. This does not approve the complete SDD or authorize implementation/release.
+- [x] Refreshed the read-only recursive source-tree inventory and inspected current storefront order, customer account, Admin authorization/order/upload, Paystack, Firebase rules/helpers/types, and test sources.
+- [x] Mapped all A-01–A-20 and ADM-R01–ADM-R54 to source presence, partial coverage, or no active source found in the inspected tree.
+- [x] Recorded that the active source contains no dedicated independent-shipment, PUDO/location capability, intake/custody, shared shipment-pricing/quote, routing/route-leg, physical movement/handover, proof-of-delivery, general audit, refund/credit, or reconciliation implementation.
+- [x] Recorded current Admin dashboard demo-data finding and the narrow scope of Firestore rules tests.
+- [ ] Owner to confirm whether root `pudo.zip` is authoritative and within the active VeriLyft source scope.
+- [ ] Define detailed observable acceptance scenarios and evidence artifacts for every P0/Conditional P0 requirement.
+- [ ] Obtain current runtime evidence for Admin authorization, checkout/stock/payment, Cloudinary uploads, catalogue visibility, and other source-present P0 paths.
+- [ ] Assess deployed configuration, production-like operations, monitoring, backup/restore, incident response, rollback and release sign-off.
+- [ ] Reconcile all remaining SDD documents and obtain explicit approval of the complete platform-wide SDD before application-code changes.
+
+**Evidence boundary:** Source mapping is read-only and pinned to `e0f69055d33dd9399c23e1d793f359468229c856`. No application code was changed. No tests were executed. No deployed configuration, provider dashboard, production Firestore data, or root archive was inspected. Source presence is not runtime verification or launch readiness.
+
+**Current active task:** Stage 3 — requirement-to-source traceability and P0 evidence mapping. Application-code changes remain blocked by the complete SDD approval gate.
