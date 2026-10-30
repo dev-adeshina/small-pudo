@@ -146,12 +146,16 @@ The order below follows dependencies: authority and booking semantics first; com
 
 ### D-10 — Routing, route-leg assignment, and movement evidence
 
-- **Status:** Owner decision required.
-- **Confirmed:** Operations reviews route proposals and manages route-leg assignments at launch; Driver Portal is deferred.
-- **Decision needed:** Which constraints are mandatory for initial proposals? Who may approve, alter, revoke, or reassign a leg? Which milestones and handover evidence must be recorded, including when staff enter events on behalf of a provider/driver?
-- **Recommendation:** Keep proposal, approval, assignment, dispatch, handover, and arrival as distinct concepts. Do not treat a proposed route or assignment as proof of physical movement.
-- **Dependencies:** D-01, D-04, D-09, shipment eligibility, location capabilities, and custody/audit requirements.
-- **Record after decision:** Transition table, mandatory fields/evidence in business terms, correction authority, and delay/loss/damage exceptions.
+- **Status:** Owner decision accepted at the high-level policy level; recorded as DEC-031 on 30 October 2026.
+- **Accepted choice:** Option A — controlled, evidence-based movement. Keep route proposal, route approval, route-leg assignment, dispatch, physical handover, and arrival confirmation as distinct concepts and events. A proposal or assignment is not proof that physical movement occurred.
+- **Authority and change history:** Operations manages route proposals and route-leg assignments at launch. Approval, alteration, revocation, and reassignment must be performed by staff with explicitly assigned authority under the staff permission model. Assignment changes must preserve prior decisions and identify the responsible actor and reason. Exact permission assignments and any two-person approval requirements remain unresolved.
+- **Movement evidence:** Record movement milestones with enough attributable context to identify the shipment/parcel, relevant route leg, event type, location, responsible physical actor where known, recording actor, timestamp, and supporting evidence appropriate to the event. Where staff record an event on behalf of a provider/driver, distinguish the person who performed or reported the physical action from the staff member who entered the record.
+- **Physical truth and exceptions:** Do not infer dispatch, handover, or arrival from a proposal or assignment. Delays, missed handovers, missing parcels, damage, disputed custody transfers, and other movement exceptions must be recorded as exceptions for investigation/resolution, not silently represented as successful movement.
+- **Launch boundary:** Operations continues to manage assignments and record milestones through the staff workflow; Driver Portal remains deferred. This decision does not grant providers/drivers direct platform access.
+- **Still unresolved:** Mandatory route-planning inputs and constraints; exact approval/alteration/revocation/reassignment permissions; whether any actions require two-person approval; mandatory milestones and event-specific evidence; provider/resource and capacity rules; correction authority; and detailed delay/loss/damage/dispute resolution and acceptance tests.
+- **Dependencies:** D-01 staff authority, D-04 location capabilities, D-09 dispatch exceptions, shipment eligibility, custody, delivery, and D-12 audit/evidence retention.
+- **Acceptance direction:** A proposed route cannot authorize dispatch; assignment cannot prove physical movement; movement events must be attributable to the correct shipment and leg; staff-entered third-party events distinguish physical actor from recorder; assignment history remains traceable; and exceptions cannot be silently closed as successful movement.
+- **Implementation boundary:** Business policy only. No schema, endpoint, permission implementation, provider integration, or application-code change is authorized.
 
 ### D-11 — Delivery proof and failed-delivery resolution
 

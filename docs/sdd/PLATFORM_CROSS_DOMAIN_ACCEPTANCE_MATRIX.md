@@ -159,3 +159,16 @@ These are policy-derived acceptance directions, not evidence that current runtim
 - [ ] Verify the parcel/shipment, reason, requester, approver(s), timestamp, supporting evidence, and decision/outcome remain attributable and reviewable.
 
 These are policy-derived acceptance directions, not evidence that runtime behaviour has passed. Eligible circumstances, permission assignment, materiality/second-approval rules, monetary or operational limits, category-specific evidence, and pre-dispatch revocation remain unresolved.
+
+
+## D-10 / DEC-031 routing and movement acceptance direction
+
+- [ ] Verify a route proposal cannot itself authorize dispatch or establish a completed movement.
+- [ ] Verify route approval and route-leg assignment are distinct from physical dispatch, handover, and arrival events.
+- [ ] Verify only staff with explicitly assigned authority can approve, alter, revoke, or reassign route legs; prior assignments/decisions remain traceable.
+- [ ] Verify movement evidence is linked to the correct shipment/parcel and route leg and records event type, location, physical actor where known, recording actor, timestamp, and applicable evidence.
+- [ ] Verify staff recording a provider/driver event on their behalf are distinguishable from the physical actor.
+- [ ] Verify delays, missed handovers, missing parcels, damage, and disputed custody transfers remain explicit exceptions and are not silently marked as successful movement.
+- [ ] Verify launch operations do not depend on a Driver Portal or imply provider/driver direct access.
+
+These are policy-derived acceptance directions, not evidence that runtime behaviour has passed. Route constraints, authority assignments, two-person approvals, mandatory evidence, capacity/provider rules, correction authority, and detailed exception outcomes remain unresolved.

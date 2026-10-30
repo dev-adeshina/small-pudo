@@ -313,3 +313,18 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Still unresolved:** Eligible circumstances; exact staff responsibility/permission assignment; which cases require two-person approval; monetary or operational limits; category-specific mandatory evidence; and whether approval may be revoked before dispatch.
 - **Acceptance direction:** Deny generic or unauthorized overrides; prevent self-approval; require second approval for material exceptions once defined; preserve payment state and unrelated holds; and retain attributable evidence.
 - **Implementation boundary:** Business policy only. No schema, endpoint, permission implementation, or application-code change is authorized.
+
+
+### DEC-031 — Controlled, evidence-based routing and movement
+
+- **Date:** 30 October 2026.
+- **Decision:** Accepted Option A — controlled, evidence-based movement.
+- Keep route proposal, route approval, route-leg assignment, dispatch, physical handover, and arrival confirmation distinct. A proposal or assignment is not proof of physical movement.
+- Operations manages proposals and route-leg assignments at launch. Approval, alteration, revocation, and reassignment require explicitly assigned staff authority; changes preserve prior decisions and identify the responsible actor and reason.
+- Movement milestones retain attributable context for the shipment/parcel, route leg, event type, location, physical actor where known, recording actor, timestamp, and supporting evidence appropriate to the event.
+- When staff record an event on behalf of a provider/driver, distinguish the physical actor who performed or reported the event from the staff member who recorded it.
+- Delays, missed handovers, missing parcels, damage, disputed custody transfers, and other movement exceptions are recorded for investigation/resolution, not silently represented as successful movement.
+- Operations continues to manage launch-time assignments and milestones through the staff workflow. Driver Portal remains deferred; this decision does not grant providers/drivers direct platform access.
+- **Still unresolved:** Mandatory route-planning inputs/constraints; exact approval/change/revocation/reassignment permissions; any two-person approval requirements; mandatory milestones and event-specific evidence; provider/resource and capacity rules; correction authority; delay/loss/damage/dispute resolution; and detailed acceptance tests.
+- **Acceptance direction:** Proposals cannot authorize dispatch; assignments cannot prove movement; movement events must reference the correct shipment and route leg; third-party physical actors and staff recorders are distinguishable; assignment history remains traceable; and exceptions are not silently marked successful.
+- **Implementation boundary:** Business policy only. No schema, endpoint, permission implementation, provider integration, or application-code change is authorized.
