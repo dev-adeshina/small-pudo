@@ -124,3 +124,13 @@ After the owner reviews this actor/responsibility draft and resolves the decisio
 6. Refunds, credits, additional charges, reconciliation, and related audit events.
 
 This order is a proposed documentation sequence, not approval of unresolved business rules.
+
+
+## Stage 5.1 — action-level permission specification
+
+The proposed action-level staff authorization baseline is maintained in `PLATFORM_STAFF_PERMISSION_MATRIX.md`. It translates DEC-022 and related workflow decisions into a draft matrix without creating technical roles, claims, schemas, or implementation authority. The matrix remains subject to owner review; its open PM-01–PM-12 decisions must be resolved before the staff permission model is considered complete.
+
+
+## Stage 5.1 — action-level permission specification
+
+The proposed action-level staff authorization baseline is maintained in `PLATFORM_STAFF_PERMISSION_MATRIX.md`. It translates DEC-022 and related workflow decisions into a draft matrix without creating technical roles, claims, schemas, or implementation authority. The matrix remains subject to owner review; its open PM-01–PM-12 decisions must be resolved before the staff permission model is considered complete.
