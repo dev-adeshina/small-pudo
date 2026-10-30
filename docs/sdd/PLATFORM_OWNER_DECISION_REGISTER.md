@@ -159,12 +159,15 @@ The order below follows dependencies: authority and booking semantics first; com
 
 ### D-11 — Delivery proof and failed-delivery resolution
 
-- **Status:** Owner decision required.
-- **Confirmed:** Flexible proof of delivery and controlled failed-delivery resolution are in launch scope.
-- **Decision needed:** Which proof methods are accepted or mandatory by service? What recipient/collection identity checks apply? Which failure reasons and resolution options are allowed, and who authorizes reattempt, return, holding, refusal, cancellation, or refund?
-- **Recommendation:** Treat attempt, successful delivery, failed delivery, collection, and return as distinct outcomes. Require the approved evidence before recording successful delivery.
-- **Dependencies:** D-01, D-04, D-10, privacy/retention rules, and financial adjustments.
-- **Record after decision:** Outcome catalogue, evidence requirements, authority, time/retry limits, customer-contact rules, and dispute scenarios.
+- **Status:** Owner decision accepted at the high-level policy level; recorded as DEC-032 on 30 October 2026.
+- **Accepted choice:** Option A — evidence-based delivery with controlled outcomes. Distinguish delivery attempt, successful delivery, failed delivery, customer collection, and return. Successful delivery requires approved evidence appropriate to the service; a staff status update alone is insufficient.
+- **Recipient authority:** Verify that the receiving person is authorized. Sender, payer, booking customer, and receiver are not interchangeable by default; preserve DEC-024's party/access boundaries.
+- **Flexible evidence:** Proof methods may vary by service. Recipient confirmation, OTP, signed acknowledgement, and attributable staff evidence are examples, not universally mandated methods.
+- **Failed delivery and resolution:** Record failed attempts and reasons distinctly. Reattempt, return, holding, refusal, cancellation, and financial adjustment require an explicitly authorized resolution procedure; no outcome follows automatically from a failed attempt.
+- **Communication and disputes:** Notify relevant parties of significant outcomes using only information they are authorized to receive. Preserve original evidence and event history when a delivery is disputed.
+- **Still unresolved:** Mandatory proof methods by service; OTP requirement; attempt limits; authority for reattempt, return, holding, refusal, cancellation, and financial adjustments; holding duration; failure-reason catalogue; loss/damage/refusal/dispute handling; customer-contact details; and detailed acceptance tests.
+- **Dependencies:** D-01, D-03, D-04, D-08, D-10, D-12, privacy/retention rules, and customer notifications.
+- **Implementation boundary:** Business policy only. No schema, endpoint, permission implementation, notification integration, or application-code change is authorized.
 
 ### D-12 — Audit, evidence retention, correction, and disclosure
 
