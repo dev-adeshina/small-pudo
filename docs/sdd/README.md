@@ -12,7 +12,6 @@ This folder is the continuity and implementation guide for the existing VeriLyft
 - `PLATFORM_STAFF_PERMISSION_DECISIONS.md` — owner-accepted outcomes for PM-01–PM-12; policy decisions are accepted, while detailed technical permission design remains open.
 - `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` — owner-accepted BP-01–BP-22 under DEC-023/DEC-024; operational and technical parameters remain open.
 - `PLATFORM_STAFF_PERMISSION_MATRIX.md` — proposed action-level staff permission, location-capability, approval, and separation-of-duties matrix; draft for owner review, not implementation approval.
-- `PLATFORM_STAFF_PERMISSION_MATRIX.md` — proposed action-level staff permission, location-capability, approval, and separation-of-duties matrix; draft for owner review, not implementation approval.
 - `PLATFORM_SHARED_WORKFLOWS.md` — draft cross-domain workflows for storefront fulfilment, independent shipment booking, intake/custody, pricing, payments, routing, dispatch, delivery, notifications, and audit/evidence.
 - `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` — draft conceptual domain relationships, lifecycle boundaries, API/service contract expectations, security controls, and source-validation checklist.
 - `IMPLEMENTATION_SOURCE_TRACEABILITY.md` — read-only source inventory mapped to the platform SDD, with evidence limits, implementation gaps, and verification follow-ups.
