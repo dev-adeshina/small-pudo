@@ -323,3 +323,27 @@ The following acceptance direction supplements A-10 and DEC-025/DEC-042. These a
 - **Lean launch scope:** No automated hours, capacity, or availability scheduling is assumed.
 
 **Still required before executable tests:** Approved service/location/action matrix; exact capability catalogue; Admin authority and staff permission scopes; partner arrangements; queued-work and temporary closure procedures; audit retention; technical/source/runtime evidence. DEC-043 is policy direction only.
+
+
+
+## A-09/A-10 and cross-domain acceptance refinement — DEC-044 custody transfers and physical exceptions
+
+The following outcomes must be covered by later executable acceptance scenarios. These are policy-derived requirements, not evidence of implementation or test execution.
+
+| Acceptance family | Required observable outcome |
+|---|---|
+| Assignment versus custody | Route assignment, dispatch authorization/record, or arrival alone does not change recorded custody. |
+| Completed handover | A transfer is complete only after actual physical handover and receiving-party possession are established with applicable evidence. |
+| Transfer attribution/history | Each handover is distinct and attributable to source/previous custodian, intended destination, actual receiver, physical actor, recording staff member when different, time/location, outcome, and applicable evidence/reason; prior history remains available. |
+| Failed handover | Refusal, failed attempt, or non-receipt is not recorded as completed transfer; last confirmed custody remains preserved. |
+| Disputed handover | Conflicting claims enter controlled investigation; route/dispatch records alone do not prove receipt; competing accounts and evidence sources remain preserved. |
+| Incomplete documentation | Known physical possession change is investigated without fabricating proof; actual possession is not left ambiguous. |
+| Correction | Erroneous custody/location records are corrected through a separately attributable, reasoned record; original event/evidence remains preserved. |
+| Missing parcel | Discovery context, last confirmed custody/location, movement history, and available third-party evidence are preserved; no unsupported transfer/delivery/recovery is asserted; resolution is authorized and reasoned. |
+| Damaged parcel | Discovery time/place, observer/reporter, circumstances, condition evidence, and surrounding custody history are preserved; last custodian is not automatically assigned fault. |
+| Incorrect location | Original assignment remains historically visible; actual location is recorded when established; administrative correction is not mistaken for physical movement. |
+| Prolonged hold | Actual custody, hold reason, and accountable owner remain identifiable; unresolved hold does not imply normal processing/dispatch permission. |
+| Exception closure | Unresolved exceptions cannot be silently closed; authorized resolution, actor/authority, reason, and supporting evidence are traceable. |
+| Financial/legal outcome | Missing/damage/transfer exception alone does not trigger refund, credit, compensation, insurance, liability, or customer-entitlement outcome. |
+
+**Still required before executable tests:** Service-specific proof/verification methods; who may confirm, dispute, and correct transfers; second-approver rules; investigation ownership; damage assessment; hold review/maximum periods; financial/customer entitlement policies; exact statuses and technical contracts; evidence retention; source reconciliation; and safe test fixtures. DEC-044 is policy direction only; no implementation or runtime evidence is implied.
