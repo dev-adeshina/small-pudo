@@ -5,7 +5,7 @@ Continue the existing **VeriLyft — Beyond Borders** project in `dev-adeshina/s
 ## Current verified repository state
 
 - Latest verified `main` head: `beb2d03e88df7894a8805af79a9d68fd74cc143f` — PR #35 merged on 30 October 2026 at 15:17:11 UTC.
-- Current documentation proposal: `docs/stage-5-2-booking-party-authority` (verify its PR/state before continuing).
+- Current documentation proposal: PR #36, `docs: consolidate booking-party authority decisions`, on `docs/stage-5-2-booking-party-authority`; open for owner review.
 - The active work is documentation-only. No application-code changes are authorized until the complete platform-wide SDD is reconciled and explicitly approved.
 - The source traceability inventory remains pinned to `c56be9b121e6007e1e99c6df2d3984e709771a92`; documentation-only merges after that source baseline do not independently prove runtime behaviour.
 
