@@ -554,3 +554,15 @@ Workflow B must now carry these accepted rules:
 - Party notifications, delegated access, deletion, disputes, and appeals follow the BP policy record.
 
 The following remain open specification rather than unanswered owner-policy choices: verification/consent methods; complete change-type and lifecycle matrix; evidence and exception standards; exact transfer/withdrawal financial procedure; delegated-access action catalogue and duration; notification event/field/channel matrix; retention/anonymisation/legal-hold rules; dispute severity/targets, reviewer eligibility, and appeal procedure details. No technical representation or implementation is approved by this reconciliation.
+
+
+### DEC-040 policy refinement — measurement adjustment and rejection resolution
+
+For Workflow C and Workflow D, apply the following owner-approved refinement:
+
+- At authorized intake, preserve declared and actual measurements separately and use the service's configured measurements/units. A discrepancy below the service's materiality/review criteria leaves accepted commercial terms unchanged; a potentially material or payment-impacting discrepancy enters the adjustment/review path. No universal threshold is approved.
+- A proposal links to the original quote/agreement and records changed facts, reason, and revised amount. Required review precedes approval. Proposer authority does not automatically confer approval authority.
+- Customer acceptance must be explicit; silence is not acceptance. Acceptance records revised commercial terms, not settlement. A dispute holds the disputed additional charge pending review.
+- Rejection triggers an authorized service-resolution decision; it does not automatically cancel, refund, credit, or charge. Possible controlled outcomes are continuation under original terms where safe and commercially feasible, an eligible alternative service with separately accepted pricing, or cancellation under the applicable policy. None is automatic.
+- Do not dispatch under a rejected revised price. Dispatch remains subject to accepted commercial terms, verified payment, and all other operational holds.
+- Exact service thresholds, authority/eligibility criteria, customer response periods, non-response handling, and runtime acceptance tests remain open. DEC-040 does not approve schema, routes, fields, statuses, permissions, or implementation.
