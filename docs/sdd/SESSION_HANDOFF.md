@@ -42,7 +42,7 @@ The readiness assessment's source findings remain valid: independent shipment bo
 - Review and merge the Milestone 2 Part 1 documentation-only PR after inspecting its full diff.
 - Continue Milestone 2 Part 2 — measurement-based adjustments, customer consent/rejection outcomes, payment-at-intake and advance-payment verification, partial/late payment, refunds/credits/reversals, and reconciliation. Preserve DEC-026–DEC-029 and DEC-039; do not invent values.
 - Then proceed through physical intake/measurement/custody, location capability, routing/dispatch/movement, delivery proof/failed-delivery resolution, audit/evidence, notifications/privacy, and production operations.
-- Continue reconciling DEC-018, DEC-037, and DEC-038 through requirement priorities, acceptance scenarios, source traceability, and launch-readiness evidence.
+- Continue reconciling DEC-018, DEC-037, DEC-038, and DEC-039 through requirement priorities, acceptance scenarios, source traceability, and launch-readiness evidence.
 - Preserve storefront catalogue, cart, checkout, customer account and payment requirements as the attached commerce service. Its existing source-backed slices may be specified and regression-tested, but must not displace the core logistics workflow.
 - Keep source facts, designed requirements, implemented behaviour, runtime evidence, and production-readiness evidence distinct. Do not invent unresolved thresholds, formulas, permission limits, proof methods, retention periods, or retry/time-out values.
 - Preserve the active source baseline at `e0f69055` unless a source-changing commit is inspected.
