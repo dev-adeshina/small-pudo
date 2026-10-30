@@ -241,4 +241,12 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Status:** High-level owner policy accepted on 30 October 2026 (Option A: narrow, controlled dispatch exceptions).
 - **Accepted:** Verified payment remains the default dispatch prerequisite; exceptions are limited to explicitly defined operational circumstances under an approved policy; only staff with explicitly assigned permission may approve; the requester must not automatically approve their own request; material exceptions require a second approver; exceptions preserve payment status and cannot bypass unrelated safety, custody, identity, legal, or other operational holds; parcel/shipment, reason, requester, approver(s), timestamp, supporting evidence, and outcome must be attributable.
 - **Still open:** Eligible circumstances, exact permission assignment, materiality/second-approval rules, monetary or operational limits, category-specific evidence, pre-dispatch revocation, and detailed acceptance tests.
-- **Next action:** Continue to D-10 routing, route-leg assignment, and movement evidence. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+- **Next action:** D-10 routing, route-leg assignment, and movement evidence is accepted as DEC-031. Continue to D-11 delivery proof and failed-delivery resolution. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+
+
+### D-10 routing, route-leg assignment, and movement evidence — DEC-031
+
+- **Status:** High-level owner policy accepted on 30 October 2026 (Option A: controlled, evidence-based movement).
+- **Accepted:** Route proposal, approval, route-leg assignment, dispatch, physical handover, and arrival confirmation are distinct; proposal/assignment is not proof of movement; Operations manages launch-time proposals and assignments; route changes require explicitly assigned authority and preserve history, actor, and reason; movement evidence distinguishes physical actor from staff recorder when staff enter provider/driver events; delays, missed handovers, missing parcels, damage, and disputed custody transfers remain explicit exceptions; Driver Portal remains deferred.
+- **Still open:** Route constraints, exact permissions and any two-person approvals, mandatory milestones/evidence, provider/resource/capacity rules, correction authority, detailed exception outcomes, and acceptance tests.
+- **Next action:** Continue to D-11 delivery proof and failed-delivery resolution. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
