@@ -86,13 +86,14 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Next action:** Review PR #4 against the current schema and existing records; verify the intended behaviour before merging or changing data.
 - **Acceptance:** Product counts and category slug-change protection work with the current schema and any explicitly supported legacy records; no unnecessary data migration.
 
-### VLY-015 — Admin Portal page specifications and requirement-level launch classification remain open
+### VLY-015 — Requirement-level launch priority proposal drafted; approval and evidence mapping remain open
 
-- **Status:** OPEN
-- **Priority:** High before broad Admin implementation
-- **Evidence:** Admin Portal design PR #1 is merged. Requirements inventory and source-level validation from PR #2 are merged into `main`; the consolidated priority baseline and detailed page specifications still need formal review. The owner has accepted DEC-036's high-level evidence-based P0/P1/deferred approach. Requirement-level classification and page-by-page acceptance specifications remain to be reconciled and explicitly approved as part of the complete SDD.
-- **Next action:** Complete requirement-level P0/P1/deferred mapping, reconcile page requirements with accepted platform policies, and define evidence criteria before implementation.
-- **Acceptance:** Each requirement is labelled proposed/approved/implemented/tested accurately; no new collection, route, field, type, or workflow is introduced without source inspection and an explicit need.
+- **Status:** OPEN — owner review pending
+- **Priority:** High before implementation planning
+- **Evidence:** PR #30 merged at `c9d9342cfc9dcef2c7d5704074d83927c5f5099c`. A proposed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` now maps all 20 cross-domain acceptance areas and ADM-R01–ADM-R54, preserves ADM-P01–ADM-P15 as P1, and identifies Conditional P0 and deferred scope. It distinguishes priority from design/source/verification/release status.
+- **Limit:** The proposal is not owner-approved. It does not refresh source traceability, establish detailed acceptance tests, prove implementation, or certify production readiness. Detailed policy values and workflow contracts remain open under DEC-022–DEC-035.
+- **Next action:** Obtain owner review of the priority mapping. After approval/merge, refresh source-to-requirement traceability at the current source head and define observable acceptance/evidence for each P0 and Conditional P0.
+- **Acceptance:** All in-scope requirements have an owner-approved priority; P1/deferred items have a safe launch boundary/manual fallback where needed; P0 evidence is explicit; no requirement is labelled implemented/tested/ready without supporting evidence.
 
 ### VLY-016 — Shipment/PUDO/pricing operational implementation is not present in the inspected Admin routes
 
