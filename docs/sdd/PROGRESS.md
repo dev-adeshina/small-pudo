@@ -704,3 +704,23 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 **Evidence boundary:** Source mapping is read-only and pinned to `e0f69055d33dd9399c23e1d793f359468229c856`. No application code was changed. No tests were executed. No deployed configuration, provider dashboard, production Firestore data, or root archive was inspected. Source presence is not runtime verification or launch readiness.
 
 **Current active task:** Stage 3 — requirement-to-source traceability and P0 evidence mapping. Application-code changes remain blocked by the complete SDD approval gate.
+
+
+## 28. P0 acceptance scenarios and evidence catalogue drafted — 30 October 2026
+
+- [x] Verified PR #32 merged to `main` at `c6dd28cd5450b598b19a19afa12a7331440320f0`.
+- [x] Re-read the current cross-domain acceptance matrix, lifecycle/contracts, shared workflows, owner decisions, priority matrix, source traceability and Admin requirements at the PR #32 baseline.
+- [x] Added `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md` with scenario outlines for all A-01–A-20 and links to ADM-R01–ADM-R54.
+- [x] Defined a common case-record format, evidence classes (source, automated test, runtime, provider, operations, production), universal pass rules, and safe test-environment boundary.
+- [x] Added conditional-P0 trigger gates for independent shipment/parcel operations, measurement-dependent pricing, returns, Telegram, government requests, retention-hold release and appeal evidence.
+- [x] Kept unresolved DEC-022–DEC-036 policy parameters explicit; no numeric thresholds, formulas, proof methods, retention periods, retries or permission boundaries were invented.
+- [ ] Owner review and approval of the catalogue's scenario scope and wording.
+- [ ] Resolve detailed policy dependencies in authoritative workflow/lifecycle/permission documents.
+- [ ] Confirm whether root `pudo.zip` is authoritative and within active VeriLyft source scope.
+- [ ] Convert approved scenario outlines into executable test specifications and collect safe non-production runtime evidence.
+- [ ] Assess production configuration, monitoring, backup/restore, incident response, rollback and release sign-off.
+- [ ] Reconcile all remaining SDD documents and obtain explicit approval of the complete platform-wide SDD before application-code changes.
+
+**Evidence boundary:** Documentation-only. The catalogue is test design, not test execution. No application code was changed and no tests were run. No production data, deployed secrets/configuration, provider dashboards, physical parcel operations or root archive were inspected. Source baseline remains `c6dd28cd5450b598b19a19afa12a7331440320f0`.
+
+**Current active task:** Stage 4 — owner review and refinement of P0/Conditional P0 acceptance scenarios and evidence requirements. Application-code changes remain blocked by the complete SDD approval gate.
