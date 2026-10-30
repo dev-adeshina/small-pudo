@@ -4,10 +4,10 @@ Continue the existing **VeriLyft — Beyond Borders** project in `dev-adeshina/s
 
 ## Current verified state
 
-- Latest verified `main` head: `c6dd28cd5450b598b19a19afa12a7331440320f0` (PR #32 merged 30 October 2026).
+- Latest verified `main` head: `7f69a67844ac7c42f1ec6bd7b29c67cd524a1966` (PR #33 merged 30 October 2026).
 - All 15 tracked high-level owner decisions (D-01–D-15; DEC-022–DEC-036) are accepted. The decision queue is complete, but the platform-wide SDD is not yet complete or approved.
 - Refreshed source inspection baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (PR #32 changed SDD documentation only). `IMPLEMENTATION_SOURCE_TRACEABILITY.md` maps A-01–A-20 and ADM-R01–ADM-R54 against the active source tree at that exact source commit.
-- Current task: **Stage 4 — owner review and refinement of P0/Conditional P0 acceptance scenarios and evidence requirements**. PR #31 priority baseline and PR #32 source traceability are merged. The complete platform-wide SDD remains unapproved.
+- Current task: **Stage 5.1 — owner review of the proposed staff action-level permission matrix** in `PLATFORM_STAFF_PERMISSION_MATRIX.md`, on branch `docs/staff-action-permission-matrix`. PR #31 priority baseline, PR #32 source traceability, and PR #33 P0 acceptance catalogue are merged. The complete platform-wide SDD remains unapproved.
 
 ## Read first
 
@@ -41,10 +41,11 @@ Read `README.md`, `SPEC.md`, `DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.m
 ## Remaining sequence
 
 1. Confirm whether root `pudo.zip` is authoritative and within active VeriLyft source scope; it has not been inspected.
-2. Owner-review `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`; resolve its policy dependencies and approve test specifications for every P0/Conditional P0 requirement.
-3. Obtain runtime evidence for source-present P0 paths in safe non-production environments; do not treat source presence as runtime proof.
-4. Assess production configuration, monitoring, backup/restore, incident response, rollback and release sign-off.
-5. Reconcile all SDD documents and present the complete platform-wide baseline for explicit owner approval.
-6. Only after complete SDD approval, plan focused implementation work.
+2. Review `PLATFORM_STAFF_PERMISSION_MATRIX.md` and resolve PM-01–PM-12; do not invent technical roles/claims or blanket second-approval rules.
+3. Resolve remaining detailed policy dependencies across DEC-022–DEC-036 and reconcile workflow/lifecycle/API/data/security contracts against current source.
+4. Obtain runtime evidence for source-present P0 paths in safe non-production environments; do not treat source presence as runtime proof.
+5. Assess production configuration, monitoring, backup/restore, incident response, rollback and release sign-off.
+6. Reconcile all SDD documents and present the complete platform-wide baseline for explicit owner approval.
+7. Only after complete SDD approval, plan focused implementation work.
 
 Do not restart the completed 15-decision sequence. Start by verifying the live `main` head and PR state, then continue from `PROGRESS.md`. Never merge on the owner's behalf.
