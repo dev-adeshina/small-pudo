@@ -217,8 +217,8 @@ Use these evidence labels consistently:
 7. A rejected quote creates no payment obligation from that quote. An accepted adjustment records the revised commercial agreement and any additional amount due. A disputed additional charge remains held pending review.
 8. Overpayments and underpayments require an authorized, traceable resolution; a failed payment remains a failed attempt. A payment received after cancellation is recorded and reconciled without reactivating the cancelled booking.
 9. A refund request is not an executed refund, and a customer credit is not a cash refund. Provider/bank reconciliation and duplicate-event protections remain mandatory.
-7. Finance or another explicitly authorized function reviews exceptions, reconciles provider records against platform records, and records resolution.
-8. Late, duplicate, failed, or contradictory events follow explicit policy and produce an auditable outcome.
+10. Finance or another explicitly authorized function reviews exceptions, reconciles provider records against platform records, and records resolution.
+11. Late, duplicate, failed, or contradictory events follow explicit policy and produce an auditable outcome.
 
 ### Open policy / design questions
 
