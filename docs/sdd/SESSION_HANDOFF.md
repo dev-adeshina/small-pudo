@@ -5,7 +5,7 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 ## Repository baseline
 
 - Latest verified `main`: `574f23787030c4b5374e6ac02ce82b69e1ece1a4` (PR #36 merged 30 October 2026, 18:36:18 UTC).
-- Stage 5.3 documentation proposal is being prepared on `docs/stage-5-3-pricing-measurement-quote-policy`; PR creation is pending.
+- Stage 5.3 documentation proposal is PR #37, `docs: reconcile Stage 5.3 pricing and quote policies`, open for owner review on `docs/stage-5-3-pricing-measurement-quote-policy`.
 - Source traceability remains pinned to `c56be9b121e6007e1e99c6df2d3984e709771a92`. Later documentation merges do not prove runtime behaviour.
 - Work remains documentation-only. Do not change application code until the complete platform-wide SDD is reconciled and explicitly approved.
 
@@ -39,7 +39,7 @@ Read `README.md`, `SPEC.md`, `DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.m
 
 ## Next sequence
 
-1. Complete and review the Stage 5.3 documentation-only PR; do not merge it on the owner's behalf.
+1. Review and merge PR #37, the Stage 5.3 documentation-only consolidation, if its contents are accepted; do not merge it on the owner's behalf.
 2. Reconcile remaining DEC-022–DEC-036 dependencies across workflows, lifecycle/API/security contracts, acceptance criteria, source traceability, and evidence planning.
 3. Specify remaining pricing/measurement details without inventing formulas, units, thresholds, or approval limits.
 4. Confirm whether repository-root `pudo.zip` is authoritative and within active VeriLyft scope; it has not been inspected.
