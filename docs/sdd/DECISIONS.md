@@ -413,3 +413,14 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Still unresolved:** Requirement-level P0/P1/deferred classification; exact P0 scenarios/evidence artifacts; production-like environment definition; blocker ownership/exception authority; deployment/rollback runbook; backup/restore proof; monitoring/alert thresholds; incident response ownership; and final dated release checklist/sign-off.
 - **Rationale:** Launch only a clearly bounded service whose essential requirements have evidence proportionate to their risk, without confusing code presence or build success with operational readiness.
 - **Status:** High-level launch-governance policy accepted. Requirement-level reconciliation, source/runtime verification, detailed evidence and ownership, and final owner sign-off remain open. No application-code change is authorized.
+
+
+### DEC-037 — Logistics is the primary business; storefront is an attached service
+
+- **Decision date:** 30 October 2026.
+- **Decision:** VeriLyft is fundamentally a logistics and shipment-management platform. Independent shipment booking is the primary customer entry point for the core business. Storefront commerce is an attached, secondary service.
+- **Shared fulfilment principle:** Storefront purchases and independently booked shipments remain distinct business concepts and sources. Storefront orders that require delivery fulfilment must enter the same operational fulfilment system used to manage shipment operations; they must not create a separate, competing fulfilment process.
+- **Scope relationship:** This clarifies the business hierarchy and reinforces the already accepted lean launch scope in DEC-018. It does not remove, defer, or independently re-approve any DEC-018 launch capability, and it does not change the deferred items already recorded there.
+- **Implication:** Product priorities, workflow design, acceptance planning, and launch-readiness assessment must treat independent shipment booking and its supporting logistics operations as the primary business workflow. Storefront ordering remains supported as an attached order source.
+- **Implementation boundary:** This is a product/workflow decision only. It does not approve a new Firestore collection, field, route, service, duplicated order/shipment model, migration, or application-code change. Preserve the distinction between storefront orders, shipments, and transport movements; inspect current source before proposing technical representation.
+- **Status:** Accepted by the owner; detailed workflow contracts, technical representation, implementation, and runtime verification remain open.
