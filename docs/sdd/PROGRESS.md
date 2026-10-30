@@ -3,11 +3,11 @@
 **Last updated:** 30 October 2026
 **Repository:** `dev-adeshina/small-pudo`
 **Project baseline branch:** `main`
-**Latest verified main head:** `beb2d03e88df7894a8805af79a9d68fd74cc143f` — PR #35 merged. Current documentation proposal branch: `docs/stage-5-2-booking-party-authority`. The source baseline inspected for the traceability inventory remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; comparison through the current head shows intervening commits changed SDD documentation only, not application source.
+**Latest verified main head:** `b238a1861c4c3825fc8a31cac122b2b14b6c7e79` — PR #37 merged on 30 October 2026 at 19:11:48 UTC. Current documentation work: Stage 5.4 P0 acceptance-evidence review on `docs/stage-5-4-p0-evidence-review`. The source baseline inspected for traceability remains `c56be9b121e6007e1e99c6df2d3984e709771a92`; later documentation merges do not prove runtime behaviour.
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
-**Current phase:** Stage 5.2 booking-party and change-authority owner policies BP-01–BP-22 accepted; documentation consolidation is in progress on `docs/stage-5-2-booking-party-authority`. Latest verified `main` includes PR #35 at `beb2d03e88df7894a8805af79a9d68fd74cc143f`. The accepted outcomes are recorded in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`; detailed technical permission design and full SDD approval remain open. No application-code changes are authorized until the complete platform-wide SDD is reconciled and explicitly approved.
+**Current phase:** Stage 5.3 pricing, measurement, quote, adjustment, and financial-outcome policies are accepted and consolidated in merged PR #37. Stage 5.4 now begins: owner review and refinement of the P0 acceptance-evidence catalogue, followed by approval of reproducible test specifications and safe non-production evidence planning. Detailed technical design and full SDD approval remain open. No application-code changes are authorized until the complete platform-wide SDD is reconciled and explicitly approved.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -21,14 +21,15 @@
 
 ## 1. Current position
 
-### Current milestone — Stage 5.3 pricing, measurement, quote, and adjustment policies accepted; SDD reconciliation underway
+### Current milestone — Stage 5.3 merged; Stage 5.4 P0 acceptance-evidence review
 
 - **Owner decision register:** 15 of 15 tracked decisions (D-01–D-15) have accepted high-level outcomes, recorded as DEC-022–DEC-036. Detailed policy values, permissions, transitions, and evidence requirements remain open where identified in the decision records.
-- **Latest verified main head:** `574f23787030c4b5374e6ac02ce82b69e1ece1a4` (PR #36 merged on 30 October 2026 at 18:36:18 UTC).
+- **Latest verified main head:** `b238a1861c4c3825fc8a31cac122b2b14b6c7e79` (PR #37 merged on 30 October 2026 at 19:11:48 UTC).
 - **Source inspection baseline:** `c56be9b121e6007e1e99c6df2d3984e709771a92`. Comparison through latest main shows intervening commits changed SDD documentation only; source traceability remains a read-only snapshot and must be reconciled with accepted policy.
-- **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), and P0 acceptance-scenario/evidence catalogue draft (PR #33) are merged.
+- **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), P0 acceptance-scenario/evidence catalogue draft (PR #33), booking-party authority consolidation (PR #36), and Stage 5.3 pricing/measurement/quote-policy consolidation (PR #37) are merged.
 - **Merged documentation:** PR #36, `docs: consolidate booking-party authority decisions`, is merged. `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` records BP-01–BP-22 accepted under DEC-023/DEC-024. PM-01–PM-12 remain accepted in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`.
-- **Current work:** PR #37 contains the documentation-only reconciliation of the six owner-approved Stage 5.3 pricing, measurement, quote-management, quote-adjustment, and financial-outcome policies. After owner review/merge, continue unresolved policy/technical dependencies, source reconciliation, production-readiness evidence, and explicit approval of the complete SDD.
+- **Stage 5.3:** PR #37 is merged. The six owner-approved pricing, measurement, quote-management, quote-adjustment, and financial-outcome policies are consolidated across the SDD.
+- **Current work:** Review `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md` with the owner, refine scenario coverage and policy dependencies, then approve reproducible P0/Conditional P0 test specifications before any test execution. VLY-017 remains open.
 - **Implementation gate:** No application-code changes until the complete platform-wide SDD has been reconciled and explicitly approved.
 
 VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, and Cloudinary application. Preserve its architecture and existing patterns; do not invent parallel services, collections, fields, routes, or permission models.
@@ -769,3 +770,16 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
 **Evidence boundary:** Documentation-only policy capture based on the owner's explicit approvals. No application source, Firebase configuration/rules, database schema, APIs, permissions, deployment, runtime behaviour, or tests were changed/run. This does not constitute complete SDD approval, implementation authorization, or production readiness.
+
+## 32. Stage 5.3 merged; Stage 5.4 P0 acceptance-evidence review opened — 30 October 2026
+
+- [x] Verified PR #37 merged to `main` at `b238a1861c4c3825fc8a31cac122b2b14b6c7e79`.
+- [x] Stage 5.3's six approved policy areas are consolidated in DEC-026/DEC-027/DEC-029 and the shared workflows, lifecycle contracts, owner decision register, acceptance matrix, issues, progress, and handoff documents.
+- [ ] Review `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md` with the owner; it remains a draft test-design catalogue, not approved test scripts or executed evidence.
+- [ ] Resolve remaining DEC-022–DEC-036 dependencies that materially affect P0 scenarios and contracts.
+- [ ] Approve reproducible P0/Conditional P0 test specifications with preconditions, actor, action, expected state/non-state changes, replay/failure behaviour, evidence, cleanup, and accountable reviewer.
+- [ ] Confirm whether repository-root `pudo.zip` is authoritative and in scope; it remains uninspected.
+- [ ] Collect safe non-production runtime evidence and separately assess production configuration, monitoring, backup/restore, incident response, rollback, and release sign-off.
+- [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
+
+**Evidence boundary:** PR #37 is documentation-only. Stage 5.4 begins with test-design review; no tests have been executed by this stage checkpoint, and no implementation or production-readiness approval is implied.
