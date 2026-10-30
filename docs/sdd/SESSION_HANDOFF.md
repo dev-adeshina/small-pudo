@@ -4,7 +4,7 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 
 ## Verified repository state
 
-- Latest verified `main` at the start of this proposal: `df6341953f459456b13e2efbf274ad581b2e765f` — PR #47 (DEC-040) merged. PR #48 / DEC-041 is the current documentation-only proposal and remains pending owner review.
+- Latest verified `main` before the current proposal: PR #50 / DEC-043 merged on 30 October 2026 at `06d485f351246b5304227d79d5e03eeed0c1b9c1`. The current documentation-only proposal records owner-approved DEC-044 on branch `docs/dec-044-custody-exceptions` and is pending owner review.
 - PR #43 corrected post-PR #42 continuity metadata; it was documentation-only.
 - The PR #42 readiness assessment remains accepted as a readiness/navigation baseline only; it does not approve executable tests, test execution, implementation, or release.
 - Active application-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). PRs #40–#44 changed SDD documentation only; they do not establish runtime behaviour.
@@ -22,7 +22,7 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 - Stage 5.3 pricing/measurement/quote/adjustment/financial-outcome policy areas are accepted and consolidated in merged PR #37, with subsequent refinements DEC-039–DEC-041. Detailed formulas/rates, units/conversion, rounding/effective dates, taxes/fees/discounts, discrepancy thresholds, authority limits, service-resolution eligibility, payment/refund limits, and reconciliation procedures remain open.
 - Milestone 1 independent shipment booking policy is owner-approved as DEC-038: valid quote acceptance by the authenticated booking party confirms the booking; service-specific booking information and business-arranged bookings are supported; payment, intake/custody, and fulfilment remain separate; each service communicates a separate handover deadline; missed handover may close as unfulfilled with financial history preserved; customer/Support/Operations/Admin responsibilities are bounded. Its documentation-only consolidation was merged in PR #45.
 
-## Current stage — Milestone 2 Part 1 and Part 2 merged; Part 3 payment/settlement proposal pending review
+## Historical stage record — Milestone 2 Part 1 and Part 2; superseded by later merged decisions
 
 Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. This is not approval of executable test specifications, test execution, implementation, or release.
 
@@ -93,3 +93,17 @@ Preserve explicit service-and-action configuration at each location; keep outgoi
 Next: review and merge the Milestone 3 Part 2 documentation-only PR. Keep the service/location/action matrix, exact capability catalogue, Admin authority granularity, staff permission scopes, partner arrangements, queued-work handling, temporary closure procedure, audit retention, technical contracts, and executable acceptance tests open. After merge, proceed to Milestone 3 Part 3 — custody transfers and physical exceptions. Continue platform-wide SDD reconciliation and preserve the explicit owner-approval gate before application-code changes.
 
 No application-code change is authorized.
+
+
+
+## Milestone 3 Part 3 owner approval — DEC-044
+
+The owner approved the high-level custody-transfer and physical-exception approach on 30 October 2026. DEC-044 is consolidated in the Milestone 3 Part 3 documentation-only proposal.
+
+Preserve the central invariant: recorded custody reflects established physical possession. A route assignment, dispatch authorization/record, arrival, or attempted handover does not automatically transfer custody. Every physical handover is distinct; completion requires actual handover and receiving-party possession. Record applicable source/previous custodian, intended recipient/destination, actual receiver, physical handover actor, recording staff member if different, time/location, outcome, evidence/source, and reason. Preserve prior custody history.
+
+Failed, disputed, and incompletely documented handovers remain distinct from completed transfers. Preserve last confirmed custody and competing reports. If possession changed but documentation is incomplete, investigate rather than invent confirmation. Missing parcels require a controlled investigation preserving discovery context, last confirmed custody/location, movement history, and available evidence. Damaged parcels require attributable discovery/condition evidence and surrounding custody history; last custodian alone does not prove fault. Incorrect location assignments preserve the original assignment; administrative correction is not physical transfer. Prolonged holds retain identifiable custody, reason, and accountable ownership. Corrections preserve original events/evidence, and unresolved exceptions are not silently closed. No automatic liability, refund, credit, compensation, insurance, or customer outcome is implied.
+
+**Still unresolved:** Service-specific handover proof methods; who may confirm/dispute/correct transfers; second-approver rules; missing-parcel investigation ownership; damage assessment/liability procedures; hold ownership/review/maximum periods; evidence retention; compensation/insurance/refund/credit/customer entitlements; exact lifecycle/status vocabulary; technical data/API/security contracts; and executable acceptance tests.
+
+**Next:** Review and merge the Milestone 3 Part 3 documentation-only PR. After merge, Milestone 3 Parts 1–3 are complete at the owner-approved policy level. Continue platform-wide SDD reconciliation, read-only source traceability, acceptance-test specification, and production-readiness evidence planning. Obtain explicit owner approval of the complete platform-wide SDD before any application-code changes. No application-code change is authorized.

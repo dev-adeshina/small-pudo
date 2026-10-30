@@ -351,3 +351,25 @@ The owner approved DEC-043 on 30 October 2026.
 **Still unresolved:** Service/location/action matrix, exact capability catalogue, designated Admin assignment granularity, staff permission scopes, partner arrangements, queued-work treatment, temporary closure procedure, audit retention, technical contracts, and executable acceptance tests.
 
 DEC-043 is high-level business policy only; it does not approve schema, fields, collections, endpoints, status values, permission implementation, or application-code changes.
+
+
+
+## Additional owner-accepted detailed policy — DEC-044
+
+### Custody transfers, physical exceptions, and resolution accountability
+
+The owner approved DEC-044 on 30 October 2026.
+
+- A physical handover is a distinct event. Proposed transfers, route assignments, dispatch authorizations/records, arrivals, and attempted handovers do not establish completed physical transfer or automatically change the recorded custodian.
+- Completion requires actual physical handover and receipt of possession by the receiving party. Capture the applicable source/previous custodian, intended destination/recipient, actual receiver, physical handover actor, recording staff member when different, time/location, outcome, evidence/source, and reason. Preserve prior custody history.
+- Failed, disputed, and incompletely documented handovers remain distinct from completed transfers. Preserve last confirmed custody and competing evidence. If physical possession changed despite incomplete records, investigate rather than invent confirmation.
+- Missing parcels require a controlled investigation preserving last confirmed custody/location, movement history, discovery context, and available evidence/third-party reports. Do not claim transfer, delivery, or recovery without supporting evidence; require authorized reasoned resolution.
+- Damage is a distinct exception with discovery time/place, observer/reporter, circumstances, and condition evidence. Preserve surrounding custody history. Last recorded custody alone does not establish fault or causation.
+- Incorrect location assignments preserve the original assignment and separately record established actual location. Administrative correction is not physical transfer.
+- Prolonged holds retain identifiable actual custody, reason, and accountable owner; holds do not imply normal onward-processing or dispatch permission.
+- Exception investigation and closure require attributable ownership and an authorized reasoned resolution. Preserve original evidence and records; corrections are separately traceable; unresolved exceptions are not silently closed.
+- Physical exceptions do not automatically determine liability, refund, credit, compensation, insurance, or customer entitlement. Those remain separate policy decisions.
+
+**Still unresolved:** Service-specific proof methods; who may confirm/dispute/correct transfers; second-approver requirements; missing-parcel investigation ownership; damage assessment/liability procedures; hold ownership/review/maximum periods; compensation/insurance/refund/credit/customer entitlements; detailed lifecycle and technical contracts; evidence retention; and executable acceptance tests.
+
+DEC-044 is high-level business policy only. It does not approve a schema, field, collection, endpoint, status enum, proof technology, permission implementation, automatic escalation, financial outcome, or application-code change.

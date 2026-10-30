@@ -594,3 +594,22 @@ This section records owner-approved policy boundaries; it is not an executable c
 8. DEC-043 does not add automated opening hours, capacity calculation, or availability scheduling to the lean location model.
 
 **Open specification:** Service/location/action eligibility matrix; exact capability catalogue; designated Admin authority and staff permission scopes; partner operational arrangements; queued-work treatment; temporary closure and restoration procedure; configuration audit retention; technical representation, APIs, authorization contracts, failure/replay handling, and test scenarios. These must be reconciled with existing source before technical design approval.
+
+
+
+## 4.4C Custody transfer and physical exception policy refinement — DEC-044
+
+This section states owner-approved business invariants. It does not establish an executable state machine, status enum, data schema, API, or authorization contract.
+
+1. **Custody is physical possession.** A recorded custodian must reflect established physical possession. Booking, route assignment, dispatch authorization/record, arrival, or an attempted handover does not independently change custody.
+2. **Transfers are distinct events.** Each physical handover between staff, locations, transport providers, or collection/receiving points is separately attributable. Completion requires that the handover actually occurred and the receiving party took possession. Preserve previous custody history.
+3. **Transfer context:** Record applicable parcel/shipment, source/previous custodian, intended recipient/destination, actual receiving person/actor, physical handover actor, recording staff member if different, time/location, outcome, evidence/source, and reason.
+4. **Failed/disputed/incomplete transfer:** Do not mark an unsuccessful or disputed handover complete. Preserve last confirmed custody and competing reports. If physical possession changed but documentation is incomplete, investigate and record the discrepancy without inventing proof or leaving known possession unaccounted for.
+5. **Corrections:** Preserve the original custody event and evidence. Record any correction separately with its actor, time, reason, and supporting basis. Administrative location reassignment is not proof of physical movement.
+6. **Missing parcel:** Preserve last confirmed custody, movement/transfer history, discovery context, last confirmed physical location, and available evidence/third-party reports. Do not mark transferred, delivered, or recovered without evidence. Require an authorized reasoned resolution.
+7. **Damage:** Record where/when discovered, observer/reporter, circumstances, and condition evidence; retain surrounding custody history. Distinguish observation from a third-party report. Last recorded custody alone does not establish causation or liability.
+8. **Incorrect location:** Preserve the original assignment and record actual location when established. Any administrative correction and any physical transfer remain distinguishable and attributable.
+9. **Hold:** Identify actual custody, hold reason, and accountable owner. A hold does not authorize normal onward processing or dispatch. No universal hold duration, review interval, or automatic escalation is defined.
+10. **Resolution and financial separation:** Preserve evidence/source and investigation findings; record authorized decision, authority, reason, and any separate correction. Do not silently close an unresolved exception. Refund, credit, compensation, insurance, and liability are not automatic consequences and remain subject to their separate policies.
+
+**Open contract questions:** Service-specific proof/verification methods; transfer confirmation/dispute/correction authority; second-person approval; investigation ownership; damage assessment; hold review/maximum duration; financial/customer entitlements; exact lifecycle vocabulary, fields, API/security contracts, evidence retention, and executable acceptance tests. Reconcile these with current source before technical approval. No implementation is authorized by DEC-044.

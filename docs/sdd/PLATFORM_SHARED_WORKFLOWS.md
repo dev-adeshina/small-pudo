@@ -612,3 +612,21 @@ DEC-042 is high-level business policy only. It does not approve technical data r
 - Do not add automated hours, capacity, or availability scheduling to the lean launch location model under this decision.
 
 **Still open:** Approved service/location/action matrix; exact capability catalogue; designated Admin assignment granularity; staff permission scopes; partner arrangements; handling of queued but not yet received work; temporary closure procedures; audit retention; technical contracts and acceptance tests. DEC-043 is policy direction only and does not approve implementation details.
+
+
+
+### Workflow C addendum — custody transfers, physical exceptions, and resolution accountability (DEC-044)
+
+This addendum refines physical intake/custody and location operations under DEC-042/DEC-043. It records policy direction only; it does not define executable statuses or technical contracts.
+
+- **Establishing a transfer:** Treat every physical handover between staff, locations, carriers/transport providers, and collection/receiving points as a distinct event. A proposed transfer, route assignment, dispatch authorization, dispatch record, arrival, or attempted handover does not establish that custody changed. The receiving party must actually take possession before the transfer is treated as completed.
+- **Transfer attribution:** Capture, as applicable, parcel/shipment, previous custodian/source, intended recipient/destination, actual receiving person/actor, physical handover actor, recording staff member if different, time/location, outcome, evidence/source, and reason. Preserve the complete prior custody history.
+- **Incomplete evidence:** If possession physically changed but documentation is incomplete, preserve the known facts and investigate the discrepancy. Do not fabricate a completed-transfer confirmation. If the handover failed or is disputed, retain the last confirmed custody while investigating actual possession.
+- **Disputes and corrections:** Preserve each party's account and the original evidence/source. Correct an erroneous record only through a separately attributable and reasoned correction; never silently overwrite the original event. A route or dispatch record cannot resolve a physical-receipt dispute by itself.
+- **Missing parcels:** Preserve last confirmed custody, movement and handover history; record discovery time/person/context; establish last confirmed physical location; and preserve available evidence and third-party reports. Do not claim transfer, delivery, or recovery without supporting evidence. Require an authorized, reasoned resolution; do not infer fault or a financial outcome.
+- **Damage:** Record discovery time/place, observer/reporter, circumstances, and condition evidence as a distinct exception. Preserve surrounding custody/movement history and distinguish direct observation from third-party reports. The last recorded custodian is not, by itself, proof of causation or liability.
+- **Incorrect assignment:** Preserve the original location assignment and record the actual location when established. An administrative correction is not a physical transfer; record any required transfer separately with its own authority and evidence.
+- **Prolonged holds:** Keep actual custody, hold reason, and accountable owner identifiable. A hold blocks assumptions of normal onward processing/dispatch. Review intervals, maximum periods, and automatic escalation are not set here.
+- **Resolution:** Assign an authorized investigator/decision-maker as required by the applicable policy; preserve evidence and source; record the resolution, authority, reason, and corrections; and do not silently close an unresolved exception. Refunds, credits, compensation, insurance, and liability remain separate decisions under their own policies.
+
+**Still open:** Service-specific proof methods; who may confirm/dispute/correct transfers; second-approver rules; investigation ownership; damage/liability assessment; hold review and maximum periods; customer/financial outcomes; exact statuses, technical contracts, and executable tests. DEC-044 does not authorize implementation.

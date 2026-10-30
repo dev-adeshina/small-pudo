@@ -522,3 +522,57 @@ These decisions are accepted at the design level only. They do not mean the corr
 **Still unresolved:** Exact service-to-location/action matrix; capability catalogue and any future additions; which designated Admin users may configure each category; staff permission assignment and scope; partner/collection-centre operating arrangements; temporary closure/unavailability procedure beyond the accepted no-new-work guard; treatment of queued work not yet physically received; capability-change notification/review; detailed audit/evidence retention; technical representation, API/security contracts, correction authority, and executable acceptance tests.
 
 **Implementation boundary:** DEC-043 records high-level business policy only. It does not approve a schema, fields, collections, endpoints, status vocabulary, permission implementation, operating-hours/capacity system, or application-code change. Read-only source reconciliation and complete platform-wide SDD approval remain required before implementation.
+
+
+
+## DEC-044 — Custody transfers, physical exceptions, and resolution accountability
+
+**Decision date:** 30 October 2026.  
+**Status:** Owner-approved high-level business policy. Detailed service procedures, authority, evidence standards, technical contracts, source reconciliation, and executable acceptance tests remain open.
+
+### 1. Physical custody and transfer integrity
+
+- Every physical handover is a distinct event, including handovers between staff, locations, transport providers, and collection/receiving points.
+- A proposed transfer, route assignment, dispatch authorization, dispatch record, arrival, or attempted handover is not proof that physical possession changed. None may automatically change the recorded custodian.
+- A transfer is completed only when the physical handover actually occurred and the receiving party took possession. The applicable evidence must support that outcome; an unsuccessful or merely attempted handover is not a completed transfer.
+- Record, where applicable, the parcel and associated shipment; previous custodian/source location; intended recipient/destination; actual receiving person or actor; physical handover actor; recording staff member when different; time and location; outcome; and applicable evidence, source, or reason.
+- Preserve the previous custody history. A later event or correction must not silently overwrite the historical record.
+- Where physical possession is known to have changed but the required documentation is incomplete, record and investigate the discrepancy. Do not invent a completed-transfer confirmation or leave the actual possession ambiguous.
+
+### 2. Failed, disputed, and incomplete handovers
+
+- Refusal before acceptance, unsuccessful attempts, disputed receipt, and incomplete/mismatched handovers must remain distinguishable from completed transfers.
+- Preserve the last confirmed custody record unless and until a physical change is established. A party's claim, dispatch instruction, or route assignment alone does not establish receipt.
+- A disputed transfer enters controlled exception handling. Preserve the competing accounts and available evidence, identify the source of each report, and investigate the actual possession where possible.
+- Corrections to an erroneous custody record must be separately attributable, reasoned, and historically traceable; preserve the original event and its evidence.
+
+### 3. Missing parcels
+
+- A missing-parcel discrepancy requires a controlled investigation. Preserve the last confirmed custody and movement history; record discovery context, including when and by whom it was identified; establish the last confirmed physical location and relevant handovers; and preserve available evidence and third-party reports.
+- Do not mark a parcel transferred, delivered, or recovered without supporting evidence of that physical outcome.
+- Resolution requires an authorized decision with a recorded reason. A missing-parcel report does not itself determine fault, liability, refund, compensation, insurance outcome, or customer entitlement.
+
+### 4. Damaged parcels
+
+- Record damage as a distinct operational exception, including when and where it was discovered, who observed or reported it, the reported circumstances, and applicable condition evidence.
+- Preserve the custody and movement history surrounding discovery. Distinguish direct observation from a report received from another person or organization.
+- Require an authorized assessment and recorded resolution. The last recorded custodian is evidence of custody history, not conclusive proof of responsibility or causation. Do not automatically assign blame or financial liability.
+
+### 5. Incorrect location assignments and prolonged holds
+
+- If actual physical location differs from the recorded assignment, preserve the original assignment and record the established actual location and discovery context. Do not silently rewrite the assignment or treat an administrative correction as a physical transfer. Any required transfer or assignment correction must be separately authorized and traceable.
+- A parcel held because of a dispute, failed handover, inspection, or unresolved instruction must remain associated with identifiable actual custody, the reason for the hold, and an accountable owner. A hold is not permission for normal onward processing or dispatch.
+- Exact hold periods, review intervals, and automatic escalation deadlines are not set by this decision; they remain service/operational policy questions.
+
+### 6. Exception resolution and accountability
+
+- Exceptions must preserve the actual issue and discovery context, last confirmed custody, known actual possession/location, original evidence and its source, investigation ownership, and attributable findings.
+- An authorized resolution must record the decision, responsible authority, reason, and relevant supporting evidence. Unresolved physical exceptions must not be silently closed.
+- Corrections are additional traceable records, not destructive edits to original custody or evidence history.
+- Payment, refund, credit, compensation, insurance, and liability outcomes remain governed by their separate approved policies. A physical exception does not automatically create or settle a financial obligation.
+
+### Still unresolved
+
+Exact service-specific handover proof; signature/photo/OTP or other verification requirements; who may confirm or dispute transfers; authority to correct custody events; second-approver requirements; missing-parcel investigation ownership; damage assessment and liability procedures; hold ownership/review intervals/maximum periods; compensation, insurance, refunds, credits, and customer entitlements; detailed lifecycle/status vocabulary; data/API/security contracts; and executable acceptance tests.
+
+**Implementation boundary:** DEC-044 records owner-approved business policy only. It does not approve a schema, field, collection, endpoint, status enum, evidence technology, permission implementation, automatic escalation, liability rule, financial outcome, or application-code change. Reconcile against the current source and complete the platform-wide SDD before implementation.
