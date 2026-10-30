@@ -2,7 +2,7 @@
 
 **Status:** Owner-reviewed scenario refinements — test-design baseline only; not approved executable test specifications, implementation or release approval  
 **Created:** 30 October 2026  
-**Documentation baseline:** `main` at `1d8a44c2da94a8ff351f365e0e5073b292690f6d` (PR #39 merged)
+**Documentation baseline:** `main` at `93f389cf16b9f1e40bbe414426ccc490d1221865` (PR #41 merged; subsequent PRs #40–#41 changed documentation only)
 **Active-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
 **Authority:** DEC-018, DEC-022–DEC-036 and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
 **Related:** `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
