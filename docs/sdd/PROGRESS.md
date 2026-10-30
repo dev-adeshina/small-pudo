@@ -1,16 +1,15 @@
 # VeriLyft Progress Tracker
 
-**Last updated:** 30 October 2026
-**Repository:** `dev-adeshina/small-pudo`
-**Project baseline branch:** `main`
-**Latest verified main head:** `6e643827fc8ef91d0e63493703198808363a90ed` — PR #44 merged, establishing the logistics-first product hierarchy. PRs #40–#44 changed SDD documentation only. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). This does not prove runtime behaviour.
-**Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
-**Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
-**Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
-**Current phase:** Stage 5.4 is complete: all A-01–A-20 scenario-design refinements were owner-approved and consolidated in PR #39. Stage 5.5 continuity/policy reconciliation (PR #40), dependency/traceability register (PR #41), and P0/Conditional P0 test-specification readiness assessment (PR #42) are merged. The readiness assessment is accepted as a navigation/readiness baseline only—not as approval of executable tests, implementation, or release. No P0/Conditional P0 is approved for execution; detailed contracts, executable test specifications, runtime/production evidence and complete platform-wide SDD approval remain open. The accepted launch scope in DEC-018 includes the lean independent-shipment and logistics capabilities; DEC-037 now confirms logistics as the primary business workflow and storefront commerce as an attached service. Milestone 1 independent shipment booking policy is owner-approved as DEC-038 and merged in PR #45. Milestone 2 Part 1 pricing input/calculation boundaries are owner-approved as DEC-039 and are being consolidated in a documentation-only PR. Next is Milestone 2 — pricing and payments, followed by the remaining workflow/lifecycle contracts and case-level specifications. Do not classify core logistics capabilities as deferred merely because they are absent from the inspected source. No application-code changes are authorized until the complete SDD is reconciled and explicitly approved.
+**Last updated:** 31 October 2026  
+**Repository:** `dev-adeshina/small-pudo`  
+**Project baseline branch:** `main`  
+**Latest verified main baseline for this work:** `61b8b65777d98950b6a4b6c5c311490e064f3d47` — PR #52 merged. The current Milestone 4 proposal is documentation-only and is not yet part of `main`.  
+**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Comparison through PR #52 found intervening changes to SDD documentation only; no later application-source commit was identified. This does not establish runtime or production behaviour.  
+**Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
+**Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
+**Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. The initial read-only baseline inventory is complete. This documentation-only proposal aligns the continuity records with PR #52, the merged DEC-038–DEC-044 policy sequence, and Milestone 3 completion. Next, reconcile the accepted decisions and cross-domain dependencies across every SDD document, then complete source traceability, detailed acceptance-test specifications, and production-readiness evidence planning. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
 
-> This tracker records the current working state, including uncommitted changes.
-> Verify the live repository and test results before treating any item as complete.
+> This tracker records the current documented working state. Verify the live repository, current branch/PR state, and dated test results before treating any item as complete.
 
 ## Status legend
 
@@ -21,26 +20,24 @@
 
 ## 1. Current position
 
-### Current milestone — Milestone 2 pricing and payments; Part 1 boundaries approved, documentation consolidation in progress
+### Current milestone — Milestone 4: Platform-wide SDD Reconciliation and Implementation Readiness
 
-- **Owner decision register:** 15 of 15 tracked D-01–D-15 decisions have accepted high-level outcomes, recorded as DEC-022–DEC-036. DEC-037 records the accepted logistics-first product hierarchy. DEC-038 records the accepted independent-booking confirmation, information, handover-deadline, cancellation, and customer/staff responsibility policy. Detailed service values, permissions, technical transitions, and evidence requirements remain open where identified.
-- **Latest verified main head:** `95a7650d1ebfb868ef6b3b214cc3d962f6f63bf2` (PR #45 merged).
-- **Source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed source pass recorded in PR #32). The comparison through PR #42 shows documentation-only changes; no later application-source change requires a new source baseline. Source presence remains distinct from runtime verification.
-- **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), P0 acceptance-scenario/evidence catalogue draft (PR #33), booking-party authority consolidation (PR #36), Stage 5.3 pricing/measurement/quote-policy consolidation (PR #37), Stage 5.4 consolidation (PR #39), Stage 5.5 continuity/policy reconciliation (PR #40), dependency/traceability register (PR #41), and the intervening continuity updates are merged.
-- **Merged documentation:** PR #36, `docs: consolidate booking-party authority decisions`, is merged. `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` records BP-01–BP-22 accepted under DEC-023/DEC-024. PM-01–PM-12 remain accepted in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`.
-- **Stage 5.3:** PR #37 is merged. The six owner-approved pricing, measurement, quote-management, quote-adjustment, and financial-outcome policies are consolidated across the SDD.
-- **Stage 5.4 owner review:** All 20 catalogue sections A-01–A-20 received explicit owner approval at the policy/scenario-design level. The approved refinements are consolidated in the merged catalogue through PR #39. The catalogue remains test design, not executable test scripts or passing evidence.
-- **Completed in PR #42:** `PLATFORM_P0_TEST_SPECIFICATION_READINESS.md` reconciles 20 A-area outlines/80 case rows and 51 P0/Conditional P0 Admin requirements (45 P0, 6 Conditional P0). The owner-reviewed assessment is accepted as the readiness/navigation baseline only; none of the 51 requirements is approved for execution. Source-backed storefront/payment slices can support narrowly scoped specification drafting; independent shipment, pricing, custody, routing, refund/reconciliation, general audit, dashboard, privacy and production-readiness capabilities remain blocked by absent source or unresolved contracts. Conditional triggers/manual fallbacks must be explicitly controlled. VLY-015, VLY-016, VLY-019–VLY-023 and relevant runtime/security issues remain open; VLY-017 is resolved.
-- **Implementation gate:** No application-code changes until the complete platform-wide SDD has been reconciled and explicitly approved.
+- **Baseline:** The read-only SDD baseline was reviewed against `main` at PR #52 merge commit `61b8b65777d98950b6a4b6c5c311490e064f3d47`.
+- **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` remains the active source-inspection snapshot. Comparing it with the PR #52 merge baseline found documentation-only intervening changes. Do not infer runtime behaviour from this comparison.
+- **Milestones 1–3:** Complete at the owner-approved policy/documentation level. Milestone 1 DEC-038 (PR #45); Milestone 2 DEC-039–DEC-041 (PRs #46–#48); Milestone 3 DEC-042–DEC-044 (PRs #49–#51). PR #52 records Milestone 3 completion.
+- **Accepted policy:** D-01–D-15 / DEC-022–DEC-036; DEC-037 logistics-first product hierarchy; DEC-038 independent shipment booking; DEC-039 pricing boundaries; DEC-040 measurement adjustment/customer resolution; DEC-041 payment/settlement; DEC-042 physical intake/custody; DEC-043 location capabilities/authority; DEC-044 custody transfers/physical exceptions. PM-01–PM-12 and BP-01–BP-22 remain accepted at their documented policy levels.
+- **Current continuity work:** Align `README.md`, `PROGRESS.md`, `SESSION_HANDOFF.md`, `SDD_COMPLETENESS_AUDIT.md`, and `ISSUES.md` with the verified repository state and current Milestone 4 sequence. This proposal changes documentation only.
+- **Remaining platform work:** Reconcile all approved decisions across workflows, lifecycle/domain contracts, actors/permissions, requirement traceability, acceptance matrices, source findings, and Admin requirements/design/audit. Specify unresolved operational/technical details without inventing values or contracts. Define executable acceptance-test specifications and production-readiness evidence.
+- **Implementation gate:** No application-code changes until the complete platform-wide SDD is reconciled and explicitly approved by the owner.
 
 VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, and Cloudinary application. Preserve its architecture and existing patterns; do not invent parallel services, collections, fields, routes, or permission models.
 
 ### Evidence discipline
 
-- Accepted policy comes from `DECISIONS.md`.
+- Accepted policy comes from `DECISIONS.md` and the authoritative policy records.
 - Implementation facts come from inspected source at a stated commit.
 - Verified behaviour requires dated test/runtime/deployment evidence with environment and scope.
-- Launch readiness requires DEC-036 evidence; source presence or a passing build alone is insufficient.
+- Launch readiness requires the evidence specified by DEC-036; source presence or a passing build alone is insufficient.
 - Historical roadmap/checkpoint sections below are retained as history, not the current task pointer.
 
 ## 2. Feature tracker
@@ -943,3 +940,17 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
 **Milestone outcome:** Parts 1–3 are complete at the owner-approved policy/documentation level. This does not mean the platform-wide SDD is complete, nor does it authorize implementation. No application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests are changed or verified by this progress reconciliation.
+
+
+## 42. Milestone 4 Step 1 — continuity baseline reconciliation prepared — 31 October 2026
+
+- [x] Verified PR #52 is merged and established `61b8b65777d98950b6a4b6c5c311490e064f3d47` as the repository baseline for this work.
+- [x] Compared the active application-source inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856` with the PR #52 baseline; intervening changes were documentation-only.
+- [x] Inventoried the principal SDD documents and identified stale continuity metadata, milestone pointers, decision ranges, and PR-state references.
+- [x] Prepared focused updates to `README.md`, `PROGRESS.md`, `SESSION_HANDOFF.md`, `SDD_COMPLETENESS_AUDIT.md`, and `ISSUES.md`.
+- [ ] Review and merge the Milestone 4 continuity-baseline PR.
+- [ ] After merge, reconcile accepted decisions and unresolved dependencies across the remaining SDD documents, without reopening accepted policy unless new evidence establishes a genuine conflict.
+- [ ] Continue read-only source traceability, detailed acceptance-test specification, and production-readiness evidence planning.
+- [ ] Obtain explicit owner approval of the complete platform-wide SDD before any application-code changes.
+
+**Evidence boundary:** This work is documentation-only and read-only. No application source, schema, Firebase rules/configuration, API, permission, deployment, runtime behaviour, or test result is changed or verified by this proposal. The source-history comparison does not certify the application or production environment.
