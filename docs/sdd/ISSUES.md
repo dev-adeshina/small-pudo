@@ -242,7 +242,7 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Accepted:** Cancellation is not a refund; late payments after cancellation/expiry are recorded and reconciled without automatic reactivation; refund request and execution are distinct; credits, additional payments, reversals, and chargebacks remain separate traceable events; provider/bank reconciliation mismatches are investigated; consequential financial actions retain actor/time/reason/reference/evidence; duplicate/replayed provider events must not duplicate financial effects; operational, cancellation, payment, and refund states remain distinct.
 - **Additional accepted outcomes:** Rejected quotes create no payment obligation from that quote; accepted adjustments record the revised commercial agreement and amount due; disputed additional charges are held pending review; overpayments/underpayments require authorized resolution; failed attempts are not successful settlement; and adjustment rejection does not automatically create a refund, credit, cancellation, or charge.
 - **Still open:** Refund authority/limits/timelines, cancellation fees, partial-refund policy, credit expiry/use, late-payment disposition, reconciliation frequency/ownership, exception handling, and detailed tests.
-- **Next action:** Continue to D-09 dispatch exception authority. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+- **Historical next-action note superseded:** D-09 / DEC-030 was accepted. Remaining payment/settlement specification is tracked under DEC-041 and the financial-settlement issue above; preserve the platform-wide SDD approval gate.
 
 ### D-09 dispatch exception authority — DEC-030
 
