@@ -152,3 +152,16 @@ The actor catalogue above contains earlier unresolved statements that predate th
 Second-approval policy is accepted for consequential financial, measurement, and operational exceptions as specified in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`. Exact materiality/monetary thresholds, permission catalogue, technical assignment/enforcement model, Support visibility, Management reporting scope, and emergency-access parameters remain open.
 
 This addendum resolves owner-policy questions only. It does not approve technical roles, Firebase claims, Firestore rules, schemas, APIs, portals, or implementation. The complete platform-wide SDD remains subject to reconciliation and explicit owner approval before application-code changes.
+
+## Booking-party and shipment-party authority update — DEC-023 / DEC-024
+
+The owner has accepted detailed policy BP-01–BP-22 in `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`. This accepted policy supersedes earlier actor-catalogue wording that described booking amendment/cancellation authority, Support, or delegated access as wholly unresolved.
+
+- **Booking party:** authenticated customer who may initiate permitted pre-intake changes/cancellation and request transfers, withdrawal, collector nominations, or delegated access under BP policy. This is not blanket authority over every party, financial obligation, or parcel release.
+- **Sender and receiver:** may raise relevant change/dispute requests through Support; they do not directly edit/cancel the booking solely by virtue of being listed. Receiver collection and receiver-nominated alternative collection require verification.
+- **Payer:** payment confirmation/receipt visibility by default; no inferred shipment-detail, edit, cancellation, or collection authority.
+- **Support:** records and verifies party requests, acknowledges/routes disputes, and escalates exceptions; does not assume booking-party authority.
+- **Designated Admin/reviewer:** handles defined exceptions, sensitive changes, disputes, and appeals only within explicitly assigned authority.
+- **Delegated customer:** receives only explicit, limited, time-bounded, revocable, non-transferable access; no sub-delegation.
+
+Verification methods, detailed staff permissions, business-account representation, operational evidence, and technical enforcement remain open. This policy addendum does not approve a separate Support portal, role schema, permission claim, or application implementation.
