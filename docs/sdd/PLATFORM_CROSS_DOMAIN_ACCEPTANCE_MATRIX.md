@@ -266,3 +266,8 @@ Owner policy BP-01–BP-22 is recorded in `PLATFORM_BOOKING_PARTY_AUTHORITY_DECI
 | Notifications | Booking party, sender, receiver, payer, and alternative collector receive only role-appropriate minimum information, subject to consent/preferences. |
 
 Before these scenarios can be marked executable, define verification and consent evidence, exact change/lifecycle matrix, exception authority, transfer-liability acceptance, delegated-access actions/duration, retention rules, notification fields, dispute severity/targets, reviewer eligibility, appeal procedure, and test environment.
+
+
+### D-06 acceptance refinement — DEC-040
+
+Acceptance evidence must eventually demonstrate that: a non-material discrepancy leaves accepted terms unchanged; potentially material/payment-impacting discrepancies enter required review; adjustment proposals preserve and reference the original quote/agreement; customer acceptance is explicit and silence is not acceptance; acceptance does not itself settle payment; disputes hold the disputed additional charge; rejection invokes an authorized service-resolution decision without automatically cancelling/refunding/crediting/charging; continuation under original terms is allowed only where safe and commercially feasible; alternative service requires separately accepted pricing; cancellation follows its own policy; and dispatch is blocked under a rejected revised price. Exact thresholds, evidence, authority/eligibility, response periods, technical contracts, and runtime evidence remain open. No implementation is authorized.
