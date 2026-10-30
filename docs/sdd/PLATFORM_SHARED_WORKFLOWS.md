@@ -4,13 +4,13 @@
 **Last updated:** 30 October 2026  
 **Scope:** Primary independent-shipment logistics workflows and attached storefront-order fulfilment, including their shared operational fulfilment boundary  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, ADMIN_REQUIREMENTS.md, ADMIN_PORTAL.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-037
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-038
 
 ## 1. Purpose, status, and boundaries
 
 This document turns the accepted launch operating model into a first-pass, platform-wide workflow description. It identifies the major participants, sequence, decision gates, records that must remain distinct, exceptions, and open policy questions. It does not assert that these workflows or all related screens/services already exist in the application.
 
-Owner-policy outcomes under DEC-022–DEC-037, PM-01–PM-12, and BP-01–BP-22 are accepted at the levels recorded in their authoritative decision documents. The workflow sequences, detailed operational parameters, technical contracts, and evidence plans in this document remain draft work and are not implementation authorization. This document does not prescribe Firestore collections, field names, API routes, enum values, or a migration. Existing source must be inspected before any future technical proposal.
+Owner-policy outcomes under DEC-022–DEC-038, PM-01–PM-12, and BP-01–BP-22 are accepted at the levels recorded in their authoritative decision documents. The workflow sequences, detailed operational parameters, technical contracts, and evidence plans in this document remain draft work and are not implementation authorization. This document does not prescribe Firestore collections, field names, API routes, enum values, or a migration. Existing source must be inspected before any future technical proposal.
 
 Use these evidence labels consistently:
 
@@ -68,44 +68,65 @@ Use these evidence labels consistently:
 
 ## 4. Workflow B — Independent shipment booking and quote
 
-**Purpose:** Allow a person or business to arrange parcel transport independently of a storefront purchase.
+**Purpose:** Allow a registered customer to arrange parcel transport independently of a storefront purchase, either for themselves or on behalf of a business.
+
+### Accepted policy constraints (DEC-023, DEC-024, DEC-038, BP-01–BP-22)
+
+- Only a registered, authenticated customer may create an independent shipment booking at launch. Guest shipment booking is excluded; storefront guest checkout is unchanged.
+- An independent shipment booking becomes commercially confirmed when the authenticated booking party explicitly accepts a valid quotation. Quote issuance alone is not confirmation.
+- Acceptance confirms the booking and accepted commercial terms. Payment, physical intake/custody, and later logistics fulfilment remain separate events.
+- The booking party, sender, receiver/collection recipient, payer, and physical handover person may be different. A person may occupy multiple roles, but the system must not assume that they are the same.
+- A registered customer may arrange a shipment on behalf of a business, subject to identifying the business and the person's relationship to it. This does not assume a separate business-account system at launch.
+- Information collection is service-specific and proportionate: origin, destination, selected available service, parcel description, and any measurements or supporting information required for that service's eligibility or pricing. Do not collect unnecessary information or assume every service requires identical details.
+- Identity verification occurs at appropriate checkpoints under the applicable authority, security, intake, payment, and collection policy. No provider or unapproved verification method is selected here.
+- Each service must define a handover period/deadline separately from quote validity. The deadline is communicated before acceptance and included in booking confirmation.
+- An unaccepted expired quote requires a fresh quote. Expiry of an already accepted quote does not silently cancel or rewrite the confirmed booking or its accepted terms.
+- A confirmed booking may await payment where payment at intake is permitted, or may have verified advance payment. Payment is authoritative only after the approved verification process.
+- A confirmed booking remains planned until an authorized actor records actual physical receipt. Booking confirmation or payment never proves intake or custody.
+- Before intake, the authenticated booking party may request permitted changes/cancellation under BP policy. Post-intake changes and cancellation are controlled and staff-mediated. Cancellation triggers financial assessment but does not itself complete a refund.
+- A booking that is not handed over by its communicated deadline may be closed as unfulfilled under the service policy. Preserve booking, payment, and audit history; financial resolution is separate.
+- Abandonment before quote acceptance creates no confirmed booking. Duplicate/replayed acceptance, payment, or cancellation events must not create duplicate records or financial side effects.
+- Staff-assisted customer booking must not impersonate the customer or accept a quote on their behalf without an explicitly approved authorization process. Staff-created walk-in intake remains a distinct path.
 
 ### Proposed sequence
 
-1. A registered customer signs in and begins an independent shipment booking. A public visitor must register and authenticate before booking creation; guest shipment booking is not available at launch.
-2. The booking flow collects the origin, destination, service, parcel details, and other inputs required by the approved pricing policy.
-3. The shared pricing capability applies the service's explicitly configured fixed, calculated, or hybrid model using only that service's approved inputs. Preserve quote inputs, itemized charges, total, currency, pricing-rule/rate version, effective context, and validity.
-4. The shipper reviews the quote and chooses an allowed payment path. Accepted launch scope includes advance online payment and payment at intake; exact method availability and rules still require definition.
-5. The customer explicitly accepts or rejects the issued quote. Quote acceptance, accepted commercial agreement, payment, and booking are distinct events. The exact point at which quote acceptance confirms a booking remains to be specified; acceptance does not prove payment or physical intake.
-6. The booking is available to the intake/Operations workflow. It remains a planned booking until physical receipt is recorded.
-7. The booking party, sender, receiver/collection recipient, payer, and person physically handing over the parcel may be different people. Record the distinct relationships where they affect access, authority, liability, payment attribution, notifications, intake, or collection.
-8. Booking-party status does not itself authorize physical collection, and payer status does not itself authorize full shipment-detail access. Payment confirmation/receipt information is the default payer visibility; broader access requires a separately approved entitlement.
-9. Define changes by type and lifecycle stage. The booking party may initiate permitted requests, but receiver/collection changes follow the applicable verification and approval policy. Changes affecting a shipment after intake or dispatch must use the approved controlled, staff-mediated workflow; the detailed change matrix remains open.
+1. A registered customer signs in and begins an independent shipment booking.
+2. The customer identifies the origin, destination, requested service, parcel description, and service-specific eligibility/pricing information. Party relationships are captured distinctly where relevant.
+3. The shared pricing capability applies the selected service's approved fixed, calculated, or hybrid model. Preserve quote inputs, itemized charges, total, currency, pricing-rule/rate version, effective context, and quote validity.
+4. The service's handover deadline is determined under its approved configuration and shown with the quotation before acceptance.
+5. The authenticated booking party explicitly accepts or rejects the valid quotation. Acceptance confirms the booking and accepted commercial terms; rejection or abandonment does not create a confirmed booking.
+6. A booking reference and confirmation are provided. The confirmation communicates the applicable handover deadline and payment path.
+7. Payment proceeds separately through an allowed path: advance online payment or payment at intake where enabled. Server/provider verification, not browser navigation or an unverified note, establishes payment outcome.
+8. The confirmed booking is available to authorized intake/Operations workflows but remains planned until physical receipt is recorded.
+9. An authorized intake actor records actual receipt, measurement/condition evidence, and custody under the separate intake workflow. Discrepancies follow the accepted adjustment/review policy.
+10. Permitted pre-intake amendments/cancellation follow BP authority. Post-intake changes are controlled and staff-mediated. A missed handover deadline may result in an unfulfilled outcome, with financial assessment handled separately.
 
 ### Open policy / design questions
 
-- **Resolved by DEC-023:** only registered, authenticated customers may create independent shipment bookings; guest shipment booking is out of launch scope.
-- **Resolved by DEC-024:** booking party, sender, receiver/collection recipient, payer, and handover person may differ; payer visibility defaults to payment confirmation/receipt only; payment does not grant full shipment-detail access; booking does not authorize collection; change permissions must be defined by change type and lifecycle stage.
-- Can one customer account act as both storefront customer and shipper? The actor model permits this, but account identity and booking-record relationships must still be verified in the detailed design.
-- What registration, contact, or identity verification beyond sign-in is required, and at which booking/intake/collection checkpoints? Do not assume an additional verification method before it is decided.
-- How should the accepted BP-01–BP-22 authority policy be translated into the complete change-type/lifecycle matrix, including exact verification, consent, staff-review, and exception evidence?
-- What sender, receiver, payer, booking-party, and handover-person information is required, and when must each identity be verified?
-- How long is a quote valid, what makes a booking accepted, and when is a reference/label/receipt issued?
-- How does expiry of an already accepted quote affect the accepted commercial agreement?
-- Which payment methods are supported at intake and how are they verified and recorded?
-- What happens when the quote is paid online but the parcel is never handed over?
+- Exact contact and identity-verification methods/checkpoints, consent evidence, and collection verification remain open.
+- The detailed business identity/relationship representation remains open; no separate business-account system is assumed.
+- Service catalogue, route eligibility, capacity/availability rules, quote validity periods, pricing formulas/inputs, and handover-deadline durations/configuration remain open.
+- Exact payment-at-intake methods, evidence, partial-payment handling, late-payment outcomes, and reconciliation remain open.
+- The booking-reference/receipt format, operational status vocabulary, intake hold/refusal outcomes, and post-deadline customer resolution remain open.
+- The full change-type/lifecycle/permission matrix, notification details, retention, evidence standards, and API/data contracts remain open.
+- The effect of cancellation, missed handover, or refused intake on fees/refunds/credits must follow the separately approved financial policy; no automatic refund is implied.
 
 ### Acceptance criteria to define
 
-- Only a registered, authenticated customer can create an independent shipment booking; unauthenticated booking-creation requests are denied server-side.
-- An authenticated customer can access or amend only bookings they are authorized to access; Customer A cannot read or change Customer B's booking.
-- Booking acceptance never claims physical receipt or custody.
-- The quote and the applied inputs/rates can be reconstructed for later review.
-- Booking-party identity and permissions are sufficient to prevent unauthorized changes; role relationships do not automatically grant full shipment visibility or collection authority.
-- A payer who is not otherwise authorized receives payment confirmation/receipt information only by default; payment alone cannot retrieve private shipment details.
-- Receiver/collection changes are allowed only through the approved change-type and lifecycle-stage policy, with required verification/consent and controlled handling after intake/dispatch.
-- A booking can be distinguished from a storefront order and from later movement records.
-- Unpaid, partially settled, cancelled, and abandoned bookings have explicitly defined outcomes.
+- Only a registered, authenticated customer can create and access an independent booking within server-enforced entitlement.
+- An issued quote alone does not confirm a booking; explicit acceptance of a valid quote by the authenticated booking party does.
+- Booking confirmation preserves the accepted quote, its inputs/rates, commercial terms, and communicated handover deadline.
+- Quote expiry before acceptance requires a fresh quote; accepted quote expiry does not silently cancel or rewrite a confirmed booking.
+- Payment status is independently verified and never inferred from booking confirmation.
+- Booking confirmation and payment never imply physical receipt or custody.
+- An authorized intake event is required to record physical receipt; booking and intake remain distinguishable.
+- The booking party, sender, receiver, payer, and handover person can differ without inferred permissions.
+- Business bookings can identify the business and booking party's relationship without assuming a separate business-account architecture.
+- Customer A cannot read or change Customer B's booking; payer, sender, receiver, and booking-party associations do not grant unapproved access or authority.
+- Pre-intake cancellation/change requests follow BP policy; post-intake changes are staff-mediated; cancellation does not itself complete a refund.
+- A missed handover deadline can be resolved as unfulfilled without deleting booking/payment/audit history.
+- Abandonment before quote acceptance creates no confirmed booking; duplicate/replayed events do not duplicate bookings or financial side effects.
+- Walk-in intake and staff-assisted booking are not misrepresented as the same customer booking path.
 
 ## 5. Workflow C — Physical intake, measurement, and custody
 
@@ -183,7 +204,7 @@ Use these evidence labels consistently:
 
 - Exact formula catalogue, rates, service mapping, input sources, units, rounding, currency handling, and effective-date rules.
 - Whether taxes, surcharges, discounts, or other fees apply and how they are calculated, displayed, and approved; unknown treatment must not be assumed to be zero.
-- Treatment of an already accepted quote after its validity period; precise booking-confirmation point and reference/receipt issuance.
+- Exact quote-validity durations, handover-deadline configuration, and booking-reference/receipt format. DEC-038 resolves that valid quote acceptance by the authenticated booking party confirms the booking and accepted-quote expiry does not silently cancel or rewrite it.
 - Service-specific required measurements, units, explicit conversion rules, numeric discrepancy thresholds, and evidence requirements.
 - Approval limits, separation of duties, second-person review cases, and operational consequences when a customer rejects an adjustment.
 - Payment-at-intake methods/evidence; authority for additional charges, refunds, credits, and write-offs; reconciliation frequency and exception ownership.

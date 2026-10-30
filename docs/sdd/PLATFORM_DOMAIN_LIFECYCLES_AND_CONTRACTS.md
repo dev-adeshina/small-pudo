@@ -4,7 +4,7 @@
 **Last updated:** 30 October 2026  
 **Scope:** Conceptual domain boundaries, lifecycle transition rules, service/API contract expectations, and authorization/security invariants  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, PLATFORM_SHARED_WORKFLOWS.md, SDD_COMPLETENESS_AUDIT.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-036
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-038
 
 ## 1. Purpose and guardrails
 
@@ -91,25 +91,34 @@ The following are conceptual objects/record responsibilities, not proposed Fires
 
 The lists below are lifecycle dimensions and transition requirements, not approved status values. Do not translate them directly into enums until owners approve the transitions and source inspection confirms compatibility.
 
-### 4.1 Booking lifecycle
+### 4.1 Booking lifecycle — DEC-023, DEC-024, DEC-038
 
-Conceptual progression:
-- Booking intent is started by a registered, authenticated customer.
-- Booking party, sender, receiver/collection recipient, payer, and expected handover person are recorded as distinct relationships where relevant; a person may occupy multiple roles.
-- Required details and quote inputs are collected.
-- A quote is produced and presented.
-- The quote is accepted or booking is confirmed under the approved rule.
-- The booking may be changed, cancelled, abandoned, or proceed to physical intake according to policy. Change authority is defined by change type and lifecycle stage; booking-party status does not create blanket authority.
-- A payer who is not separately entitled receives payment confirmation/receipt information only by default; payment alone does not grant full shipment-detail access or collection authority.
-- Intake either links to an existing booking or follows the approved staff-created walk-in path.
+Accepted conceptual progression:
+- A registered, authenticated customer starts an independent shipment booking; guest shipment booking is not available at launch.
+- Booking party, sender, receiver/collection recipient, payer, and expected physical handover person are distinct relationships where relevant. A person may occupy multiple roles; do not infer they are the same.
+- A customer may prepare booking information and receive a quotation before making a commercial commitment.
+- The booking captures origin, destination, selected available service, parcel description, and only the additional measurements/supporting information required by that service for eligibility or pricing. A customer acting for a business identifies the business and their relationship; a separate business-account architecture is not assumed.
+- The service-specific quotation preserves inputs, itemized charges, total, currency, pricing-rule/rate version, effective context, and its validity.
+- The service's handover period/deadline is separate from quote validity, communicated before quote acceptance, and included in booking confirmation.
+- Explicit acceptance of a valid quotation by the authenticated booking party confirms the independent shipment booking and accepted commercial terms. Quote issuance, rejection, or abandonment before acceptance does not confirm a booking.
+- A confirmed booking may be awaiting payment where payment at intake is allowed, or may have verified advance payment. Payment is a separate financial event and is not implied by booking confirmation.
+- A confirmed booking remains planned until an authorized actor records actual physical receipt. Intake/custody is separate from booking and payment.
+- Before intake, permitted changes/cancellation may be initiated by the authenticated booking party under BP-01–BP-03. Price/service changes require a revised quote and explicit acceptance; other party/collection changes follow the relevant verification/consent/review policy. After intake, changes and cancellation are controlled and staff-mediated.
+- A confirmed booking not handed over by its communicated service deadline may be closed as unfulfilled under the approved service policy. Booking/payment/audit history is preserved and financial resolution is separate.
+- Intake either links to an existing confirmed booking or follows the approved staff-created walk-in path. Staff-assisted customer booking must not represent staff as the customer or accept a quote without an explicitly approved authorization process.
 
 Required guards:
-- Quote acceptance must be distinguishable from physical intake.
-- Booking confirmation must not imply payment is settled unless independently verified.
-- Changes to an accepted quote must preserve prior accepted commercial facts.
-- Booking cancellation must not silently erase payment, custody, or audit history.
+- Quote issuance alone never confirms a booking; valid explicit acceptance by the authenticated booking party does.
+- Confirmation preserves accepted commercial terms and the communicated handover deadline.
+- Expiry of an unaccepted quote requires a fresh quote. Expiry of an already accepted quote does not silently cancel or rewrite the confirmed booking or accepted terms.
+- Quote acceptance/booking confirmation, payment verification, physical intake/custody, and logistics fulfilment remain independently observable facts.
+- Booking confirmation or payment must not be represented as physical receipt/custody.
+- Booking-party, sender, receiver, payer, and handover-person relationships do not imply unapproved access, edit, cancellation, or collection authority.
+- Cancellation, missed handover, refused/held intake, refunds, credits, and other financial outcomes remain separate and preserve history.
+- Duplicate/replayed acceptance, payment, cancellation, and other consequential events must not create duplicate records or financial side effects.
+- Business representation, service-specific information requirements, and identity verification follow approved service and authority policy; do not invent fields, providers, or universal requirements.
 
-Open specification: quote validity, booking confirmation point, cancellation fees/refund consequences, expiry, and what happens when a paid booking never reaches intake. Eligibility and the owner-policy direction for amendment/cancellation authority are addressed by DEC-023 and BP-01–BP-05; exact verification and lifecycle procedures remain to be specified.
+Open specification: service-specific handover durations/configuration; quote validity and pricing rules; service eligibility/capacity; business identity/relationship representation; contact/identity/consent methods; payment-at-intake evidence and partial/late-payment outcomes; booking reference/receipt format; operational status vocabulary; missed-handover and refused-intake customer/financial resolution; exact lifecycle/API/data contracts; and detailed acceptance tests. BP-01–BP-22 continues to govern party authority, transfers, delegation, disputes, and exceptions.
 
 ### 4.2 Quote and adjustment lifecycle
 
@@ -119,8 +128,8 @@ Conceptual progression:
 - Reuse the shared approved pricing rule set across storefront delivery and independent shipment booking wherever their inputs overlap.
 - Create a quote with preserved inputs, itemized charges, total, currency, pricing-rule/rate version, effective context, and service-configured validity.
 - Recognize draft, issued, accepted, rejected, expired, superseded, and cancelled quote outcomes. Issued means presented to the customer; acceptance is explicit.
-- An unaccepted quote that expires requires a fresh quote before proceeding. The treatment of an already accepted quote after its validity period remains an open specification.
-- A customer acceptance creates an accepted commercial agreement; it does not itself prove payment, booking confirmation, or physical intake.
+- An unaccepted quote that expires requires a fresh quote before proceeding. Expiry of an already accepted quote does not silently cancel or rewrite the confirmed booking or its accepted terms. The separate service-specific handover deadline governs the period for physical handover.
+- A customer acceptance of a valid issued quote by the authenticated booking party creates the accepted commercial agreement and confirms the independent shipment booking under DEC-038; it does not prove payment or physical intake.
 - Recalculation or repricing creates a new quote/revision and preserves prior issued/accepted quote history.
 - Later measurement or another permitted change may create a proposed adjustment linked to the original quote and accepted agreement.
 - Required review and customer consent occur before a price-changing adjustment becomes binding or an additional charge is collected.
@@ -133,7 +142,7 @@ Required guards:
 - Adjustment proposals identify changed facts and reason and link to the original quote; they do not overwrite it or constitute settlement.
 - A disputed additional charge remains held pending review; a rejected adjustment follows the service-resolution policy and does not automatically imply a refund, credit, or cancellation.
 
-Open policy: exact formulas/rates and service mapping, input sources, units and conversion rules, rounding, effective dates, tax/fee/discount treatment, accepted-quote expiry edge cases, booking-confirmation point, required measurements, numeric discrepancy thresholds, approval limits/separation of duties, and detailed consequences if the customer rejects an adjustment.
+Open policy: exact formulas/rates and service mapping, input sources, units and conversion rules, rounding, effective dates, tax/fee/discount treatment, quote-validity durations, required measurements, numeric discrepancy thresholds, approval limits/separation of duties, and detailed consequences if the customer rejects an adjustment. DEC-038 resolves the booking-confirmation point and accepted-quote expiry policy.
 
 ### 4.3 Payment and financial-event lifecycle
 

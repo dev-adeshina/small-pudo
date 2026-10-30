@@ -1,6 +1,6 @@
 # VeriLyft Platform Owner Decision Register
 
-**Document status:** Decision register for D-01–D-15; all high-level owner outcomes are accepted and recorded. Detailed implementation policy remains open where explicitly identified.  
+**Document status:** D-01–D-15 high-level owner outcomes are accepted and recorded; additional owner-approved detailed policies are cross-referenced below. Detailed implementation policy remains open where identified.  
 **Last updated:** 30 October 2026  
 **Related baseline:** PR #13 merged; `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`  
 **Implementation gate:** No application-code changes until the platform-wide SDD is reconciled and explicitly approved.
@@ -52,7 +52,8 @@ The order below follows dependencies: authority and booking semantics first; com
 - **Status:** Owner decision accepted; recorded as DEC-023 on 29 October 2026.
 - **Accepted choice:** Option B — registered customers only. A customer must have a registered account and be authenticated before creating an independent shipment booking. Guest shipment booking is outside the initial launch scope.
 - **Security invariant:** Booking creation and access must be authorized server-side against the authenticated customer identity. A public page or hidden UI control is not an authorization boundary; a customer may access only bookings for which they have verified entitlement.
-- **Unresolved:** Exact contact/identity verification checkpoints, minimum sender/receiver/payer details, business-account handling, quote validity, and amendment/cancellation authority. This decision does not imply email/phone verification beyond the registration/authentication requirements explicitly defined elsewhere.
+- **Refined by DEC-038:** Explicit acceptance of a valid quote by the authenticated booking party confirms the booking; required information is service-specific; business-arranged bookings are permitted when the business and booking party's relationship are identified; and a separate service-specific handover deadline is communicated before acceptance.
+- **Still unresolved:** Exact contact/identity verification checkpoints and methods, business identity/relationship representation and multiple-user authority, exact service-specific information fields, quote-validity durations, handover durations, and runtime tests. This decision does not imply email/phone verification beyond requirements explicitly defined elsewhere.
 - **Boundary:** Preserve the separate provisional guest-checkout rule for storefront purchases. This decision does not change storefront checkout or decide guest-order recovery/claiming (VLY-004).
 - **Dependencies:** Booking workflow, actor model, quote acceptance, cancellation, customer access, and notification requirements.
 - **Acceptance direction:** Unauthenticated users cannot create or retrieve customer booking details; an authenticated customer cannot read or alter another customer's booking; booking remains distinct from physical intake and storefront orders.
@@ -67,7 +68,7 @@ The order below follows dependencies: authority and booking semantics first; com
 - **Transfer/delegation/security:** BP-10–BP-17 define accepted transfer, financial-responsibility, withdrawal, legal-representative, delegated-access, and compromised-account policies.
 - **Privacy/disputes:** BP-18–BP-22 define deletion/retention boundaries, record disputes, resolution targets, appeals, and restricted further review.
 - **Dependencies:** Booking data requirements, identity/consent methods, change-type/lifecycle gates, intake handover, payment attribution, collection evidence, notification fields, dispute procedures, retention, and source/runtime verification.
-- **Still unresolved:** Exact verification/consent methods; business-account handling; detailed operational steps and evidence standards; delegated-access catalogue/duration; financial responsibility transfer mechanics; retention/anonymisation rules; dispute severity/targets and reviewer eligibility. Accepted amendment/cancellation and collection-authority policy is recorded in BP-01–BP-22. See `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`. This decision does not authorize a schema or implementation.
+- **Still unresolved:** Exact verification/consent methods; business identity/relationship representation and multiple-user authority; detailed operational steps and evidence standards; delegated-access catalogue/duration; financial responsibility transfer mechanics; retention/anonymisation rules; dispute severity/targets and reviewer eligibility. Accepted amendment/cancellation and collection-authority policy is recorded in BP-01–BP-22. See `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`. This decision does not authorize a schema or implementation.
 - **Acceptance direction:** Tests must distinguish booking-party, sender, receiver, payer, handover-person, collection-person, legal representative, and delegate entitlements; deny access based solely on a booking ID or payment; reject changes outside the approved actor/change/stage policy; and preserve history and financial responsibility.
 
 ### D-04 — Staff-created walk-in intake and location capabilities
@@ -87,9 +88,9 @@ The order below follows dependencies: authority and booking semantics first; com
 - **Accepted pricing models:** Each service explicitly uses fixed, calculated, or hybrid pricing according to its cost characteristics. A service may combine approved fixed and variable components; not every service needs all three models.
 - **Shared rule authority:** Storefront delivery and independent shipment booking share the same approved pricing rule set wherever inputs overlap. No service may invent an ad hoc formula outside the approved catalogue/configuration.
 - **Accepted input categories:** Service-applicable inputs may include origin, destination, distance/approved distance band, weight, dimensions, volumetric weight, service class/delivery speed, configured minimum charge, and documented special-handling requirements. Each service declares which inputs apply; exact formulas, sources, units, and any additional categories remain open.
-- **Quote lifecycle:** Draft, issued, accepted, rejected, expired, superseded, and cancelled are recognized quote lifecycle outcomes. Customer acceptance is explicit. An unaccepted expired quote requires a fresh quote before proceeding. Quote validity is configured by service and expiry is communicated. The treatment of an already accepted quote after its validity period remains unresolved.
+- **Quote lifecycle:** Draft, issued, accepted, rejected, expired, superseded, and cancelled are recognized quote lifecycle outcomes. Customer acceptance is explicit. An unaccepted expired quote requires a fresh quote before proceeding. Quote validity is configured by service and expiry is communicated. DEC-038 resolves that valid quote acceptance by the authenticated booking party confirms the independent booking and that accepted-quote expiry does not silently cancel or rewrite it. A separate service-specific handover deadline is communicated before acceptance and included in booking confirmation.
 - **Historical quote preservation:** Preserve accepted inputs, itemized charges, total, currency, and applicable rate/rule version/effective context. Recalculation creates a new quote/revision; later rate changes must not silently mutate prior issued/accepted quotes or completed payments.
-- **Commercial separation:** Quote, accepted agreement, payment, and booking are distinct business events. Quote acceptance is not proof of payment or physical intake.
+- **Commercial separation:** Quote issuance, accepted commercial terms/booking confirmation, payment, and physical intake are distinct facts. Valid quote acceptance by the authenticated booking party is the booking-confirmation event under DEC-038; it is not proof of payment or physical intake.
 - **Unknown charges:** Do not assume taxes, surcharges, discounts, or other fees are zero; applicability and treatment remain unresolved.
 - **Dependencies:** D-06 measurement/adjustment policy, D-07 payment-at-intake evidence, D-08 financial events/reconciliation, and D-12 audit/evidence retention.
 - **Acceptance direction:** Equivalent approved inputs under the same service and rule version produce a reproducible result; a rate update cannot silently change a historical quote; unaccepted expiry requires a fresh quote; and no unapproved fee/tax treatment is invented.
@@ -248,3 +249,24 @@ For each D-01–D-15 item:
 All 15 owner-decision slots (D-01–D-15) now have high-level owner outcomes recorded. This closes the current owner-decision queue only; it does not mean the platform-wide SDD is complete, every requirement is specified, the application is implemented, or launch readiness has been demonstrated. Continue with full-document reconciliation, read-only source traceability, requirement-level priority classification, acceptance-scenario definition, and evidence planning. Obtain explicit owner approval of the complete reconciled SDD before any application-code changes.
 
 **No decision in this register is approved merely by appearing here.**
+
+
+## 6. Additional owner-accepted detailed policy — DEC-038
+
+DEC-038 records the owner's approval of the independent shipment booking confirmation, information, lifecycle, and responsibility policy. It refines DEC-018, DEC-023, DEC-024, DEC-026, DEC-027, DEC-029, DEC-033, DEC-034, DEC-037, and BP-01–BP-22; it does not create or reopen a D-01–D-15 decision slot.
+
+Accepted:
+- Explicit acceptance of a valid quotation by the authenticated booking party confirms the independent shipment booking and accepted commercial terms.
+- Booking information is service-specific and proportionate: origin, destination, selected service, parcel description, and only necessary eligibility/pricing inputs.
+- Booking party, sender, receiver/collection recipient, payer, and physical handover person may differ.
+- A registered customer may arrange a business shipment, identifying the business and their relationship, without assuming a separate business-account system at launch.
+- Payment, physical intake/custody, and logistics fulfilment remain distinct from booking confirmation.
+- Unaccepted quote expiry requires a fresh quote; accepted quote expiry does not silently cancel or rewrite the confirmed booking.
+- Each service has a separately configured handover period/deadline, communicated before acceptance and included in booking confirmation. Missing the deadline may result in an unfulfilled outcome while preserving booking/payment/audit history; financial resolution is separate.
+- Pre-intake booking-party changes/cancellation and post-intake staff-mediated handling follow BP-01–BP-05 and the relevant authority policies.
+- Support, Operations, Admin, staff-assisted booking, walk-in intake, and external actors retain the responsibility boundaries recorded in DEC-038.
+
+Still unresolved:
+- Service-specific handover durations/configuration; service eligibility/capacity; quote validity and pricing detail; business identity/relationship representation; identity/contact/consent verification; payment-at-intake and late-payment rules; booking reference and status vocabulary; missed-handover/refused-intake financial and service outcomes; complete permissions, data/API contracts, evidence, and acceptance tests.
+
+DEC-038 is business policy only. It does not approve implementation, schemas, fields, APIs, routes, status enums, identity providers, permission claims, or code changes. The complete platform-wide SDD must still be reconciled and explicitly approved before application-code work.
