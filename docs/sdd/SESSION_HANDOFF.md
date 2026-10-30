@@ -4,10 +4,10 @@ Continue the existing **VeriLyft — Beyond Borders** project in `dev-adeshina/s
 
 ## Current verified state
 
-- Latest verified `main` head before this proposal: `c9d9342cfc9dcef2c7d5704074d83927c5f5099c` (PR #30 merged). This documentation proposal is on `docs/requirement-level-priority-baseline` and must be reviewed/merged by the owner before it becomes main.
+- Latest verified `main` head: `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merged 30 October 2026).
 - All 15 tracked high-level owner decisions (D-01–D-15; DEC-022–DEC-036) are accepted. The decision queue is complete, but the platform-wide SDD is not yet complete or approved.
-- Source inspection baseline: `c56be9b121e6007e1e99c6df2d3984e709771a92`. Comparison through latest main showed intervening commits changed SDD documentation only, not application source. Treat source traceability as a read-only snapshot to be reconciled and refreshed.
-- Current task: **Stage 2 — requirement-level launch priority reconciliation**. Proposed mapping is in `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`; review it with `DECISIONS.md` DEC-018/DEC-036, `ADMIN_REQUIREMENTS.md`, and `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`.
+- Refreshed source inspection baseline: `e0f69055d33dd9399c23e1d793f359468229c856`. `IMPLEMENTATION_SOURCE_TRACEABILITY.md` now maps A-01–A-20 and ADM-R01–ADM-R54 against the active source tree at this exact commit.
+- Current task: **Stage 3 — requirement-to-source traceability and P0 evidence mapping**. PR #31's priority baseline is owner-reviewed and merged. The complete platform-wide SDD remains unapproved.
 
 ## Read first
 
@@ -40,11 +40,11 @@ Read `README.md`, `SPEC.md`, `DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.m
 
 ## Remaining sequence
 
-1. Review/merge the requirement-level priority proposal only after owner approval.
-2. Refresh read-only source traceability against the current source head and map each P0/Conditional P0 requirement to source evidence, a gap, or an explicit unverified/not-inspected state.
-3. Define detailed cross-domain acceptance scenarios and evidence requirements.
-4. Assess production-readiness evidence and unresolved release blockers.
-5. Reconcile all SDD documents and present the complete baseline for explicit owner approval.
-6. Only after approval, plan focused implementation work.
+1. Confirm whether root `pudo.zip` is authoritative and within active VeriLyft source scope; it has not been inspected.
+2. Define detailed observable acceptance scenarios and evidence artifacts for every P0/Conditional P0 requirement.
+3. Obtain runtime evidence for source-present P0 paths; do not treat source presence as runtime proof.
+4. Assess production configuration, monitoring, backup/restore, incident response, rollback and release sign-off.
+5. Reconcile all SDD documents and present the complete platform-wide baseline for explicit owner approval.
+6. Only after complete SDD approval, plan focused implementation work.
 
 Do not restart the completed 15-decision sequence. Start by verifying the live `main` head and PR state, then continue from `PROGRESS.md`. Never merge on the owner's behalf.

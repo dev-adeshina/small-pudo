@@ -86,14 +86,15 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Next action:** Review PR #4 against the current schema and existing records; verify the intended behaviour before merging or changing data.
 - **Acceptance:** Product counts and category slug-change protection work with the current schema and any explicitly supported legacy records; no unnecessary data migration.
 
-### VLY-015 — Requirement-level launch priority proposal drafted; approval and evidence mapping remain open
+### VLY-015 — Requirement-level launch priority baseline merged; source/evidence mapping in progress
 
-- **Status:** OPEN — owner review pending
-- **Priority:** High before implementation planning
-- **Evidence:** PR #30 merged at `c9d9342cfc9dcef2c7d5704074d83927c5f5099c`. A proposed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` now maps all 20 cross-domain acceptance areas and ADM-R01–ADM-R54, preserves ADM-P01–ADM-P15 as P1, and identifies Conditional P0 and deferred scope. It distinguishes priority from design/source/verification/release status.
-- **Limit:** The proposal is not owner-approved. It does not refresh source traceability, establish detailed acceptance tests, prove implementation, or certify production readiness. Detailed policy values and workflow contracts remain open under DEC-022–DEC-035.
-- **Next action:** Obtain owner review of the priority mapping. After approval/merge, refresh source-to-requirement traceability at the current source head and define observable acceptance/evidence for each P0 and Conditional P0.
-- **Acceptance:** All in-scope requirements have an owner-approved priority; P1/deferred items have a safe launch boundary/manual fallback where needed; P0 evidence is explicit; no requirement is labelled implemented/tested/ready without supporting evidence.
+- **Status:** IN PROGRESS — priority baseline accepted; evidence mapping active
+- **Priority:** Blocking for implementation planning until P0 acceptance evidence and full SDD approval are complete
+- **Evidence:** PR #31 reviewed and merged to `main` at `e0f69055d33dd9399c23e1d793f359468229c856`. `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` now records the owner-reviewed P0, Conditional P0, P1 and Deferred mapping for A-01–A-20 and ADM-R01–ADM-R54.
+- **Limit:** Priority acceptance is not approval of the complete platform SDD, technical design, implementation, testing, or production readiness. Detailed policies, contracts, acceptance scenarios and operational evidence remain open.
+- **Current source evidence:** Refreshed read-only source traceability at the PR #31 baseline maps all A-01–A-20 and ADM-R01–ADM-R54 to source presence, partial coverage, or no active source found in the inspected tree. Storefront checkout/orders and Paystack paths have source foundations; independent shipment/PUDO/intake/custody/pricing/routing/movement/delivery-proof/general audit/refund/reconciliation capabilities were not found in active source. Runtime and production evidence remain unverified.
+- **Next action:** Define detailed observable acceptance scenarios and evidence artifacts for every P0/Conditional P0 requirement; confirm whether root `pudo.zip` is in scope; then reconcile the complete SDD before implementation planning.
+- **Acceptance:** Every P0/Conditional P0 has an approved contract, source status, repeatable acceptance scenario, evidence source and actual verification state; no requirement is labelled implemented/tested/ready without supporting evidence.
 
 ### VLY-016 — Shipment/PUDO/pricing operational implementation is not present in the inspected Admin routes
 

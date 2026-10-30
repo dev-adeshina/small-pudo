@@ -1,6 +1,6 @@
 # VeriLyft Platform Requirement-Level Launch Priority Matrix
 
-**Status:** Draft for owner review — not approved for implementation or release  
+**Status:** Owner-reviewed and merged baseline — not implementation approval or release authorization  
 **Date:** 30 October 2026  
 **Baseline:** `main` at `c9d9342cfc9dcef2c7d5704074d83927c5f5099c` (PR #30 merged)  
 **Authority:** DEC-018 (owner-approved lean launch scope), DEC-022–DEC-035 (accepted policy directions), and DEC-036 (evidence-based launch governance).  
@@ -10,7 +10,7 @@
 
 This document reconciles the existing Admin requirement inventory and the 20 cross-domain acceptance areas into one platform-level launch priority baseline. It does not replace the source requirement definitions or make the conceptual domain draft implementation-ready.
 
-The classification is a **proposed reconciliation for owner review**. DEC-036 requires an explicit requirement-level P0/P1/deferred baseline and demonstrable acceptance evidence. No application-code, schema, API, permission, deployment, or runtime change is authorized by this document.
+The classification is the owner-reviewed requirement-level priority baseline, merged in PR #31. This approval accepts the priority mapping as the planning baseline; it does not approve the complete SDD, detailed technical contracts, implementation, or release. DEC-036 requires an explicit requirement-level P0/P1/deferred baseline and demonstrable acceptance evidence. No application-code, schema, API, permission, deployment, or runtime change is authorized by this document.
 
 ### Priority definitions
 
