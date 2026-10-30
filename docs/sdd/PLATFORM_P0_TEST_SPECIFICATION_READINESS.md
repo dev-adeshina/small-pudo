@@ -180,10 +180,10 @@ Telegram is not one of the six ADM Conditional P0 rows, but it is a separately c
 
 ## 7. Recommended sequence to reach test-specification approval
 
-1. **Freeze the test scope:** identify which P0 capabilities are genuinely in the intended initial launch and which conditional triggers are disabled/manual. Do not treat absent independent-shipment features as testable.
-2. **Resolve the blocking contracts:** action permissions; storefront/independent-shipment lifecycle boundaries; quote/pricing/measurement; financial events; physical custody/routing/delivery; audit/evidence; notification/privacy; P0 metrics; production operations.
-3. **Draft source-backed regression specifications first:** narrow storefront catalogue, checkout/stock, existing order lifecycle, existing customer access, Paystack payment and currently implemented Admin authorization slices. State exactly which source-backed behaviour is covered and which policy-dependent scenario is excluded.
-4. **Create new capability specifications only after their contracts exist:** shipment booking, quote/pricing, intake/custody, routing, dispatch, delivery proof, refunds/reconciliation, general audit, exception handling, live dashboard/alerts and production readiness.
+1. **Apply the accepted launch scope:** DEC-018 already includes the lean independent-shipment and logistics capabilities. DEC-037 confirms that logistics/independent shipment booking is the primary business workflow and storefront commerce is an attached service. Do not classify absent core logistics capabilities as deferred merely because the inspected source does not yet implement them. Conditional triggers remain disabled or manual only where their specific gates require it.
+2. **Resolve the blocking logistics contracts:** booking authority and eligibility; action permissions; booking/quote/payment lifecycle; pricing/measurement; physical custody and location capability; routing/dispatch/movement; delivery proof and failed-delivery outcomes; financial events; audit/evidence; notification/privacy; P0 metrics; production operations. Preserve the distinction between storefront orders, independent shipments, and transport movements.
+3. **Draft source-backed regression specifications for existing slices:** storefront catalogue, checkout/stock, existing order lifecycle, customer access, Paystack payment, and currently implemented Admin authorization. These supporting commerce specifications must not displace the core logistics contract work. State exactly which source-backed behaviour is covered and which policy-dependent scenario is excluded.
+4. **Create new logistics capability specifications as their contracts are approved:** shipment booking, quote/pricing, intake/custody, location capability, routing, dispatch, delivery proof, refunds/reconciliation, general audit, exception handling, live dashboard/alerts and production readiness.
 5. **Review every case independently:** require an owner-approved specification, independent reviewer, reproducible fixtures, expected state and non-state changes, evidence capture and cleanup before execution.
 6. **Execute only in an approved non-production environment:** use sandbox providers, synthetic identities/data and controlled fault injection. No production customer data, live charges, real customer notifications or physical parcels without separate approval.
 7. **Record evidence and defects:** do not mark a requirement accepted from source inspection, a screenshot alone, or an uncorrelated test report. Preserve the exact commit/configuration/test command/results and evidence references.
@@ -221,7 +221,7 @@ A case is not ready for execution until all applicable items are true:
 - [x] A-01–A-20 catalogue case counts and requirement links reconciled.
 - [x] Source status tied to the active inspected source baseline.
 - [x] Conditional P0 triggers and minimum gates identified.
-- [ ] Owner confirms the intended initial launch scope and disabled/manual conditional capabilities.
+- [x] Owner confirms logistics/independent shipment booking as the primary business workflow and storefront commerce as an attached service, consistent with DEC-018. Detailed conditional triggers/manual fallbacks remain governed by their individual gates.
 - [ ] Owner approves the blocker list and sequence for detailed test-specification work.
 - [ ] Individual P0/Conditional P0 test specifications are authored and approved.
 - [ ] Non-production environment is approved and evidenced before test execution.
