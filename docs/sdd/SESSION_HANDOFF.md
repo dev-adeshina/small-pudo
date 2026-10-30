@@ -4,9 +4,9 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 
 ## Verified repository state
 
-- Latest verified `main`: `1d8a44c2da94a8ff351f365e0e5073b292690f6d` — PR #39 merged on 30 October 2026 at 19:59:30 UTC.
-- Current documentation-only proposal branch: `docs/stage-5-5-cross-document-reconciliation`.
-- Active-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). Changes through PR #39 are documentation-only; they do not establish runtime behaviour.
+- Latest verified `main`: `712d32da11a5740fdbc4e2a0b826adab42ed352b` — PR #40 merged.
+- Current documentation-only proposal branch: `docs/stage-5-5-dependency-traceability`.
+- Active-source traceability baseline: `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Changes through PR #40 are documentation-only; they do not establish runtime behaviour.
 - Application-code changes remain prohibited until the complete platform-wide SDD is reconciled and explicitly approved.
 
 ## Accepted policy and completed documentation stages
@@ -22,16 +22,16 @@ Continue **VeriLyft — Beyond Borders** in `dev-adeshina/small-pudo`.
 Stage 5.4 is complete. The owner explicitly approved the policy/scenario-design approach for all 20 sections A-01–A-20, and PR #39 merged the refinements into `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`. This is not approval of executable test specifications, test execution, implementation, or release.
 
 Stage 5.5 proceeds in four controlled steps:
-1. Correct continuity records, duplicate issue identifiers, and stale approval/status statements.
-2. Reconcile DEC-022–DEC-036 against the actor model, shared workflows, lifecycle contracts, and cross-domain acceptance matrix. Accepted policies remain accepted; unresolved technical contracts remain open.
-3. Build a consolidated dependency and traceability register for A-01–A-20 and ADM-R01–ADM-R54.
-4. Review P0/Conditional P0 test-specification readiness and identify blockers before any safe non-production execution plan.
+1. **Completed in PR #40:** Correct continuity records, duplicate issue identifiers, and stale approval/status statements.
+2. **First-pass alignment recorded in PR #40:** Reconcile DEC-022–DEC-036 against actor, shared-workflow, lifecycle, and cross-domain acceptance documents. Accepted policies remain accepted; unresolved technical contracts remain open. Detailed workflow/lifecycle reconciliation continues where register review identifies gaps.
+3. **Prepared for owner review:** `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md` maps all A-01–A-20 and ADM-R01–ADM-R54 to priorities, policy dependencies, actors, shared workflows, lifecycle references, source status, and test-specification gates.
+4. **Next:** Review/approve the register, then assess P0/Conditional P0 test-specification readiness and identify blockers before any safe non-production execution plan.
 
 Do not invent unresolved thresholds, formulas, permission limits, proof methods, retention periods, or retry/time-out values. Before any test execution, each P0/Conditional P0 needs an approved, reproducible test specification with preconditions, actor, action, expected state and non-state changes, replay/failure behaviour, evidence artifacts, cleanup, and accountable reviewer. Production-readiness evidence is a separate workstream.
 
 Other unresolved gates:
 - Confirm whether repository-root `pudo.zip` belongs to the active VeriLyft source-of-truth scope; it has not been inspected.
-- Reconcile remaining DEC-022–DEC-036 technical dependencies and source traceability; preserve the active source baseline at `e0f69055` unless a source-changing commit is inspected.
+- Review the proposed dependency/traceability register and reconcile any corrections; preserve the active source baseline at `e0f69055` unless a source-changing commit is inspected.
 - Define production-like environment, blocker ownership, deployment/rollback, backup/restore proof, monitoring/alerts, incident response, and dated release sign-off.
 - Obtain explicit owner approval of the complete platform-wide SDD before implementation.
 
