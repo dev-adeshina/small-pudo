@@ -21,14 +21,14 @@
 
 ## 1. Current position
 
-### Current milestone — booking-party authority policies accepted; SDD reconciliation underway
+### Current milestone — Stage 5.3 pricing, measurement, quote, and adjustment policies accepted; SDD reconciliation underway
 
 - **Owner decision register:** 15 of 15 tracked decisions (D-01–D-15) have accepted high-level outcomes, recorded as DEC-022–DEC-036. Detailed policy values, permissions, transitions, and evidence requirements remain open where identified in the decision records.
-- **Latest verified main head:** `beb2d03e88df7894a8805af79a9d68fd74cc143f` (PR #35).
+- **Latest verified main head:** `574f23787030c4b5374e6ac02ce82b69e1ece1a4` (PR #36 merged on 30 October 2026 at 18:36:18 UTC).
 - **Source inspection baseline:** `c56be9b121e6007e1e99c6df2d3984e709771a92`. Comparison through latest main shows intervening commits changed SDD documentation only; source traceability remains a read-only snapshot and must be reconciled with accepted policy.
 - **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), and P0 acceptance-scenario/evidence catalogue draft (PR #33) are merged.
-- **Current proposal:** PR #36, `docs: consolidate booking-party authority decisions`, is open for owner review. `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` records BP-01–BP-22 accepted under DEC-023/DEC-024. PM-01–PM-12 remain accepted in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`.
-- **Next stages:** Proceed to Stage 5.3 — pricing, measurements, and quote adjustments (DEC-026/DEC-027); resolve remaining policy/technical dependencies in DEC-022–DEC-036; reconcile lifecycle/API/data/security contracts against source; assess production readiness; obtain explicit approval of the complete SDD.
+- **Merged documentation:** PR #36, `docs: consolidate booking-party authority decisions`, is merged. `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` records BP-01–BP-22 accepted under DEC-023/DEC-024. PM-01–PM-12 remain accepted in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`.
+- **Current work:** PR #37 contains the documentation-only reconciliation of the six owner-approved Stage 5.3 pricing, measurement, quote-management, quote-adjustment, and financial-outcome policies. After owner review/merge, continue unresolved policy/technical dependencies, source reconciliation, production-readiness evidence, and explicit approval of the complete SDD.
 - **Implementation gate:** No application-code changes until the complete platform-wide SDD has been reconciled and explicitly approved.
 
 VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, and Cloudinary application. Preserve its architecture and existing patterns; do not invent parallel services, collections, fields, routes, or permission models.
@@ -748,9 +748,24 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Consolidated the accepted booking-party, sender/receiver, Support/Admin escalation, cancellation, collection, notification, transfer, financial responsibility, withdrawal, legal-representative, delegated-access, account-compromise, deletion/retention, dispute, and appeal policies in `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`.
 - [x] Reconciled the decision log, owner decision register, shared workflows, lifecycle/security contracts, cross-domain acceptance matrix, actor model, and issue tracker to distinguish accepted policy from unresolved operational/technical detail.
 - [x] Corrected stale PR #34 baseline references in this progress tracker.
-- [ ] Review and merge PR #36, the Stage 5.2 documentation-only consolidation.
+- [x] Review and merge PR #36, the Stage 5.2 documentation-only consolidation.
 - [ ] Define remaining verification/consent methods, lifecycle/change matrix, evidence and exception authority, transfer-liability procedure, delegated-access parameters, retention/notification rules, and dispute/appeal operating details.
-- [ ] Continue with Stage 5.3 — pricing, measurements, and quote adjustments after the Stage 5.2 PR is reviewed and merged.
+- [x] Continue with Stage 5.3 — pricing, measurements, and quote adjustments after the Stage 5.2 PR was reviewed and merged.
 - [ ] Reconcile all remaining SDD dependencies and obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
 
 **Evidence boundary:** Documentation-only policy capture and reconciliation. No application source, Firebase configuration/rules, schemas, APIs, permissions, deployment, runtime behaviour, or tests were changed/run. BP-01–BP-22 acceptance does not constitute complete SDD approval, implementation authorization, or production readiness.
+
+## 31. Stage 5.3 — pricing, measurement, quote, adjustment, and financial-outcome policies accepted — 30 October 2026
+
+- [x] Verified PR #36 merged to `main` at `574f23787030c4b5374e6ac02ce82b69e1ece1a4`.
+- [x] Received explicit owner approval of all six Stage 5.3 policy areas: fixed/calculated/hybrid service pricing; approved service-specific pricing inputs; shared measurement recording with service-specific requirements and units; quote lifecycle, validity, preservation, and explicit acceptance; evidence-based quote adjustments with customer consent; and distinct financial outcomes.
+- [x] Refined DEC-026 to recognize fixed, calculated, and hybrid pricing; service-configured inputs; shared pricing-rule authority; explicit quote outcomes; historical quote preservation; and separation of quote, accepted agreement, payment, and booking.
+- [x] Refined DEC-027 to distinguish declared and actual measurements, require explicit service-configured units and attributable measurement evidence, preserve original quotes, require review for material/payment-impacting discrepancies, and require customer acceptance before collecting additional charges.
+- [x] Reconciled DEC-029 financial outcomes: rejected quotes, accepted adjustments, disputed additional charges, over/underpayments, failed attempts, refunds, credits, reversals, late payments, and reconciliation remain distinct and traceable.
+- [x] Updated the owner decision register, shared workflows, lifecycle/contract draft, cross-domain acceptance matrix, issue tracker, progress tracker, and session handoff in this documentation proposal.
+- [ ] Review and merge PR #37, the focused Stage 5.3 documentation-only PR.
+- [ ] Specify exact formulas/rates, input sources, service mapping, units/conversion, rounding/effective dates, taxes/fees/discounts, accepted-quote expiry edge cases, measurement thresholds, approval limits, and adjustment-rejection service resolution.
+- [ ] Reconcile remaining DEC-022–DEC-036 dependencies, technical contracts, source traceability, P0 acceptance evidence, and production-readiness requirements.
+- [ ] Obtain explicit owner approval of the complete platform-wide SDD before application-code changes.
+
+**Evidence boundary:** Documentation-only policy capture based on the owner's explicit approvals. No application source, Firebase configuration/rules, database schema, APIs, permissions, deployment, runtime behaviour, or tests were changed/run. This does not constitute complete SDD approval, implementation authorization, or production readiness.

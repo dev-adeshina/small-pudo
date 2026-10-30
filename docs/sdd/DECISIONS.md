@@ -248,30 +248,34 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Status:** Owner-approved high-level policy; detailed workflow rules, source reconciliation, and implementation remain open.
 
 
-### DEC-026 — Service-specific hybrid pricing and quote validity
+### DEC-026 — Service-specific pricing models and quote management
 
-- **Decision date:** 29 October 2026.
-- **Decision:** Assign fixed or calculated pricing by service according to cost characteristics. Storefront delivery and independent shipment booking use one shared approved pricing rule set wherever service inputs overlap.
-- **Calculated-price inputs:** A service may use applicable inputs from origin/destination or a defined distance band, parcel weight, parcel dimensions or volumetric weight, service class/delivery speed, and a configured minimum charge. The exact formula, units, distance source/bands, service-to-formula mapping, and any additional inputs remain unresolved.
-- **Quote validity:** Configure quote validity by service. Quote expiry and whether a fresh quote is required after expiry must be explicitly defined before implementation.
-- **Quote preservation:** Preserve accepted inputs, itemized charges, total, currency, and applicable rate/rule version/effective context. Later rate changes must not silently alter accepted quotes or completed payments.
+- **Decision date:** 29 October 2026; refined by owner approval on 30 October 2026.
+- **Pricing models:** Each service must explicitly use an approved fixed, calculated, or hybrid pricing model. Fixed pricing applies where cost is predictable within defined service conditions; calculated pricing applies where approved variables materially affect cost; hybrid pricing may combine approved fixed and variable components. Not every service must use every model.
+- **Shared rule authority:** Storefront delivery and independent shipment booking use the same approved pricing rule set wherever their service inputs overlap. No service may introduce an ad hoc pricing formula outside the approved pricing catalogue/configuration.
+- **Pricing inputs:** Each service explicitly declares which approved inputs apply. Permitted input categories include origin, destination, distance or an approved distance band, actual/declared parcel weight as the applicable policy permits, dimensions, volumetric weight, service class/delivery speed, configured minimum charge, and documented special-handling requirements. Not every input applies to every service. Exact formulas, input sources, units, service mapping, and any further input categories remain unresolved.
+- **Quote lifecycle:** A quote may be draft, issued, accepted, rejected, expired, superseded, or cancelled. Issued means presented to the customer; acceptance must be explicit. An unaccepted expired quote requires a fresh quote before proceeding. Each service configures quote validity and communicates the expiry. The effect of expiry on a quote already accepted, and the precise booking-confirmation point, remain to be specified.
+- **Quote preservation:** Preserve the inputs, itemized charges, total, currency, and applicable pricing-rule/rate version and effective context used for an issued/accepted quote. Later rate changes must not silently alter an issued or accepted historical quote or completed payment. A recalculation/revision creates a new quote while preserving prior versions.
+- **Commercial and operational separation:** A quote, accepted commercial agreement, payment, and booking are distinct business events. Quote acceptance does not prove payment or physical intake.
 - **Unknown charges:** Do not assume taxes, surcharges, discounts, or other fees are zero. Their applicability, calculation, display, and approval remain unresolved.
-- **Adjustments:** Actual intake measurements or other permitted changes may generate a proposed adjustment linked to the original quote. Material discrepancies and adjustments affecting existing payments require review under a policy still to be defined. Charges, additional payments, credits, and refunds remain distinct financial events.
-- **Rationale:** Maintain consistent pricing across relevant booking paths while allowing service-appropriate cost models and preserving commercial facts customers accepted.
-- **Status:** High-level owner policy accepted. Formula catalogue, examples, units, rounding, effective dates, expiry behaviour, tax/fee treatment, adjustment thresholds, and implementation remain open.
+- **Adjustments:** Actual intake measurements or other permitted changes may create a proposed adjustment linked to the original quote and accepted agreement. A proposal must not overwrite the original quote or become an approved charge/settled financial event automatically. Material discrepancies and payment-impacting adjustments require review. Customer notification and explicit consent are required before collecting an additional charge.
+- **Rationale:** Maintain consistent pricing across relevant booking paths while allowing service-appropriate cost models and preserving the commercial facts presented to and accepted by customers.
+- **Status:** High-level owner policy accepted and refined. Formula catalogue, rates, units, input-source rules, rounding, effective dates, tax/fee treatment, accepted-quote expiry edge cases, and detailed booking transitions remain open.
 
-### DEC-027 — Configurable measurement discrepancy and adjustment review
+### DEC-027 — Measurement standards, discrepancy review, and quote adjustments
 
-- **Decision date:** 29 October 2026.
-- **Decision:** Adopt a configurable, evidence-based policy that distinguishes routine measurement variation from material discrepancies. Thresholds must be appropriate to the service and relevant measurement; no numeric threshold is approved by this decision.
-- **Measurement evidence:** Preserve the original quoted inputs and separately record actual intake measurements with responsible actor, location, time, and applicable evidence/reason.
-- **Quote and adjustment integrity:** Preserve the accepted quote and its rate/rule context. A discrepancy may create a proposed adjustment linked to the original quote, but the proposal must not silently overwrite the quote or be treated as an approved charge or settled financial event.
-- **Review authority:** Staff may record measurements and propose adjustments only within assigned permissions. Material discrepancies and adjustments affecting an existing payment require review under a configured authority policy. Exact approval limits and second-person requirements remain unresolved.
-- **Customer outcomes:** Notification/consent requirements and explicit outcomes for acceptance, dispute, refusal, and unresolved cases must be defined before implementation. A disputed or refused adjustment must not silently become an approved charge.
-- **Still unresolved:** Units and required measurements by service; numeric thresholds; authority limits and separation of duties; customer consent/notification rules; refusal/dispute outcomes; evidence details and runtime acceptance tests.
-- **Rationale:** Protect quote integrity and customer trust while allowing operationally practical handling of routine variation and controlled review of material differences.
-- **Status:** High-level owner policy accepted. Detailed thresholds, authority matrix, customer/financial outcomes, source reconciliation, and implementation remain open.
-
+- **Decision date:** 29 October 2026; refined by owner approval on 30 October 2026.
+- **Measurement framework:** Use a shared measurement-recording framework with service-specific requirements. Each service explicitly defines the measurements it needs and the unit for each measurement. Kilograms (kg) and centimetres (cm) are examples only; no universal unit selection is approved here.
+- **Declared and actual values:** Preserve customer/booking-party-declared measurements separately from actual measurements recorded at intake. Do not silently overwrite, convert, or reinterpret a recorded value. Any unit conversion must be explicit, controlled, and traceable under the later technical contract.
+- **Measurement evidence:** Actual measurement records identify the responsible actor, location, timestamp, and applicable evidence/reason. Evidence requirements may vary by service and action.
+- **Discrepancy policy:** Use a configurable, evidence-based policy to distinguish routine variation from material discrepancies, appropriate to the service and relevant measurement. No numeric threshold or tolerance is approved by this decision.
+- **Quote and adjustment integrity:** Preserve the accepted quote and its pricing-rule/rate context. A discrepancy may create a proposed adjustment linked to the original quote and accepted agreement, identifying changed facts and reason. The proposal must not silently overwrite the quote or be treated as an approved charge or settled financial event.
+- **Review authority:** Staff may record measurements and propose adjustments only within assigned permissions. Material discrepancies and adjustments affecting an existing payment require review under the configured authority policy. Exact approval limits and second-person requirements remain unresolved.
+- **Customer outcomes and consent:** Notify the customer of a price-changing adjustment with its reason and revised amount. Record explicit customer acceptance before collecting an additional charge. Record outcomes such as accepted, rejected, disputed, withdrawn, pending review, or unresolved. A disputed additional charge is suspended pending review; a rejected adjustment follows the applicable service-resolution policy. Neither dispute nor rejection silently authorizes a charge.
+- **Financial separation:** A proposed or accepted adjustment does not itself execute an additional payment, refund, credit, or other financial transaction. Each financial event follows its own authorization, verification, and reconciliation policy.
+- **Still unresolved:** Service-specific required measurements and units; conversion rules; numeric thresholds; evidence detail; approval limits and separation of duties; service-resolution outcomes after rejection; and detailed runtime acceptance tests.
+- **Rationale:** Protect quote integrity and customer trust while allowing operationally practical measurement and controlled review of material differences.
+- **Status:** High-level owner policy accepted and refined. Detailed thresholds, authority matrix, technical representation, source reconciliation, and implementation remain open.
 
 ### DEC-028 — Configured payment-at-intake methods and evidence
 
@@ -296,6 +300,8 @@ These decisions are accepted at the design level only. They do not mean the corr
 - Cancellation of a booking/order/shipment does not itself mean a payment was refunded. Cancellation state and refund state remain distinct.
 - A payment received after cancellation or expiry is recorded and reconciled against its original transaction; it does not silently reactivate the cancelled booking/order/shipment.
 - A refund request and an executed refund are distinct. Refund initiation and approval must follow authorized controls and retain reason and applicable evidence; exact approval limits remain unresolved.
+- Financial outcomes for quotes and adjustments remain explicit: a rejected quote creates no payment obligation from that quote; an accepted quote preserves the agreed amount; an accepted adjustment records a revised commercial agreement and any additional amount due; a disputed additional charge is held pending review; overpayments and underpayments require an authorized resolution; and failed payments remain failed attempts rather than successful settlement.
+- Customer rejection of an adjustment follows the applicable service-resolution policy; it does not automatically create a refund, credit, cancellation, or additional charge. The detailed operational consequences remain to be specified.
 - Customer credit is distinct from a cash refund and must remain traceable to its originating transaction. Additional payments are separate events and must not overwrite the original payment.
 - Reversals and chargebacks preserve the original transaction/event history and record their own outcomes.
 - Reconcile internal payment records against authoritative provider/bank records. Mismatches require investigation rather than an assumed success or silent correction.

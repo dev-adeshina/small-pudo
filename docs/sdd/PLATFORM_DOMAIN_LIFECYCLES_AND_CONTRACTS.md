@@ -114,23 +114,26 @@ Open specification: quote validity, booking confirmation point, cancellation fee
 ### 4.2 Quote and adjustment lifecycle
 
 Conceptual progression:
-- Pricing inputs are validated for the selected service.
-- Fixed or calculated pricing is selected according to that service's approved rule; calculated rules use only the inputs applicable to the service (which may include origin/destination or distance band, parcel weight, dimensions/volumetric weight, service class/delivery speed, and a configured minimum charge).
-- A quote is calculated from the shared approved rule set wherever storefront delivery and independent shipment booking inputs overlap.
-- The quote's validity is determined by the selected service's configured policy.
-- The quote and rate/rule context are preserved, including accepted inputs, itemized charges, total, currency, and applicable effective/version context.
-- The customer accepts, declines, or lets the quote expire under the approved rule.
-- Later measurement or service changes may create a proposed adjustment.
-- Any required review/approval occurs before the adjustment becomes binding.
-- A resulting charge, additional payment, credit, or refund is processed and verified separately.
+- Validate only the pricing inputs explicitly configured for the selected service.
+- Apply that service's approved fixed, calculated, or hybrid pricing model. Calculated/hybrid components use only approved applicable inputs, potentially including origin, destination, distance/approved distance band, weight, dimensions, volumetric weight, service class/delivery speed, minimum charge, and documented special handling.
+- Reuse the shared approved pricing rule set across storefront delivery and independent shipment booking wherever their inputs overlap.
+- Create a quote with preserved inputs, itemized charges, total, currency, pricing-rule/rate version, effective context, and service-configured validity.
+- Recognize draft, issued, accepted, rejected, expired, superseded, and cancelled quote outcomes. Issued means presented to the customer; acceptance is explicit.
+- An unaccepted quote that expires requires a fresh quote before proceeding. The treatment of an already accepted quote after its validity period remains an open specification.
+- A customer acceptance creates an accepted commercial agreement; it does not itself prove payment, booking confirmation, or physical intake.
+- Recalculation or repricing creates a new quote/revision and preserves prior issued/accepted quote history.
+- Later measurement or another permitted change may create a proposed adjustment linked to the original quote and accepted agreement.
+- Required review and customer consent occur before a price-changing adjustment becomes binding or an additional charge is collected.
+- Any resulting charge, additional payment, credit, refund, reversal, or reconciliation outcome is processed and verified as a separate financial event.
 
 Required guards:
-- Current rate changes must not rewrite a previously accepted quote.
-- Adjustment proposals must link to the original quote and identify changed inputs and reason.
-- A proposed adjustment is not a settled financial event.
-- An adjustment affecting an existing payment follows the approved review policy.
+- A service cannot use an unapproved model, input, formula, or ad hoc charge.
+- Current rate changes cannot rewrite a previously issued/accepted quote or completed payment.
+- Quote, accepted commercial agreement, booking, payment, intake, and custody remain separate facts.
+- Adjustment proposals identify changed facts and reason and link to the original quote; they do not overwrite it or constitute settlement.
+- A disputed additional charge remains held pending review; a rejected adjustment follows the service-resolution policy and does not automatically imply a refund, credit, or cancellation.
 
-Open policy: exact formulas and service mapping, units/distance source and bands, rounding, rate effective dates, expiry and re-quote behaviour, tax/fee/discount treatment, allowed repricing events, customer consent, adjustment thresholds/approval limits, and consequences if the customer declines.
+Open policy: exact formulas/rates and service mapping, input sources, units and conversion rules, rounding, effective dates, tax/fee/discount treatment, accepted-quote expiry edge cases, booking-confirmation point, required measurements, numeric discrepancy thresholds, approval limits/separation of duties, and detailed consequences if the customer rejects an adjustment.
 
 ### 4.3 Payment and financial-event lifecycle
 
@@ -438,10 +441,9 @@ This draft does not resolve:
 
 ## Measurement discrepancy and adjustment contract — DEC-027
 
-Conceptual contract: retain the original quote and its accepted inputs/rate context; separately record actual intake measurements and their actor, location, time, and required evidence; and link any proposed adjustment to the original quote. The measurement record, proposal, approval decision, payment, additional charge, credit, and refund are distinct facts and must not be collapsed into one status.
+Conceptual contract: preserve customer/booking-party-declared measurements separately from actual intake measurements. Each service defines the measurements it requires and the unit for each; examples such as kg and cm are not universal unit decisions. Do not silently overwrite, convert, or reinterpret a recorded value. Actual measurement records identify the responsible actor, location, timestamp, and applicable evidence/reason.
 
-Material discrepancies and adjustments affecting an existing payment must follow the configured review/authority policy. Routine-versus-material thresholds must be service-appropriate and configurable; exact units, values, approval limits, customer consent/notification rules, and refusal/dispute outcomes remain unresolved. A proposal or unresolved dispute is not authorization to mutate the accepted quote or represent a financial event as settled. No schema, API, or implementation details are approved here.
-
+Link any proposed adjustment to the original quote and accepted agreement, retaining the changed facts, reason, and review history. The measurement record, proposal, approval decision, customer acceptance/dispute/refusal, payment, additional charge, credit, and refund are distinct facts. Material discrepancies and adjustments affecting an existing payment follow the configured review/authority policy; thresholds are configurable and service-appropriate, but no numeric values are approved. Notify the customer of a price-changing adjustment and its revised amount; explicit acceptance is required before collecting an additional charge. A disputed additional charge remains held pending review. Rejection follows the applicable service-resolution policy and does not itself execute a financial transaction. Exact units, conversion rules, numeric thresholds, evidence detail, approval limits, and rejection-resolution procedures remain open. No schema, API, or implementation details are approved here.
 
 ## Payment-at-intake contract — DEC-028
 
@@ -452,7 +454,9 @@ Payment recording does not prove physical custody. Booking, payment, and custody
 
 ## Financial event and settlement boundaries — DEC-029
 
-Financial history must distinguish the original payment, later additional payments, refund requests, executed refunds, customer credits, reversals, and chargebacks. Preserve the original event and append attributable subsequent outcomes rather than rewriting history. Cancellation, payment, refund, credit, and operational shipment/order lifecycles are separate conceptual responsibilities. A late payment after cancellation/expiry is reconciled to its original transaction and cannot silently reactivate the cancelled booking/order/shipment. Duplicate or replayed provider events must be idempotent with respect to financial effects. Reconciliation against authoritative provider/bank records is an investigation/control process; mismatches are not silently treated as settled. These are business boundaries, not a proposed schema or ledger implementation. Detailed approval, retention, and exception rules remain open.
+Financial history must distinguish the original payment, later additional payments, refund requests, executed refunds, customer credits, reversals, chargebacks, and reconciliation outcomes. Preserve the original event and append attributable subsequent outcomes rather than rewriting history. Cancellation, payment, refund, credit, and operational shipment/order lifecycles are separate conceptual responsibilities. A late payment after cancellation/expiry is reconciled to its original transaction and cannot silently reactivate the cancelled booking/order/shipment. Duplicate or replayed provider events must be idempotent with respect to financial effects. Reconciliation against authoritative provider/bank records is an investigation/control process; mismatches are not silently treated as settled.
+
+Quote and adjustment outcomes remain distinct from financial settlement: a rejected quote creates no payment obligation from that quote; an accepted adjustment records the revised commercial agreement and any additional amount due; a disputed additional charge remains held pending review; overpayments and underpayments require an authorized, attributable resolution; and failed payments remain failed attempts rather than successful settlement. A refund request is not an executed refund, and a credit is not a cash refund. Rejection of an adjustment follows the applicable service-resolution policy and does not automatically create a refund, credit, cancellation, or charge. Detailed approval limits, timelines, credit rules, reconciliation ownership, and exception procedures remain open. These are business boundaries, not a proposed schema or ledger implementation.
 
 ## Dispatch exception control — DEC-030
 

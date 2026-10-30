@@ -74,9 +74,9 @@ Use these evidence labels consistently:
 
 1. A registered customer signs in and begins an independent shipment booking. A public visitor must register and authenticate before booking creation; guest shipment booking is not available at launch.
 2. The booking flow collects the origin, destination, service, parcel details, and other inputs required by the approved pricing policy.
-3. The shared pricing capability calculates or selects the applicable quote. The quote should preserve its inputs, applied rates/rule version, currency, and validity/acceptance context once those details are defined.
+3. The shared pricing capability applies the service's explicitly configured fixed, calculated, or hybrid model using only that service's approved inputs. Preserve quote inputs, itemized charges, total, currency, pricing-rule/rate version, effective context, and validity.
 4. The shipper reviews the quote and chooses an allowed payment path. Accepted launch scope includes advance online payment and payment at intake; exact method availability and rules still require definition.
-5. The system records booking intent/acceptance and supplies a booking reference or receipt. The exact point at which a quote becomes an accepted booking must be specified.
+5. The customer explicitly accepts or rejects the issued quote. Quote acceptance, accepted commercial agreement, payment, and booking are distinct events. The exact point at which quote acceptance confirms a booking remains to be specified; acceptance does not prove payment or physical intake.
 6. The booking is available to the intake/Operations workflow. It remains a planned booking until physical receipt is recorded.
 7. The booking party, sender, receiver/collection recipient, payer, and person physically handing over the parcel may be different people. Record the distinct relationships where they affect access, authority, liability, payment attribution, notifications, intake, or collection.
 8. Booking-party status does not itself authorize physical collection, and payer status does not itself authorize full shipment-detail access. Payment confirmation/receipt information is the default payer visibility; broader access requires a separately approved entitlement.
@@ -91,6 +91,7 @@ Use these evidence labels consistently:
 - How should the accepted BP-01–BP-22 authority policy be translated into the complete change-type/lifecycle matrix, including exact verification, consent, staff-review, and exception evidence?
 - What sender, receiver, payer, booking-party, and handover-person information is required, and when must each identity be verified?
 - How long is a quote valid, what makes a booking accepted, and when is a reference/label/receipt issued?
+- How does expiry of an already accepted quote affect the accepted commercial agreement?
 - Which payment methods are supported at intake and how are they verified and recorded?
 - What happens when the quote is paid online but the parcel is never handed over?
 
@@ -122,7 +123,7 @@ Use these evidence labels consistently:
 
 1. Intake begins from an existing booking or an authorized staff-created walk-in intake. Advance booking and walk-in intake are both in the accepted launch scope.
 2. Staff identify the booking/parcel and confirm the intake location is configured for the requested service. A registered collection centre must not be assumed to accept outgoing parcels unless that capability is explicitly enabled.
-3. The authorized actor records actual receipt and the minimum parcel/condition/measurement information required by the approved intake policy.
+3. The authorized actor records actual receipt and the minimum parcel/condition/measurement information required by the approved service-specific intake policy. Preserve customer/booking-party-declared measurements separately from actual intake measurements; record the unit, actor, location, timestamp, and applicable evidence/reason.
 4. The system associates the receipt with the correct booking/shipment and records who accepted custody, when, where, and any required evidence.
 5. If actual measurements or service details affect the quote, the shared pricing rules calculate a proposed adjustment while preserving the original quote.
 6. Where a discrepancy is material or affects an existing payment, the case follows the approved review/approval policy. Do not silently rewrite the quote or mark an unapproved adjustment settled.
@@ -133,8 +134,8 @@ Use these evidence labels consistently:
 
 - Which location types can accept outgoing parcels, collect parcels, measure parcels, hold custody, or perform handover?
 - What is the required intake checklist: dimensions/weight, packaging/condition, prohibited-item checks, photos, sender identity, and acceptance acknowledgement?
-- What units, tolerances, and remeasurement rules apply?
-- What threshold makes a discrepancy material, and who can approve the resulting adjustment?
+- Which service-specific measurements and units are required, and what explicit conversion rules apply?
+- What numeric tolerance distinguishes routine variation from a material discrepancy, and who can approve the resulting adjustment?
 - Can a parcel be refused, held, corrected, or returned at intake, and what is the documented process for each?
 - What evidence and retention rules apply to custody changes and disputes?
 
@@ -148,51 +149,57 @@ Use these evidence labels consistently:
 
 ## 6. Workflow D — Shared pricing, quote adjustment, and settlement
 
-**Purpose:** Apply consistent pricing rules across storefront delivery and independent shipment booking, and handle later changes transparently.
+**Purpose:** Apply consistent, service-appropriate pricing across storefront delivery and independent shipment booking, preserve commercial agreements, and handle later changes transparently.
 
-### Accepted constraints
+### Accepted constraints (DEC-026/DEC-027)
 
-- One shared pricing service/rule set serves storefront delivery and independent shipment booking where applicable.
-- Fixed versus calculated pricing is assigned by service according to cost characteristics; do not force every service into one formula (DEC-026).
-- Storefront delivery and independent shipment booking use one shared approved pricing rule set wherever service inputs overlap.
-- Calculated rates use only the inputs applicable to the selected service, chosen from origin/destination or defined distance band, parcel weight, dimensions/volumetric weight, service class/delivery speed, and configured minimum charge. Exact formulas and units remain open.
-- Quote validity is configured by service; exact expiry and re-quote behaviour remain open.
-- Preserve the accepted quote's inputs, itemized charges, total, currency, and applicable rate/rule version/effective context.
-- Actual intake measurements may produce a proposed recalculation.
-- Material discrepancies and payment-impacting adjustments require review under a configurable policy.
-- Additional payments, credits, and refunds are separate financial operations; unresolved payment outcomes are not successful payments.
+- Each service explicitly uses an approved fixed, calculated, or hybrid pricing model. A service may combine approved fixed and variable components; not every service uses every model.
+- Storefront delivery and independent shipment booking share the same approved pricing rule set wherever their inputs overlap. A service may not invent an ad hoc formula outside the approved pricing catalogue/configuration.
+- Each service declares which approved inputs apply. Categories may include origin, destination, distance/approved distance band, weight, dimensions, volumetric weight, service class/delivery speed, minimum charge, and documented special-handling requirements.
+- Only applicable, approved inputs are used. Exact formulas, rates, input sources, service mappings, units, rounding, and effective-date rules remain open.
+- Quote validity is configured by service and communicated to the customer. An unaccepted expired quote requires a fresh quote before proceeding. The effect of expiry on an already accepted quote remains open.
+- Recognized quote outcomes are draft, issued, accepted, rejected, expired, superseded, and cancelled. Acceptance is explicit.
+- Preserve quote inputs, itemized charges, total, currency, and pricing-rule/rate version/effective context. Recalculation creates a new quote/revision; prior issued/accepted quotes are not silently overwritten.
+- A quote, accepted commercial agreement, payment, and booking are distinct events.
+- Preserve customer-declared and actual measurements separately. Actual measurement records identify unit, actor, location, timestamp, and applicable evidence/reason. Units and measurement requirements are service-specific; no universal units or numeric tolerances are approved.
+- Material discrepancies and adjustments affecting an existing payment require review under configured authority. A proposed adjustment is not an approved charge or settled financial event.
+- Notify the customer of a price-changing adjustment, including its reason and revised amount. Explicit customer acceptance is required before collecting an additional charge. A disputed additional charge is held pending review; rejection follows the applicable service-resolution policy.
+- Additional payments, credits, refunds, reversals, and reconciliation outcomes remain distinct financial events.
 
 ### Proposed sequence
 
-1. Identify the service and the required pricing inputs.
-2. Apply the approved active rule/rate set and produce a quote with enough context to reproduce the calculation.
-3. Present the quote and capture acceptance under the booking/checkout policy.
-4. Preserve the quote snapshot and the applicable rate/rule version.
-5. If later facts differ (for example, intake measurement), calculate a proposed difference without overwriting the original quote.
-6. Apply the approved materiality threshold and route any required review to the authorized approver.
-7. Record the decision, reason, actor, and resulting charge/credit/refund operation where applicable.
-8. Verify and reconcile the financial event independently of shipment/order operational state.
-9. Keep the case open or in a defined exception path until the financial and operational outcomes required by policy are resolved.
+1. Identify the service and validate only the pricing inputs configured for that service.
+2. Apply the service's approved fixed, calculated, or hybrid model and active rule/rate context.
+3. Produce and issue a quote that preserves its input snapshot, itemized charges, total, currency, rule/rate version, effective context, and configured expiry.
+4. Record explicit customer acceptance or rejection. If an unaccepted quote expires, require a fresh quote before proceeding. Preserve prior quote versions when superseded or recalculated.
+5. Treat the accepted commercial agreement, booking, and any payment as separate events with explicit relationships.
+6. At intake, preserve declared values and separately record actual measurements using the service's configured units and evidence requirements.
+7. If actual measurements or another permitted fact changes the price, create a proposed adjustment linked to the original quote and accepted agreement; do not overwrite the original.
+8. Apply the configured materiality/review authority. Notify the customer of the reason and revised amount; obtain explicit acceptance before collecting an additional charge. Hold disputed additional charges pending review.
+9. Record the adjustment outcome and reason. A rejection follows the service-resolution policy; do not infer a refund, credit, cancellation, or other outcome automatically.
+10. Process any resulting charge, additional payment, credit, refund, reversal, or reconciliation outcome as a separate authorized and verified financial event.
 
 ### Open policy / design questions
 
-- Exact formula catalogue, units, distance source/bands, service-to-formula mapping, rounding, currency handling, and rate effective-date rules.
+- Exact formula catalogue, rates, service mapping, input sources, units, rounding, currency handling, and effective-date rules.
 - Whether taxes, surcharges, discounts, or other fees apply and how they are calculated, displayed, and approved; unknown treatment must not be assumed to be zero.
-- Quote-expiry outcome, re-quote requirements, permitted repricing triggers, and customer-consent rules for any proposed change after acceptance.
-- Material-discrepancy thresholds, approval limits, and who can authorize adjustments.
-- Which payment-at-intake methods are accepted and what evidence verifies them.
-- Who can initiate/approve refunds, credits, additional charges, and write-offs; separation-of-duties requirements.
-- What happens if an adjustment is rejected, the customer declines to pay, or a payment attempt remains unresolved.
+- Treatment of an already accepted quote after its validity period; precise booking-confirmation point and reference/receipt issuance.
+- Service-specific required measurements, units, explicit conversion rules, numeric discrepancy thresholds, and evidence requirements.
+- Approval limits, separation of duties, second-person review cases, and operational consequences when a customer rejects an adjustment.
+- Payment-at-intake methods/evidence; authority for additional charges, refunds, credits, and write-offs; reconciliation frequency and exception ownership.
 
 ### Acceptance criteria to define
 
-- The same approved pricing rules are reused across applicable booking paths, while fixed/calculated pricing is selected by service.
-- Each calculated quote uses only that service's approved inputs; equivalent inputs and the same rate/rule version produce a reproducible result.
-- Quote validity is configured by service and expiry is handled according to an explicit rule.
-- Quotes can be reconstructed from their preserved inputs, itemized charges, total, currency, and rate/rule version/effective context.
-- A rate update does not silently change an accepted quote.
-- Every adjustment is linked to the original quote and records the review decision where required.
-- Charges, credits, refunds, and payment status remain separately traceable.
+- Each service uses only its explicitly configured fixed, calculated, or hybrid pricing model and approved inputs.
+- Storefront delivery and independent shipment booking reuse the shared approved rule set wherever inputs overlap.
+- Equivalent approved inputs under the same service/rule version produce a reproducible result.
+- Issued and accepted quotes can be reconstructed from preserved inputs, itemized charges, total, currency, and pricing-rule/rate version/effective context.
+- Unaccepted quote expiry requires a fresh quote; an already accepted quote is not silently changed by expiry or rate updates.
+- Quote, accepted agreement, booking, payment, and physical intake remain distinguishable.
+- Declared and actual measurements remain separately attributable, with explicit units and applicable evidence.
+- Every adjustment links to its original quote, preserves the original agreement, and follows required review and customer-consent controls.
+- A proposed or disputed adjustment is never treated as an approved charge or settled financial event.
+- Charges, additional payments, credits, refunds, reversals, and reconciliation outcomes remain separately traceable.
 - No workflow claims settlement until the relevant financial event is verified.
 
 ## 7. Workflow E — Payment events and financial reconciliation
@@ -207,8 +214,11 @@ Use these evidence labels consistently:
 4. Payment outcomes remain distinct from order/shipment/movement statuses. A paid storefront order does not prove parcel intake; a shipment movement does not prove settlement.
 5. Payment at intake, if supported for the relevant journey, is recorded through an explicitly approved method and evidence process. A staff note alone is not sufficient proof unless the approved method defines it as such.
 6. Additional charges, refunds, credits, reversals, and reconciliation adjustments are distinct financial events linked to the original business transaction and reason.
-7. Finance or another explicitly authorized function reviews exceptions, reconciles provider records against platform records, and records resolution.
-8. Late, duplicate, failed, or contradictory events follow explicit policy and produce an auditable outcome.
+7. A rejected quote creates no payment obligation from that quote. An accepted adjustment records the revised commercial agreement and any additional amount due. A disputed additional charge remains held pending review.
+8. Overpayments and underpayments require an authorized, traceable resolution; a failed payment remains a failed attempt. A payment received after cancellation is recorded and reconciled without reactivating the cancelled booking.
+9. A refund request is not an executed refund, and a customer credit is not a cash refund. Provider/bank reconciliation and duplicate-event protections remain mandatory.
+10. Finance or another explicitly authorized function reviews exceptions, reconciles provider records against platform records, and records resolution.
+11. Late, duplicate, failed, or contradictory events follow explicit policy and produce an auditable outcome.
 
 ### Open policy / design questions
 
