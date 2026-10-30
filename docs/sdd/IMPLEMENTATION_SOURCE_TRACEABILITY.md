@@ -1,14 +1,14 @@
 # VeriLyft Implementation-to-SDD Source Traceability
 
-**Document status:** Read-only source inventory — owner review required  
-**Inspection date:** 29 October 2026  
-**Repository baseline inspected:** `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`  
-**Scope:** Current repository source compared with the platform actor, shared-workflow, and domain/lifecycle drafts  
+**Document status:** Read-only source inventory — refreshed active-source pass; policy reconciliation remains separate  
+**Inspection date:** 30 October 2026 (refreshed pass in Section 6)  
+**Repository baseline inspected:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
+**Scope:** Active application source mapped to A-01–A-20 and ADM-R01–ADM-R54; the root `pudo.zip` archive and production environment remain uninspected  
 **Authority:** Source facts only. This document does not approve product policy, prove runtime behaviour, or authorize implementation.
 
 ## 1. Inspection method and evidence limits
 
-The inspection used the repository's current `main` tree and read the API route inventory, shared auth helper, client-side category/product/order helpers, Firestore rules, relevant admin pages, order types, and the Firestore rules test file. A second read-only pass checked the shared-workflow/domain drafts and decision register against the source inventory. It did not modify or execute application code, inspect production Firestore records, inspect deployed configuration, test provider credentials, or reproduce browser/runtime behaviour. The root `pudo.zip` archive was not treated as active Next.js application source and was not unpacked or audited in this pass.
+The initial inspection narrative in Sections 1–5 is retained as historical context. The refreshed source pass in Section 6 is authoritative where the earlier narrative differs. The refreshed pass inspected the recursive repository tree and selected current source files at the stated baseline; it did not modify or execute application code, inspect production Firestore records, inspect deployed configuration, test provider credentials, or reproduce browser/runtime behaviour. The root `pudo.zip` archive was not unpacked or audited.
 
 Use this document to separate:
 - **Observed in source:** code/configuration exists at the cited path.

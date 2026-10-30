@@ -1,7 +1,7 @@
 # VeriLyft Platform Actors and Responsibility Model
 
-**Document status:** Draft for owner review — not approved for implementation  
-**Last updated:** 29 October 2026  
+**Document status:** Draft actor/technical responsibility model — accepted owner policies incorporated; detailed specification and full SDD approval remain open  
+**Last updated:** 30 October 2026  
 **Scope:** Platform-level human/system actors, responsibility boundaries, and portal/module distinctions  
 **Related decisions:** DEC-010, DEC-012, DEC-014, DEC-015, DEC-016, DEC-018, DEC-019, DEC-021, DEC-022–DEC-036
 
@@ -39,13 +39,13 @@ The model preserves the owner-confirmed launch scope: storefront orders and inde
 | Receiver / collection recipient | Conceptual business participant | Receives a delivered parcel or collects it through an approved collection workflow. | Receiver/collection identity checks and collection authorization are required under the approved policy. Receiver status does not by itself authorize changes to a booking; detailed verification and evidence requirements remain open. |
 | Authorized Admin staff | Confirmed as a privileged actor class; hybrid model accepted | Manage the storefront catalogue and oversee orders, shipments, transactions, pricing, network, settings, and operational visibility within approved permissions. | Exact action-by-action permissions and approval rules remain to be defined. Customer authentication alone is insufficient; sensitive actions must have explicit server-enforced boundaries. |
 | Operations staff | Confirmed responsibility; hybrid staff model accepted | Review/adjust proposed route legs, approve transport assignments, manage shipment operations, record launch-time milestones, and review consequential failed-delivery exceptions. | Driver Portal is deferred. Exact lifecycle transitions, approval limits, and workflow-specific separation-of-duties rules remain unresolved; a separate portal is not implied. |
-| Staffed PUDO station staff | Location type confirmed; actor permissions proposed | Support authorized physical intake, measurement, custody, handover, and/or collection at a staffed station according to its configured capabilities. | Exact station actions, staff identity model, and permission scope must be approved in the intake/custody workflows. Do not infer that every station performs every operation. |
-| Registered collection-centre operator / partner | Location type confirmed; actor permissions unresolved | Operate a registered collection centre for explicitly configured services. | Outgoing-parcel acceptance is not automatic. Whether partners receive system access or all actions are recorded by VeriLyft staff is unresolved. |
+| Staffed PUDO station staff | Operational actor; authority is capability- and permission-scoped | Perform only the intake, measurement, custody, payment, handover, or collection actions enabled for the location and assigned to the staff member. | Each action requires the staff member's assigned permission and the location's active capability (DEC-025 / PM-03). Do not infer that every station performs every operation. |
+| Registered collection-centre operator / partner | External physical actor; no direct platform login at launch | Perform only the physical services configured for the collection-centre location; authorized internal staff manage platform records. | PM-09 excludes direct partner login at launch. The physical actor must remain distinguishable from the staff member who records the event. |
 | Transport provider / carrier | Confirmed as a conceptual external party | Performs an assigned transport leg and supplies agreed handover/movement information. | Provider onboarding, service-level commitments, proof format, and integration versus manual recording are unresolved. |
-| Driver / courier | Conceptual operational participant; separate Driver Portal deferred | Physically performs assigned transport/delivery work and may provide movement or delivery evidence through the launch process. | At launch, Operations staff manage assignments and record milestones. Do not assume drivers have direct system accounts or portal access. |
+| Driver / courier | External physical actor; no direct platform login at launch | Physically performs assigned transport/delivery work and may supply movement or delivery evidence to VeriLyft staff. | PM-09 excludes direct driver login at launch. Operations staff manage assignments and record milestones while identifying the physical actor. |
 | Finance staff / Finance function | Finance responsibility boundary confirmed; deployment model unresolved | Handle financial operations such as reconciliation, refunds/credits, expenses, commissions/payouts, payroll scope, and financial reporting according to approved policy. | Admin may show operational financial summaries but is not the full Finance function. Whether Finance is a separate deployed portal, a protected module, or both remains a product/architecture decision. |
-| Management / business owner | Management experience is a documented need; role boundary unresolved | Review business performance and operational outcomes to support decisions. | Metric definitions, permitted drill-down, approval authority, and whether Management is a distinct role or permission set are unresolved. Do not assume broad access to personal or financial data. |
-| Customer support / service staff | Unresolved candidate actor | May assist with enquiries, order/shipment lookup, and escalation if a support workflow is included. | A distinct support role, case-management workflow, data visibility, and authority to change records have not been approved. Do not build a dedicated support portal on this basis. |
+| Management / business owner | Accepted launch policy: reporting/oversight responsibility, not a separate operational role | Review approved business-performance and operational information through explicitly assigned reporting/oversight permissions. | PM-10: no separate Management operational role at launch. Metric definitions, permitted drill-down, and exact reporting access remain open; no operational or administrative authority is implied. |
+| Customer support / service staff | Accepted launch responsibility; no separate portal | Assist with enquiries, limited customer/order lookup, recovery, complaints, and operational escalation within explicitly assigned access. | PM-11: Support access does not imply financial, custody, dispatch, or unrestricted audit privileges. Sensitive actions are escalated to appropriately authorized staff; detailed visibility and case procedure remain open. |
 | Government/public authority requester | Confirmed as a request context, not a privileged platform role | Submits a request that may require an authorized review, decision, evidence reference, and recorded disclosure. | A requester receives no internal access merely by making a request. No dedicated Government Requests page or elaborate workflow is planned; legal handling and approval boundaries still need detail. |
 | Payment provider (Paystack) | Existing integration named in project architecture | Processes online payment and sends payment outcomes/events for server-side verification. | The server remains authoritative; callback/browser state is not payment proof. Payment-at-intake method(s), reconciliation, refunds, late events, and integration failure handling need workflow contracts. |
 | Cloudinary | Selected external integration | Hosts uploaded category/product images through the server-side upload integration. | Credentials remain server-side; authorized success, unauthorized denial, and persisted URL behaviour still require runtime verification (VLY-011). |
@@ -86,20 +86,20 @@ No role names, custom claims, Firestore rules, collections, or permission code a
 
 ## 6. Remaining actor and permission specification work
 
-The high-level owner choices for staff model, booking eligibility, party relationships, location capabilities, dispatch exceptions, audit/disclosure, and launch boundary are accepted in DEC-022–DEC-036. This draft remains unapproved as a complete actor/permission specification. The following detail is still required:
+The owner-policy boundaries below are accepted in DEC-022–DEC-036, PM-01–PM-12, and BP-01–BP-22. This actor model remains a draft because detailed technical representation, workflow contracts, evidence, and full SDD approval are still open. The following are specification dependencies, not pending owner-policy decisions:
 
-1. **Action-level staff permissions:** Translate the minimal hybrid Admin/Operations model into a workflow/action matrix. Authentication or Admin status alone must not imply every permission. Define assignment, revocation, and authorization checks at each privileged boundary.
-2. **Approval separation:** Identify which sensitive financial, measurement, dispatch, route, delivery, correction, and disclosure actions require a second approver, and define materiality/limits without contradicting accepted decisions.
-3. **Location and partner access:** DEC-025 requires separately configured location capabilities. Specify who configures/assigns them, whether collection-centre partners ever receive direct access, and how staff-recorded actions identify the physical actor.
-4. **Finance deployment boundary:** Financial responsibility remains distinct from Admin operational visibility. Decide whether Finance is a separate portal, a permission-protected module, or a later deployment choice.
-5. **Management access:** Define whether Management is a separate role or reporting permission set, and which metrics/records may be drilled into.
-6. **Shipper/business accounts:** DEC-023 requires registered, authenticated customers for independent booking. Define business-account handling and whether multiple authorized users may act for one business.
-7. **Sender/receiver/payer authority:** DEC-024 accepts distinct parties and the default payer privacy boundary. Specify verification checkpoints, consent, change-type permissions, and lifecycle-stage restrictions.
-8. **Support responsibility:** Decide whether support requires a distinct launch responsibility or remains with existing authorized staff; any support-assisted guest-order recovery/transfer must follow DEC-035 and DEC-033.
-9. **External actor access:** Confirm whether transport providers, drivers, or collection-centre partners require direct login. Current launch boundary does not imply a Driver Portal; Operations records provider/driver movement evidence.
-10. **Notification recipient scope:** Apply DEC-034 party entitlements and minimum disclosure to each event; no party relationship alone grants broader access than accepted policy.
+1. **Action-level authorization contract:** Complete the action/resource/scope matrix, assignment lifecycle, server-side enforcement points, revocation behaviour, and compatibility with the existing Admin allowlist/custom-claim source. PM-01–PM-04 and PM-08 define policy constraints; they do not approve a technical permission schema.
+2. **Approval separation:** Apply the accepted second-person rules for consequential financial actions, material measurement adjustments, and consequential operational exceptions. Monetary/materiality thresholds, approver eligibility, and detailed case boundaries remain open under PM-05–PM-08.
+3. **Location and staff assignment:** Specify how designated Admin users configure location capabilities and assign staff permissions/scopes; the action requires both assigned staff permission and active location capability (DEC-025 / PM-03).
+4. **Finance boundary:** Finance responsibility remains distinct from Admin operational visibility. Deployment as a separate portal or protected module is not decided; do not infer a Finance staff permission model from Admin access.
+5. **Management reporting:** PM-10 accepts reporting/oversight permissions only and no separate operational role at launch. Metric definitions, drill-down scope, and permitted sensitive-data visibility remain open.
+6. **Business accounts:** DEC-023 accepts registered, authenticated independent booking. Business-account representation and multiple-user authority remain open.
+7. **Party verification and consent:** BP-01–BP-22 define accepted change, collection, transfer, delegation, privacy, dispute, and appeal boundaries. Identity/consent methods, evidence, exact lifecycle gates, and technical enforcement remain open.
+8. **Support access and process:** PM-11 accepts a limited Support responsibility without a separate portal. Define the detailed customer/order visibility, case/evidence handling, escalation, and recovery procedure without granting automatic finance, custody, dispatch, or unrestricted audit access.
+9. **External physical actors:** PM-09 excludes direct partner/driver login at launch. Define how internal staff record and attribute physical events while distinguishing the physical actor from the recording staff member.
+10. **Notification scope:** Apply DEC-034 and BP-09 recipient entitlements, consent/preferences, minimum fields, retries, and failure ownership; these details remain open.
 
-These are detailed design questions under accepted high-level policy, not a reopening of the completed D-01–D-15 decision queue.
+These are technical and operational specification dependencies under accepted owner policy, not a reopening of completed owner decisions.
 
 ## 7. Acceptance criteria for the actor/responsibility model
 
@@ -114,26 +114,12 @@ These are detailed design questions under accepted high-level policy, not a reop
 
 ## 8. Next workstream
 
-After the owner reviews this actor/responsibility draft and resolves the decisions needed for the launch baseline, specify the shared workflows in this order:
-
-1. Booking, quote, payment choice, and payment verification.
-2. Physical intake, measurement, quote discrepancy review, and custody.
-3. Route proposal, Operations review, route-leg assignment, and handover.
-4. Dispatch gate and payment exceptions.
-5. Delivery evidence and failed-delivery resolution.
-6. Refunds, credits, additional charges, reconciliation, and related audit events.
-
-This order is a proposed documentation sequence, not approval of unresolved business rules.
+The high-level actor and responsibility policies are accepted. Continue the Stage 5.5 cross-document reconciliation by aligning these boundaries with the shared workflows, lifecycle contracts, source traceability, and A-01–A-20 / ADM-R01–ADM-R54 evidence mapping. Resolve technical and operational dependencies without reopening accepted owner policy or authorizing implementation.
 
 
 ## Stage 5.1 — action-level permission specification
 
-The proposed action-level staff authorization baseline is maintained in `PLATFORM_STAFF_PERMISSION_MATRIX.md`. It translates DEC-022 and related workflow decisions into a draft matrix without creating technical roles, claims, schemas, or implementation authority. The matrix remains subject to owner review; its open PM-01–PM-12 decisions must be resolved before the staff permission model is considered complete.
-
-
-## Stage 5.1 — action-level permission specification
-
-The proposed action-level staff authorization baseline is maintained in `PLATFORM_STAFF_PERMISSION_MATRIX.md`. It translates DEC-022 and related workflow decisions into a draft matrix without creating technical roles, claims, schemas, or implementation authority. The matrix remains subject to owner review; its open PM-01–PM-12 decisions must be resolved before the staff permission model is considered complete.
+The proposed action-level staff authorization baseline is maintained in `PLATFORM_STAFF_PERMISSION_MATRIX.md`. PM-01–PM-12 are accepted owner-policy decisions recorded in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`; the matrix remains a proposed technical/action-level translation. It does not approve a technical role/claim schema, API, Firestore rules, or implementation.
 
 
 ## 9. Owner decision update — staff permissions and launch responsibility boundaries

@@ -2,7 +2,8 @@
 
 **Status:** Owner-reviewed scenario refinements — test-design baseline only; not approved executable test specifications, implementation or release approval  
 **Created:** 30 October 2026  
-**Repository baseline:** `main` at `c6dd28cd5450b598b19a19afa12a7331440320f0` (PR #32 merged)  
+**Documentation baseline:** `main` at `1d8a44c2da94a8ff351f365e0e5073b292690f6d` (PR #39 merged)
+**Active-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
 **Authority:** DEC-018, DEC-022–DEC-036 and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
 **Related:** `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
 
@@ -359,6 +360,6 @@ The following values/rules must be resolved in the owning SDD sections before th
 
 At the baseline above, the source-traceability pass identifies source foundations for storefront catalogue/checkout, customer access, Admin allowlist guards, Paystack payment integration and basic storefront fulfilment. It identifies material gaps for independent shipment, PUDO, intake/custody, shared shipment pricing/quotes, route/movement, delivery proof, general audit, refunds/credits and reconciliation. The Admin dashboard contains demo values rather than verified live operational metrics.
 
-This catalogue is **test design**, not test execution. No scenarios in this document are claimed passed. No tests were run to create this document. No production data, deployed secrets/configuration, provider dashboards, physical parcel operations or root `pudo.zip` archive were inspected. The source baseline remains the PR #32 merge commit until a later source-changing commit is inspected.
+This catalogue is **test design**, not test execution. No scenarios in this document are claimed passed. No tests were run to create this document. No production data, deployed secrets/configuration, provider dashboards, physical parcel operations or root `pudo.zip` archive were inspected. The active-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge), as refreshed in PR #32. The repository comparison through PR #39 shows documentation-only changes after that source baseline; no later application-source change is recorded. This remains source evidence only, not runtime verification.
 
 **Stage 5.4 status:** Owner review and policy-level approval of A-01–A-20 are complete; approved refinements are recorded in Section 3.1. The catalogue remains test design only. Complete SDD approval, test execution and application-code changes remain separately gated.
