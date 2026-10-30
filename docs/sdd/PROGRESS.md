@@ -7,7 +7,7 @@
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf`.
 **Audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — the historical `main` baseline reviewed by `SDD_COMPLETENESS_AUDIT.md` before PR #5.
 **Admin Portal requirements/audit:** PR #2 is merged to `main`. PR #3 is merged into the inspected baseline; PR #4 remains open/unmerged.
-**Current phase:** Stage 2 — requirement-level launch priority reconciliation. PR #30 is merged; all 15 high-level owner decisions are accepted. A proposed platform-wide P0/P1/Conditional P0/deferred matrix has been drafted on `docs/requirement-level-priority-baseline` for owner review. After approval/merge, refresh source traceability, define detailed P0 acceptance scenarios/evidence, assess production readiness, and obtain explicit approval of the complete SDD. No application-code changes are authorized until that complete approval.
+**Current phase:** Stage 5.1 — staff action-level permission and approval-boundary specification. PR #33 is merged at `7f69a67844ac7c42f1ec6bd7b29c67cd524a1966`. Current proposal branch: `docs/staff-action-permission-matrix`. The new `PLATFORM_STAFF_PERMISSION_MATRIX.md` is a draft for owner review; PM-01–PM-12 remain open. No application-code changes are authorized until the complete platform-wide SDD is reconciled and explicitly approved.
 
 > This tracker records the current working state, including uncommitted changes.
 > Verify the live repository and test results before treating any item as complete.
@@ -21,13 +21,14 @@
 
 ## 1. Current position
 
-### Current milestone — requirement-level launch priority baseline drafted; full SDD reconciliation underway
+### Current milestone — P0 acceptance catalogue merged; staff permission specification underway
 
 - **Owner decision register:** 15 of 15 tracked decisions (D-01–D-15) have accepted high-level outcomes, recorded as DEC-022–DEC-036. Detailed policy values, permissions, transitions, and evidence requirements remain open where identified in the decision records.
-- **Latest verified main head:** `c9d9342cfc9dcef2c7d5704074d83927c5f5099c` (PR #30).
+- **Latest verified main head:** `7f69a67844ac7c42f1ec6bd7b29c67cd524a1966` (PR #33).
 - **Source inspection baseline:** `c56be9b121e6007e1e99c6df2d3984e709771a92`. Comparison through latest main shows intervening commits changed SDD documentation only; source traceability remains a read-only snapshot and must be reconciled with accepted policy.
-- **Current stage:** Proposed requirement-level priority matrix drafted in `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`; it maps A-01–A-20 and ADM-R01–ADM-R54 while preserving unresolved detail and evidence gaps.
-- **Next stages:** Owner review/merge of the priority matrix; targeted read-only source refresh; detailed P0 acceptance scenarios/evidence; production-readiness assessment; explicit owner approval of the complete SDD.
+- **Completed stages:** Requirement-level priority baseline (PR #31), refreshed source traceability (PR #32), and P0 acceptance-scenario/evidence catalogue draft (PR #33) are merged.
+- **Current proposal:** `PLATFORM_STAFF_PERMISSION_MATRIX.md` on `docs/staff-action-permission-matrix`; PM-01–PM-12 require owner resolution.
+- **Next stages:** Owner review of staff permissions; resolve remaining policy dependencies in DEC-022–DEC-036; reconcile lifecycle/API/data/security contracts against source; assess production readiness; obtain explicit approval of the complete SDD.
 - **Implementation gate:** No application-code changes until the complete platform-wide SDD has been reconciled and explicitly approved.
 
 VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, and Cloudinary application. Preserve its architecture and existing patterns; do not invent parallel services, collections, fields, routes, or permission models.
