@@ -183,26 +183,28 @@ Specify these details, trace them to existing source, and support them with acce
 
 - **Status:** OPEN
 - **Priority:** Blocking for new application-code implementation under the current owner-approved working direction.
-- **Evidence:** PR #7 (actor/responsibility), PR #8 (shared workflows), PR #9 (domain/lifecycle/API/security draft), and PR #10 (implementation source traceability) are merged. The follow-up source pass is recorded in `IMPLEMENTATION_SOURCE_TRACEABILITY.md`; it checked current TypeScript helpers, Admin pages, Firestore rules/tests, payment routes, and design decisions. The drafts and source map expose remaining owner decisions, scope questions, and runtime verification work; merging documents does not approve unresolved policy.
-- **Next action:** Confirm whether the root `pudo.zip` archive is in scope for the active source review; resolve remaining owner decisions in `DECISIONS.md`; reconcile the source findings with the completeness audit and acceptance criteria. D-01's high-level staff model is accepted as DEC-022, while action-level permissions and approval rules remain design work. Application-code implementation remains blocked until the platform-wide SDD is reviewed and approved.
-- **Acceptance:** Every launch-essential workflow has an agreed owner, lifecycle, permissions, data relationships, API/integration expectations, exception handling, and acceptance/test criteria; unresolved business rules are explicitly listed for owner decision; continuity docs agree on status and evidence; no application code is changed to close this issue.
+- **Evidence:** PRs #7–#10 established the actor, workflow, lifecycle/API/security, and source-traceability drafts. PR #40 reconciled continuity and issue status, and the Stage 5.5 dependency register now consolidates A-01–A-20 and ADM-R01–ADM-R54 against accepted policy, actors, workflows, lifecycle references, and inspected source status.
+- **Limit:** The register is a navigation/traceability aid, not approval of detailed technical contracts, executable test specifications, runtime evidence, or production readiness. The root `pudo.zip` archive and production environment remain uninspected.
+- **Next action:** Review the dependency register; confirm whether root `pudo.zip` belongs to the active source scope; complete detailed workflow/lifecycle/security contracts and P0 test specifications; reconcile all source, issue and acceptance evidence. Application-code implementation remains blocked until the complete platform-wide SDD is explicitly approved.
+- **Acceptance:** Every launch-essential workflow has an agreed owner, lifecycle, permissions, data relationships, API/integration expectations, exception handling, and acceptance/test criteria; unresolved technical questions and scope limits are explicit; continuity documents agree; no application code is changed to close this issue.
 
-### VLY-020 — Shared platform workflows require owner review
+### VLY-020 — Shared platform workflow specification and implementation contracts remain open
 
-- **Status:** OPEN
-- **Priority:** Blocking for detailed implementation planning
-- **Evidence:** `PLATFORM_SHARED_WORKFLOWS.md` was reviewed and merged in PR #8 on 29 October 2026. It establishes a reviewed workflow-draft baseline but leaves detailed policy unresolved by design.
-- **Policy update:** DEC-024 and BP-01–BP-22 in `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` now resolve the owner-policy direction for booking-party changes/cancellation, sender/receiver requests, collection authority, transfer/withdrawal, delegated access, privacy, disputes, and appeals. These topics must not continue to be described as unanswered owner choices.
-- **Next action:** Specify the remaining operational/technical details—verification and consent evidence, complete change/lifecycle matrix, exception authority, transfer-liability procedure, delegated-access action/duration, notification fields, retention, dispute targets/reviewer/appeal mechanics—and reconcile them with source and acceptance evidence. Keep the issue open until launch-essential workflows have implementable contracts and testable acceptance criteria.
-- **Acceptance:** Each launch-essential workflow has an agreed owner, trigger, transitions, exception outcomes, permissions, evidence, and testable acceptance criteria—or a clearly recorded owner decision/blocker. No application code is changed to close this issue.
+- **Status:** IN PROGRESS — owner policy direction is accepted; workflow detail and implementation contracts remain draft.
+- **Priority:** Blocking for detailed implementation planning.
+- **Evidence:** `PLATFORM_SHARED_WORKFLOWS.md` was established in PR #8. DEC-022–DEC-036, PM-01–PM-12, and BP-01–BP-22 now record accepted owner-policy boundaries. PR #40 clarified that accepted policy is incorporated while the shared workflow document remains a draft; the Stage 5.5 dependency register maps the workflow anchors to A-01–A-20 and ADM-R01–ADM-R54.
+- **Limit:** Owner policy acceptance does not approve workflow sequencing, detailed actor/approval assignments, data/API contracts, evidence fields, operational parameters, or executable acceptance tests.
+- **Next action:** Specify the remaining workflow details—verification/consent evidence, complete change/lifecycle matrix, exception authority, transfer-liability procedure, delegated-access actions/duration, notification fields, retention, dispute targets/reviewer/appeal mechanics—and reconcile them with lifecycle, source and acceptance evidence.
+- **Acceptance:** Each launch-essential workflow has agreed triggers, transitions, exception outcomes, permissions, evidence and testable acceptance criteria consistent with accepted owner policy. No application code is changed to close this issue.
 
-### VLY-021 — Conceptual domain, lifecycle, and API/security contracts require review
+### VLY-021 — Conceptual domain, lifecycle, and API/security contracts remain incomplete
 
-- **Status:** OPEN
-- **Priority:** Blocking for implementation design
-- **Evidence:** The domain/lifecycle/API/security draft is merged but remains a draft for owner review. `IMPLEMENTATION_SOURCE_TRACEABILITY.md` now includes a second source pass: all four inspected Admin pages call `verifyAdminAccess`; category/product helpers use client Firestore writes behind custom-claim rules; checkout uses the server order route while a legacy client-side order helper remains; the webhook event record is for deduplication rather than a general audit ledger. Independent booking/PUDO/pricing/routing/audit source surfaces and complete runtime evidence remain unresolved. No tests were executed and production configuration/data were not inspected.
-- **Next action:** Confirm whether `pudo.zip` is authoritative/in-scope; then resolve the open domain, pricing, custody, routing, financial-event, and audit decisions and reconcile the full SDD acceptance matrix. Do not implement until the complete SDD is approved.
-- **Acceptance:** Owner-approved conceptual relationships and transition rules exist for launch-essential flows; API/security contracts define validation, authorization, failure, idempotency, concurrency, and audit expectations; source facts and runtime evidence are documented separately; no application code is changed to close this issue.
+- **Status:** IN PROGRESS — owner-policy direction is accepted; detailed domain, lifecycle and API/security contracts remain draft.
+- **Priority:** Blocking for implementation design.
+- **Evidence:** The domain/lifecycle/API/security draft and source-traceability inventory are merged. PR #40 clarified that accepted owner policies are incorporated without approving the technical contracts. The Stage 5.5 dependency register maps the draft lifecycle/security anchors and source-level status to A-01–A-20 and ADM-R01–ADM-R54. The inspected source pass found no independent shipment/PUDO/pricing/routing/general audit implementation; existing storefront and payment source remains partial against the wider platform requirements.
+- **Limit:** Source inspection is not runtime verification. The root `pudo.zip` archive, deployed configuration, production data, and operational evidence remain uninspected.
+- **Next action:** Confirm whether `pudo.zip` is authoritative/in-scope; specify domain relationships, lifecycle guards/transitions, API validation/authorization/failure contracts, idempotency/concurrency/recovery, and audit/evidence expectations; reconcile each against accepted policy and test criteria.
+- **Acceptance:** Launch-essential conceptual relationships and transition rules are specified; API/security contracts define validation, authorization, failure, idempotency, concurrency and audit expectations; source facts and runtime evidence remain distinct; no application code is changed to close this issue.
 
 ## Source-traceability checkpoint — 29 October 2026
 
