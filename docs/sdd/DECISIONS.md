@@ -140,8 +140,9 @@ These decisions are accepted at the design level only. They do not mean the corr
 ### DEC-014 — Operational financial visibility in Admin
 
 - **Decision:** Admin may show successful/pending/failed payments, refund summaries, order/shipment revenue summaries, delivery charges, and outstanding balances where supported by reliable records.
-- **Implication:** Do not label revenue as profit. Expenses, salaries/payroll, full profit-and-loss, commissions/payouts, and comprehensive reconciliation belong in the Finance Portal.
+- **Implication:** Do not label revenue as profit. Expenses, salaries/payroll, full profit-and-loss, commissions/payouts, and comprehensive reconciliation belong to the Finance function, beyond Admin's operational financial visibility.
 - **Status:** Accepted.
+- **Deployment clarification (accepted interpretation, 31 October 2026):** References to a “Finance Portal” identify this full-finance responsibility boundary; they do not approve a separate software deployment. Whether the full-finance capability is delivered through a protected module, a separate portal, or a combination remains unresolved and must be settled in the platform-wide SDD. This clarification does not change DEC-014's accepted separation between Admin operational visibility and full-finance responsibility.
 
 ### DEC-015 — Keep operational and payment status distinct
 
