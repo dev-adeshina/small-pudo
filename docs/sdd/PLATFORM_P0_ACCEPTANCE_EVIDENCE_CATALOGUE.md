@@ -2,10 +2,10 @@
 
 **Status:** Owner-reviewed scenario refinements — test-design baseline only; not approved executable test specifications, implementation or release approval  
 **Created:** 30 October 2026  
-**Documentation baseline:** PR #70 merge commit `ad6189a598d3fcbb79c90679a7dac33914ea0474` (PRs #67–#69 continued documentation-only reconciliation)
+**Documentation baseline:** PR #72 merge commit `${neu}` (PRs #67–#69 continued documentation-only reconciliation)
 **Active-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
 **Authority:** DEC-018, DEC-022–DEC-044, accepted PM-01–PM-12 and BP-01–BP-22 policy records, and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
-**Related:** `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
+**Related:** `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
 
 ## 1. Purpose and boundaries
 
@@ -393,3 +393,8 @@ This catalogue is **test design**, not test execution. No scenarios in this docu
 
 
 **Repository-history note (PR #70):** Current `main` is identical to PR #70 merge commit `ad6189a598d3fcbb79c90679a7dac33914ea0474`. The source inspection snapshot remains `e0f69055d33dd9399c23e1d793f359468229c856`; comparison to current `main` lists only SDD documentation paths after that snapshot. This does not establish fresh runtime or production evidence and does not change any case's execution status.
+
+
+## 9. Mutation and recovery contract cross-reference
+
+Use `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md` when converting scenario rows into executable test specifications. It defines the cross-cutting guards and failure/recovery variants to apply where relevant. It does not add execution evidence, approve unresolved thresholds or service-specific proof methods, or change any P0/Conditional P0 status.
