@@ -167,4 +167,44 @@ describe("Firestore security rules", () => {
       }),
     );
   });
+
+  it("denies direct customer reads of shipment booking drafts", async () => {
+    const db = testEnv
+      .authenticatedContext("customer-1", {
+        email_verified: true,
+      })
+      .firestore();
+
+    await assertFails(
+      getDoc(doc(db, "users/customer-1/shipmentBookingDrafts/draft-1")),
+    );
+  });
+
+  it("denies direct customer writes to shipment booking drafts", async () => {
+    const db = testEnv
+      .authenticatedContext("customer-1", {
+        email_verified: true,
+      })
+      .firestore();
+
+    await assertFails(
+      setDoc(doc(db, "users/customer-1/shipmentBookingDrafts/draft-1"), {
+        origin: "Lagos",
+        destination: "Abuja",
+        parcelDescription: "Sample parcel",
+      }),
+    );
+  });
+
+  it("denies one customer direct access to another customer's shipment drafts", async () => {
+    const db = testEnv
+      .authenticatedContext("customer-1", {
+        email_verified: true,
+      })
+      .firestore();
+
+    await assertFails(
+      getDoc(doc(db, "users/customer-2/shipmentBookingDrafts/draft-2")),
+    );
+  });
 });
