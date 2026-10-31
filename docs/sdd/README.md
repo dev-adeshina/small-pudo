@@ -6,6 +6,8 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 
 ### Documents
 
+- `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` — single ordered implementation plan derived from accepted policy and existing source findings; identifies buildable work, unresolved capability gates, deferred scope and acceptance evidence without inventing business rules or technical schema.
+
 - `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and historical roadmap (not the current work order).
 - `SDD_COMPLETENESS_AUDIT.md` — platform-wide documentation coverage, inconsistencies, gaps, and the SDD completion sequence.
 - `PLATFORM_DECISION_DOCUMENT_RECONCILIATION.md` — decision-to-document coverage, stale references, omissions, and unresolved reconciliation work.
@@ -32,6 +34,10 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 - `ISSUES.md` — known gaps, risks, verification tasks, and decisions that must not be silently assumed.
 - `DECISIONS.md` — architecture and product decisions, including constraints that future sessions must preserve.
 - `SESSION_HANDOFF.md` — copy/paste instructions for starting a new ChatGPT session with these documents.
+
+### Current execution direction — 31 October 2026
+
+DEC-045 records the owner's instruction to begin implementation now and supersedes the previous blanket freeze requiring Reviews 3–5 before any application-code change. Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single implementation pointer. This authorizes bounded implementation under accepted policy; it does not approve pending recommendations in the consolidated owner package, remove capability gates, or waive DEC-036 P0 acceptance and production-release evidence.
 
 ### SDD-first working protocol
 
