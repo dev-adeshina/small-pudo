@@ -119,3 +119,17 @@ The inconsistency was in deployment wording. Some Admin documents described a se
 This clarification does not reopen or amend DEC-014, create a new owner decision, approve a Finance role/permission model, or settle portal/module architecture. The full-finance workflows, access boundaries, audit requirements, and eventual deployment arrangement remain open SDD work. A-08 remains a P0 financial-integrity area and is not reduced by this clarification.
 
 **Step 2D update:** The affected Admin, actor, priority, decision, completeness-audit, progress, README, and handoff references are aligned in this documentation-only pass. Full platform-wide reconciliation remains open; application-code changes remain blocked pending explicit owner approval of the complete SDD.
+
+## 10. DEC-044 custody-transfer and physical-exception review
+
+The targeted review compared the accepted DEC-044 workflow/lifecycle policy with actor responsibilities, staff permissions, A-09/A-12/A-13/A-16/A-17 acceptance criteria, P0 evidence cases, requirement traceability, and VLY-026.
+
+- The custody invariant is consistent: a transfer completes only after actual physical handover and receiving-party possession. Assignment, dispatch authorization/record, arrival, and attempted handover do not establish possession change.
+- Physical actor, receiving actor, external evidence source, and internal recorder remain distinguishable. Failed/disputed handovers preserve last confirmed custody; incomplete documentation is investigated without fabricated confirmation; corrections preserve the original event/evidence.
+- Missing/damaged parcels, incorrect location assignments and prolonged holds remain controlled exceptions. Administrative location correction is not physical movement. No automatic fault, liability or financial/customer outcome is inferred.
+- The A-09 matrix row and existing P0 cases A09-04, A12-01/A12-04, A16-01/A16-03 and A17-03/A17-04 are refined to make the accepted DEC-044 outcomes observable. Existing case IDs, priority classifications and the 80-case catalogue count are unchanged.
+- Current repository comparison through PR #63 shows documentation-only changes after the active source-inspection baseline. A recursive current-tree path inventory found no dedicated shipment, parcel, custody, handover, route or location API/library path. This is not a full semantic source review or runtime verification.
+
+The accepted DEC-044 policy is not reopened. Service-specific proof, confirmation/dispute/correction authority, second approvals, investigation ownership, damage/liability/insurance/compensation, hold controls, evidence retention, customer entitlements, exact lifecycle/data/API/security contracts and executable acceptance specifications remain open.
+
+**Step 2D update:** Findings and evidence boundaries are recorded in Section 17 of `SDD_COMPLETENESS_AUDIT.md` and Section 49 of `PROGRESS.md`. Full platform-wide reconciliation remains open; application-code changes remain blocked pending explicit owner approval of the complete SDD.
