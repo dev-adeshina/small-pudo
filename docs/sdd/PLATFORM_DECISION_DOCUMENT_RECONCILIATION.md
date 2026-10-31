@@ -1,8 +1,8 @@
 # VeriLyft Platform Decision-to-Document Reconciliation
 
-**Status:** Step 2A inventory and Step 2C first status/reference scan complete; targeted Step 2D review remains in progress. PR #61 corrected the A-10/DEC-043 approval wording; this follow-up aligns DEC-038–DEC-041 status references without reopening accepted policy.  
+**Status:** Step 2A inventory and Step 2C first status/reference scan complete; targeted Step 2D review remains in progress. PR #61 corrected A-10/DEC-043 wording, PR #62 aligned DEC-038–DEC-041 status references, and the current pass clarifies the Finance responsibility/deployment boundary.  
 **Date:** 31 October 2026  
-**Repository baseline:** PR #61 merge commit `157d3e2c24f09694f80033fb09c26b02812bd5d1`.  
+**Repository baseline:** PR #62 merge commit `bcbbca289eb1eef8a4535fb81ab24b3e3fd1a32f`.  
 **Application-source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`.  
 **Scope:** All 23 Markdown documents under `docs/sdd/`.  
 **Authority:** This report inventories existing decisions; it does not create, amend, or reopen owner policy.
@@ -99,7 +99,7 @@ Do not guess service-specific pricing formulas/rates/units/rounding/fees/taxes/d
 
 ## 8. Evidence boundary and implementation gate
 
-This report is a documentation inventory and reconciliation tracker. The first cross-document status/reference scan was completed through PR #60; targeted review corrections were merged in PR #61 and this follow-up. PRs #52–#61 after the active source-inspection baseline were documentation-only. No application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed or verified. The active source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
+This report is a documentation inventory and reconciliation tracker. The first cross-document status/reference scan was completed through PR #60; targeted review corrections were merged in PRs #61–#62 and this follow-up. PRs #52–#62 after the active source-inspection baseline were documentation-only. No application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed or verified. The active source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
 
 **Implementation remains blocked** until the complete platform-wide SDD is reconciled and explicitly approved by the owner.
 
@@ -107,4 +107,15 @@ This report is a documentation inventory and reconciliation tracker. The first c
 **Step 2D update:** The targeted review findings and PR #60 baseline are recorded in Section 14 of `SDD_COMPLETENESS_AUDIT.md` and Section 46 of `PROGRESS.md`. Full section-level reconciliation remains open.
 
 
-**Step 2D update:** The targeted A-10/DEC-043 correction was merged in PR #61. The pricing/measurement/financial status findings and current baseline are recorded in Section 15 of `SDD_COMPLETENESS_AUDIT.md` and Section 47 of `PROGRESS.md`. Full section-level reconciliation remains open.
+**Step 2D update:** The targeted A-10/DEC-043 correction was merged in PR #61. The pricing/measurement/financial status findings are recorded in Section 15 of `SDD_COMPLETENESS_AUDIT.md` and Section 47 of `PROGRESS.md`. The Finance responsibility/deployment clarification is recorded in Section 16 of the audit and Section 48 of progress. Full section-level reconciliation remains open.
+
+
+## 9. Finance responsibility versus deployment boundary
+
+The targeted review compared DEC-014 with the Admin Portal design, Admin requirements and source audit, actor/responsibility model, priority matrix, and platform completeness audit. The accepted policy is consistent on the business boundary: Admin may expose operational financial information, while full-finance responsibility (including expenses, payroll, commissions/payouts, comprehensive reconciliation, and full financial reporting) remains distinct from Admin operational visibility.
+
+The inconsistency was in deployment wording. Some Admin documents described a separate “Finance Portal” as though that deployment had already been approved, while the actor model correctly left open whether Finance is delivered through a protected module, a separate portal, or a combination. The owner approved the interpretation that “Finance Portal” references describe the full-finance responsibility boundary only; they do not authorize a separate deployed portal.
+
+This clarification does not reopen or amend DEC-014, create a new owner decision, approve a Finance role/permission model, or settle portal/module architecture. The full-finance workflows, access boundaries, audit requirements, and eventual deployment arrangement remain open SDD work. A-08 remains a P0 financial-integrity area and is not reduced by this clarification.
+
+**Step 2D update:** The affected Admin, actor, priority, decision, completeness-audit, progress, README, and handoff references are aligned in this documentation-only pass. Full platform-wide reconciliation remains open; application-code changes remain blocked pending explicit owner approval of the complete SDD.
