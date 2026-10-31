@@ -2,9 +2,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #73 is merged; merge commit `7c07ab701993f027efa9ea17523402bb24b66ae1`.
-- PRs #54–#73 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The comparison from the source-inspection baseline through PR #73 reflects documentation-only changes; PRs #71–#73 themselves are documentation-only. The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
+- Current `main` baseline: PR #74 is merged; merge commit `804f51d56def5a6dc6ba9518464886333b9be43a`.
+- PRs #54–#74 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The comparison from the source-inspection baseline through PR #74 reflects documentation-only changes; PRs #71–#74 themselves are documentation-only. The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -33,7 +33,7 @@ Milestones 1–3 are complete at the owner-approved policy/documentation level. 
 
 **Milestone:** Platform-wide SDD Reconciliation and Implementation Readiness.
 
-Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #71. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#58 corrected Admin baseline/history, actor and staff-permission references, requirement dependency/priority crosswalks, and P0 catalogue/readiness crosswalks; PR #60 completed the first status/reference scan. Step 2D targeted section-level review continues; PR #69 completes the A-17 Support/exception policy-to-acceptance reconciliation. PR #61 corrected stale owner-approval wording in the original A-10 row against accepted DEC-043. PR #62 aligned DEC-038–DEC-041 status wording. PR #63 clarified the Finance responsibility/deployment boundary. PR #64 aligns DEC-044 custody acceptance criteria and evidence cases while preserving service-specific proof, authority, investigation, hold, retention and technical details as open. Detailed reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
+Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #74. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#58 corrected Admin baseline/history, actor and staff-permission references, requirement dependency/priority crosswalks, and P0 catalogue/readiness crosswalks; PR #60 completed the first status/reference scan. Step 2D targeted section-level review continues; PR #69 completes the A-17 Support/exception policy-to-acceptance reconciliation. PR #61 corrected stale owner-approval wording in the original A-10 row against accepted DEC-043. PR #62 aligned DEC-038–DEC-041 status wording. PR #63 clarified the Finance responsibility/deployment boundary. PR #64 aligns DEC-044 custody acceptance criteria and evidence cases while preserving service-specific proof, authority, investigation, hold, retention and technical details as open. Detailed reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
 
 ### Milestone 4 sequence
 
@@ -155,3 +155,13 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - The matrix preserves DEC-042–DEC-044 physical receipt/custody requirements and prevents assignment, dispatch authorization, arrival, notification or status update from being mistaken for physical proof.
 - It does not mandate event sourcing, a generalized event bus, new schema, event names, enums or implementation architecture. It adds requirements for late/out-of-order events, corrections, projections and acceptance scenarios.
 - Reviews 1 and 2 of 5 remain approved. Review 3 is still being assembled; Reviews 4 and 5 remain future gates. No application-code changes before explicit Review 5 approval.
+
+
+## Latest operational-readiness workstream — PR #75 preparation
+
+- Verified PR #74 is merged at `804f51d56def5a6dc6ba9518464886333b9be43a`; current `main` is identical to that merge commit.
+- Added `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md` as a Review 3 support artifact. It defines control objectives, responsibility areas, minimum evidence and failure dispositions for environment/configuration, secrets, privilege, deployment/rollback, observability, backup/restore, incident response, continuity, provider unknown outcomes and release approval.
+- The matrix maps directly to A20-01–A20-05 and related A-07/A-08/A-14/A-16/A-18 operational evidence. It adds no acceptance case IDs and claims no tests or production controls have passed.
+- No topology, tool, RTO/RPO, backup cadence, retention period, alert threshold, response target or named owner is selected. Those remain explicit decisions for the responsible owners.
+- This is documentation-only. The application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; no new source, runtime, deployment or production verification is claimed.
+- Reviews 1 and 2 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. Implementation remains frozen until explicit Review 5 approval.

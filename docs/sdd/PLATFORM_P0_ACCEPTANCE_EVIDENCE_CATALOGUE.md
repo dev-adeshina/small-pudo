@@ -398,3 +398,8 @@ This catalogue is **test design**, not test execution. No scenarios in this docu
 ## 9. Mutation and recovery contract cross-reference
 
 Use `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md` when converting scenario rows into executable test specifications. It defines the cross-cutting guards and failure/recovery variants to apply where relevant. It does not add execution evidence, approve unresolved thresholds or service-specific proof methods, or change any P0/Conditional P0 status.
+
+
+## 10. Production-readiness contract cross-reference
+
+Use `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md` when converting A20-01–A20-05 into executable test specifications and release evidence. It expands the control/evidence expectations for environment separation, configuration and secrets, deployed authorization/rules, provider readiness, deployment/rollback, observability/alerting, backup/restore, incident response, operational continuity and release sign-off. It also maps relevant operational evidence to A-07/A-08, A-14, A-16 and A-18. No case IDs or priorities change. This cross-reference does not approve test execution, establish passing results, resolve numeric operational targets, or claim production readiness.

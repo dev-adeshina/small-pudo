@@ -84,3 +84,6 @@ The domain and identity decision crosswalk is tracked in `PLATFORM_DOMAIN_BOUNDA
 - `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md` — action-level mutation guards, authorization sequence, concurrency/idempotency, external unknown-outcome handling, recovery ownership, and acceptance evidence obligations.
 
 - `PLATFORM_LIFECYCLE_EVENT_AND_STATE_CONTRACT_MATRIX.md` — separates commands, decisions, observed/provider events, domain facts, current state, projections, evidence, corrections and reconciliation across lifecycle domains.
+
+
+- `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md` — production control objectives, ownership/evidence expectations, environment/configuration, deployment/rollback, observability, backup/restore, incident response, continuity and evidence-gated release; no topology or numeric operational targets are pre-approved.
