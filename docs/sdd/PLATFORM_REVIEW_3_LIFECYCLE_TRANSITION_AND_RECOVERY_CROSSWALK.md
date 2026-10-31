@@ -2,7 +2,7 @@
 
 **Status:** Technical-design preparation; not an approved state machine, schema, API contract, or implementation authorization  
 **Prepared:** 31 October 2026  
-**Repository baseline:** PR #81 merge commit `471ebb1d16c33677e12ddcca1c6d3fdef343d239`  
+**Repository baseline:** PR #82 merge commit `f3e3df4f212271a84b3a26d45a233bcfc064f5dc`  
 **Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`  
 **Related:** `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md`, `PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md`, `PLATFORM_REVIEW_3_ACTION_CAPABILITY_CROSSWALK.md`, `PLATFORM_REVIEW_3_OWNER_INPUT_TRIAGE.md`, DEC-033–DEC-044, PM-01–PM-12, BP-01–BP-22.
 

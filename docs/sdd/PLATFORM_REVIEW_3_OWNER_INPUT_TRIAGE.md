@@ -1,10 +1,10 @@
 # Review 3 Owner-Input Triage and Consolidation
 
-**Status:** Review 3 preparation artifact; classification only, not an owner decision or approved data model  
+**Status:** Review 3 preparation artifact; classification plus a linked consolidated recommendation package; no owner decision or approved data model is inferred  
 **Prepared:** 31 October 2026  
-**Repository baseline:** PR #79 merge commit `d9532b2173500d36057a2d2cdb4e64a30853e32f`  
+**Repository baseline:** PR #83 merge commit `986f4ad79232ce1700f4edaa972a17522ed319c8`  
 **Source-inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`  
-**Related:** `PLATFORM_REVIEW_3_COMPLETENESS_AUDIT.md`, `PLATFORM_OWNER_DECISION_REGISTER.md`, `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md`
+**Related:** `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`, `PLATFORM_REVIEW_3_COMPLETENESS_AUDIT.md`, `PLATFORM_OWNER_DECISION_REGISTER.md`, `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md`
 
 ## 1. Purpose and approval discipline
 
@@ -82,3 +82,17 @@ Before presenting the consolidated Review 3 package, complete these internally:
 This document is a triage and consolidation aid. It does not constitute Review 3 approval, Review 4 approval, final SDD approval, or implementation authorization.
 
 The five-exchange limit is a maximum, not a requirement to use every exchange for questions. Reuse already accepted decisions, resolve technical details internally, and consolidate all genuinely owner-dependent choices. The fifth and final exchange must be reserved for explicit approval of the complete reconciled SDD and authorization to begin implementation. Until then, no application-code, schema, API, Firebase-rule/configuration, provider-activation or deployment work is authorized.
+
+
+## 7. Consolidated recommendation package prepared after PR #83
+
+- `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md` groups DB-01–DB-12 and the remaining authority/operational owner-dependent choices into five packages: booking/physical service unit; commercial/financial unit; party/operating model; evidence/disclosure; and authority/operational accountability.
+- Each proposal states accepted policy that must not be reopened, a minimum-launch recommendation, alternatives, consequences and explicit deferrals or blockers.
+- The package is a preparation artifact. The owner's instruction to prepare and reconcile it is not approval of any recommendation. Recommendations remain pending until explicitly accepted, rejected or deferred by the owner and reconciled into the authoritative decision register and affected SDD documents.
+- PR #83's resource-entitlement/projection-lineage crosswalk complements the PR #80 action/capability and PR #81 lifecycle/recovery crosswalks. These documents improve conceptual coverage but do not establish implementation, runtime verification, exact schema/API contracts or production readiness.
+- Preserve the approval discipline in §1: do not fragment the remaining owner-dependent choices into serial questions. The final owner exchange remains reserved for the complete reconciled SDD and explicit implementation decision. Keep implementation frozen until that gate is passed.
+
+
+## Implementation direction update — DEC-045 (31 October 2026)
+
+The owner has directed implementation to begin now. The previous blanket freeze pending formal completion of Reviews 3–5 is superseded for starting bounded implementation slices. This does not resolve the owner-dependent items listed in this triage and does not approve the recommendations in the consolidated owner decision package. Use the implementation backlog to sequence work; where an unresolved item changes business meaning, customer entitlement, pricing, authority, custody, financial outcome or legal/evidence obligations, keep the affected capability disabled or excluded until the governing rule is established.

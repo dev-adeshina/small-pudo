@@ -2,7 +2,7 @@
 
 **Status:** Technical-design synthesis of accepted policy; proposed crosswalk, not an approved permission catalogue or implementation model  
 **Prepared:** 31 October 2026  
-**Repository baseline:** PR #80 merge commit `92f3f421500332ea9588f189046757b734e1330f`  
+**Repository baseline:** PR #81 merge commit `471ebb1d16c33677e12ddcca1c6d3fdef343d239`  
 **Authority:** PM-01–PM-12, DEC-033, DEC-037–DEC-044, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_MATRIX.md`, `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`
 
 ## 1. Purpose and limits

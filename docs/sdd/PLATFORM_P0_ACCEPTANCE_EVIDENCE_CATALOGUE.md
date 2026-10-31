@@ -1,18 +1,21 @@
 # VeriLyft P0 Acceptance Scenarios and Evidence Catalogue
 
+> **Execution status update (31 October 2026):** DEC-045 authorizes bounded implementation to begin under accepted policy. This catalogue remains a test-design/evidence baseline and does not approve platform-wide acceptance or release. Focused tests may be written and run alongside each implementation slice when expected behaviour is established. Unresolved policy inputs remain capability gates; the P0 and Conditional P0 release requirements are unchanged.
+
+
 **Status:** Owner-reviewed scenario refinements — test-design baseline only; not approved executable test specifications, implementation or release approval  
 **Created:** 30 October 2026  
-**Documentation baseline:** PR #72 merge commit `${neu}` (PRs #67–#69 continued documentation-only reconciliation)
+**Documentation baseline:** PR #83 merge commit `986f4ad79232ce1700f4edaa972a17522ed319c8` (PRs #67–#83 continued documentation-only reconciliation)
 **Active-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
 **Authority:** DEC-018, DEC-022–DEC-044, accepted PM-01–PM-12 and BP-01–BP-22 policy records, and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
-**Related:** `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
+**Related:** `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `PLATFORM_REVIEW_3_ACTION_CAPABILITY_CROSSWALK.md`, `PLATFORM_REVIEW_3_LIFECYCLE_TRANSITION_AND_RECOVERY_CROSSWALK.md`, `PLATFORM_REVIEW_3_RESOURCE_ENTITLEMENT_AND_PROJECTION_LINEAGE_CROSSWALK.md`, `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
 
 ## 1. Purpose and boundaries
 
 This catalogue converts the P0 and Conditional P0 requirements in A-01–A-20 and ADM-R01–ADM-R54 into observable acceptance-scenario outlines and evidence requirements. It is intended to make later test design, execution, review and release sign-off auditable.
 
 It does **not**:
-- approve the complete platform SDD or authorize implementation;
+- approve platform-wide P0 acceptance or launch readiness;
 - define Firestore collections, fields, routes, payloads, enums, token formats, indexes, roles or permission claims;
 - invent numeric limits, pricing formulas, quote periods, retention periods, proof methods, approval thresholds, retry counts or operational timeouts where the accepted decisions leave them open;
 - treat existing source code, a successful build, or a test report without reproducible artifacts as proof of acceptance;
@@ -403,3 +406,11 @@ Use `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md` when converting sce
 ## 10. Production-readiness contract cross-reference
 
 Use `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md` when converting A20-01–A20-05 into executable test specifications and release evidence. It expands the control/evidence expectations for environment separation, configuration and secrets, deployed authorization/rules, provider readiness, deployment/rollback, observability/alerting, backup/restore, incident response, operational continuity and release sign-off. It also maps relevant operational evidence to A-07/A-08, A-14, A-16 and A-18. No case IDs or priorities change. This cross-reference does not approve test execution, establish passing results, resolve numeric operational targets, or claim production readiness.
+
+
+## 11. Post-PR #83 SDD reconciliation boundary
+
+- The documentation baseline is PR #83. PRs #80–#83 add an owner-input classification and conceptual action/capability, lifecycle/recovery, and resource-entitlement/projection-lineage crosswalks. These additions refine test-design dependencies; they do not establish that any missing application capability has been implemented or tested.
+- The consolidated owner decision package groups proposed DB-01–DB-12 and related operating-policy recommendations. Those recommendations remain pending owner confirmation and must not be treated as approved expected results in executable test specifications.
+- The existing 80 rows remain scenario outlines. They are not approved execution packages and do not imply 80 tests have been implemented, run or passed. The readiness assessment continues to report 0/51 P0/Conditional P0 Admin requirements approved for acceptance-test execution.
+- For each case, unresolved policy, absent capability, missing fixture/actor/permission, incomplete expected state/non-state effects, missing failure/replay behavior, or missing evidence/reviewer must remain an explicit blocker. Do not invent values or convert a blocked outline into an executable test merely to increase completion counts.
