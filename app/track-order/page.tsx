@@ -146,7 +146,8 @@ export default function TrackOrderPage() {
 
 
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
+        const frame = window.requestAnimationFrame(() => {
+            const params = new URLSearchParams(window.location.search);
         const requestedOrderId = params.get("orderId");
 
         if (!requestedOrderId) return;
@@ -194,6 +195,9 @@ export default function TrackOrderPage() {
                 `${window.location.pathname}${window.location.search}`
             );
         }
+            });
+
+        return () => window.cancelAnimationFrame(frame);
     }, []);
 
 
