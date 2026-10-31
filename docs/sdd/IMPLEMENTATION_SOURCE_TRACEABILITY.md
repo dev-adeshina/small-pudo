@@ -269,3 +269,12 @@ This refresh updates repository-history metadata only. It does not change any A-
 - **Limits:** No semantic source review, test execution, runtime/browser/API verification, deployed configuration review, production data inspection, or production-readiness verification was performed by this refresh. The path-level inventory recorded in the PR #64 review is not a substitute for semantic or runtime evidence.
 
 The active source-inspection baseline remains unchanged. Do not upgrade any source finding to implemented, tested, or production-ready on the basis of this history comparison.
+
+
+## 9. Repository-history comparison refresh — PR #71 — 31 October 2026
+
+- **Current documentation baseline:** PR #71 merged into `main` at `37a6ca57f1619d124ebb9718aa6067ed8d40f978`.
+- **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`.
+- **Evidence boundary:** PR #71 was documentation-only. Repository-history continuity and the earlier comparison from the source snapshot do not constitute fresh semantic source inspection, runtime/API/browser testing, production data inspection, deployed Firebase rules/configuration verification, provider-dashboard review or production readiness.
+- **New design crosswalk:** `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md` defines conceptual record responsibilities, party entitlement separation, unresolved cardinality questions DB-01–DB-12, consistency boundaries and existing source reuse constraints. These are technical design inputs, not approved persistence objects or implementation evidence.
+- **Interpretation:** Source observations in Sections 1–6 remain tied to the stated source-inspection baseline. Do not upgrade any source status based on documentation-only commits.
