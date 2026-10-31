@@ -58,7 +58,7 @@ The following classification covers every row in `PLATFORM_CROSS_DOMAIN_ACCEPTAN
 | A-05 | Independent shipment booking | P0 | Registered authenticated customers only; booking and physical intake remain distinct. |
 | A-06 | Shared pricing and quote acceptance | P0 | Shared rules for supported channels; preserve quote inputs/rate context; no silent repricing. |
 | A-07 | Payment initialization and confirmation | P0 | Authoritative provider verification, amount/currency/reference checks, replay safety. |
-| A-08 | Refunds, adjustments and reconciliation | P0 | Minimum supported financial events, approval boundaries, traceability and reconciliation; not a full Finance Portal. |
+| A-08 | Refunds, adjustments and reconciliation | P0 | Minimum supported financial events, approval boundaries, traceability and reconciliation; not the full Finance function or a decision to deploy it as a separate portal. |
 | A-09 | Physical intake, measurement and custody | P0 | Advance and walk-in intake; capability-authorized custody and evidence. |
 | A-10 | Location and service capability | P0 | Lean location model and explicit capability configuration before a location performs that service. |
 | A-11 | Routing and route proposals | P0 | Hybrid proposal/review/assignment for the launch network; no advanced optimization. |
