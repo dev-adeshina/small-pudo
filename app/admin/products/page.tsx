@@ -114,12 +114,39 @@ export default function ProductsPage() {
   //         )
 
   //         setCheckingAuth(false)
+        void loadData();
   //       }
   //     )
 
   //   return () => unsubscribe()
   // }, [router])
 
+
+  async function loadData() {
+    setLoading(true)
+    setError("")
+
+    try {
+      const [
+        productData,
+        categoryData,
+      ] = await Promise.all([
+        getProducts(),
+        getCategories(),
+      ])
+
+      setProducts(productData)
+      setCategories(categoryData)
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to load products."
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     let active = true;
@@ -177,37 +204,7 @@ export default function ProductsPage() {
     };
   }, [router]);
 
-  useEffect(() => {
-    if (!checkingAuth) {
-      loadData()
-    }
-  }, [checkingAuth])
 
-  async function loadData() {
-    setLoading(true)
-    setError("")
-
-    try {
-      const [
-        productData,
-        categoryData,
-      ] = await Promise.all([
-        getProducts(),
-        getCategories(),
-      ])
-
-      setProducts(productData)
-      setCategories(categoryData)
-    } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : "Unable to load products."
-      )
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const filteredProducts =
     useMemo(() => {
