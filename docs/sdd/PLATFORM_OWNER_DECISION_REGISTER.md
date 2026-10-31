@@ -386,7 +386,7 @@ Exact rates/formulas, units and thresholds, quote/handover durations, payment/re
 The next consolidated owner checkpoint is Review 3 — technical design and architecture. Reviews 4 and 5 remain reserved for complete SDD/acceptance specification review and final consistency/implementation-gate approval.
 
 
-## 10. Consolidated owner decision proposals — pending, not accepted
+## Consolidated owner decision proposals — pending, not accepted
 
 The document `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md` groups the remaining owner-dependent choices into five review packages and proposes a conservative minimum-launch baseline for DB-01–DB-12, staff/operational authority, evidence/disclosure and production accountability.
 
