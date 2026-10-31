@@ -1,6 +1,6 @@
 # VeriLyft Admin Portal — Requirements Inventory and Prioritization
 
-**Last updated:** 28 October 2026  
+**Last updated:** 31 October 2026  
 **Document status:** Owner-approved startup launch-scope baseline; requirement-level verification pending  
 **Workstream:** Admin Portal  
 **Purpose:** Consolidate the Admin Portal requirements, prioritize them for a startup launch, remove unnecessary enterprise scope, and record what must be decided before detailed design.
@@ -222,7 +222,7 @@ Every approved P0 feature must satisfy the applicable requirements below:
 | Deliverable | Status |
 |---|---|
 | Consolidated requirement inventory with stable IDs | Drafted in this document |
-| P0/P1/deferred startup prioritization | Drafted in this document |
+| P0/P1/deferred startup prioritization | Owner-reviewed and approved in `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` (PR #31); this document remains the requirements inventory |
 | Startup exclusions and scope boundaries | Drafted in this document |
 | Known cross-cutting requirements recorded | Drafted in this document |
 | Requirements distinguished from pages/features/implementation | Established |
@@ -231,8 +231,8 @@ Every approved P0 feature must satisfy the applicable requirements below:
 | Detailed page/navigation flows | Partial — initial navigation/dashboard design is in `ADMIN_PORTAL.md`; detailed page specifications remain under review |
 | Feature and workflow specifications | Not done; later design stage |
 | Architecture/API/data mapping | Not done; later design stage |
-| Owner approval of the P0/P1/deferred priority baseline | Pending; operating-model choices are confirmed, but the consolidated priority baseline still needs review |
+| Owner approval of the P0/P1/deferred priority baseline | Approved in `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` (PR #31); detailed workflow, source, and runtime verification remain separate |
 
-**Stage 1 status: Inventory and prioritization drafted; owner-confirmed operating-model choices are recorded, but the consolidated P0/P1/deferred baseline is not yet formally approved.**
+**Stage 1 status: Requirements inventory drafted; the consolidated P0/P1/deferred priority baseline is owner-reviewed and approved in `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` (PR #31). Detailed page specifications, source reconciliation, runtime verification, and implementation remain separate open work.**
 
-Do not mark the Admin Portal requirements phase complete until the priority baseline has been reviewed and approved. The first-pass source audit is in `ADMIN_REQUIREMENTS_AUDIT.md`; continue by resolving source/runtime evidence gaps and refining page-level specifications before implementation.
+Do not mark the Admin Portal requirements phase complete solely because priority classification is approved. The first-pass source audit is in `ADMIN_REQUIREMENTS_AUDIT.md`; source/runtime evidence gaps and page-level specifications remain open and must be resolved through the platform-wide SDD and its approval gate.
