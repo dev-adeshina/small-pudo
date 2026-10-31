@@ -973,7 +973,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 **Step 2A boundary:** This is a documentation inventory and gap assessment, not a declaration that the SDD is reconciled or approved. No accepted policy is reopened. No new policy, technical contract, schema, API, permission implementation, test execution, or application-code change is approved by this checkpoint.
 
 
-## 44. Milestone 4 Step 2B — P0 evidence and test-readiness reconciliation proposed — 31 October 2026
+## 44. Milestone 4 Step 2B — P0 evidence and test-readiness reconciliation merged — 31 October 2026
 
 - [x] Verified PR #54, PR #55, PR #56 and PR #57 merge states and used PR #57 merge commit `de067c0a872de6e5cffaa2c7cf7c5bbcccab3269` as the current documentation baseline.
 - [x] Confirmed PR #56 reconciled actor responsibilities and the staff permission matrix with DEC-037–DEC-044.
@@ -981,9 +981,9 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Mapped DEC-037–DEC-044 to the existing A-area/case families in the P0 acceptance catalogue and test-readiness assessment; retained all 80 case rows.
 - [x] Refreshed source-history comparison through PR #57 while preserving active source-inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856`.
 - [x] Updated the decision/document reconciliation inventory to distinguish merged corrections from the current proposal.
-- [ ] Owner review and merge of PR #58, `docs: reconcile P0 evidence with logistics decisions`.
+- [x] Owner reviewed and merged PR #58 at `d67a8bcd33713b0bcc64b6841237a7e9b0ee78b7`.
 - [ ] Continue full cross-document contradiction/dependency review across the 23 SDD documents; accepted policy is not reopened absent genuine conflicting evidence.
 - [ ] Complete detailed workflow, lifecycle, data/API/security, integration and exception contracts; do not infer technical implementation from policy crosswalks.
 - [ ] Continue production-readiness evidence planning and obtain explicit owner approval of the complete platform-wide SDD before any application-code changes.
 
-**Step 2B boundary:** PR #58 is documentation-only and remains open for owner review. The P0 catalogue and readiness document remain design/navigation artefacts; 45 P0 and 6 Conditional P0 Admin requirements remain unapproved for test execution (0/51 approved). No test was executed, no runtime/production evidence was added, and no application source, schema, API, permission implementation, configuration or deployment was changed. The active source-inspection baseline remains the commit above.
+**Step 2B boundary:** PR #58 was documentation-only and is merged. The P0 catalogue and readiness document remain design/navigation artefacts; 45 P0 and 6 Conditional P0 Admin requirements remain unapproved for test execution (0/51 approved). No test was executed, no runtime/production evidence was added, and no application source, schema, API, permission implementation, configuration or deployment was changed. The active source-inspection baseline remains the commit above.
