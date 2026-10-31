@@ -398,12 +398,14 @@ Verified payment is required by default before dispatch. DEC-030 accepts only na
 
 ### Proposed sequence
 
-1. Identify the action/event, responsible actor or external source, target record, timestamp, and outcome.
-2. Record a reason and approval reference for exceptions, overrides, financial adjustments, custody changes, disclosure, or other actions identified as consequential by policy.
-3. Store or reference evidence with appropriate access and retention controls; do not assume a log entry by itself proves the physical event occurred.
-4. For a government/public-authority request, record the request context and route it to an authorized internal reviewer. The requester gains no platform access from submitting a request.
-5. Record the decision, scope of disclosure, approving actor, disclosed evidence/data, time, and outcome under the approved legal-handling policy.
-6. Restrict evidence access and disclosure to authorized actors; retain an auditable history of access/changes where required.
+1. Identify the consequential action/event, responsible actor or system/external source, affected resource, timestamp and outcome. Preserve the distinction between the physical actor, actual receiver, staff recorder and source that supplied evidence.
+2. Record the applicable reason, correlation/reference and approval for exceptions, overrides, financial adjustments, custody changes, corrections, holds and disclosures. Do not invent mandatory fields for event types whose evidence requirements remain unspecified.
+3. Preserve or reference the original supporting evidence with its source and context. A status change or audit entry alone does not prove physical receipt, custody transfer, movement or delivery.
+4. Restrict audit/evidence viewing and exporting to explicitly authorized reviewers under separate PM-08 permissions. Admin status alone is insufficient; access, exports, denied access and consequential evidence actions must be attributable and auditable.
+5. For a government/public-authority request, record the requesting authority, request/reference, stated legal basis, scope and receipt context, then route it to an authorized internal reviewer. The requester gains no platform access from submitting a request.
+6. Record the authorized decision and any second-person approval required by the applicable policy, the scope and contents of any disclosure, approving/acting staff, recipient, time and outcome. Disclose only information authorized and necessary for the reviewed purpose.
+7. Preserve originals when corrections, additions or redactions are made. Link the change to the original and record its actor, time, reason and applicable authority; do not silently overwrite the original or represent an administrative location correction as a physical transfer.
+8. Apply category- and purpose-appropriate retention, deletion/anonymization and legal holds. An active applicable hold blocks routine deletion; release requires an authorized, attributable decision. Exact periods and authorities remain open.
 
 ### Open policy / design questions
 
