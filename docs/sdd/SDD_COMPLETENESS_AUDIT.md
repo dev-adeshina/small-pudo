@@ -270,3 +270,30 @@ No confirmed contradiction requiring an accepted owner policy to be reopened was
 5. Re-review all 23 SDD documents for decision references, status vocabulary, unresolved dependencies, and implementation/test approval boundaries.
 
 **Current status:** Step 2A inventory complete; full decision/document reconciliation remains open. No accepted policy was changed, no new policy or technical contract was approved, and no application code or runtime behaviour was changed or verified.
+
+
+## 13. Cross-document status and decision-reference review — 31 October 2026
+
+### Review baseline and scope
+
+- Current repository baseline: PR #59 merge commit `94c0ac87374248a32b606d82e6d418267a5b0218`.
+- The first cross-document status/reference scan covered all 23 Markdown SDD documents inventoried in Step 2A. It checked decision-family references, repository/PR metadata, approval-state wording, continuity pointers, and the existing P0 scenario crosswalk.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. PRs #53–#59 are documentation-only; this comparison does not establish runtime, deployment, or production behaviour.
+
+### Findings
+
+1. No confirmed contradiction requiring an accepted owner decision to be reopened was found in this first cross-document status/reference scan. Preserve DEC-001–DEC-044, PM-01–PM-12, and BP-01–BP-22 at their individually recorded approval levels.
+2. PRs #55–#58 have completed the previously identified Admin history, actor/permission, requirement/priority, and P0 catalogue/readiness corrections. PR #59 refreshed continuity metadata.
+3. Several current-reference fields still lagged the merged baseline: the README and handoff pointed to PR #53/#58; the requirement dependency register still presented PR #41 as its current status and PR #56 as its repository baseline; workflow/lifecycle/acceptance headers stopped at DEC-036/038/039 despite later policy addenda; and source/P0 evidence comparison fields stopped at PR #57/#58. These metadata and decision-range references are being corrected in the current documentation pass.
+4. The DEC-037–DEC-044 crosswalk in the P0 catalogue references existing case IDs only. A mechanical cross-check found 80 unique catalogue case rows and no missing case ID among the crosswalk references. This validates reference existence only; it does not validate executable test completeness or approve execution.
+5. The older PR #4 “open/unmerged” wording in the 29 October audit checkpoints is retained as dated historical state; current status elsewhere correctly records PR #4 as closed without merge. Historical snapshots must not be silently rewritten as if they were current.
+6. `SPEC.md` remains an explicitly historical product/technical specification; no attempt is made to supersede its archive/roadmap content by rewriting it as a current implementation record.
+
+### Remaining review work
+
+- Complete detailed section-level comparison of workflows, lifecycle boundaries, actor and permission authority, requirement dependencies, acceptance criteria, Admin page design, and source-evidence claims against each authoritative decision.
+- Resolve or explicitly preserve each operational/technical dependency: service configuration, price inputs/formulas, measurement thresholds, payment/refund/reconciliation, custody proof and exception resolution, location capability, booking-party consent/delegation, lifecycle/status vocabulary, data/API/security, retention, idempotency/recovery, and test fixtures.
+- Reassess the scope/authority of root `pudo.zip` before including it in source evidence; it remains uninspected.
+- Continue source-traceability and production-readiness planning without claiming runtime evidence or changing application code.
+
+**Current status:** This is the first status/reference scan, not completion of the full platform-wide SDD reconciliation. VLY-019 remains open and blocks application-code changes until the complete SDD is explicitly approved by the owner. No policy was changed, no new technical contract was approved, no tests were executed, and no application code or runtime behaviour was changed or verified.
