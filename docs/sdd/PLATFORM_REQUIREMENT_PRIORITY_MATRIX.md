@@ -2,7 +2,7 @@
 
 **Status:** Owner-reviewed and merged baseline — not implementation approval or release authorization  
 **Date:** 31 October 2026  
-**Baseline:** Owner-reviewed priority classifications from PR #31; documentation reconciliation current through PR #59 merge `94c0ac87374248a32b606d82e6d418267a5b0218`.  
+**Baseline:** Owner-reviewed priority classifications from PR #31; documentation reconciliation current through PR #65 merge `c9698417f6d4e024484d608655a1e4149584dcc4`.  
 **Authority:** DEC-018 (owner-approved lean launch scope), DEC-022–DEC-044 (accepted policy directions and refinements), and DEC-036 (evidence-based launch governance).  
 **Related documents:** `DECISIONS.md`, `ADMIN_REQUIREMENTS.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ISSUES.md`, `PROGRESS.md`.
 
@@ -82,7 +82,7 @@ The stable `ADM-R01`–`ADM-R54` identifiers are retained from `ADMIN_REQUIREMEN
 |---|---|---|---|
 | ADM-R01 Admin authentication | P0 | A-15 | Supported staff sign-in/session handling. |
 | ADM-R02 Server-side admin authorization | P0 | A-15 | Direct navigation and direct API requests must both be denied when unauthorized. |
-| ADM-R03 Minimum role boundaries | P0 | A-15, A-17 | Minimal hybrid responsibility model; action-level permission detail remains to specify. |
+| ADM-R03 Minimum role boundaries | P0 | A-15, A-17 | Minimal hybrid responsibility model and action-level permission assignment are accepted under DEC-022 and PM-02; exact permission catalogue, scope representation, and technical enforcement remain to specify. |
 | ADM-R04 Protected data and actions | P0 | A-15, A-19 | Server/API/data boundaries, not UI visibility. |
 | ADM-R05 Safe user feedback | P0 | A-01–A-20 | Applicable to every enabled launch workflow; errors must not leak secrets. |
 | ADM-R06 Preserve existing UI and architecture | P0 | Cross-cutting | Implementation constraint; reuse existing patterns and prove need before adding architecture. |
