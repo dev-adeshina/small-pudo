@@ -34,7 +34,6 @@ async function authenticateCustomer(request: NextRequest) {
 
     return {
       uid: decodedToken.uid,
-      email: decodedToken.email ?? "",
     };
   } catch {
     return {
