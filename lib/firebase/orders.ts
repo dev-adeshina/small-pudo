@@ -4,7 +4,6 @@ import {
   doc,
   getDoc,
   serverTimestamp,
-  type DocumentReference,
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";

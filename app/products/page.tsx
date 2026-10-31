@@ -175,16 +175,16 @@ export default async function ProductsPage() {
                     className="block"
                   >
                     <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-
-
                       {image && (
-                        <img
-                          src={image}
-                          alt={product.name}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                        />
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={image}
+                            alt={product.name}
+                            loading="lazy"
+                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                          />
+                        </>
                       )}
                       {product.featured && (
                         <span className="absolute left-3 top-3 rounded-full bg-yellow-400 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-neutral-900">
