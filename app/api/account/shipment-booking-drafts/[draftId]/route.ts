@@ -108,7 +108,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
     const snapshot = await draftRef.get();
 
-    if (!snapshot.exists) {
+    if (!snapshot.exists || snapshot.data()?.status !== "draft") {
       return NextResponse.json(
         { error: "The requested shipment draft was not found." },
         { status: 404 }
