@@ -2,7 +2,7 @@
 
 **Status:** Owner-reviewed scenario refinements — test-design baseline only; not approved executable test specifications, implementation or release approval  
 **Created:** 30 October 2026  
-**Documentation baseline:** PR #66 merge commit `f5b274874693db1dbd7a46f17f3e1840a0d372d6` (PRs #42–#66 after the original catalogue approval changed SDD documentation only)
+**Documentation baseline:** PR #68 merge commit `b958422facd55fde65dc95b8e00b72648b3841f1` (PRs #67–#68 continued documentation-only reconciliation)
 **Active-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
 **Authority:** DEC-018, DEC-022–DEC-044, accepted PM-01–PM-12 and BP-01–BP-22 policy records, and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
 **Related:** `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
