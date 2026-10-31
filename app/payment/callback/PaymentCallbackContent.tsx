@@ -25,11 +25,7 @@ export default function PaymentCallbackPage() {
   const [orderId, setOrderId] = useState("");
 
   useEffect(() => {
-    if (!reference) {
-      setStatus("failed");
-      setMessage("No payment reference was provided.");
-      return;
-    }
+    if (!reference) return;
 
     let cancelled = false;
 
@@ -85,18 +81,23 @@ export default function PaymentCallbackPage() {
     };
   }, [reference]);
 
+  const displayedStatus = reference ? status : "failed";
+  const displayedMessage = reference
+    ? message
+    : "No payment reference was provided.";
+
   return (
     <main className="mx-auto flex min-h-[70vh] max-w-xl items-center justify-center px-4 py-12">
       <div className="w-full rounded-2xl border border-gray-200 p-8 text-center shadow-sm">
         <h1 className="mb-4 text-2xl font-semibold">
-          {status === "verifying"
+          {displayedStatus === "verifying"
             ? "Verifying your payment"
             : status === "success"
               ? "Payment confirmed"
               : "Payment not confirmed"}
         </h1>
 
-        <p className="text-gray-600">{message}</p>
+        <p className="text-gray-600">{displayedMessage}</p>
 
         {orderId && (
           <p className="mt-4 break-all text-sm text-gray-600">
@@ -104,13 +105,13 @@ export default function PaymentCallbackPage() {
           </p>
         )}
 
-        {status === "verifying" && (
+        {displayedStatus === "verifying" && (
           <p className="mt-4 text-sm text-gray-500">
             Please do not close this page.
           </p>
         )}
 
-        {status !== "verifying" && (
+        {displayedStatus !== "verifying" && (
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               href="/"
