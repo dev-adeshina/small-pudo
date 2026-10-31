@@ -1,6 +1,5 @@
 'use Client';
 
-import Image from 'next/image';
 import Link from "next/link"
 
 
@@ -45,7 +44,7 @@ export default function AboutPage() {
                     <span className="eyebrow">Our story</span>
 
                     <h2>
-                        Logistics shouldn't feel complicated.
+                        Logistics shouldn&apos;t feel complicated.
                     </h2>
                 </div>
 
@@ -93,7 +92,7 @@ export default function AboutPage() {
                         <h3>Simplicity</h3>
                         <p>
                             Complex logistics should feel simple from
-                            the customer's perspective.
+                            the customer&apos;s perspective.
                         </p>
                     </article>
 
@@ -110,7 +109,7 @@ export default function AboutPage() {
 
             <section className="about-cta">
                 <div>
-                    <span className="eyebrow">Let's move</span>
+                    <span className="eyebrow">Let&apos;s move</span>
 
                     <h2>
                         Have something
