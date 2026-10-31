@@ -1,5 +1,14 @@
 Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`.
 
+## Current owner direction — 31 October 2026
+
+- DEC-045 records the owner's explicit instruction to stop extending the planning cycle and begin implementation using accepted policy. The previous blanket freeze pending Reviews 3–5 is superseded for starting bounded implementation work.
+- Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. Start with M0 baseline/regression safety, then M1 independent shipment booking preparation.
+- Do not treat DB-01–DB-12 recommendations as approved policy. Unresolved values and authorities are capability gates; keep affected functionality disabled or excluded rather than inventing defaults.
+- DEC-018/DEC-036 launch scope, P0 acceptance evidence and production release requirements remain in force. Implementation start is not launch approval.
+- Preserve the existing Next.js App Router, TypeScript, Firebase/Firestore/Auth/Admin, Paystack and Cloudinary architecture. Inspect current source before modifying it; the historical source-inspection baseline is not runtime proof.
+
+
 ## Current verified repository state
 
 - Current `main` baseline: PR #83 is merged; merge commit `986f4ad79232ce1700f4edaa972a17522ed319c8`. The current documentation working branch is `docs/sdd/consolidated-owner-decision-package`; it is not merged.
