@@ -11,10 +11,6 @@ import { adminDb } from "@/lib/firebase-admin";
 
 export const runtime = "nodejs";
 
-interface CancelRequestBody {
-  orderAccessToken: string;
-}
-
 function isRecord(
   value: unknown
 ): value is Record<string, unknown> {
