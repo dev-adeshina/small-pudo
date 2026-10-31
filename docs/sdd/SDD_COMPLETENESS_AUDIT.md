@@ -450,3 +450,35 @@ The update is a cross-document policy consistency correction, not a source revie
 ### Evidence boundary
 
 This is a documentation-only reconciliation of accepted policy and test-design outlines. It does not approve an audit architecture, event schema, storage, endpoint, permission code, retention job, disclosure integration or implementation. No tests were executed; no application source, schema, Firebase rules/configuration, APIs, permissions or deployment were changed or runtime-verified. The complete SDD remains unapproved and the application-code freeze remains active.
+
+
+## 21. PR #67 baseline refresh and owner-approved SDD closure direction — 31 October 2026
+
+### Repository and source-inspection baseline
+
+- PR #67 merged into `main` at `04c093927c8d47f9e1fe8351c9f8ecb48920b753`.
+- Compared application-source inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856` with PR #67. The comparison reports 360 commits ahead and lists SDD documentation paths only; no application-source path appears in the returned changed-file set.
+- The application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. The comparison does not re-inspect source semantics, runtime behaviour, deployed configuration, production data, or operational readiness.
+
+### Owner approvals and resulting direction
+
+The owner approved Review 1's overall reconciliation/closure approach and Review 2's consolidated policy direction. These approvals establish the method and policy direction for completing the SDD; they do not constitute approval of every open technical or operational detail and do not lift the implementation freeze.
+
+The approved direction is to:
+
+1. Preserve all accepted owner decisions and reconcile them across every affected workflow, lifecycle, actor, permission, requirement, evidence, Admin, issue, and handoff document.
+2. Specify commercial rules by service and configuration, preserving accepted quotes and historical rule context; do not invent universal rates, formulas, fees, taxes, or numerical thresholds.
+3. Define controlled measurement adjustment, customer response, payment verification, settlement, refund/credit and financial reconciliation procedures without silently deciding eligibility, limits, or tolerances.
+4. Preserve booking-party, sender, receiver, payer, and handover-person authority distinctions; keep Support bounded to its approved duties.
+5. Require evidence appropriate to physical intake, custody transfer, movement, delivery, and exceptions. A status update or assignment alone is not physical proof.
+6. Require both location capability and staff action-level authorization for operational actions; preserve approved second-person approval and separation-of-duty boundaries.
+7. Preserve original audit/evidence records and separately attribute additions, corrections, redactions, and disclosures; use category-specific retention and legal holds.
+8. Treat production release as evidence-gated, with unresolved P0 requirements and unmet conditional triggers blocking the relevant release or capability.
+
+Exact service rates/formulas, units/conversions/materiality thresholds, quote/handover durations, payment/refund/credit limits and tolerances, service-specific proof methods, approval thresholds, retention periods, and operational/recovery targets are deliberately deferred until their governing service, legal, financial, or operating context is established. The SDD must identify the accountable owner, configuration boundary, dependencies, and acceptance evidence for each; it must not fabricate values to create an appearance of completeness.
+
+### Remaining work and evidence boundary
+
+The next owner review is Review 3 — consolidated technical design and architecture. Before that review, complete section-level A-01–A-20 reconciliation, workflow/lifecycle and exception dependency review, source-aware technical contracts, and cross-document status/reference correction. Reviews 4 and 5 remain reserved for complete SDD/acceptance-specification review and final consistency/implementation-gate approval.
+
+This update is documentation-only. It does not approve a schema, collection, field, endpoint, status enum, role/claim, permission implementation, integration, pricing value, operational threshold, retention schedule, or application-code change. No tests were executed. The 80 P0 evidence cases remain design/evidence scenarios, not completed tests. The application-source comparison is not runtime or production verification. Application-code changes remain blocked until explicit Review 5 approval of the complete SDD.
