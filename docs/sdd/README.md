@@ -93,6 +93,10 @@ The domain and identity decision crosswalk is tracked in `PLATFORM_DOMAIN_BOUNDA
 
 
 - `PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md` — Review 3 synthesis index mapping A-01–A-20 across authoritative facts, lifecycle, API/persistence/authorization, external effects, acceptance evidence and unresolved dependencies; no implementation architecture is approved.
+- `PLATFORM_REVIEW_3_COMPLETENESS_AUDIT.md` — criterion-by-criterion assessment of the Review 3 checklist, supporting contract evidence, remaining gaps and the conditions for presenting the consolidated review; not an owner approval or implementation authorization.
 
 
 The current Review 3 technical-design synthesis is tracked in `PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md`; its API/persistence/integration, lifecycle/state, mutation/authorization/recovery, domain-boundary, and production-readiness companion contracts are listed above. PR #77 is merged. Review 3 remains in preparation until the completeness checklist and all cross-document dependencies are reconciled; Reviews 4 and 5 remain future approval gates. The 80 P0/Conditional P0 case rows remain design inputs, not approved executable tests. No implementation is authorized before explicit Review 5 approval.
+
+
+**Review 3 preparation:** PR #77's technical-design coherence matrix is merged, and `PLATFORM_REVIEW_3_COMPLETENESS_AUDIT.md` records the current 15-criterion assessment. Several criteria are only partially covered because owner-dependent relationships, operational policies, and detailed authorization/evidence inputs remain unresolved. Review 3 is not yet ready to present; Reviews 1–2 remain approved, Reviews 4–5 remain future gates, and implementation remains frozen through Review 5.

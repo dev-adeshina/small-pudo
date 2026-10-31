@@ -513,3 +513,14 @@ This update is documentation-only. It does not approve a schema, collection, fie
 ### Evidence boundary and next work
 
 This reconciliation does not close VLY-009/VLY-010, VLY-023, payment replay/concurrency, guest recovery, production configuration, or any other runtime issue. Continue to build the consolidated Review 3 package from source facts, accepted policies, explicit technical candidates and unresolved owner inputs. Reviews 1–2 of 5 remain approved; Reviews 3–5 remain future gates. The application-code freeze remains in force until explicit Review 5 approval.
+
+
+## 12. Current Review 3 completeness addendum — 31 October 2026
+
+The first-pass audit above remains historical and is not the current work order. The current technical-design synthesis and criterion-by-criterion status are now recorded in:
+
+- `PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md` — integrated A-01–A-20 design and dependency index.
+- `PLATFORM_REVIEW_3_COMPLETENESS_AUDIT.md` — status of each of the 15 Review 3 criteria, supporting contracts, remaining gaps and exit conditions.
+- `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md`, `PLATFORM_LIFECYCLE_EVENT_AND_STATE_CONTRACT_MATRIX.md`, `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`, `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md`, and `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md` — companion conceptual technical contracts.
+
+PR #78 is the latest verified continuity baseline at `8b0c9d5e04669f3051f992b6524c1928b40518db`. Review 3 remains in preparation: the technical contract set is substantial, but several criteria remain partial or blocked by DB-01–DB-12 and other owner-dependent policy/operational inputs. Reviews 1–2 remain approved; Reviews 4–5 remain future gates. No implementation is authorized before explicit Review 5 approval. This addendum is a documentation review only; it does not claim fresh source inspection, test execution, runtime/deployment verification or production readiness.
