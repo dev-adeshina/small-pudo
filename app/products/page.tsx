@@ -179,10 +179,10 @@ export default async function ProductsPage() {
                         <>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                          src={image}
-                          alt={product.name}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                            src={image}
+                            alt={product.name}
+                            loading="lazy"
+                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                           />
                         </>
                       )}
