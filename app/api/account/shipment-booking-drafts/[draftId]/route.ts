@@ -2,6 +2,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { validateShipmentBookingDraft } from "@/lib/validations/shipment-booking-draft";
 
 export const runtime = "nodejs";
 
@@ -59,42 +60,11 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     );
   }
 
-  if (typeof body !== "object" || body === null) {
-    return NextResponse.json(
-      { error: "Enter the shipment details before saving." },
-      { status: 400 }
-    );
-  }
+  const validated = validateShipmentBookingDraft(body);
 
-  const candidate = body as Record<string, unknown>;
-  const origin =
-    typeof candidate.origin === "string" ? candidate.origin.trim() : "";
-  const destination =
-    typeof candidate.destination === "string"
-      ? candidate.destination.trim()
-      : "";
-  const parcelDescription =
-    typeof candidate.parcelDescription === "string"
-      ? candidate.parcelDescription.trim()
-      : "";
-
-  if (!origin || !destination || !parcelDescription) {
+  if (!validated.success) {
     return NextResponse.json(
-      { error: "Origin, destination and parcel description are required." },
-      { status: 400 }
-    );
-  }
-
-  if (origin.length > 180 || destination.length > 180) {
-    return NextResponse.json(
-      { error: "Origin and destination must each be 180 characters or fewer." },
-      { status: 400 }
-    );
-  }
-
-  if (parcelDescription.length > 1000) {
-    return NextResponse.json(
-      { error: "Parcel description must be 1,000 characters or fewer." },
+      { error: validated.error },
       { status: 400 }
     );
   }
@@ -116,9 +86,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     }
 
     await draftRef.update({
-      origin,
-      destination,
-      parcelDescription,
+      origin: validated.data.origin,
+      destination: validated.data.destination,
+      parcelDescription: validated.data.parcelDescription,
       updatedAt: FieldValue.serverTimestamp(),
     });
 
@@ -126,9 +96,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       success: true,
       draft: {
         id: draftId,
-        origin,
-        destination,
-        parcelDescription,
+        origin: validated.data.origin,
+        destination: validated.data.destination,
+        parcelDescription: validated.data.parcelDescription,
         status: "draft",
       },
     });
