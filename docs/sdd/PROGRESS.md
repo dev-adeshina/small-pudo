@@ -3,8 +3,8 @@
 **Last updated:** 31 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest verified main baseline for this work:** `37a6ca57f1619d124ebb9718aa6067ed8d40f978` — PR #69 merged.  
-**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #69 found intervening changes to SDD documentation paths only; no later application-source commit was identified. This is not a fresh semantic source review, runtime verification, or production verification.  
+**Latest verified main baseline for this work:** `37a6ca57f1619d124ebb9718aa6067ed8d40f978` — PR #71 merged.  
+**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #71 reflects documentation-only changes after this source snapshot; no later application-source commit was identified. This is not a fresh semantic source review, runtime verification, or production verification.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
 **Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. Step 1 continuity baseline and Step 2A inventory are complete; corrective decision crosswalks in PRs #55–#58 are merged, PR #60 completed the first cross-document status/reference scan, and PR #61 corrected the A-10 approval wording against DEC-043; PR #62 aligned DEC-038–DEC-041 status references; PR #63 clarified the Finance responsibility/deployment boundary; PR #64 reconciled DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 reconciles A-16 audit/evidence policy; PR #68 refreshes the closure direction/baseline; PR #69 reconciles A-17 Support, exception and manual-override boundaries and adds acceptance evidence. The subsequent cross-document review found inconsistent wording that treated the Finance Portal as an approved separate deployment even though the actor model leaves the deployment arrangement unresolved. This documentation pass clarifies the accepted Finance responsibility boundary without approving a separate portal, protected module, or deployment architecture. Full reconciliation, technical contracts, detailed acceptance-test specifications, and production-readiness evidence planning remain open. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
@@ -22,8 +22,8 @@
 
 ### Current milestone — Milestone 4: Platform-wide SDD Reconciliation and Implementation Readiness
 
-- **Baseline:** The initial read-only SDD baseline review was PR #52; current `main` is PR #71 merge commit `37a6ca57f1619d124ebb9718aa6067ed8d40f978`. PRs #53–#69 were documentation-only.
-- **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` remains the active source-inspection snapshot. Repository-history comparison through PR #69 found documentation-only intervening changes. Do not infer runtime behaviour from this comparison.
+- **Baseline:** The initial read-only SDD baseline review was PR #52; current `main` is PR #71 merge commit `37a6ca57f1619d124ebb9718aa6067ed8d40f978`. PRs #53–#71 were documentation-only.
+- **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` remains the active source-inspection snapshot. Repository-history comparison through PR #71 reflects documentation-only intervening changes. Do not infer runtime behaviour from this comparison.
 - **Milestones 1–3:** Complete at the owner-approved policy/documentation level. Milestone 1 DEC-038 (PR #45); Milestone 2 DEC-039–DEC-041 (PRs #46–#48); Milestone 3 DEC-042–DEC-044 (PRs #49–#51). PR #52 records Milestone 3 completion.
 - **Accepted policy:** D-01–D-15 / DEC-022–DEC-036; DEC-037 logistics-first product hierarchy; DEC-038 independent shipment booking; DEC-039 pricing boundaries; DEC-040 measurement adjustment/customer resolution; DEC-041 payment/settlement; DEC-042 physical intake/custody; DEC-043 location capabilities/authority; DEC-044 custody transfers/physical exceptions. PM-01–PM-12 and BP-01–BP-22 remain accepted at their documented policy levels.
 - **Current continuity work:** Continue detailed section-level dependency reconciliation across all SDD documents, including finance responsibility/deployment wording, Admin scope, workflows, actors/permissions, acceptance, and source evidence. The current proposal changes documentation only.
@@ -1140,6 +1140,14 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 ## Domain boundary and identity reconciliation — current workstream
 
 - **Verified documentation baseline:** PR #71 merge commit `37a6ca57f1619d124ebb9718aa6067ed8d40f978`; current `main` is the base for this work.
+- **New design artifact:** `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md` makes record responsibilities, party identity/entitlement boundaries, unresolved cardinality decisions DB-01–DB-12, transaction consistency candidates and source-reuse constraints explicit.
+- **Purpose:** prevent a final data/API design from collapsing booking, quote, shipment/parcel, intake, custody, route, movement, payment, financial event and delivery facts into one record or inferring authority from a person's role.
+- **Gate:** This is a design support matrix, not an approved schema or data model. Reviews 1–2 of 5 remain approved; Review 3 remains in preparation; implementation freeze remains through Review 5.
+
+
+## Domain boundary and identity reconciliation — current workstream
+
+- **Verified documentation baseline:** PR #71 merge commit `37a6ca57f1619d124ebb9718aa6067ed8d40f978`.
 - **New design artifact:** `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md` makes record responsibilities, party identity/entitlement boundaries, unresolved cardinality decisions DB-01–DB-12, transaction consistency candidates and source-reuse constraints explicit.
 - **Purpose:** prevent a final data/API design from collapsing booking, quote, shipment/parcel, intake, custody, route, movement, payment, financial event and delivery facts into one record or inferring authority from a person's role.
 - **Gate:** This is a design support matrix, not an approved schema or data model. Reviews 1–2 of 5 remain approved; Review 3 remains in preparation; implementation freeze remains through Review 5.
