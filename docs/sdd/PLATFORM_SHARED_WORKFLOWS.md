@@ -443,6 +443,22 @@ The following cases require explicit outcomes in the detailed lifecycle and acce
 | Notification fails or is duplicated | Retry/deduplication, observability, fallback and privacy |
 | Government disclosure request | Request validation, approval, disclosure scope, evidence access and audit |
 
+### 13.1 Support-assisted requests and controlled resolution
+
+Support is a request-intake, verification, communication and escalation responsibility; it is not a substitute decision-maker for the customer, Finance, Operations, or an authorized reviewer.
+
+1. Record the requester's identity and claimed relationship to the booking/order, the requested action or disputed fact, the affected record, time, and available supporting material. Apply the verification method and entitlement required by the relevant workflow; contact details or association with a booking alone do not establish authority.
+2. A sender, receiver, payer, delegate, or other interested party may raise a request or dispute through Support where policy permits. Support records and routes the request; it does not assume booking-party authority. A booking change requires the booking party's authorization unless a separately approved exception applies.
+3. If the booking party is unavailable, Support escalates the circumstances and evidence to a designated Admin/reviewer. If authority cannot be established, existing booking details remain unchanged. Reports of death, legal incapacity, or suspected account compromise trigger the applicable verification/review and protective restrictions; they do not automatically transfer ownership, cancel a booking, change payment, or authorize parcel release.
+4. A disputed collection-authority change keeps parcel release on hold until the authorized reviewer establishes entitlement. Support must not release a parcel or treat the request itself as proof of collection authority.
+5. Support responsibility alone does not authorize refund approval/execution, payment-state changes, custody or delivery-evidence alteration, dispatch exceptions, parcel release, unrestricted audit/evidence viewing, export, or external disclosure. Those actions require the relevant separately assigned permission, location capability where applicable, and workflow-specific approval.
+6. Sensitive financial, measurement, routing, dispatch, custody, delivery, disclosure, and other consequential exceptions follow their own accepted authority and second-approval rules. Requester/approver separation and second-person review apply where the governing policy requires them; do not impose a universal second approver on routine actions.
+7. Disputes are assigned to an appropriately authorized reviewer. Preserve the disputed original information and evidence; record corrections as attributable amendments. Where reasonably possible, an appeal is reviewed by someone other than the original decision-maker. Further review is limited to significant new evidence, procedural failure, or material error and requires the designated authorization.
+8. Guest-order recovery and claiming continue to follow DEC-035 and A04-03/A04-04: Support assistance cannot bypass proof of control of the original checkout email, the separate ownership challenge, expiry/replay protections, or server-side entitlement checks.
+9. Record the Support actor, requester and relationship verification, request, evidence references, routing/escalation, assigned reviewer, decision, approver where required, outcome and notifications. Audit/evidence access itself remains subject to PM-08; Admin status alone is insufficient.
+
+**Acceptance boundary:** Support can help a customer reach the correct authorized process, but cannot create authority, silently mutate the underlying record, override a hold, or convert a request, note, notification or audit entry into proof of payment, custody, handover or delivery. The detailed visibility matrix, identity methods, escalation targets, review eligibility, thresholds, retention and technical contracts remain open.
+
 ## 14. Accepted owner decisions and remaining workflow specification
 
 All 15 high-level owner decisions are accepted and recorded in DEC-022–DEC-036. This section tracks detail needed to turn accepted policies into complete workflows; it is not a list of pending owner decisions.
