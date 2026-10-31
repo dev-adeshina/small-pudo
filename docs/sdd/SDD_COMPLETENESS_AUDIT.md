@@ -491,3 +491,25 @@ This update is documentation-only. It does not approve a schema, collection, fie
 - **Acceptance evidence:** A17-05–A17-07 now cover Support-assisted requests, unavailable/compromised booking-party and disputed collection authority, and dispute/appeal review. Existing A17-01–A17-04 remain, with second-person approval limited to policy-defined consequential cases.
 - **Limit:** This is a documentation reconciliation, not implementation or runtime evidence. No application code or tests were changed/run. Exact permission catalogue, reviewer assignment, identity methods, thresholds, service-specific exception eligibility, evidence requirements, retention, and technical enforcement remain open.
 - **Review gates:** Reviews 1 and 2 of 5 are approved. Review 3 remains pending completion of source-aware technical contracts; Reviews 4 and 5 remain future consolidated approval gates. Application-code changes remain frozen until Review 5.
+
+
+## 22. Repository baseline and technical-contract continuation — 31 October 2026
+
+### Repository and source-history evidence
+
+- Current `main` was compared with PR #70 merge commit `ad6189a598d3fcbb79c90679a7dac33914ea0474`; GitHub reports the refs identical (zero commits ahead/behind).
+- Comparing the active source-inspection snapshot `e0f69055d33dd9399c23e1d793f359468229c856` with current `main` reports 379 commits ahead. The compare response lists changes only under `docs/sdd/`; no application-source path is listed as changed in that comparison.
+- This is repository-history evidence that the previously inspected application-source snapshot has not been superseded by a later application-source path change. It is not a fresh semantic review of every source file, runtime/API/browser test, production Firestore inspection, deployed-rules/configuration verification, provider-dashboard inspection, or production-readiness evidence.
+- PR #70 itself was documentation-only. No application code or tests were changed or run.
+
+### Technical-contract reconciliation direction
+
+- Add a dedicated source-aware contract crosswalk distinguishing existing storefront/order/payment/Admin capabilities from conceptual shipment-booking, intake/custody, location capability, routing, movement, delivery-proof, general financial-event and audit/evidence capabilities not found in the inspected source surface.
+- Specify common mutation preconditions, authorization layers, concurrency and replay behaviour, external-provider unknown outcomes, correction/audit expectations, and recovery ownership as design requirements rather than implementation choices.
+- Keep existing Next.js App Router, Firebase Auth/Firestore/Admin, Paystack and Cloudinary boundaries as the source architecture to reuse where suitable. Do not create parallel architecture or presume new collections, fields, endpoints, status enums, claims, services, portals, or a generalized workflow engine.
+- Treat the conceptual permission model as layered: authenticated principal; explicit customer/business entitlement or staff assignment; action/resource scope; location capability where applicable; lifecycle precondition; required independent approval; and attributable evidence. Exact technical representation remains open.
+- Keep unresolved owner/operating inputs blocked: service pricing/rates/units, quote and handover durations, payment/refund/credit thresholds, service-specific physical proof, approval/materiality thresholds, retention/legal holds, Support/dispute response targets, and production monitoring/recovery objectives.
+
+### Evidence boundary and next work
+
+This reconciliation does not close VLY-009/VLY-010, VLY-023, payment replay/concurrency, guest recovery, production configuration, or any other runtime issue. Continue to build the consolidated Review 3 package from source facts, accepted policies, explicit technical candidates and unresolved owner inputs. Reviews 1–2 of 5 remain approved; Reviews 3–5 remain future gates. The application-code freeze remains in force until explicit Review 5 approval.
