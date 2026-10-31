@@ -120,8 +120,8 @@ The status below is provisional and based on the paths listed. Where evidence is
 | ADM-P02 Notification centre | Missing | No notification-centre route found. |
 | ADM-P03 Saved dashboard/date preferences | Missing | No preferences or custom dashboard configuration found. |
 | ADM-P04 Detailed reconciliation | Missing / unverified | Payment endpoints exist, but reconciliation UI/workflow is not evidenced. |
-| ADM-P05 Commission/payout oversight | Missing; separate Finance Portal scope | No Admin implementation found; keep out of launch unless a real operational need promotes it. |
-| ADM-P06 Expense/route-cost reporting | Missing; Finance Portal scope | No expense or route-cost capture found. |
+| ADM-P05 Commission/payout oversight | Missing; full-finance responsibility outside Admin scope; deployment model unresolved | No Admin implementation found; keep out of launch unless a real operational need promotes it. |
+| ADM-P06 Expense/route-cost reporting | Missing; full-finance responsibility outside Admin scope | No expense or route-cost capture found. |
 | ADM-P07 Advanced/scheduled reports | Missing | No reports page found. |
 | ADM-P08 Rich audit filtering/export | Missing | No audit-log route found. |
 | ADM-P09 Granular staff permissions UI | Missing / unresolved | No staff-access administration UI found. |
@@ -140,7 +140,7 @@ Keep the startup scope lean. Do not start implementing all missing requirements 
 2. **Replace the dashboard demo content:** first define the small set of real, computable launch metrics and their data sources. Reuse existing order/payment data; do not add a new collection solely to support cards.
 3. **Verify the existing order/product/category paths:** test their current CRUD and status transitions; record specific defects before changing them.
 4. **Apply the owner-confirmed operating model:** the launch choices are recorded in §7. The corresponding shipment/intake/PUDO/transport/pricing requirements are part of the intended launch scope; resolve detailed policy values and implementation gaps before coding.
-5. **Design the minimum missing routes/workflows** only after those decisions and the underlying schema are inspected. Keep full finance operations in the separate Finance Portal and defer enterprise features.
+5. **Design the minimum missing routes/workflows** only after those decisions and the underlying schema are inspected. Keep full finance operations within the Finance function and outside the Admin launch scope; the deployment model remains unresolved. Defer enterprise features.
 
 ## 6. Required verification still outstanding
 
