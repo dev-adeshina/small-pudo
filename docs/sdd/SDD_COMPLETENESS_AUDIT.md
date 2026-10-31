@@ -251,7 +251,7 @@ The initial Step 2A review inventoried all 23 Markdown files under `docs/sdd/` o
 2. `PLATFORM_SHARED_WORKFLOWS.md` and `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` contain the DEC-039–DEC-044 refinements. `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md` references DEC-037–DEC-044 as policy-derived acceptance direction and remains a draft, not an executable test specification.
 3. `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md` and `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` do not yet incorporate DEC-037–DEC-044. The P0 evidence catalogue includes DEC-038 but not DEC-039–DEC-044; the P0 readiness assessment includes DEC-037 but not the full later sequence.
 4. `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` incorporates DEC-038 and booking-party authority but does not yet reflect DEC-039–DEC-044 actor responsibilities. `PLATFORM_STAFF_PERMISSION_MATRIX.md` needs explicit reconciliation with the physical custody and location-authority refinements.
-5. `PLATFORM_OWNER_DECISION_REGISTER.md` contains later policy addenda, but its metadata pointed to an old PR #13 baseline and described only D-01–D-15 in its opening status line. The stale baseline metadata is refreshed in this branch; the full cross-index still needs review.
+5. `PLATFORM_OWNER_DECISION_REGISTER.md` contains later policy addenda, but its metadata pointed to an old PR #13 baseline and described only D-01–D-15 in its opening status line. The stale baseline metadata was refreshed in PR #54; the full cross-index still needs review.
 6. `ADMIN_REQUIREMENTS.md` still describes the consolidated priority baseline as pending, although the requirement-level priority baseline was owner-reviewed and merged in PR #31. `ADMIN_REQUIREMENTS_AUDIT.md` still describes PR #3 and PR #4 as open; current GitHub state confirms PR #3 merged and PR #4 closed without merge.
 7. `IMPLEMENTATION_SOURCE_TRACEABILITY.md` remains tied to the active source commit `e0f69055d33dd9399c23e1d793f359468229c856`, but its historical documentation-comparison references stop at PR #39. PR #53 is documentation-only, so the source commit remains unchanged; comparison metadata should be brought current without implying runtime verification.
 8. `SPEC.md` retains an explicitly historical archive baseline and earlier roadmap/source descriptions. Keep its historical status clear; current product policy and work order are governed by current decision, workflow, progress, and handoff documents.
@@ -270,3 +270,30 @@ No confirmed contradiction requiring an accepted owner policy to be reopened was
 5. Re-review all 23 SDD documents for decision references, status vocabulary, unresolved dependencies, and implementation/test approval boundaries.
 
 **Current status:** Step 2A inventory complete; full decision/document reconciliation remains open. No accepted policy was changed, no new policy or technical contract was approved, and no application code or runtime behaviour was changed or verified.
+
+
+## 13. Cross-document status and decision-reference review — 31 October 2026
+
+### Review baseline and scope
+
+- Current repository baseline: PR #59 merge commit `94c0ac87374248a32b606d82e6d418267a5b0218`.
+- The first cross-document status/reference scan covered all 23 Markdown SDD documents inventoried in Step 2A. It checked decision-family references, repository/PR metadata, approval-state wording, continuity pointers, and the existing P0 scenario crosswalk.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. PRs #53–#59 are documentation-only; this comparison does not establish runtime, deployment, or production behaviour.
+
+### Findings
+
+1. No confirmed contradiction requiring an accepted owner decision to be reopened was found in this first cross-document status/reference scan. Preserve DEC-001–DEC-044, PM-01–PM-12, and BP-01–BP-22 at their individually recorded approval levels.
+2. PRs #55–#58 have completed the previously identified Admin history, actor/permission, requirement/priority, and P0 catalogue/readiness corrections. PR #59 refreshed continuity metadata.
+3. Several current-reference fields still lagged the merged baseline: the README and handoff pointed to PR #53/#58; the requirement dependency register still presented PR #41 as its current status and PR #56 as its repository baseline; workflow/lifecycle/acceptance headers stopped at DEC-036/038/039 despite later policy addenda; and source/P0 evidence comparison fields stopped at PR #57/#58. These metadata and decision-range references are being corrected in the current documentation pass.
+4. The DEC-037–DEC-044 crosswalk in the P0 catalogue references existing case IDs only. A mechanical cross-check found 80 unique catalogue case rows and no missing case ID among the crosswalk references. This validates reference existence only; it does not validate executable test completeness or approve execution.
+5. The older PR #4 “open/unmerged” wording in the 29 October audit checkpoints is retained as dated historical state; current status elsewhere correctly records PR #4 as closed without merge. Historical snapshots must not be silently rewritten as if they were current.
+6. `SPEC.md` remains an explicitly historical product/technical specification; no attempt is made to supersede its archive/roadmap content by rewriting it as a current implementation record.
+
+### Remaining review work
+
+- Complete detailed section-level comparison of workflows, lifecycle boundaries, actor and permission authority, requirement dependencies, acceptance criteria, Admin page design, and source-evidence claims against each authoritative decision.
+- Resolve or explicitly preserve each operational/technical dependency: service configuration, price inputs/formulas, measurement thresholds, payment/refund/reconciliation, custody proof and exception resolution, location capability, booking-party consent/delegation, lifecycle/status vocabulary, data/API/security, retention, idempotency/recovery, and test fixtures.
+- Reassess the scope/authority of root `pudo.zip` before including it in source evidence; it remains uninspected.
+- Continue source-traceability and production-readiness planning without claiming runtime evidence or changing application code.
+
+**Current status:** This is the first status/reference scan, not completion of the full platform-wide SDD reconciliation. VLY-019 remains open and blocks application-code changes until the complete SDD is explicitly approved by the owner. No policy was changed, no new technical contract was approved, no tests were executed, and no application code or runtime behaviour was changed or verified.

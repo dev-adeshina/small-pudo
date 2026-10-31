@@ -1,8 +1,8 @@
 # VeriLyft Requirement Dependency and Traceability Register
 
-**Document status:** Stage 5.5 consolidated traceability baseline — owner-reviewed and merged in PR #41  
+**Document status:** Owner-reviewed traceability baseline (PR #41); DEC-037–DEC-044 dependency crosswalk reconciled in PR #57; detailed technical/source/runtime contracts remain open  
 **Prepared:** 31 October 2026  
-**Repository baseline:** `main` after PR #56 merge `5cf0b8bae46e8b88d777b87c694400657bfd54ed` (documentation-only)  
+**Repository baseline:** `main` after PR #59 merge `94c0ac87374248a32b606d82e6d418267a5b0218` (documentation-only)  
 **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32)  
 **Authority:** Derived from the owner-approved priority matrix, A-01–A-20 catalogue, DEC-022–DEC-044, PM-01–PM-12, BP-01–BP-22, and the current actor/workflow/lifecycle drafts. This register is a traceability aid, not a new source of product policy or implementation authorization.
 
@@ -213,4 +213,4 @@ Before a P0/Conditional P0 scenario can be approved for execution, its test spec
 - [x] Source-status summaries remain tied to the active-source inspection baseline; PR #41 changed documentation only.
 - [x] Register accepted as a navigation/traceability baseline only; technical design, test execution, implementation and production release remain unapproved.
 
-**Current status:** Owner-reviewed and merged in PR #41 as a traceability/navigation baseline. No tests were run and no application code was changed.
+**Current status:** The A-01–A-20/ADM-R01–ADM-R54 traceability baseline was owner-reviewed in PR #41; the DEC-037–DEC-044 dependency crosswalk was added in PR #57. This remains a navigation/traceability aid only. No tests were run, no application code was changed, and technical contracts/runtime verification remain open.
