@@ -75,3 +75,5 @@ The latest A-15 reconciliation distinguishes accepted action-level staff permiss
 
 
 The A-16 reconciliation aligns DEC-033 accountable recordkeeping and PM-08's separate audit-view, export and external-disclosure permissions with A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51. The four existing A-16 case IDs and 80-case catalogue are retained. VLY-023 remains open; no audit architecture or implementation is approved, and the implementation freeze remains active.
+
+The current technical-contract reconciliation is tracked in `PLATFORM_TECHNICAL_CONTRACT_RECONCILIATION.md`. It maps source-backed capabilities and gaps to proposed contract boundaries, mutation/authorization/replay/recovery expectations, acceptance evidence, and unresolved design inputs. It is a design/reconciliation artifact, not implementation authorization.
