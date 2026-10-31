@@ -4,9 +4,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #62 is merged; merge commit `bcbbca289eb1eef8a4535fb81ab24b3e3fd1a32f`.
-- PRs #54–#62 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, and PR #61 aligns the A-10 acceptance row with DEC-043.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32; repository-history comparison refreshed through PR #61). Comparison through PR #62 found only SDD documentation changes after that source baseline. This does not verify runtime behaviour or production readiness.
+- Current `main` baseline: PR #63 is merged; merge commit `9c764e9f0c3a43ee7cae92f607480e1fc386c704`.
+- PRs #54–#63 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, and PR #63 clarifies the Finance responsibility/deployment boundary.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository comparison through PR #63 found documentation-only changes after that source baseline; the current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This does not mean source was re-inspected at PR #63 and does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -35,7 +35,7 @@ Milestones 1–3 are complete at the owner-approved policy/documentation level. 
 
 **Milestone:** Platform-wide SDD Reconciliation and Implementation Readiness.
 
-Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #62. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#58 corrected Admin baseline/history, actor and staff-permission references, requirement dependency/priority crosswalks, and P0 catalogue/readiness crosswalks; PR #60 completed the first status/reference scan. Step 2D targeted section-level review has begun. PR #61 corrected stale owner-approval wording in the original A-10 row against accepted DEC-043. PR #62 aligned DEC-038–DEC-041 status wording. The latest review clarifies that references to a Finance Portal describe the accepted full-finance responsibility boundary, not approval for a separate deployed portal; protected-module versus separate-portal deployment remains unresolved. Detailed reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
+Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #63. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#58 corrected Admin baseline/history, actor and staff-permission references, requirement dependency/priority crosswalks, and P0 catalogue/readiness crosswalks; PR #60 completed the first status/reference scan. Step 2D targeted section-level review continues. PR #61 corrected stale owner-approval wording in the original A-10 row against accepted DEC-043. PR #62 aligned DEC-038–DEC-041 status wording. PR #63 clarified the Finance responsibility/deployment boundary. The current DEC-044 pass aligns custody acceptance criteria and evidence cases while preserving service-specific proof, authority, investigation, hold, retention and technical details as open. Detailed reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
 
 ### Milestone 4 sequence
 
