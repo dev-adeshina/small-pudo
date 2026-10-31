@@ -258,3 +258,8 @@ The action-level guard, authorization, replay/concurrency, unknown-provider-outc
 ## 12. API, persistence and integration boundary cross-reference
 
 Use `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md` when converting A-01–A-20 and ADM-R01–ADM-R54 scenario outlines into executable case specifications. It identifies authoritative fact owners, command/query/provider/evidence boundaries, source reuse and gaps, candidate transaction/consistency boundaries, API authorization/input/replay requirements, projection freshness and provider unknown-outcome obligations. It adds no test-case IDs, does not change priority/readiness classifications, does not resolve DB-01–DB-12 or policy blockers, and does not claim that any test has been executed or passed.
+
+
+## 13. Technical design coherence cross-reference
+
+Use `PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md` as the cross-document index when converting P0 and Conditional P0 scenario outlines into case-level specifications. It maps A-01–A-20 to authoritative fact/lifecycle ownership, API/persistence/authorization boundaries, external effects/recovery, evidence anchors and unresolved dependencies. It does not resolve policy/DB blockers, add case IDs, change priorities, authorize execution or claim tests passed. Case-level preconditions, fixtures, actors, actions, expected changed/unchanged facts, replay/failure variants, evidence, cleanup and reviewer remain required under this readiness document.
