@@ -92,7 +92,7 @@ export default function PaymentCallbackPage() {
         <h1 className="mb-4 text-2xl font-semibold">
           {displayedStatus === "verifying"
             ? "Verifying your payment"
-            : status === "success"
+            : displayedStatus === "success"
               ? "Payment confirmed"
               : "Payment not confirmed"}
         </h1>
