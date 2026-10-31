@@ -237,3 +237,36 @@ Before marking the platform SDD complete:
 7. **Owner approval gate:** present the complete reconciled platform-wide SDD for explicit owner approval. No application-code changes before approval.
 
 **Current gate:** The continuity baseline has been inspected and a focused documentation-only reconciliation has been prepared. The complete platform-wide SDD remains incomplete and unapproved. Milestone 3 policy completion does not authorize implementation. No application-code changes are authorized.
+
+
+## 12. Decision/document reconciliation inventory — 31 October 2026
+
+### Scope and evidence
+
+The initial Step 2A review inventoried all 23 Markdown files under `docs/sdd/` on the PR #53 baseline (`d17b6440a8c9aca4a07b3797ae4bc1b24520e95c`). The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; PR #53 changed documentation only. This pass did not execute tests, inspect deployed configuration, or establish runtime/production behaviour.
+
+### Reconciliation findings
+
+1. The authoritative `DECISIONS.md` contains DEC-001–DEC-044. Accepted status remains decision-specific: provisional, conceptual, high-level policy, and detailed policy outcomes must not be flattened into one approval state.
+2. `PLATFORM_SHARED_WORKFLOWS.md` and `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` contain the DEC-039–DEC-044 refinements. `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md` references DEC-037–DEC-044 as policy-derived acceptance direction and remains a draft, not an executable test specification.
+3. `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md` and `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` do not yet incorporate DEC-037–DEC-044. The P0 evidence catalogue includes DEC-038 but not DEC-039–DEC-044; the P0 readiness assessment includes DEC-037 but not the full later sequence.
+4. `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` incorporates DEC-038 and booking-party authority but does not yet reflect DEC-039–DEC-044 actor responsibilities. `PLATFORM_STAFF_PERMISSION_MATRIX.md` needs explicit reconciliation with the physical custody and location-authority refinements.
+5. `PLATFORM_OWNER_DECISION_REGISTER.md` contains later policy addenda, but its metadata pointed to an old PR #13 baseline and described only D-01–D-15 in its opening status line. The stale baseline metadata is refreshed in this branch; the full cross-index still needs review.
+6. `ADMIN_REQUIREMENTS.md` still describes the consolidated priority baseline as pending, although the requirement-level priority baseline was owner-reviewed and merged in PR #31. `ADMIN_REQUIREMENTS_AUDIT.md` still describes PR #3 and PR #4 as open; current GitHub state confirms PR #3 merged and PR #4 closed without merge.
+7. `IMPLEMENTATION_SOURCE_TRACEABILITY.md` remains tied to the active source commit `e0f69055d33dd9399c23e1d793f359468229c856`, but its historical documentation-comparison references stop at PR #39. PR #53 is documentation-only, so the source commit remains unchanged; comparison metadata should be brought current without implying runtime verification.
+8. `SPEC.md` retains an explicitly historical archive baseline and earlier roadmap/source descriptions. Keep its historical status clear; current product policy and work order are governed by current decision, workflow, progress, and handoff documents.
+9. Continuity documents now use PR #53 as the current repository baseline. Remaining affected domain documents require targeted corrections before Step 2 can be declared complete.
+
+### Policy-conflict assessment
+
+No confirmed contradiction requiring an accepted owner policy to be reopened was identified in this initial inventory. The findings are missing cross-references, stale metadata/status, and unresolved operational/technical detail. This is preliminary; the corrective pass must verify each affected section and record any genuine contradiction if found.
+
+### Required corrective sequence
+
+1. Update the owner decision register metadata and reconcile its index against DEC-001–DEC-044, PM-01–PM-12, and BP-01–BP-22.
+2. Propagate DEC-037–DEC-044 into actor responsibilities, staff permission boundaries, requirement dependency traceability, priority mapping, and P0 evidence/readiness documents where relevant.
+3. Correct Admin requirement priority status and PR #3/#4 history; retain dated source/runtime limitations as historical evidence rather than current verification.
+4. Refresh source-traceability comparison metadata through PR #53 without changing the inspected source baseline or making runtime claims.
+5. Re-review all 23 SDD documents for decision references, status vocabulary, unresolved dependencies, and implementation/test approval boundaries.
+
+**Current status:** Step 2A inventory complete; full decision/document reconciliation remains open. No accepted policy was changed, no new policy or technical contract was approved, and no application code or runtime behaviour was changed or verified.

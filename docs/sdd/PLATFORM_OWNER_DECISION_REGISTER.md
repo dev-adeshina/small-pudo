@@ -1,8 +1,9 @@
 # VeriLyft Platform Owner Decision Register
 
-**Document status:** D-01–D-15 high-level owner outcomes are accepted and recorded; additional owner-approved detailed policies are cross-referenced below. Detailed implementation policy remains open where identified.  
-**Last updated:** 30 October 2026  
-**Related baseline:** PR #13 merged; `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`  
+**Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-044 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
+**Last updated:** 31 October 2026  
+**Current repository baseline:** PR #53 merged at `d17b6440a8c9aca4a07b3797ae4bc1b24520e95c`.
+**Related documents:** `DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, and `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`  
 **Implementation gate:** No application-code changes until the platform-wide SDD is reconciled and explicitly approved.
 
 ## 1. Purpose and rules

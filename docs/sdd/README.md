@@ -7,7 +7,8 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 ### Documents
 
 - `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and historical roadmap (not the current work order).
-- `SDD_COMPLETENESS_AUDIT.md` — platform-wide documentation coverage, inconsistencies, gaps, and the proposed SDD completion sequence.
+- `SDD_COMPLETENESS_AUDIT.md` — platform-wide documentation coverage, inconsistencies, gaps, and the SDD completion sequence.
+- `PLATFORM_DECISION_DOCUMENT_RECONCILIATION.md` — decision-to-document coverage, stale references, omissions, and unresolved reconciliation work.
 - `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` — platform actor catalogue, accepted responsibility boundaries, portal/module distinction, and remaining role/permission design questions.
 - `PLATFORM_STAFF_PERMISSION_DECISIONS.md` — owner-accepted outcomes for PM-01–PM-12; policy decisions are accepted, while detailed technical permission design remains open.
 - `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md` — owner-accepted BP-01–BP-22 under DEC-023/DEC-024; operational and technical parameters remain open.
@@ -59,11 +60,11 @@ When sources conflict, do not silently favour code or documentation. Record the 
 
 ### Current Milestone 4 status
 
-The latest verified `main` baseline for the current Milestone 4 continuity work is PR #52 merge commit `61b8b65777d98950b6a4b6c5c311490e064f3d47`. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; comparison through PR #52 found documentation-only changes after that source baseline. This is a source-history comparison, not runtime or production verification.
+The latest verified `main` baseline is PR #53 merge commit `d17b6440a8c9aca4a07b3797ae4bc1b24520e95c`. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; comparison through PR #53 found documentation-only changes after that source baseline. This is a source-history comparison, not runtime or production verification.
 
 Milestones 1–3 are complete at the owner-approved policy/documentation level: DEC-038 through DEC-044 are recorded in the SDD, with the relevant documentation PRs merged through PR #51. PR #52 reconciled the Milestone 3 completion record. The 15 high-level owner decisions D-01–D-15, staff permission policies PM-01–PM-12, and booking-party authority policies BP-01–BP-22 remain accepted at their recorded policy levels.
 
-Milestone 4 is now the active workstream: platform-wide SDD reconciliation and implementation-readiness assessment. The initial continuity baseline has identified stale progress, handoff, audit, and issue-register references. Reconcile these records before proceeding to domain-by-domain decisions, source traceability, acceptance-test specifications, and production-readiness evidence planning.
+Milestone 4 is now the active workstream: platform-wide SDD reconciliation and implementation-readiness assessment. Step 1 is complete following PR #53. The initial Step 2 inventory reviewed all 23 Markdown SDD documents and identified missing DEC-037–DEC-044 references in several dependent documents, stale Admin requirement/PR metadata, and incomplete continuity references. See `PLATFORM_DECISION_DOCUMENT_RECONCILIATION.md`; corrective reconciliation remains in progress.
 
 **Implementation gate:** No application-code changes are authorized until the complete platform-wide SDD has been reconciled and explicitly approved by the owner. Policy approval, documentation presence, source presence, passing builds, and readiness catalogues are not interchangeable with executable test approval or production evidence. Preserve the distinction between intended behaviour, current source facts, runtime verification, and production readiness.
 

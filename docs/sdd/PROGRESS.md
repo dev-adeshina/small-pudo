@@ -3,8 +3,8 @@
 **Last updated:** 31 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest verified main baseline for this work:** `61b8b65777d98950b6a4b6c5c311490e064f3d47` — PR #52 merged. The current Milestone 4 proposal is documentation-only and is not yet part of `main`.  
-**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Comparison through PR #52 found intervening changes to SDD documentation only; no later application-source commit was identified. This does not establish runtime or production behaviour.  
+**Latest verified main baseline for this work:** `d17b6440a8c9aca4a07b3797ae4bc1b24520e95c` — PR #53 merged.  
+**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Comparison through PR #53 found intervening changes to SDD documentation only; no later application-source commit was identified. This does not establish runtime or production behaviour.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
 **Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. The initial read-only baseline inventory is complete. This documentation-only proposal aligns the continuity records with PR #52, the merged DEC-038–DEC-044 policy sequence, and Milestone 3 completion. Next, reconcile the accepted decisions and cross-domain dependencies across every SDD document, then complete source traceability, detailed acceptance-test specifications, and production-readiness evidence planning. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
@@ -942,15 +942,32 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 **Milestone outcome:** Parts 1–3 are complete at the owner-approved policy/documentation level. This does not mean the platform-wide SDD is complete, nor does it authorize implementation. No application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests are changed or verified by this progress reconciliation.
 
 
-## 42. Milestone 4 Step 1 — continuity baseline reconciliation prepared — 31 October 2026
+## 42. Milestone 4 Step 1 — continuity baseline reconciliation completed — 31 October 2026
 
-- [x] Verified PR #52 is merged and established `61b8b65777d98950b6a4b6c5c311490e064f3d47` as the repository baseline for this work.
-- [x] Compared the active application-source inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856` with the PR #52 baseline; intervening changes were documentation-only.
+- [x] Verified PR #52 was merged at `61b8b65777d98950b6a4b6c5c311490e064f3d47` and used it as the starting baseline.
+- [x] Compared the active application-source inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856` through PR #53 merge commit `d17b6440a8c9aca4a07b3797ae4bc1b24520e95c`; intervening changes were documentation-only.
 - [x] Inventoried the principal SDD documents and identified stale continuity metadata, milestone pointers, decision ranges, and PR-state references.
-- [x] Prepared focused updates to `README.md`, `PROGRESS.md`, `SESSION_HANDOFF.md`, `SDD_COMPLETENESS_AUDIT.md`, and `ISSUES.md`.
-- [ ] Review and merge the Milestone 4 continuity-baseline PR.
-- [ ] After merge, reconcile accepted decisions and unresolved dependencies across the remaining SDD documents, without reopening accepted policy unless new evidence establishes a genuine conflict.
+- [x] Prepared and merged the focused continuity updates to `README.md`, `PROGRESS.md`, `SESSION_HANDOFF.md`, `SDD_COMPLETENESS_AUDIT.md`, and `ISSUES.md` in PR #53.
+- [x] Verified PR #53 merged into `main` at `d17b6440a8c9aca4a07b3797ae4bc1b24520e95c`.
+- [x] Begin the accepted-decision/document inventory across all 23 Markdown SDD documents; record missing references, stale metadata, and unresolved dependencies in `PLATFORM_DECISION_DOCUMENT_RECONCILIATION.md`.
+- [ ] Correct the identified domain-document omissions and stale Admin requirement/PR metadata in focused documentation-only changes.
+- [ ] Complete the cross-document contradiction and dependency review without reopening accepted policy unless new evidence establishes a genuine conflict.
 - [ ] Continue read-only source traceability, detailed acceptance-test specification, and production-readiness evidence planning.
 - [ ] Obtain explicit owner approval of the complete platform-wide SDD before any application-code changes.
 
 **Evidence boundary:** This work is documentation-only and read-only. No application source, schema, Firebase rules/configuration, API, permission, deployment, runtime behaviour, or test result is changed or verified by this proposal. The source-history comparison does not certify the application or production environment.
+
+
+## 43. Milestone 4 Step 2A — decision/document inventory and gap assessment — 31 October 2026
+
+- [x] Reviewed all 23 Markdown documents under `docs/sdd/` against DEC-001–DEC-044, PM-01–PM-12, and BP-01–BP-22.
+- [x] Confirmed that the authoritative decision log records DEC-001–DEC-044; the staff and booking-party policy records retain their accepted PM/BP outcomes.
+- [x] Confirmed that shared workflow and lifecycle documents incorporate DEC-039–DEC-044, and the cross-domain acceptance matrix references DEC-037–DEC-044 as policy-derived acceptance direction.
+- [x] Identified missing DEC-037–DEC-044 references in requirement traceability/priority documents; actor, staff-permission, P0 catalogue, and test-readiness documents also need targeted reconciliation.
+- [x] Identified stale Admin requirement-baseline status and historical PR #3/#4 statements; verified PR #3 merged and PR #4 closed without merge.
+- [x] Recorded document-by-document findings and the corrective sequence in `PLATFORM_DECISION_DOCUMENT_RECONCILIATION.md`.
+- [ ] Complete corrective reconciliation of affected domain documents and continuity metadata.
+- [ ] Complete read-only application-source traceability, detailed acceptance-test specification, and production-readiness evidence planning.
+- [ ] Obtain explicit owner approval of the complete platform-wide SDD before any application-code changes.
+
+**Step 2A boundary:** This is a documentation inventory and gap assessment, not a declaration that the SDD is reconciled or approved. No accepted policy is reopened. No new policy, technical contract, schema, API, permission implementation, test execution, or application-code change is approved by this checkpoint.
