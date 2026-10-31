@@ -258,6 +258,6 @@ Before final technical design is presented:
 **Current gate:** Reviews 1 and 2 of 5 remain approved. Review 3 remains in preparation; Reviews 4 and 5 remain future consolidated approvals. This document does not authorize application code, schema, API, Firebase rules, configuration, provider enablement or deployment. The implementation freeze remains until explicit Review 5 approval of the complete reconciled SDD.
 
 
-## 14. Consolidated owner-decision package boundary
+## 15. Consolidated owner-decision package boundary
 
 The owner-dependent booking, parcel, route-leg, party/business, location/partner and financial-event relationships are consolidated in `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`. Its recommendations remain pending and are not approved persistence rules. This contract must continue to represent unresolved cardinalities as open until the owner confirms the relevant business rule and the technical design is reconciled. No collection, field, index, endpoint or transaction boundary may be inferred from the package.
