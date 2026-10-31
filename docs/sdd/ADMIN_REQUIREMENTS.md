@@ -27,7 +27,7 @@ Priority is not the same as implementation status. Existing functionality must b
 - A shipment may have multiple transport movements.
 - Payment status and physical shipment status must remain separate.
 - Admin Portal pages should reuse the existing Next.js App Router, TypeScript, Firebase/Firestore, Firebase Authentication/Admin, API, component, and styling patterns wherever suitable.
-- The Admin Portal is not the full Finance Portal. It provides the operational financial visibility needed by administrators; payroll, detailed accounting, commissions/payouts, and comprehensive financial reporting can remain outside this initial scope.
+- The Admin Portal is not the full Finance function. It provides the operational financial visibility needed by administrators; payroll, detailed accounting, commissions/payouts, and comprehensive financial reporting remain outside the Admin launch scope. This is a responsibility boundary, not approval for a separate Finance Portal deployment; whether full-finance capability is delivered through a protected module, a separate portal, or a combination remains unresolved.
 - No new collection, field, route, domain type, service, or migration should be assumed until repository inspection shows the need and the design is approved.
 
 ### 2.2 Explicit startup exclusions unless a concrete need arises
