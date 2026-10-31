@@ -2,8 +2,8 @@
 
 **Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-044 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
 **Last updated:** 31 October 2026  
-**Current repository baseline:** PR #67 merged at `04c093927c8d47f9e1fe8351c9f8ecb48920b753`.
-**Related documents:** `DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, and `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`  
+**Current main baseline:** PR #83 merged at `986f4ad79232ce1700f4edaa972a17522ed319c8`. The current unmerged preparation branch contains a proposed owner decision package; no recommendation in that package is accepted by this register.
+**Related documents:** `DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, and `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, and `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`  
 **Implementation gate:** No application-code changes until the platform-wide SDD is reconciled and explicitly approved.
 
 ## 1. Purpose and rules
@@ -384,3 +384,12 @@ The owner approved the five-review closure process and the consolidated policy d
 Exact rates/formulas, units and thresholds, quote/handover durations, payment/refund/credit tolerances, service-specific proof methods, approval thresholds, retention periods, and operational/recovery targets remain deliberately deferred until their governing context is established. These should remain visible as open specifications with accountable owners, configuration boundaries, dependencies, and acceptance evidence. Do not invent values or technical representation to force closure.
 
 The next consolidated owner checkpoint is Review 3 — technical design and architecture. Reviews 4 and 5 remain reserved for complete SDD/acceptance specification review and final consistency/implementation-gate approval.
+
+
+## 10. Consolidated owner decision proposals — pending, not accepted
+
+The document `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md` groups the remaining owner-dependent choices into five review packages and proposes a conservative minimum-launch baseline for DB-01–DB-12, staff/operational authority, evidence/disclosure and production accountability.
+
+**Status: Prepared for consolidated owner review; no proposal has been accepted by this register.** The owner's instruction to prepare the package is not approval of its contents. Preserve the accepted decisions above. Do not treat proposed booking/parcel/route-leg cardinality, quote/payment allocation, business representation, location operating scope, evidence rules, notification matrix or accountability recommendations as approved policy or an approved data model.
+
+At the consolidated owner review, each proposal must be explicitly accepted, rejected in favour of an alternative, or deferred with the affected launch capability excluded or blocked. Once confirmed, record the accepted choice in the relevant DEC/decision record and reconcile the affected workflow, lifecycle, domain-boundary, API/persistence, acceptance, issue, progress and handoff documents. Until then, technical design must retain the uncertainty and no application-code/schema/API/Firebase/provider/deployment work is authorized.
