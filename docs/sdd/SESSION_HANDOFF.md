@@ -4,9 +4,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #69 is merged; merge commit `c20493c04c2323e70cc6570426afbecced649846`.
+- Current `main` baseline: PR #70 is merged; merge commit `ad6189a598d3fcbb79c90679a7dac33914ea0474`.
 - PRs #54–#69 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository comparison through PR #69 found documentation-only changes after that source baseline; the current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This does not mean source was re-inspected at PR #66 and does not verify runtime behaviour or production readiness.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository comparison through PR #70 found documentation-only changes after that source baseline; the current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This does not mean source was re-inspected at PR #66 and does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -35,7 +35,7 @@ Milestones 1–3 are complete at the owner-approved policy/documentation level. 
 
 **Milestone:** Platform-wide SDD Reconciliation and Implementation Readiness.
 
-Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #69. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#58 corrected Admin baseline/history, actor and staff-permission references, requirement dependency/priority crosswalks, and P0 catalogue/readiness crosswalks; PR #60 completed the first status/reference scan. Step 2D targeted section-level review continues; PR #69 completes the A-17 Support/exception policy-to-acceptance reconciliation. PR #61 corrected stale owner-approval wording in the original A-10 row against accepted DEC-043. PR #62 aligned DEC-038–DEC-041 status wording. PR #63 clarified the Finance responsibility/deployment boundary. PR #64 aligns DEC-044 custody acceptance criteria and evidence cases while preserving service-specific proof, authority, investigation, hold, retention and technical details as open. Detailed reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
+Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #70. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#58 corrected Admin baseline/history, actor and staff-permission references, requirement dependency/priority crosswalks, and P0 catalogue/readiness crosswalks; PR #60 completed the first status/reference scan. Step 2D targeted section-level review continues; PR #69 completes the A-17 Support/exception policy-to-acceptance reconciliation. PR #61 corrected stale owner-approval wording in the original A-10 row against accepted DEC-043. PR #62 aligned DEC-038–DEC-041 status wording. PR #63 clarified the Finance responsibility/deployment boundary. PR #64 aligns DEC-044 custody acceptance criteria and evidence cases while preserving service-specific proof, authority, investigation, hold, retention and technical details as open. Detailed reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
 
 ### Milestone 4 sequence
 
@@ -111,9 +111,17 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 
 ## Latest verified baseline and A-17 reconciliation — PR #69 — 31 October 2026
 
-- PR #69 is merged at `c20493c04c2323e70cc6570426afbecced649846`; current `main` was compared with that merge commit and found identical.
+- PR #69 is merged at `ad6189a598d3fcbb79c90679a7dac33914ea0474`; current `main` was compared with that merge commit and found identical.
 - PR #69 changes only three `docs/sdd/` files. It clarifies Support's bounded role, adds workflow-level controlled exception guidance, expands A-17 with A17-05–A17-07, and refreshes the P0 catalogue baseline. No application code or tests were changed/run.
 - Reviews 1 and 2 of 5 are approved. Continue autonomous reconciliation; do not request Review 3 until a coherent source-aware technical architecture/contract package is ready.
 - The next focus is cross-domain lifecycle and technical contract completeness: transition ownership/guards, existing data/service boundaries, API authorization, idempotency/concurrency, provider integration, failure/recovery, audit/evidence, and test evidence. Distinguish confirmed source facts from proposed contracts and unresolved owner choices.
 - `pudo.zip` remains uninspected and outside source claims pending a scope/authority decision. Do not infer runtime or production behaviour from repository-history comparison.
 - No application-code changes until explicit Review 5 approval of the complete reconciled SDD.
+
+
+## Latest continuation checkpoint — after PR #70
+
+- Current `main` is verified identical to PR #70 merge commit `ad6189a598d3fcbb79c90679a7dac33914ea0474`.
+- A direct comparison from `e0f69055d33dd9399c23e1d793f359468229c856` to current `main` reports 379 commits ahead with changes limited to SDD documentation paths. This is repository-history evidence only; it does not refresh semantic source inspection or prove runtime/production behaviour.
+- Continue technical contract reconciliation across domain boundaries, mutation guards, authorization, idempotency/concurrency, provider recovery, audit/evidence, acceptance and production readiness. The dedicated addendum remains conceptual and source-aware; it does not settle Firestore schema, routes, enums, thresholds or deployment design.
+- Reviews 1 and 2 of 5 are approved. Do not present Review 3 until its consolidated package is complete. No application-code changes before Review 5 approval.
