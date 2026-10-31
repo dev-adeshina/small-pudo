@@ -9,13 +9,10 @@ import {
   AlertCircle,
   ArrowLeft,
   CheckCircle2,
-  Edit3,
   Loader2,
   LogOut,
   Plus,
   Search,
-  Tags,
-  Trash2,
   X,
 } from "lucide-react";
 
