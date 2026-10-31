@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Loader2 } from "lucide-react"
 
 import type {
@@ -38,8 +38,17 @@ export function CategoryForm({
 }: Props) {
   const isEditing = Boolean(category)
 
-  const [form, setForm] =
-    useState<CategoryFormData>(emptyForm)
+  const [form, setForm] = useState<CategoryFormData>(() =>
+    category
+      ? {
+          name: category.name,
+          slug: category.slug,
+          description: category.description,
+          image: category.image,
+          isActive: category.isActive,
+        }
+      : emptyForm
+  )
 
   const [errors, setErrors] =
     useState<Record<string, string>>({})
@@ -47,26 +56,7 @@ export function CategoryForm({
   const [saving, setSaving] = useState(false)
 
   const [slugManuallyEdited, setSlugManuallyEdited] =
-    useState(false)
-
-  useEffect(() => {
-    if (category) {
-      setForm({
-        name: category.name,
-        slug: category.slug,
-        description: category.description,
-        image: category.image,
-        isActive: category.isActive,
-      })
-
-      setSlugManuallyEdited(true)
-    } else {
-      setForm(emptyForm)
-      setSlugManuallyEdited(false)
-    }
-
-    setErrors({})
-  }, [category])
+    useState(Boolean(category))
 
   function updateField<K extends keyof CategoryFormData>(
     field: K,
