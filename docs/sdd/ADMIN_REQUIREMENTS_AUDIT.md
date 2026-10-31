@@ -1,6 +1,6 @@
 # VeriLyft Admin Portal — Repository Validation (Stage 2)
 
-**Last updated:** 28 October 2026  
+**Last updated:** 31 October 2026  
 **Status:** Initial source review — not a runtime or deployment verification  
 **Requirements baseline:** `ADMIN_REQUIREMENTS.md` (launch scope owner-approved 28 October 2026; implementation statuses remain unverified where noted)  
 **Reviewed branch:** `main` for application source; requirements document from the Stage 1 draft branch
@@ -222,9 +222,21 @@ This means the relevant shipment, intake, PUDO, route, assignment, pricing, and 
 **Interpretation:** TypeScript and development-server startup pass. Do not mark runtime authorization, Cloudinary, or end-to-end security requirements complete until the corresponding behaviour is observed and recorded.
 
 
-## 9. Merge-status reconciliation — 28 October 2026
+## 9. Merge-status reconciliation — refreshed 31 October 2026
 
 - PR #2 is confirmed merged into `main`; merge commit `fbb56ce522fe713524d04f9a23c7ab7c43da8f95`.
-- PR #3 (`fix/public-category-visibility`) remains open and unmerged.
-- PR #4 (`fix/category-product-counts`) remains open and unmerged.
+- PR #3 (`fix/public-category-visibility`) is confirmed merged into `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`.
+- PR #4 (`fix/category-product-counts`) is closed without merge; GitHub reports `merged=false`, so its changes must not be treated as present on `main`.
 - The next active work remains runtime authorization verification, not application-code implementation.
+
+
+## 10. Current repository-status reconciliation — 31 October 2026
+
+- PR #3 is merged into `main` at `c56be9b121e6007e1e99c6df2d3984e709771a92`.
+- PR #4 is closed without merge. Its merge commit field is not evidence of a merged pull request; GitHub reports `merged=false`.
+- PR #31 is merged at `e0f69055d33dd9399c23e1d793f359468229c856`. It owner-reviewed and established the platform requirement-level P0/Conditional P0/P1 priority baseline in `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`, including ADM-R01–ADM-R54.
+- PR #54 is merged at `44445997506b97004cb02cc04a4972a4b5ce80c7`; it changed SDD documentation only.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. Later PR #52–#54 changes are documentation-only and do not refresh or extend the application-source inspection.
+- This repository-status correction does not update the dated runtime checkpoint above. It does not establish current browser, API, deployed-environment, production, or security behaviour.
+
+**Current audit limitation:** This remains a read-only source and repository-history audit. Runtime authorization, Cloudinary, payment/stock edge cases, deployed configuration, and production readiness remain unverified unless supported by a separate dated evidence record.
