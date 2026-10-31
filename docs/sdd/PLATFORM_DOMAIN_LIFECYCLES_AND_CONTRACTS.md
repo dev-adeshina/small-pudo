@@ -1,7 +1,7 @@
 # VeriLyft Domain Relationships, Lifecycle Boundaries, and API/Security Contracts
 
 **Document status:** Draft lifecycle/contract specification — accepted owner policies incorporated; detailed contracts and full SDD approval remain open  
-**Last updated:** 30 October 2026  
+**Last updated:** 31 October 2026  
 **Scope:** Conceptual domain boundaries, lifecycle transition rules, service/API contract expectations, and authorization/security invariants  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, PLATFORM_SHARED_WORKFLOWS.md, SDD_COMPLETENESS_AUDIT.md  
 **Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-044
