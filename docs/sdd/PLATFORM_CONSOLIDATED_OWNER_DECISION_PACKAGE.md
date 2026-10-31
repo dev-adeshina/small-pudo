@@ -307,3 +307,12 @@ At the consolidated owner review, the owner may:
 No silence, elapsed time, PR merge, technical feasibility or assistant recommendation counts as policy approval.
 
 The final SDD review must also disclose unresolved blockers, source-evidence limitations, P0 specification status, production ownership/evidence gaps and any scope excluded from launch. Implementation may begin only after the owner explicitly approves the complete reconciled SDD and lifts the implementation freeze.
+
+
+## 10. Implementation direction update — DEC-045 (31 October 2026)
+
+The owner has explicitly directed the project to begin implementation now and stop extending the planning cycle. DEC-045 supersedes the final-gate language above only insofar as it previously prohibited all application-code changes until Reviews 3–5 were complete.
+
+The recommendations in this package remain proposals and are **not** approved business policy. Implementation may proceed using accepted decisions and verified source conventions. Any capability that depends on an unresolved recommendation or owner-dependent value remains disabled or excluded until that dependency is resolved. The instruction to begin coding does not approve a schema, pricing value, permission assignment, evidence standard, provider capability, retention period or operational target.
+
+Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the execution pointer. DEC-018/DEC-036 launch scope, P0 acceptance evidence and production release requirements remain in force.
