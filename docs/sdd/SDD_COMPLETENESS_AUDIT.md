@@ -410,3 +410,21 @@ This is a documentation clarification, not a change to DEC-014. It does not appr
 The source findings in this audit remain tied to the previously inspected application-source commit `e0f69055d33dd9399c23e1d793f359468229c856`. The repository-history comparison supports the conclusion that no application-source path changed between that inspected snapshot and PR #64. It does not constitute a fresh semantic source review, runtime test, browser/API verification, deployed-configuration review, production-data inspection, or production-readiness assessment. The recursive tree-path inventory recorded in the PR #64 review remains a path-level observation, not proof of runtime behaviour.
 
 No tests were executed and no application source, schema, Firebase rules/configuration, APIs, permissions, or deployment were changed by this refresh. The active application-source inspection baseline remains unchanged. Continue the platform-wide section-level reconciliation, technical-contract work, executable acceptance-test specification, and production-readiness evidence planning. **Application-code changes remain blocked until the owner explicitly approves the complete reconciled SDD.**
+
+
+## 19. A-15 permission-policy consistency review — 31 October 2026
+
+### Finding
+
+The A-15 row in `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md` described “role granularity” as unresolved even though PM-02 has already been accepted: staff permissions are assigned at the individual-action level, with permission sets permitted as a convenience and relevant location/operational scope applied. The wording understated the accepted owner policy.
+
+### Reconciliation
+
+The A-15 matrix, A15-04 scenario, and ADM-R03 priority qualification now distinguish accepted policy from open specification:
+
+- Accepted: minimal hybrid Admin/Operations responsibility model; action-level permission assignment; designated permission administration; independent location capabilities; defined categories of second approval; separate audit view/export/disclosure permissions; no direct partner/driver login at launch; limited Management and Support access; controlled emergency access.
+- Open: exact permission catalogue, technical enforcement, identity lifecycle, location/staff scope representation, approver eligibility and thresholds, emergency-access parameters, retention, and executable/runtime tests.
+
+### Evidence boundary
+
+The update is a cross-document policy consistency correction, not a source review or runtime authorization test. VLY-009 and VLY-010 remain open. No application code, schema, claims, APIs, routes, Firebase rules, or deployment configuration changed. The complete SDD remains unapproved and the implementation freeze remains in force.
