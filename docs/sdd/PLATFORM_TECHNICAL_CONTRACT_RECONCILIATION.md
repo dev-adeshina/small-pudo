@@ -248,3 +248,8 @@ Review 3 must not be presented until all are true:
 ## 14. Mutation and recovery contract cross-reference
 
 The action-specific mutation, authorization, concurrency, unknown-outcome, recovery ownership and acceptance-evidence obligations are consolidated in `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`. That matrix refines this document's Sections 4–10 without approving an API, persistence schema, universal idempotency mechanism, retry/timeout value or provider integration design.
+
+
+## 15. Production-readiness evidence contract cross-reference
+
+The detailed operational control objectives, responsibility areas, minimum evidence, failure dispositions, environment/configuration requirements, deployment/rollback, observability, backup/restore, incident response, continuity/manual fallback, provider unknown-outcome handling and release gates are consolidated in `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md`. Apply it alongside Section 11 and A20-01–A20-05 when preparing executable acceptance specifications. It adds no approved deployment topology, tool, numeric service level, RTO/RPO, backup interval, retention period, alert threshold or named owner; those remain owner decisions. It does not establish that any control is implemented or verified.
