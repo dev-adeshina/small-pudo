@@ -1,8 +1,8 @@
 # VeriLyft Platform Decision-to-Document Reconciliation
 
-**Status:** Step 2A inventory and Step 2C first status/reference scan complete; targeted Step 2D review remains in progress. PR #61 corrected A-10/DEC-043 wording, PR #62 aligned DEC-038–DEC-041 status references, PR #63 clarified the Finance responsibility/deployment boundary, and PR #64 reconciled DEC-044 custody acceptance/evidence coverage.  
+**Status:** Step 2A inventory and Step 2C first status/reference scan complete; targeted Step 2D review remains in progress. PR #61 corrected A-10/DEC-043 wording, PR #62 aligned DEC-038–DEC-041 status references, PR #63 clarified the Finance responsibility/deployment boundary, and PR #64 reconciled DEC-044 custody acceptance/evidence coverage; PR #66 aligns A-15 with accepted PM-01–PM-12 staff permission policy.  
 **Date:** 31 October 2026  
-**Repository baseline:** PR #64 merge commit `d02b2d69156aea45c07b5e2db5511b2486e50471`.  
+**Repository baseline:** PR #65 merge commit `c9698417f6d4e024484d608655a1e4149584dcc4`.  
 **Application-source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`.  
 **Scope:** All 23 Markdown documents under `docs/sdd/`.  
 **Authority:** This report inventories existing decisions; it does not create, amend, or reopen owner policy.
@@ -138,3 +138,14 @@ The accepted DEC-044 policy is not reopened. Service-specific proof, confirmatio
 ## 11. PR #64 repository-baseline refresh
 
 PR #64 merged into `main` at `d02b2d69156aea45c07b5e2db5511b2486e50471`. The repository-history comparison from the active source-inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856` returns SDD documentation paths only. This confirms documentation-only intervening repository changes according to the comparison result; it does not re-inspect application source or verify runtime/production behaviour. The DEC-044 custody acceptance/evidence refinement is recorded in Section 17 of `SDD_COMPLETENESS_AUDIT.md` and Section 49 of `PROGRESS.md`; this refresh is recorded in Section 18 of the audit and Section 50 of progress. Full platform-wide reconciliation remains open, and application-code changes remain blocked pending explicit owner approval of the complete SDD.
+
+
+## 12. A-15 / Admin and Operations access reconciliation — PM-01–PM-12
+
+The A-15 matrix and P0 case A15-04 are aligned with the accepted owner policy in `PLATFORM_STAFF_PERMISSION_DECISIONS.md`. PM-01–PM-12 are accepted at policy level; the access model is action-level permission assignment within the minimal hybrid Admin/Operations responsibility model, not an unresolved generic role-granularity choice.
+
+The reconciliation records designated permission administrators (PM-01), action-level grants and relevant scope (PM-02), cumulative staff-permission and location-capability checks (PM-03), accepted second-approval categories and requester/approver separation (PM-05–PM-07), separate audit viewing/export/disclosure permissions (PM-08), no direct partner/driver login at launch (PM-09), limited Management oversight (PM-10), bounded Support access (PM-11), and controlled time-limited emergency access (PM-12).
+
+Still open are the exact permission catalogue and permission-set contents, staff identity lifecycle and designated-admin recovery, technical enforcement across all server/data/background-job boundaries, scope representation, approver eligibility/materiality thresholds, emergency duration/renewal, retention, and executable/runtime evidence. These details do not reopen accepted policy. The source/runtime authorization findings and VLY-009/VLY-010 remain open; no security behaviour is claimed verified by this documentation reconciliation.
+
+PR #66 changes documentation only. It does not define technical roles/claims, schema, APIs, routes, or implementation and does not lift the application-code freeze.
