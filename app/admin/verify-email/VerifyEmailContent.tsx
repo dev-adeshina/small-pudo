@@ -55,7 +55,7 @@ export default function VerifyEmailContent() {
               02 / VERIFY EMAIL
             </span>
 
-            <h2>You're almost in.</h2>
+            <h2>You&apos;re almost in.</h2>
 
             <p>
               We have sent you a verification email to{" "}
