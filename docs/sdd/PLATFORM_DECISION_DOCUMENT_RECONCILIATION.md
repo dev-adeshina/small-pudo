@@ -65,7 +65,7 @@ The accepted DEC-037–DEC-044 sequence is now reflected in actor responsibiliti
 - The Admin requirement inventory's stale "priority baseline pending" statement was corrected in PR #55 to reflect the owner-reviewed/merged priority baseline in PR #31.
 - The Admin repository audit's PR #3/#4 states were corrected in PR #55: PR #3 merged at `c56be9b121e6007e1e99c6df2d3984e709771a92`; PR #4 is closed without merge.
 - The owner decision register's old PR #13 metadata was refreshed in PR #54.
-- Source-traceability comparison metadata is refreshed through PR #60, while preserving the inspected application-source commit and historical evidence limitations.
+- Source-traceability comparison metadata is refreshed through PR #64, while preserving the inspected application-source commit and historical evidence limitations.
 
 ### 4.3 Approval-state distinctions to preserve
 
