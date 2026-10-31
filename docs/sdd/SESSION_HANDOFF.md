@@ -4,9 +4,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #65 is merged; merge commit `c9698417f6d4e024484d608655a1e4149584dcc4`.
-- PRs #54–#65 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository comparison through PR #65 found documentation-only changes after that source baseline; the current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This does not mean source was re-inspected at PR #65 and does not verify runtime behaviour or production readiness.
+- Current `main` baseline: PR #66 is merged; merge commit `f5b274874693db1dbd7a46f17f3e1840a0d372d6`.
+- PRs #54–#66 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository comparison through PR #66 found documentation-only changes after that source baseline; the current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This does not mean source was re-inspected at PR #65 and does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -86,4 +86,8 @@ Use `ISSUES.md`, `DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.md`, `PLATFOR
 
 ## Latest A-15 reconciliation — PM-01–PM-12
 
-The next focused reconciliation aligns A-15/A15-04 and ADM-R03 with the accepted action-level permission model. PM-01–PM-12 are accepted at policy level; the exact permission catalogue, technical enforcement, scope representation, materiality thresholds, emergency-access parameters, and runtime evidence remain open. VLY-009/VLY-010 remain unresolved verification issues. Do not make application-code changes before explicit owner approval of the complete reconciled SDD.
+A-15/A15-04 and ADM-R03 are aligned with the accepted action-level permission model. PM-01–PM-12 are accepted at policy level; the exact permission catalogue, technical enforcement, scope representation, materiality thresholds, emergency-access parameters, and runtime evidence remain open. VLY-009/VLY-010 remain unresolved verification issues.
+
+## Latest A-16 reconciliation — DEC-033 and PM-08
+
+A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 are reconciled with accepted DEC-033 accountable recordkeeping and PM-08's separate audit-view, export and external-disclosure permissions. The four existing A-16 cases remain; the P0 catalogue retains 80 unique case IDs. Event/evidence catalogue, reviewer-to-permission mapping, integrity controls, retention schedule, legal-hold authority, correction/redaction procedures, second-approval cases and executable specifications remain open. VLY-023 remains open; `pudo.zip` remains uninspected. No source/runtime verification or implementation is claimed. Do not make application-code changes before explicit owner approval of the complete reconciled SDD.
