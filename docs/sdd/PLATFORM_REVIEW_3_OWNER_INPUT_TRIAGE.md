@@ -91,3 +91,8 @@ The five-exchange limit is a maximum, not a requirement to use every exchange fo
 - The package is a preparation artifact. The owner's instruction to prepare and reconcile it is not approval of any recommendation. Recommendations remain pending until explicitly accepted, rejected or deferred by the owner and reconciled into the authoritative decision register and affected SDD documents.
 - PR #83's resource-entitlement/projection-lineage crosswalk complements the PR #80 action/capability and PR #81 lifecycle/recovery crosswalks. These documents improve conceptual coverage but do not establish implementation, runtime verification, exact schema/API contracts or production readiness.
 - Preserve the approval discipline in §1: do not fragment the remaining owner-dependent choices into serial questions. The final owner exchange remains reserved for the complete reconciled SDD and explicit implementation decision. Keep implementation frozen until that gate is passed.
+
+
+## Implementation direction update — DEC-045 (31 October 2026)
+
+The owner has directed implementation to begin now. The previous blanket freeze pending formal completion of Reviews 3–5 is superseded for starting bounded implementation slices. This does not resolve the owner-dependent items listed in this triage and does not approve the recommendations in the consolidated owner decision package. Use the implementation backlog to sequence work; where an unresolved item changes business meaning, customer entitlement, pricing, authority, custody, financial outcome or legal/evidence obligations, keep the affected capability disabled or excluded until the governing rule is established.
