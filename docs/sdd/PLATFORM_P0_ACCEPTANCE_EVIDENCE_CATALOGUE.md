@@ -2,9 +2,9 @@
 
 **Status:** Owner-reviewed scenario refinements — test-design baseline only; not approved executable test specifications, implementation or release approval  
 **Created:** 30 October 2026  
-**Documentation baseline:** `main` at `93f389cf16b9f1e40bbe414426ccc490d1221865` (PR #41 merged; subsequent PRs #40–#41 changed documentation only)
+**Documentation baseline:** `main` at `de067c0a872de6e5cffaa2c7cf7c5bbcccab3269` (PR #57 merge; PRs #42–#57 after the original catalogue approval changed SDD documentation only)
 **Active-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
-**Authority:** DEC-018, DEC-022–DEC-036 and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
+**Authority:** DEC-018, DEC-022–DEC-044, accepted PM-01–PM-12 and BP-01–BP-22 policy records, and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
 **Related:** `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
 
 ## 1. Purpose and boundaries
@@ -150,7 +150,7 @@ A screenshot alone is insufficient for transactional, authorization, payment, st
 | A08-04 | Internal record differs from provider/bank record; late payment after cancellation | Run reconciliation case and record resolution | Mismatch is surfaced and assigned; no silent correction/reactivation; original and correcting events remain visible | Reconciliation source statement; exception record; audit history |
 
 ### A-09 — Physical intake, measurement and custody (P0)
-**Requirement links:** ADM-R21, R23–R28, R33, R36–R37; DEC-025, DEC-027–028  
+**Requirement links:** ADM-R21, R23–R28, R33, R36–R37; DEC-025, DEC-027–028, DEC-037, DEC-039–040, DEC-042–044  
 **Source baseline:** No active intake/custody service found.
 
 | Case | Scenario and setup | Action | Required observable result | Evidence |
@@ -161,7 +161,7 @@ A screenshot alone is insufficient for transactional, authorization, payment, st
 | A09-04 | Parcel is refused, damaged, missing or duplicate intake is submitted | Record each supported exception/replay | No false received/accepted custody state; duplicate does not create duplicate intake; resolution is attributable | Exception reason/evidence; custody history; replay result |
 
 ### A-10 — Location and service capability (P0)
-**Requirement links:** ADM-R36–R38, R52; DEC-025
+**Requirement links:** ADM-R36–R38, R52; DEC-025, DEC-042–043
 
 | Case | Scenario and setup | Action | Required observable result | Evidence |
 |---|---|---|---|---|
@@ -170,7 +170,7 @@ A screenshot alone is insufficient for transactional, authorization, payment, st
 | A10-03 | Collection centre has receive/collection capability but no outgoing capability | Attempt outgoing intake/release/dispatch | No capability is inferred from location label; only explicitly enabled operations work | Capability matrix; direct API denial evidence |
 
 ### A-11 — Routing and route proposals (P0)
-**Requirement links:** ADM-R38–R40; DEC-031
+**Requirement links:** ADM-R38–R40; DEC-031, DEC-037, DEC-043
 
 | Case | Scenario and setup | Action | Required observable result | Evidence |
 |---|---|---|---|---|
@@ -180,7 +180,7 @@ A screenshot alone is insufficient for transactional, authorization, payment, st
 | A11-04 | Proposer attempts self-approval where separation is required by approved policy | Attempt approval | Approved separation-of-duties rule is enforced; unresolved rule blocks final test approval | Owner-approved approval matrix; denial evidence |
 
 ### A-12 — Dispatch, movement and handover (P0)
-**Requirement links:** ADM-R23–R28, R35, R38–R39; DEC-030–031
+**Requirement links:** ADM-R23–R28, R35, R38–R39; DEC-030–031, DEC-037, DEC-041–044
 
 | Case | Scenario and setup | Action | Required observable result | Evidence |
 |---|---|---|---|---|
@@ -190,7 +190,7 @@ A screenshot alone is insufficient for transactional, authorization, payment, st
 | A12-04 | Duplicate, wrong-leg, wrong-parcel, delayed or missed handover event | Submit event/replay | Wrong target/leg denied; duplicate has no duplicate movement effect; missing event remains an exception, not inferred success | Event payload; correlation; custody/movement history |
 
 ### A-13 — Delivery attempt and outcome (P0)
-**Requirement links:** ADM-R23–R29; DEC-032
+**Requirement links:** ADM-R23–R29; DEC-032, DEC-037, DEC-044
 
 | Case | Scenario and setup | Action | Required observable result | Evidence |
 |---|---|---|---|---|
@@ -211,7 +211,7 @@ A screenshot alone is insufficient for transactional, authorization, payment, st
 | A14-04 | Telegram notification proposed for paid order | Attempt send before and after Admin “Assign For Delivery” | No Telegram send before required Admin gate; even after gate, send only if separate purpose/audience/disclosure policy is approved | Feature/config gate; Admin action audit; Telegram sandbox record or denial |
 
 ### A-15 — Admin and Operations access (P0)
-**Requirement links:** ADM-R01–R04, R07, R51; DEC-022, DEC-025, DEC-030–033
+**Requirement links:** ADM-R01–R04, R07, R51; DEC-022, DEC-025, DEC-030–033, DEC-037–038, DEC-042–044
 
 | Case | Scenario and setup | Action | Required observable result | Evidence |
 |---|---|---|---|---|
@@ -221,7 +221,7 @@ A screenshot alone is insufficient for transactional, authorization, payment, st
 | A15-04 | Admin/Operations performs permitted and prohibited actions | Exercise action matrix across locations and responsibilities | Shared routine actions work only when granted; sensitive actions/approvals follow DEC-022 and preserve actor/location/time/reason | Owner-approved action matrix; automated role matrix; audit records |
 
 ### A-16 — Audit and evidence (P0)
-**Requirement links:** ADM-R07, R24, R48–R51; DEC-022, DEC-033
+**Requirement links:** ADM-R07, R24, R48–R51; DEC-022, DEC-033, DEC-042, DEC-044
 
 | Case | Scenario and setup | Action | Required observable result | Evidence |
 |---|---|---|---|---|
@@ -231,7 +231,7 @@ A screenshot alone is insufficient for transactional, authorization, payment, st
 | A16-04 | Legal hold or retention expiry applies | Attempt routine deletion/release | Hold blocks routine deletion; release requires authorized decision; deletion/anonymization follows approved retention policy | Retention schedule; hold record; deletion evidence |
 
 ### A-17 — Support, exceptions and manual override (P0)
-**Requirement links:** ADM-R07, R18, R28–R35, R46–R50; DEC-022, DEC-029–033
+**Requirement links:** ADM-R07, R18, R28–R35, R46–R50; DEC-022, DEC-029–033, DEC-037, DEC-040–044
 
 | Case | Scenario and setup | Action | Required observable result | Evidence |
 |---|---|---|---|---|
@@ -251,7 +251,7 @@ A screenshot alone is insufficient for transactional, authorization, payment, st
 | A18-04 | Financial totals and operational counts include linked/duplicate records | Recalculate metrics | Orders, shipments, payment events, refunds and movements are not conflated or double-counted | Metric formula; fixture ledger; reproducible calculation |
 
 ### A-19 — Customer communications and privacy (P0)
-**Requirement links:** ADM-R04, R14–R19, R54; DEC-024, DEC-032–034
+**Requirement links:** ADM-R04, R14–R19, R54; DEC-024, DEC-032–034, DEC-038, DEC-040, DEC-044
 
 | Case | Scenario and setup | Action | Required observable result | Evidence |
 |---|---|---|---|---|
@@ -297,6 +297,24 @@ The owner has reviewed and explicitly approved the policy-level approach for eve
 - **A-20 — Production configuration and operational readiness:** Retain the five cases. Secure configuration, deployment verification, backup/restore, incident response/rollback and final release sign-off are separate evidence obligations. A successful build or deployment is not production-readiness proof.
 
 These are owner-approved scenario-design refinements only. They do not resolve the policy dependencies listed in Section 6, authorize test execution, establish passing evidence, approve implementation, or constitute complete SDD or release approval.
+
+
+## 3.2 Accepted logistics-policy crosswalk — DEC-037–DEC-044
+
+The following crosswalk makes the accepted logistics-first and fulfilment decisions visible in the existing 80-case catalogue. It links policy to existing scenarios; it does not create new cases, alter priority, or approve executable specifications. A policy reference is not evidence that its operational or technical contract is complete.
+
+| Accepted decision | Existing case coverage | Requirement dependency | Acceptance emphasis retained |
+|---|---|---|---|
+| DEC-037 — Logistics-first hierarchy and shared fulfilment boundary | A03-01; A05-01–A05-04; A09-01–A09-04; A10-01–A10-03; A11-01–A11-04; A12-01–A12-04; A13-01–A13-04 | A-03, A-05, A-06, A-09–A-12; ADM-R14–R28, R30–R39 | Independent shipment booking is primary; storefront delivery enters shared fulfilment without conflating orders, shipments or transport movements. |
+| DEC-038 — Booking confirmation and responsibility boundaries | A05-01–A05-04; A06-02–A06-03; A19-01, A19-03 | A-05, A-06, A-19; ADM-R01–R04, R21–R24, R28, R30–R32, R54 | Authenticated booking-party acceptance confirms the booking; payer, sender, receiver and handover-person entitlements remain distinct; payment and intake remain separate. |
+| DEC-039 — Service-specific pricing boundaries | A06-01–A06-04; A09-03; A08-01, A08-03 | A-06, A-08, A-09; ADM-R30–R34 | Service inputs, formulas, units, rate versions, itemization and reproducibility must be specified; no pricing value is inferred here. |
+| DEC-040 — Measurement adjustment and customer resolution | A06-03–A06-04; A08-01, A08-03–A08-04; A09-03; A17-03; A19-01 | A-06, A-08, A-09, A-17; ADM-R07, R25, R28, R30–R34 | Original quote inputs, actual measurements, proposed adjustments, customer decision and financial outcome remain distinct and traceable. |
+| DEC-041 — Payment, settlement, refund, reconciliation and dispatch | A03-02–A03-04; A07-01–A07-04; A08-01–A08-04; A12-01–A12-03; A17-01–A17-03 | A-03, A-07, A-08, A-12, A-17; ADM-R15–R20, R28–R29, R34–R35 | Payment verification, settlement, refund/credit, reconciliation and dispatch authorization are separate events; duplicate and late events remain recoverable and auditable. |
+| DEC-042 — Physical intake, custody, measurement and location operation | A09-01–A09-04; A10-01–A10-03; A12-01, A12-04; A16-01, A16-03–A16-04; A17-03–A17-04 | A-09, A-10, A-12, A-16, A-17; ADM-R03–R04, R07, R21–R28, R35–R37, R39, R51–R52 | Booking is not intake; physical actor and recorder are distinct; custody, measurement, location operation and exceptions require attributable evidence. |
+| DEC-043 — Location capability and actor authority | A09-01–A09-02; A10-01–A10-03; A11-02; A12-01–A12-03; A15-01–A15-04; A17-01–A17-02, A17-04 | A-09–A-12, A-15, A-17; ADM-R03–R04, R07, R25–R28, R36–R39, R51–R52 | A consequential action requires both enabled location capability and authorized actor permission; labels or authentication alone grant no authority. |
+| DEC-044 — Custody transfer integrity and physical exceptions | A09-04; A12-04; A13-01–A13-03; A16-01, A16-03; A17-03–A17-04 | A-09, A-12, A-13, A-16, A-17; ADM-R07, R23–R28, R39, R48–R51 | Attempted handover is not completed transfer; preserve last confirmed custody, evidence and correction history; missing/damaged/disputed cases require controlled investigation and resolution. |
+
+**Unresolved-contract boundary:** The crosswalk does not settle service-specific procedures, pricing inputs/formulas, measurement thresholds, proof methods, exact status vocabulary, permission implementation, location capability catalogue, investigation ownership, retention, financial entitlements, or technical data/API contracts. Keep the corresponding scenarios blocked until their owning SDD contracts are approved.
 
 ## 4. Conditional P0 trigger register
 
@@ -362,6 +380,6 @@ The following values/rules must be resolved in the owning SDD sections before th
 
 At the baseline above, the source-traceability pass identifies source foundations for storefront catalogue/checkout, customer access, Admin allowlist guards, Paystack payment integration and basic storefront fulfilment. It identifies material gaps for independent shipment, PUDO, intake/custody, shared shipment pricing/quotes, route/movement, delivery proof, general audit, refunds/credits and reconciliation. The Admin dashboard contains demo values rather than verified live operational metrics.
 
-This catalogue is **test design**, not test execution. No scenarios in this document are claimed passed. No tests were run to create this document. No production data, deployed secrets/configuration, provider dashboards, physical parcel operations or root `pudo.zip` archive were inspected. The active-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge), as refreshed in PR #32. The repository comparison through PR #39 shows documentation-only changes after that source baseline; no later application-source change is recorded. This remains source evidence only, not runtime verification.
+This catalogue is **test design**, not test execution. No scenarios in this document are claimed passed. No tests were run to create this document. No production data, deployed secrets/configuration, provider dashboards, physical parcel operations or root `pudo.zip` archive were inspected. The active-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge), as refreshed in PR #32. The repository comparison through PR #57 shows documentation-only changes after that source baseline; no later application-source change is recorded. This remains source evidence only, not runtime verification.
 
-**Stage 5.4 status:** Owner review and policy-level approval of A-01–A-20 are complete; approved refinements are recorded in Section 3.1. The catalogue remains test design only. Complete SDD approval, test execution and application-code changes remain separately gated.
+**Catalogue reconciliation status:** DEC-037–DEC-044 are cross-referenced to the existing case rows in Section 3.2, following PR #57. The 80-case catalogue remains test design only. Complete SDD approval, individual executable test-specification approval, test execution and application-code changes remain separately gated.

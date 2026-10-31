@@ -37,43 +37,35 @@ A missing reference does not reverse an accepted decision. A proposed workflow, 
 | `PLATFORM_SHARED_WORKFLOWS.md` | Includes DEC-039–DEC-044 workflow addenda. | Later policy is reflected; exact workflow steps, authority, evidence, and technical contracts remain draft/open. |
 | `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md` | Includes DEC-039–DEC-044 lifecycle/policy refinements. | Later policy is reflected; no executable lifecycle, schema, API, or security contract is approved. |
 | `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md` | References DEC-037–DEC-044. | Correctly labels outcomes as policy-derived acceptance direction; remains a draft, not an executable test specification. |
-| `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` | Incorporates DEC-023/DEC-024 and DEC-038, plus PM/BP policy. | Missing explicit actor-responsibility propagation for DEC-039–DEC-044, especially measurement/financial resolution, physical intake, location capabilities, custody transfer, and exception investigation. |
-| `PLATFORM_STAFF_PERMISSION_MATRIX.md` | Contains proposed action-level matrix and PM-01–PM-12 boundaries; references decisions mainly through DEC-036. | Needs explicit reconciliation with DEC-042–DEC-044 physical custody, location capability, transfer confirmation/correction, and exception authority. It remains a draft. |
-| `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md` | Decision dependency table currently stops at DEC-036. | Missing DEC-037–DEC-044 mappings and associated requirement dependencies. |
-| `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` | Priority baseline references owner decisions mainly through DEC-036. | Needs DEC-037–DEC-044 cross-references while preserving owner-approved P0/Conditional P0/P1 classifications. |
-| `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md` | Includes DEC-038 but not later DEC-039–DEC-044 refinements. | A-05/A-06/A-08/A-09/A-10/A-12/A-13/A-16/A-17 need policy-reference reconciliation; catalogue remains test design, not execution. |
-| `PLATFORM_P0_TEST_SPECIFICATION_READINESS.md` | Includes DEC-037 but not the full DEC-038–DEC-044 sequence. | Update dependency references and readiness blockers; do not treat this assessment as approval to execute tests. |
-| `IMPLEMENTATION_SOURCE_TRACEABILITY.md` | Source inspection is tied to commit `e0f69055d33dd9399c23e1d793f359468229c856`. | Source baseline remains valid because PR #53 is documentation-only. Historical documentation-comparison references stop at PR #39 and need refreshing through PR #53. No runtime/production verification is implied. |
-| `ADMIN_REQUIREMENTS.md` | Admin requirements and P0/P1 inventory. | Final status still says the consolidated priority baseline is pending, although the owner-reviewed requirement priority baseline merged in PR #31. |
-| `ADMIN_REQUIREMENTS_AUDIT.md` | Historical source/runtime audit. | PR-state section incorrectly describes PR #3 and PR #4 as open. Current state: PR #3 merged; PR #4 closed without merge. Dated source/runtime limitations should remain historical. |
+| `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md` | **Updated in PR #56** to map DEC-037–DEC-044 into customer, Support, Operations, Admin, Finance and external-actor responsibilities. | Actor roles are reconciled at policy level; detailed operational procedures and technical authority contracts remain open. |
+| `PLATFORM_STAFF_PERMISSION_MATRIX.md` | **Updated in PR #56** with DEC-037–DEC-044 policy boundaries and separation of staff permissions from location capabilities. | It remains a draft; technical permission design, permission codes/claims, scope enforcement and implementation remain open. |
+| `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md` | **Updated in PR #57** with DEC-037–DEC-044 crosswalks to existing A-area and ADM-R requirement IDs. | Existing requirement IDs and dependencies are mapped; detailed operational/technical contracts and source/runtime verification remain open. |
+| `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` | **Updated in PR #57** with DEC-037–DEC-044 policy cross-references. | Owner-approved P0/Conditional P0/P1 classifications remain unchanged; no priority re-opening is proposed. |
+| `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md` | **Corrective crosswalk proposed in this PR** for DEC-037–DEC-044; existing 80 case rows and test-design-only boundary are retained. | The crosswalk maps accepted policy to existing cases; unresolved procedures, technical contracts and evidence requirements still block executable approval. |
+| `PLATFORM_P0_TEST_SPECIFICATION_READINESS.md` | **Corrective crosswalk proposed in this PR** for DEC-037–DEC-044; no executable test approval is implied. | The 80-case count, 45 P0 / 6 Conditional P0 / 3 P1 classifications and zero execution approvals remain unchanged. |
+| `IMPLEMENTATION_SOURCE_TRACEABILITY.md` | Source inspection is tied to commit `e0f69055d33dd9399c23e1d793f359468229c856`. | Source baseline remains valid because PR #53 is documentation-only. Repository-history comparison refreshed through PR #57; active source-inspection baseline remains unchanged. No runtime/production verification is implied. |
+| `ADMIN_REQUIREMENTS.md` | **Reconciled in PR #55** with the owner-reviewed priority baseline from PR #31, including ADM-R01–ADM-R54. | Detailed page specifications, source reconciliation, runtime verification and implementation remain open. |
+| `ADMIN_REQUIREMENTS_AUDIT.md` | **Reconciled in PR #55**: PR #3 is merged; PR #4 is closed without merge. | Dated source/runtime findings remain historical and are not current runtime verification. |
 | `ADMIN_PORTAL.md` | Page-by-page design with Draft/Agreed statuses and implementation acceptance boundaries. | No new approval is implied. Cross-check page/action descriptions against current actor, permission, workflow, and lifecycle contracts. |
 | `SPEC.md` | Earlier product/technical specification with historical archive baseline. | Contains earlier roadmap and source descriptions. Keep its historical status clear; current product policy and work order are governed by current decision, workflow, progress, and handoff documents. |
-| `README.md` | SDD index and authority/evidence guidance. | Updated to identify this reconciliation report and PR #53 baseline. |
-| `PROGRESS.md` | Active status and milestone history. | Step 1 is recorded as merged; Step 2A inventory and outstanding corrective work are recorded. |
-| `SESSION_HANDOFF.md` | Current-session continuity instructions. | Updated to PR #53 and the Step 2A inventory; full reconciliation remains open. |
-| `SDD_COMPLETENESS_AUDIT.md` | Platform-wide completeness findings and work sequence. | Step 2A findings appended; prior checkpoints retained as history. |
-| `ISSUES.md` | Open gaps and issue ownership. | Step 2A findings appended; VLY-019 remains open and blocks implementation pending complete SDD approval. |
+| `README.md` | SDD index and authority/evidence guidance. | Updated to identify this reconciliation report; continuity metadata is being advanced through PR #57. |
+| `PROGRESS.md` | Active status and milestone history. | Step 1 and Step 2A are recorded; corrective reconciliation is being advanced through PR #57 and the current P0 catalogue/readiness proposal. |
+| `SESSION_HANDOFF.md` | Current-session continuity instructions. | Updated through PR #57 and the current Step 2 corrective sequence; full reconciliation remains open. |
+| `SDD_COMPLETENESS_AUDIT.md` | Platform-wide completeness findings and work sequence. | Step 2A findings retained as history; later corrective progress remains to be recorded. |
+| `ISSUES.md` | Open gaps and issue ownership. | VLY-019 remains open and blocks implementation pending complete SDD approval. |
 
 ## 4. Cross-document gaps requiring correction
 
 ### 4.1 Later decisions not propagated consistently
 
-The accepted DEC-037–DEC-044 sequence is present in the decision log, owner register, workflows/lifecycles, and cross-domain acceptance matrix, but is not consistently reflected in:
-- actor responsibilities;
-- staff action/permission matrix;
-- requirement dependency traceability;
-- requirement priority cross-references;
-- P0 acceptance/evidence catalogue; and
-- P0 test-specification readiness.
-
-The corrective pass must map each decision to affected A-areas and ADM-R requirements without inventing requirement IDs or changing priority.
+The accepted DEC-037–DEC-044 sequence is now reflected in actor responsibilities and the staff permission matrix (PR #56), and in requirement dependency traceability and priority cross-references (PR #57). This PR proposes the remaining P0 catalogue and test-readiness crosswalk. It maps policy to existing cases and requirements without inventing requirement IDs or changing priority.
 
 ### 4.2 Stale status and history
 
-- The Admin requirement inventory's "priority baseline pending" statement conflicts with the owner-reviewed/merged priority baseline in PR #31.
-- The Admin repository audit's PR #3/#4 states conflict with current GitHub records. PR #3 merged at `c56be9b121e6007e1e99c6df2d3984e709771a92`; PR #4 is closed without merge.
-- The owner decision register's old PR #13 metadata was stale; its baseline metadata is refreshed in this branch.
-- Source-traceability comparison metadata must be brought forward to PR #53, while preserving the inspected application-source commit and historical evidence limitations.
+- The Admin requirement inventory's stale "priority baseline pending" statement was corrected in PR #55 to reflect the owner-reviewed/merged priority baseline in PR #31.
+- The Admin repository audit's PR #3/#4 states were corrected in PR #55: PR #3 merged at `c56be9b121e6007e1e99c6df2d3984e709771a92`; PR #4 is closed without merge.
+- The owner decision register's old PR #13 metadata was refreshed in PR #54.
+- Source-traceability comparison metadata is refreshed through PR #57, while preserving the inspected application-source commit and historical evidence limitations.
 
 ### 4.3 Approval-state distinctions to preserve
 
@@ -96,16 +88,17 @@ Do not guess service-specific pricing formulas/rates/units/rounding/fees/taxes/d
 
 ## 7. Corrective reconciliation sequence
 
-1. Complete actor-responsibility and staff-permission updates for DEC-039–DEC-044.
-2. Add DEC-037–DEC-044 mappings to requirement dependency traceability and priority mapping, preserving existing priority decisions.
-3. Update P0 catalogue and test-readiness references for later decisions, keeping all cases as unapproved test design until individually specified and approved.
-4. Correct Admin requirement-baseline status and PR #3/#4 history; retain dated source/runtime limitations accurately.
-5. Refresh source-traceability comparison metadata through PR #53 without changing the active source inspection baseline.
-6. Re-review all 23 SDD documents for decision coverage, status language, cross-document contradictions, and unresolved dependency consistency.
-7. Record completion in progress, issues, audit, and handoff documents.
+1. [x] Reconcile actor responsibilities and staff-permission policy references with DEC-037–DEC-044 (PR #56 merged).
+2. [x] Map DEC-037–DEC-044 into requirement dependency traceability and the owner-approved priority matrix without changing classifications (PR #57 merged).
+3. [ ] Complete P0 acceptance-catalogue and test-readiness decision crosswalks, retaining the 80 existing cases and test-design-only boundary (proposed in this PR).
+4. [x] Correct Admin requirement-baseline status and PR #3/#4 history (PR #55 merged).
+5. [x] Refresh source-history metadata through PR #57 while retaining the active source inspection baseline.
+6. [ ] Re-review all 23 SDD documents for decision coverage, status language, cross-document contradictions, and unresolved dependency consistency.
+7. [ ] Record the completed reconciliation and remaining blockers in progress, issues, audit, and handoff documents after owner review/merge.
+
 
 ## 8. Evidence boundary and implementation gate
 
-This report is a documentation inventory. No application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed or verified. The repository comparison through PR #53 establishes only that intervening changes were documentation-only.
+This report is a documentation inventory and reconciliation tracker. PRs #52–#57 after the active source-inspection baseline were documentation-only. No application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed or verified. The active source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
 
 **Implementation remains blocked** until the complete platform-wide SDD is reconciled and explicitly approved by the owner.
