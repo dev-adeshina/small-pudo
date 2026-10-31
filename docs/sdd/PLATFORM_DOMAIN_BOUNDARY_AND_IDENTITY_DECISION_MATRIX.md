@@ -4,7 +4,7 @@
 **Prepared:** 31 October 2026  
 **Documentation baseline:** PR #71 merge commit `37a6ca57f1619d124ebb9718aa6067ed8d40f978`  
 **Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`  
-**Related:** `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_TECHNICAL_CONTRACT_RECONCILIATION.md`, `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`
+**Related:** `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_TECHNICAL_CONTRACT_RECONCILIATION.md`, `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`
 
 ## 1. Purpose and guardrails
 
@@ -165,3 +165,8 @@ Review 3 may distinguish:
 ## 10. API, persistence and integration boundary cross-reference
 
 The conceptual API/query/provider/evidence boundaries, authoritative fact ownership, persistence invariants, transaction/consistency candidates and source-reuse constraints are consolidated in `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md`. Apply it alongside this matrix when preparing technical contracts. It does not resolve DB-01–DB-12, select schema/cardinality, or approve API routes, fields, collections or implementation architecture. The owner decision must precede final technical modelling wherever a business relationship remains open.
+
+
+## 9. Consolidated owner-decision package reference
+
+The remaining DB-01–DB-12 owner choices are grouped in `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`. Its minimum-launch recommendations are proposals only; they do not resolve the relationship/cardinality questions in this matrix until explicitly accepted by the owner. Do not select a Firestore model or persistence contract from those proposals before owner confirmation and technical reconciliation.
