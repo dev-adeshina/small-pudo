@@ -163,7 +163,7 @@ export default function CustomerSignInPage() {
           </form>
 
           <p className="auth-footer">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/account/register">Create an account</Link>
           </p>
         </section>

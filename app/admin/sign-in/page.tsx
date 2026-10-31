@@ -168,7 +168,7 @@ export default function AdminSignInPage() {
           <GoogleAuthButton mode="sign-in" />
 
           <div className="auth-footer">
-            <span>Don't have an admin account?</span>
+            <span>Don&apos;t have an admin account?</span>
 
             <Link href="/admin/sign-up">
               Sign Up <ArrowUpRight size={15} />

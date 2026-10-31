@@ -1,3 +1,5 @@
+import type { DocumentData, QueryDocumentSnapshot } from "firebase/firestore"
+
 import {
   collection,
   deleteDoc,
@@ -23,7 +25,7 @@ function categoriesCollection() {
   return collection(db, COLLECTION_NAME)
 }
 
-function mapCategory(snapshot: any): Category {
+function mapCategory(snapshot: QueryDocumentSnapshot<DocumentData>): Category {
   const data = snapshot.data()
 
   return {

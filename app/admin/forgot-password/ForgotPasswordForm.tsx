@@ -160,7 +160,7 @@ export default function ForgotPasswordForm() {
           </h1>
 
           <p>
-            Enter your administrator email and we'll send
+            Enter your administrator email and we&apos;ll send
             you a secure link to change your password.
           </p>
         </div>
