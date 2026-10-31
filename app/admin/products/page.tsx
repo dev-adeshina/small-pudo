@@ -114,7 +114,6 @@ export default function ProductsPage() {
   //         )
 
   //         setCheckingAuth(false)
-        void loadData();
   //       }
   //     )
 
@@ -122,7 +121,7 @@ export default function ProductsPage() {
   // }, [router])
 
 
-  async function loadData() {
+  const loadData = useCallback(async () => {
     setLoading(true)
     setError("")
 
@@ -175,6 +174,7 @@ export default function ProductsPage() {
 
         setAdminEmail(email);
         setCheckingAuth(false);
+        void loadData();
       } catch (error) {
         if (!active) return;
 
