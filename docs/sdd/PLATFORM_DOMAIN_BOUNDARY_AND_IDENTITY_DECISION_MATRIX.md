@@ -160,3 +160,8 @@ Review 3 may distinguish:
 - **Verification required:** runtime, security, provider or production evidence not yet available.
 
 **Current gate:** Reviews 1 and 2 of 5 remain approved. Review 3 is still in preparation; Reviews 4 and 5 remain future gates. No application code, schema, API, Firebase rules or deployment implementation is authorized before explicit Review 5 approval of the complete SDD.
+
+
+## 10. API, persistence and integration boundary cross-reference
+
+The conceptual API/query/provider/evidence boundaries, authoritative fact ownership, persistence invariants, transaction/consistency candidates and source-reuse constraints are consolidated in `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md`. Apply it alongside this matrix when preparing technical contracts. It does not resolve DB-01–DB-12, select schema/cardinality, or approve API routes, fields, collections or implementation architecture. The owner decision must precede final technical modelling wherever a business relationship remains open.
