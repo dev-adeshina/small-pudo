@@ -74,7 +74,7 @@ Operational requirements previously marked conditional should now be prioritized
 | ADM-R04 | Protected data and actions | Server/API/data boundaries enforce authorization; hiding UI controls alone is insufficient. |
 | ADM-R05 | Safe user feedback | Pages provide meaningful loading, empty, validation, success, and error states without exposing secrets or sensitive internals. |
 | ADM-R06 | Preserve existing UI and architecture | Existing pages/components/styles/services are inspected and reused; changes stay focused and responsive. |
-| ADM-R07 | Audit important privileged actions | Record significant administrative changes, approvals, overrides, and sensitive disclosures with actor, time, action, and target where supported. |
+| ADM-R07 | Audit important privileged actions | Record consequential privileged actions, approvals, permission grants/revocations, overrides, evidence access/exports, corrections and sensitive disclosures with attributable actor, action, affected target, time, outcome and applicable reason/evidence. Distinguish physical actor from staff recorder; a log entry alone does not prove a physical event. |
 | ADM-R08 | Data integrity | The server remains authoritative for prices, stock, payment state, ownership, and privileged operations. |
 
 ### 3.2 Storefront administration
@@ -148,12 +148,12 @@ Operational requirements previously marked conditional should now be prioritized
 
 | ID | Requirement | Minimum acceptance outcome |
 |---|---|---|
-| ADM-R46 | Government-request record | If a request is received, record basic authority/reference/date/details, reviewer, decision, and any disclosure. No separate page is required. |
-| ADM-R47 | Government-request authorization | Only an authorized person may approve or carry out disclosure; record the decision and action. |
-| ADM-R48 | Evidence preservation | Preserve evidence needed for an active dispute, appeal, investigation, or valid retention/legal hold; do not routinely delete it. |
-| ADM-R49 | Retention-hold release | A hold is released only through an authorized, recorded decision under the applicable policy. |
-| ADM-R50 | Appeal evidence | Relevant payment/refund/dispute evidence can be associated with the case and accessed only by authorized personnel. |
-| ADM-R51 | Audit access protection | Audit/evidence records are protected from unauthorized reading or alteration, using existing suitable infrastructure where possible. |
+| ADM-R46 | Government-request record | If a request is received, record the requesting authority, request/reference, date, stated legal basis, scope, assigned internal reviewer, decision and any disclosure. No separate page is required; the requester receives no platform access merely by submitting the request. |
+| ADM-R47 | Government-request authorization | Only explicitly authorized personnel may review/approve and carry out a disclosure; record legal-basis review, scope, any required second approval, decision, recipient, disclosed information, acting/approving actors, time and outcome. Viewing, exporting and external-disclosure approval remain separate permissions under PM-08. |
+| ADM-R48 | Evidence preservation | Preserve attributable original evidence needed for an active dispute, appeal, investigation or valid retention/legal hold; identify its source and keep additions/corrections/redactions distinguishable. Do not treat a log/status entry alone as proof of a physical event or routinely delete evidence subject to an applicable hold. |
+| ADM-R49 | Retention-hold release | A hold blocks routine deletion while active. Release occurs only through an authorized, attributable decision under the applicable policy; exact activation/release authority, retention periods and procedures remain to be specified. |
+| ADM-R50 | Appeal evidence | Relevant payment/refund/dispute evidence can be associated with the case, traced to its source and original record, and accessed/exported only by personnel with the applicable explicit permissions; access and disclosure are attributable. |
+| ADM-R51 | Audit access protection | Audit/evidence viewing, exporting and approving external disclosure are separately permission-checked under PM-08; Admin status alone grants no blanket access. Unauthorized reads/exports/mutations are denied, original evidence is preserved, and authorized access/exports/disclosures are themselves attributable and auditable. |
 
 ### 3.9 Minimum settings, reports, and notifications
 
