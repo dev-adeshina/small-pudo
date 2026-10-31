@@ -251,7 +251,7 @@ The table records source presence only. A row marked partial/present is **not** 
 
 ## 7. Repository-history comparison refresh — 31 October 2026
 
-- **Current repository baseline:** PR #60 merged into `main` at `97f48a530254da8e1e072639116a6a3e09eca1c7`.
+- **Current repository baseline:** PR #63 merged into `main` at `9c764e9f0c3a43ee7cae92f607480e1fc386c704`.
 - **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (the source tree previously inspected and mapped in this document).
 - **Comparison result:** PRs #52–#59 after the source-inspection baseline contain SDD documentation changes only. No later application-source commit was identified in this comparison.
 - **Interpretation:** The source findings in Sections 1–6 remain tied to the stated inspected source commit. The repository baseline has advanced through documentation-only PR #60, but this does not mean the application source was re-inspected at PR #60.
