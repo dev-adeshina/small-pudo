@@ -35,7 +35,7 @@ Milestones 1–3 are complete at the owner-approved policy/documentation level. 
 
 **Milestone:** Platform-wide SDD Reconciliation and Implementation Readiness.
 
-Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #59. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#57 corrected Admin baseline/history, actor and staff-permission references, and requirement dependency/priority crosswalks. PR #58 completed the DEC-037–DEC-044 crosswalks in the 80-case P0 catalogue and readiness assessment. Full cross-document reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
+Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #59. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#58 corrected Admin baseline/history, actor and staff-permission references, requirement dependency/priority crosswalks, and P0 catalogue/readiness crosswalks. The first status/reference scan across all 23 SDD documents found no confirmed policy contradiction requiring an accepted decision to be reopened, but identified stale metadata now being corrected. Detailed section-level reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
 
 ### Milestone 4 sequence
 
