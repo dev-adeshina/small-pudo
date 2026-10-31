@@ -4,9 +4,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #59 is merged; merge commit `94c0ac87374248a32b606d82e6d418267a5b0218`.
-- PRs #54–#59 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents and PR #59 records that merge in continuity metadata.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32; repository-history comparison refreshed through PR #59). Comparison through PR #59 found only SDD documentation changes after that source baseline. This does not verify runtime behaviour or production readiness.
+- Current `main` baseline: PR #60 is merged; merge commit `97f48a530254da8e1e072639116a6a3e09eca1c7`.
+- PRs #54–#60 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #59 refreshes continuity metadata, and PR #60 completes the first cross-document status/reference pass.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32; repository-history comparison refreshed through PR #60). Comparison through PR #60 found only SDD documentation changes after that source baseline. This does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -35,11 +35,11 @@ Milestones 1–3 are complete at the owner-approved policy/documentation level. 
 
 **Milestone:** Platform-wide SDD Reconciliation and Implementation Readiness.
 
-Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #59. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#58 corrected Admin baseline/history, actor and staff-permission references, requirement dependency/priority crosswalks, and P0 catalogue/readiness crosswalks. The first status/reference scan across all 23 SDD documents found no confirmed policy contradiction requiring an accepted decision to be reopened, but identified stale metadata now being corrected. Detailed section-level reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
+Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #60. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#58 corrected Admin baseline/history, actor and staff-permission references, requirement dependency/priority crosswalks, and P0 catalogue/readiness crosswalks; PR #60 completed the first status/reference scan. Step 2D targeted section-level review has begun. Its first finding is stale owner-approval wording in the original A-10 acceptance row, now being aligned with accepted DEC-043. Detailed reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
 
 ### Milestone 4 sequence
 
-1. Establish and maintain one authoritative documentation/repository baseline — complete through PR #53; refreshed through PR #59.
+1. Establish and maintain one authoritative documentation/repository baseline — complete through PR #53; refreshed through PR #60.
 2. Reconcile accepted decisions across all SDD documents; identify contradictions, stale references, omissions, and unresolved dependencies without silently reopening accepted policy — Step 2A inventory complete; corrective updates in PRs #55–#58 merged; full review remains open.
 3. Trace requirements and policy to the existing application source read-only; distinguish present, partial, absent, not inspected, and not verified.
 4. Complete workflow, actor/permission, lifecycle, data/API/security, integration, and exception contracts.
