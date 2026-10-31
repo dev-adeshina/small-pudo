@@ -3,8 +3,8 @@
 **Last updated:** 31 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest verified main baseline for this work:** `7c07ab701993f027efa9ea17523402bb24b66ae1` — PR #73 merged.  
-**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #73 reflects documentation-only changes after this source snapshot; no later application-source commit was identified. This is not a fresh semantic source review, runtime verification, or production verification.  
+**Latest verified main baseline for this work:** `804f51d56def5a6dc6ba9518464886333b9be43a` — PR #74 merged.  
+**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #74 reflects documentation-only changes after this source snapshot; no later application-source commit was identified. This is not a fresh semantic source review, runtime verification, or production verification.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
 **Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. Step 1 continuity baseline and Step 2A inventory are complete; corrective decision crosswalks in PRs #55–#58 are merged, PR #60 completed the first cross-document status/reference scan, and PR #61 corrected the A-10 approval wording against DEC-043; PR #62 aligned DEC-038–DEC-041 status references; PR #63 clarified the Finance responsibility/deployment boundary; PR #64 reconciled DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 reconciles A-16 audit/evidence policy; PR #68 refreshes the closure direction/baseline; PR #69 reconciles A-17 Support, exception and manual-override boundaries and adds acceptance evidence. The subsequent cross-document review found inconsistent wording that treated the Finance Portal as an approved separate deployment even though the actor model leaves the deployment arrangement unresolved. This documentation pass clarifies the accepted Finance responsibility boundary without approving a separate portal, protected module, or deployment architecture. Full reconciliation, technical contracts, detailed acceptance-test specifications, and production-readiness evidence planning remain open. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
@@ -22,8 +22,8 @@
 
 ### Current milestone — Milestone 4: Platform-wide SDD Reconciliation and Implementation Readiness
 
-- **Baseline:** The initial read-only SDD baseline review was PR #52; current `main` is PR #73 merge commit `7c07ab701993f027efa9ea17523402bb24b66ae1`. PRs #53–#73 were documentation-only.
-- **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` remains the active source-inspection snapshot. Repository-history comparison through PR #72 reflects documentation-only intervening changes. Do not infer runtime behaviour from this comparison.
+- **Baseline:** The initial read-only SDD baseline review was PR #52; current `main` is PR #74 merge commit `804f51d56def5a6dc6ba9518464886333b9be43a`. PRs #53–#74 were documentation-only.
+- **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` remains the active source-inspection snapshot. Repository-history comparison through PR #74 reflects documentation-only intervening changes. Do not infer runtime behaviour from this comparison.
 - **Milestones 1–3:** Complete at the owner-approved policy/documentation level. Milestone 1 DEC-038 (PR #45); Milestone 2 DEC-039–DEC-041 (PRs #46–#48); Milestone 3 DEC-042–DEC-044 (PRs #49–#51). PR #52 records Milestone 3 completion.
 - **Accepted policy:** D-01–D-15 / DEC-022–DEC-036; DEC-037 logistics-first product hierarchy; DEC-038 independent shipment booking; DEC-039 pricing boundaries; DEC-040 measurement adjustment/customer resolution; DEC-041 payment/settlement; DEC-042 physical intake/custody; DEC-043 location capabilities/authority; DEC-044 custody transfers/physical exceptions. PM-01–PM-12 and BP-01–BP-22 remain accepted at their documented policy levels.
 - **Current continuity work:** Continue detailed section-level dependency reconciliation across all SDD documents, including finance responsibility/deployment wording, Admin scope, workflows, actors/permissions, acceptance, and source evidence. The current proposal changes documentation only.
@@ -39,6 +39,15 @@ VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentic
 - Verified behaviour requires dated test/runtime/deployment evidence with environment and scope.
 - Launch readiness requires the evidence specified by DEC-036; source presence or a passing build alone is insufficient.
 - Historical roadmap/checkpoint sections below are retained as history, not the current task pointer.
+
+### Current technical workstream — production readiness and operational evidence contract (PR #75 preparation)
+
+- **Verified documentation baseline:** PR #74 merged at `804f51d56def5a6dc6ba9518464886333b9be43a`; the merge commit is identical to `main`.
+- **New artifact:** `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md` defines environment/configuration, secret and privilege controls, deployment/rollback, observability/alerting, backup/restore, incident response, continuity/manual fallback, provider unknown outcomes and evidence-gated release.
+- **A-20 alignment:** The artifact expands the existing A20-01–A20-05 acceptance obligations without adding case IDs, changing priority, inventing service levels, or claiming tests passed.
+- **Open inputs:** Environment topology, monitoring products/thresholds, backup interval/retention, RTO/RPO, response targets, named owners and manual fallback scope remain explicit owner decisions.
+- **Evidence boundary:** No source/runtime/deployment/provider/production inspection or test execution was performed for this documentation change. The application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
+- **Gate:** Reviews 1 and 2 of 5 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. No implementation is authorized before explicit Review 5 approval.
 
 ## 2. Feature tracker
 
