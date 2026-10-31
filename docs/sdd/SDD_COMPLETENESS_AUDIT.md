@@ -297,3 +297,27 @@ No confirmed contradiction requiring an accepted owner policy to be reopened was
 - Continue source-traceability and production-readiness planning without claiming runtime evidence or changing application code.
 
 **Current status:** This is the first status/reference scan, not completion of the full platform-wide SDD reconciliation. VLY-019 remains open and blocks application-code changes until the complete SDD is explicitly approved by the owner. No policy was changed, no new technical contract was approved, no tests were executed, and no application code or runtime behaviour was changed or verified.
+
+
+## 14. Targeted workflow/lifecycle/acceptance cross-check — 31 October 2026
+
+### Review baseline and scope
+
+- PR #60 merged into `main` at `97f48a530254da8e1e072639116a6a3e09eca1c7`; `main` was confirmed identical to that commit.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. PRs #53–#60 are documentation-only; no source/runtime/production verification is implied.
+- The initial targeted review compared selected shared-workflow sections, lifecycle Sections 3–8, acceptance rows A-09/A-10 and the DEC-043 refinement, actor responsibilities, and the staff-permission matrix against DEC-037–DEC-044 and applicable PM/BP policies.
+
+### Findings
+
+1. The DEC-043 location-capability policy is consistently represented in the shared-workflow addendum, lifecycle Section 4.4B, actor responsibility Section 10, staff-permission Section 9, and the later A-10 refinement. These documents preserve independent checks for location/service/action eligibility and the acting person's assigned authority.
+2. The original A-10 row in the cross-domain acceptance matrix still says the location type/capability model requires owner approval. That wording is stale because DEC-043 has already been approved. The later A-10 refinement contains the correct accepted policy and clearly leaves the exact service/location/action matrix, capability catalogue, assignment granularity, partner arrangements, and technical contracts open.
+3. This is a document-level approval-status inconsistency, not evidence of a contradiction in DEC-043 or a reason to reopen the accepted owner decision. The base A-10 row should be aligned with the later refinement while preserving the unresolved detailed specification.
+
+### Remaining review work
+
+- Continue the cross-document review of pricing, measurement adjustments, payment/settlement, route assignment, dispatch, delivery, notifications, audit/evidence, booking-party authority, and all A-01–A-20 acceptance rows.
+- Compare detailed workflow actors and permissions with PM/BP policy, requirement dependencies, Admin page design, and source-evidence claims.
+- Preserve all open operational/technical questions and distinguish them from accepted owner policy.
+- Reassess root `pudo.zip` scope/authority before including it in source evidence; it remains uninspected.
+
+**Current status:** Step 2D has begun; this is a targeted first pass, not full workflow/lifecycle/acceptance reconciliation. VLY-019 remains open and blocks application-code changes until the complete platform-wide SDD is explicitly approved. No new policy or technical contract was approved, no tests were executed, and no application source or runtime behaviour was changed or verified.
