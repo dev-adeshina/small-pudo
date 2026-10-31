@@ -2,9 +2,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #72 is merged; merge commit `d17828292f2a0e0424de9461affe4aebc2c94e0b`.
-- PRs #54–#72 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The comparison from the source-inspection baseline through PR #72 reflects documentation-only changes; PRs #71 and #72 themselves are documentation-only. The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
+- Current `main` baseline: PR #73 is merged; merge commit `7c07ab701993f027efa9ea17523402bb24b66ae1`.
+- PRs #54–#73 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The comparison from the source-inspection baseline through PR #73 reflects documentation-only changes; PRs #71–#73 themselves are documentation-only. The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -127,7 +127,7 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 
 ## Latest continuation checkpoint — after PR #71
 
-- PR #71 merged at `d17828292f2a0e0424de9461affe4aebc2c94e0b`; this is the current verified documentation baseline.
+- PR #71 merged at `37a6ca57f1619d124ebb9718aa6067ed8d40f978`; PR #72 and PR #73 subsequently extended the documentation baseline.
 - `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md` now separates domain responsibility, identity/party entitlements, record ownership, unresolved booking/parcel/route/payment relationships (DB-01–DB-12), transaction consistency candidates and source-reuse boundaries.
 - The matrix does not settle owner decisions or schema. Resolve launch-essential relationships through the existing owner decision process before finalizing data/API contracts. Do not invent defaults.
 - Reviews 1 and 2 of 5 remain approved. Review 3 is still being assembled; Reviews 4 and 5 remain future gates. No application code before Review 5 approval.
@@ -146,3 +146,12 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - It specifies reliability obligations for duplicate/concurrent/stale/replayed/delayed/out-of-order requests and unknown provider outcomes, plus recovery ownership and evidence requirements. It does not prescribe schema, endpoints, enums, key formats, retry values or provider-specific mechanisms.
 - PR #72 is the verified current documentation baseline at `d17828292f2a0e0424de9461affe4aebc2c94e0b`; the source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
 - Reviews 1 and 2 of 5 remain approved. Review 3 is not yet presented; Reviews 4 and 5 remain future gates. No application-code changes before explicit Review 5 approval.
+
+
+## Latest lifecycle event/state workstream — PR #74 preparation
+
+- PR #73 merged at `7c07ab701993f027efa9ea17523402bb24b66ae1`; current `main` was compared with that merge commit and found identical.
+- `PLATFORM_LIFECYCLE_EVENT_AND_STATE_CONTRACT_MATRIX.md` separates command, decision, observation/provider event, domain fact, current state, projection, evidence, correction and reconciliation responsibilities.
+- The matrix preserves DEC-042–DEC-044 physical receipt/custody requirements and prevents assignment, dispatch authorization, arrival, notification or status update from being mistaken for physical proof.
+- It does not mandate event sourcing, a generalized event bus, new schema, event names, enums or implementation architecture. It adds requirements for late/out-of-order events, corrections, projections and acceptance scenarios.
+- Reviews 1 and 2 of 5 remain approved. Review 3 is still being assembled; Reviews 4 and 5 remain future gates. No application-code changes before explicit Review 5 approval.
