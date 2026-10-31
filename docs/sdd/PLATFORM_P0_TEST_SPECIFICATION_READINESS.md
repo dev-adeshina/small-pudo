@@ -253,3 +253,8 @@ A case is not ready for execution until all applicable items are true:
 ## 11. Mutation-contract dependency — PR #72 baseline
 
 The action-level guard, authorization, replay/concurrency, unknown-provider-outcome, recovery-owner and evidence obligations are cross-referenced in `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`. These requirements inform the case-specific executable specifications; they do not constitute test execution or close any open P0 policy/owner decision. Existing readiness status remains unchanged.
+
+
+## 12. API, persistence and integration boundary cross-reference
+
+Use `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md` when converting A-01–A-20 and ADM-R01–ADM-R54 scenario outlines into executable case specifications. It identifies authoritative fact owners, command/query/provider/evidence boundaries, source reuse and gaps, candidate transaction/consistency boundaries, API authorization/input/replay requirements, projection freshness and provider unknown-outcome obligations. It adds no test-case IDs, does not change priority/readiness classifications, does not resolve DB-01–DB-12 or policy blockers, and does not claim that any test has been executed or passed.
