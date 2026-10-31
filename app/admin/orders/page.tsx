@@ -223,7 +223,7 @@ export default function AdminOrdersPage() {
       active = false;
       unsubscribe();
     };
-  }, [router]);
+  }, [loadOrders, router]);
 
 
 
