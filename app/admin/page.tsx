@@ -214,7 +214,7 @@ export default function AdminDashboard() {
             <h1>
               Good morning.
               <br />
-              <em>Let's move.</em>
+              <em>Let&apos;s move.</em>
             </h1>
 
             <p>
