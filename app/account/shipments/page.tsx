@@ -133,7 +133,7 @@ export default function ShipmentDraftsPage() {
       const idToken = await user.getIdToken();
       const response = await fetch(
         editingId
-          ? `/api/account/shipment-booking-drafts/${editingId}`
+          ? `/api/account/shipment-booking-drafts/${encodeURIComponent(editingId)}`
           : "/api/account/shipment-booking-drafts",
         {
           method: editingId ? "PATCH" : "POST",
