@@ -44,7 +44,7 @@ export default function CartPage() {
 
           <h2>Your cart is empty</h2>
 
-          <p>You haven't added anything to your cart yet.</p>
+          <p>You haven&apos;t added anything to your cart yet.</p>
 
           <Link href="/products" className="btn btn-primary">
             Browse Products
