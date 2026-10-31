@@ -2,9 +2,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #76 is merged; merge commit `da4fa5407d899ed5999ce29e61a43be1ef8a89bb`.
-- PRs #54–#76 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The comparison from the source-inspection baseline through PR #75 reflects documentation-only changes; PRs #71–#75 themselves are documentation-only; The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
+- Current `main` baseline: PR #77 is merged; merge commit `61c6d5de8a4d28be916856db9e6c715fc24cad36`.
+- PRs #54–#77 are merged documentation-only reconciliation/design changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The repository-history comparison through PR #77 reflects documentation-only changes after the source-inspection baseline; The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -185,3 +185,13 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - It does not resolve business rules/cardinality, approve schema/API/service/provider/operational targets, or authorize implementation.
 - Documentation-only; no fresh source/runtime/deployment/production verification or tests are claimed. Source inspection remains at `e0f69055d33dd9399c23e1d793f359468229c856`.
 - Reviews 1 and 2 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. Implementation remains frozen until explicit Review 5 approval.
+
+
+## Latest verified baseline and technical-design synthesis — PR #77 — 31 October 2026
+
+- PR #77 is merged at `61c6d5de8a4d28be916856db9e6c715fc24cad36`; GitHub comparison confirmed `main` and the merge commit are identical.
+- `PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md` is the Review 3 synthesis index across A-01–A-20, tying authoritative facts/lifecycles, API/persistence/authorization, external effects/recovery, acceptance evidence, source reuse/gaps and unresolved owner inputs together.
+- Companion design contracts now cover domain boundaries/identity, mutation authorization/recovery, lifecycle events/states, production readiness/operational evidence, and API/persistence/integration boundaries. These remain conceptual SDD artifacts, not approved schemas, routes, services, provider choices or implementation architecture.
+- Next: perform the consolidated Review 3 completeness and cross-document consistency audit. Do not present Review 3 until all checklist obligations and companion contracts agree and every unresolved owner input is clearly separated from proposed technical design.
+- The application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. PR #77 is documentation-only; no new source/runtime/deployment/production verification or tests are claimed.
+- Reviews 1 and 2 of 5 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. The 80 P0/Conditional P0 case rows are not approved for execution. Application-code and production changes remain frozen until explicit Review 5 approval.
