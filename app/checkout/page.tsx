@@ -2,14 +2,11 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
 import { auth } from "@/lib/firebase";
 // import { createOrder } from "@/lib/firebase/orders";
 
 export default function CheckoutPage() {
-  const router = useRouter();
-
   const {
     items,
     isReady,
