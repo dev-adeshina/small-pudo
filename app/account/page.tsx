@@ -287,7 +287,7 @@ export default function CustomerAccountPage() {
             </p>
 
             <Link href="/account/shipments" className="customer-primary-action">
-              <ShoppingBag size={17} />
+              <Package size={17} />
               Prepare a shipment
               <ArrowUpRight size={16} />
             </Link>
