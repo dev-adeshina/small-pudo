@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import {
@@ -77,7 +77,7 @@ export default function CategoriesPage() {
   //   return () => unsubscribe();
   // }, [router]);
 
-  async function loadCategories() {
+  const loadCategories = useCallback(async () => {
     setLoading(true);
     setError("");
 
@@ -98,7 +98,7 @@ export default function CategoriesPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -155,7 +155,7 @@ export default function CategoriesPage() {
       active = false;
       unsubscribe();
     };
-  }, [router]);
+  }, [loadCategories, router]);
 
   async function handleLogout() {
     await logoutAdmin();
