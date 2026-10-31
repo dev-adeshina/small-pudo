@@ -4,7 +4,7 @@
 **Prepared:** 31 October 2026  
 **Documentation baseline:** PR #75 merge commit `f9ad98fe0c76929d139849bde1376592e21a4454`  
 **Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`  
-**Related:** `PLATFORM_TECHNICAL_CONTRACT_RECONCILIATION.md`, `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_LIFECYCLE_EVENT_AND_STATE_CONTRACT_MATRIX.md`, `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`, `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md`, `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md`
+**Related:** `PLATFORM_TECHNICAL_CONTRACT_RECONCILIATION.md`, `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_LIFECYCLE_EVENT_AND_STATE_CONTRACT_MATRIX.md`, `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`, `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md`, `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md`, `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`
 
 ## 1. Purpose and authority
 
@@ -256,3 +256,8 @@ Before final technical design is presented:
 - unresolved DB/policy/operational inputs must be presented as blockers, not silently defaulted.
 
 **Current gate:** Reviews 1 and 2 of 5 remain approved. Review 3 remains in preparation; Reviews 4 and 5 remain future consolidated approvals. This document does not authorize application code, schema, API, Firebase rules, configuration, provider enablement or deployment. The implementation freeze remains until explicit Review 5 approval of the complete reconciled SDD.
+
+
+## 14. Consolidated owner-decision package boundary
+
+The owner-dependent booking, parcel, route-leg, party/business, location/partner and financial-event relationships are consolidated in `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`. Its recommendations remain pending and are not approved persistence rules. This contract must continue to represent unresolved cardinalities as open until the owner confirms the relevant business rule and the technical design is reconciled. No collection, field, index, endpoint or transaction boundary may be inferred from the package.
