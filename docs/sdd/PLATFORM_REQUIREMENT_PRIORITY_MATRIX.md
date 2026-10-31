@@ -1,9 +1,9 @@
 # VeriLyft Platform Requirement-Level Launch Priority Matrix
 
 **Status:** Owner-reviewed and merged baseline — not implementation approval or release authorization  
-**Date:** 30 October 2026  
-**Baseline:** `main` at `c9d9342cfc9dcef2c7d5704074d83927c5f5099c` (PR #30 merged)  
-**Authority:** DEC-018 (owner-approved lean launch scope), DEC-022–DEC-035 (accepted policy directions), and DEC-036 (evidence-based launch governance).  
+**Date:** 31 October 2026  
+**Baseline:** Owner-reviewed priority classifications from PR #31; documentation reconciliation current through PR #56 merge `5cf0b8bae46e8b88d777b87c694400657bfd54ed`.  
+**Authority:** DEC-018 (owner-approved lean launch scope), DEC-022–DEC-044 (accepted policy directions and refinements), and DEC-036 (evidence-based launch governance).  
 **Related documents:** `DECISIONS.md`, `ADMIN_REQUIREMENTS.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ISSUES.md`, `PROGRESS.md`.
 
 ## 1. Purpose and authority
@@ -29,7 +29,7 @@ A source file, UI page, successful build, or historical happy-path report is not
 
 ## 2. Launch scope used for this classification
 
-The P0 baseline covers the lean operating model accepted in DEC-018 and elaborated by DEC-022–DEC-035:
+The P0 baseline covers the lean operating model accepted in DEC-018 and elaborated by DEC-022–DEC-044:
 
 - Existing VeriLyft storefront, catalogue, cart, guest/account checkout, customer account and entitled order access.
 - Independent shipment booking by registered authenticated customers.
@@ -192,6 +192,25 @@ The priority baseline does not fill in detailed business rules. The following re
 9. **Technical contracts:** conceptual relationships, source reuse, API request/response contracts, server authorization, idempotency, compatibility and migration questions must be reconciled against the active source before implementation.
 
 These are detailed specification/evidence tasks under accepted high-level decisions, not a reopening of D-01–D-15.
+
+
+
+### 6.1 DEC-037–DEC-044 policy refinement crosswalk
+
+These decisions refine the meaning, actor boundaries, and evidence dependencies of existing launch requirements. They do not change the owner-approved priority classifications in Sections 3–4 or add requirements.
+
+| Decision | Existing priority-matrix coverage | Priority interpretation retained |
+|---|---|---|
+| **DEC-037** | A-03, A-05–A-06, A-09–A-12; ADM-R14–R39 | Independent shipment/logistics is the primary workflow; storefront delivery shares fulfilment operations where applicable. No change to existing P0 classifications or storefront-vs-shipment distinction. |
+| **DEC-038** | A-05–A-06, A-19; ADM-R21–R24, R30–R32, R54 | Booking confirmation, accepted quote, party responsibilities, and service handover deadline remain distinct from payment and physical intake. Existing P0 priorities remain unchanged. |
+| **DEC-039** | A-06, A-08–A-09; ADM-R25, R30–R34 | Service-specific pricing and trusted calculation remain P0 dependencies; formulas, inputs, rate sources, and calculation details remain specification gates. |
+| **DEC-040** | A-06, A-08–A-09, A-17; ADM-R07, R25, R28, R30–R34 | Actual measurement, proposed adjustment, review/second approval where applicable, customer decision, and service resolution remain distinct. No universal threshold is added. |
+| **DEC-041** | A-03, A-07–A-08, A-12, A-17; ADM-R15–R20, R29, R34–R35 | Payment/settlement, refund/credit, reconciliation, custody, and dispatch remain separate; the normal full-settlement dispatch gate is not weakened by partial payment. |
+| **DEC-042** | A-09–A-10, A-12, A-15, A-17; ADM-R03–R04, R07, R21–R28, R35–R37, R39, R51–R52 | Physical intake/custody requires an active, capable location and separately authorized actor. Holds preserve actual custody; no priority change. |
+| **DEC-043** | A-09–A-12, A-15, A-17; ADM-R03–R04, R07, R25–R28, R36–R39, R51–R52 | Location capability and staff permission are independent cumulative controls. Configuration authority and capability revocation remain controlled; no priority change. |
+| **DEC-044** | A-09, A-12–A-13, A-16–A-17; ADM-R07, R23–R28, R39, R48–R51 | Physical handover and receiving possession establish transfer completion; attempted/assigned/dispatch events do not. Custody exceptions require traceable evidence and resolution; no automatic financial/customer outcome. |
+
+**Priority guardrails:** ADM-R40, ADM-R44 and ADM-R53 remain P1. Conditional P0 items remain conditional on their recorded activation triggers. This crosswalk does not change the priority authority established in PR #31, establish implementation status, or approve executable tests.
 
 ## 7. Requirement-to-evidence status rules
 
