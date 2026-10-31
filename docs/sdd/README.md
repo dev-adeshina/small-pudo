@@ -80,3 +80,5 @@ The current technical-contract reconciliation is tracked in `PLATFORM_TECHNICAL_
 
 
 The domain and identity decision crosswalk is tracked in `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md`. It separates business record responsibilities, party entitlements, unresolved relationship/cardinality decisions, consistency boundaries and source-reuse constraints. It is a design support artifact, not an approved data model or implementation authorization.
+
+- `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md` — action-level mutation guards, authorization sequence, concurrency/idempotency, external unknown-outcome handling, recovery ownership, and acceptance evidence obligations.
