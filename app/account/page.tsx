@@ -286,9 +286,9 @@ export default function CustomerAccountPage() {
               Your orders, deliveries, and account details—all in one place.
             </p>
 
-            <Link href="/products" className="customer-primary-action">
-              <ShoppingBag size={17} />
-              Continue shopping
+            <Link href="/account/shipments" className="customer-primary-action">
+              <Package size={17} />
+              Prepare a shipment
               <ArrowUpRight size={16} />
             </Link>
           </div>
@@ -528,6 +528,13 @@ export default function CustomerAccountPage() {
                 <span>
                   <UserRound size={18} />
                   My profile
+                </span>
+                <ArrowUpRight size={17} />
+              </Link>
+              <Link href="/account/shipments" className="customer-action">
+                <span>
+                  <Package size={18} />
+                  Prepare a shipment
                 </span>
                 <ArrowUpRight size={17} />
               </Link>
