@@ -45,8 +45,10 @@ export default function ProductActions({
     (item) => item.productId === productId
   );
 
-  const quantity = cartItem
-    ? Math.min(stock, cartItem.quantity)
+  const quantity = isReady
+    ? cartItem
+      ? Math.min(stock, cartItem.quantity)
+      : 1
     : selectedQuantity;
 
   // Synchronize the requested quantity with the cart.
