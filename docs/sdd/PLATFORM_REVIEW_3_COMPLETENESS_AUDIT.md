@@ -1,5 +1,8 @@
 # VeriLyft Review 3 Technical-Design Completeness Audit
 
+> **Execution status update (31 October 2026):** DEC-045 supersedes the former requirement to finish Reviews 3–5 before beginning any application-code work. This audit remains the record of unresolved technical, policy and evidence gaps, not a stop-work order. Implement only slices supported by accepted policy and existing source conventions; unresolved dependencies remain capability gates. This does not mark Review 3 complete, approve DB-01–DB-12 recommendations, or waive P0/release evidence.
+
+
 **Status:** Internal preparation audit; Review 3 is not yet ready for owner presentation; consolidated owner recommendations prepared but not approved  
 **Audit date:** 31 October 2026 (refreshed after PR #83)  
 **Documentation baseline:** PR #83 merge commit `986f4ad79232ce1700f4edaa972a17522ed319c8`  
