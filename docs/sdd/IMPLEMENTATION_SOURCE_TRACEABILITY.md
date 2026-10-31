@@ -234,7 +234,7 @@ The table records source presence only. A row marked partial/present is **not** 
 
 | ID | Current finding | Required follow-up |
 |---|---|---|
-| SRC-01 | The active source-inspection commit remains `e0f69055d33dd9399c23e1d793f359468229c856`; repository-history comparison is refreshed through PR #60. | Keep source findings tied to the inspected commit; perform a new source inspection only after a later source-changing commit or an explicitly approved deeper review. |
+| SRC-01 | The active source-inspection commit remains `e0f69055d33dd9399c23e1d793f359468229c856`; repository-history comparison is refreshed through PR #64. | Keep source findings tied to the inspected commit; perform a new source inspection only after a later source-changing commit or an explicitly approved deeper review. |
 | SRC-02 | Customer/Admin authorization source exists but has not been reproduced end-to-end. | Test ordinary customer direct navigation, protected API calls, valid Admin sign-in, expired/revoked token, and denial without breaking customer session. |
 | SRC-03 | Paystack order paths have transaction/replay controls but no current runtime matrix. | Test duplicate/concurrent initialization, duplicate webhook, late success after cancellation, amount/currency/reference mismatch, provider success/local save failure, and stock consistency. |
 | SRC-04 | Cloudinary validation/auth source exists; previous 401 and successful upload remain unresolved. | Test authorized valid upload, unauthorized upload, wrong folder, spoofed MIME/signature, oversized file, persistence and deployed configuration. |
@@ -258,3 +258,14 @@ The table records source presence only. A row marked partial/present is **not** 
 - **Evidence limits:** No runtime/browser/API test, deployed configuration review, production data inspection, provider-dashboard check, or production-readiness verification was performed by this documentation update. The root `pudo.zip` archive remains uninspected and outside source claims until its authority/scope is established.
 
 This refresh updates repository-history metadata only. It does not change any A-area or ADM-R source status, close source gaps, approve implementation, or authorize test execution.
+
+
+## 8. Repository-history comparison refresh — PR #64 — 31 October 2026
+
+- **Current repository baseline:** PR #64 merged into `main` at `d02b2d69156aea45c07b5e2db5511b2486e50471`.
+- **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`.
+- **Comparison result:** Comparing the inspected source baseline with PR #64's merge commit reports 320 commits ahead and returns SDD documentation paths only. No application-source path appears in the comparison's changed-file set. PR #64 itself changes nine SDD documentation files only.
+- **Interpretation:** Sections 1–6 remain observations about source inspected at `e0f69055d33dd9399c23e1d793f359468229c856`. The intervening history has not changed the inspected application-source paths according to the repository comparison; this does not mean the application was freshly re-inspected at PR #64.
+- **Limits:** No semantic source review, test execution, runtime/browser/API verification, deployed configuration review, production data inspection, or production-readiness verification was performed by this refresh. The path-level inventory recorded in the PR #64 review is not a substitute for semantic or runtime evidence.
+
+The active source-inspection baseline remains unchanged. Do not upgrade any source finding to implemented, tested, or production-ready on the basis of this history comparison.
