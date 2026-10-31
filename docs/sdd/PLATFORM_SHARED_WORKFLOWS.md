@@ -184,7 +184,7 @@ Use these evidence labels consistently:
 - A quote, accepted commercial agreement, payment, and booking are distinct events.
 - Preserve customer-declared and actual measurements separately. Actual measurement records identify unit, actor, location, timestamp, and applicable evidence/reason. Units and measurement requirements are service-specific; no universal units or numeric tolerances are approved.
 - Material discrepancies and adjustments affecting an existing payment require review under configured authority. A proposed adjustment is not an approved charge or settled financial event.
-- Notify the customer of a price-changing adjustment, including its reason and revised amount. Explicit customer acceptance is required before collecting an additional charge. A disputed additional charge is held pending review; rejection follows the applicable service-resolution policy.
+- Notify the customer of a price-changing adjustment, including its reason and revised amount. Explicit customer acceptance is required before collecting an additional charge. A disputed additional charge is held pending review; under DEC-040, rejection triggers an authorized service-resolution decision and never automatically cancels, refunds, credits, or charges.
 - Additional payments, credits, refunds, reversals, and reconciliation outcomes remain distinct financial events.
 
 ### Proposed sequence
@@ -204,9 +204,9 @@ Use these evidence labels consistently:
 
 - Exact formula catalogue, rates, service mapping, input sources, units/conversions, distance sources/bands, rounding, currency handling, minimums, tax/fee/discount applicability, and effective-date rules.
 - Whether taxes, surcharges, discounts, or other fees apply and how they are calculated, displayed, and approved; unknown treatment must not be assumed to be zero.
-- Exact quote-validity durations, handover-deadline configuration, and booking-reference/receipt format. DEC-038 resolves that valid quote acceptance by the authenticated booking party confirms the booking and accepted-quote expiry does not silently cancel or rewrite it.
+- Exact quote-validity durations, handover-deadline configuration, and booking-reference/receipt format. DEC-038 resolves that valid quote acceptance by the authenticated booking party confirms the booking and accepted-quote expiry does not silently cancel or rewrite it; only the service-specific duration/configuration remains open.
 - Service-specific required measurements, units, explicit conversion rules, numeric discrepancy thresholds, and evidence requirements.
-- Approval limits, separation of duties, second-person review cases, and operational consequences when a customer rejects an adjustment.
+- Approval limits, separation of duties, second-person review cases, who is authorized to choose among the DEC-040 service-resolution outcomes, service-specific safety/commercial feasibility criteria, alternative-service eligibility, customer response periods, and non-response handling.
 - Payment-at-intake methods/evidence; authority for additional charges, refunds, credits, and write-offs; reconciliation frequency and exception ownership.
 
 ### Acceptance criteria to define
