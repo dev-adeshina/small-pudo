@@ -3,11 +3,11 @@
 **Last updated:** 31 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest verified main baseline for this work:** `157d3e2c24f09694f80033fb09c26b02812bd5d1` — PR #61 merged.  
-**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #61 found intervening changes to SDD documentation only; no later application-source commit was identified. This does not establish runtime or production behaviour.  
+**Latest verified main baseline for this work:** `bcbbca289eb1eef8a4535fb81ab24b3e3fd1a32f` — PR #62 merged.  
+**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #62 found intervening changes to SDD documentation only; no later application-source commit was identified. This does not establish runtime or production behaviour.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
-**Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. Step 1 continuity baseline and Step 2A inventory are complete; corrective decision crosswalks in PRs #55–#58 are merged, PR #60 completed the first cross-document status/reference scan, and PR #61 corrected the A-10 approval wording against DEC-043. The next review identified stale status wording around DEC-038, DEC-040 and DEC-041: accepted quote-expiry and adjustment-rejection policy was still described as unresolved, and the acceptance/issue records did not fully reflect the accepted DEC-041 payment boundaries. This documentation pass aligns those references while preserving detailed service and technical dependencies as open. Full reconciliation, technical contracts, detailed acceptance-test specifications, and production-readiness evidence planning remain open. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
+**Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. Step 1 continuity baseline and Step 2A inventory are complete; corrective decision crosswalks in PRs #55–#58 are merged, PR #60 completed the first cross-document status/reference scan, and PR #61 corrected the A-10 approval wording against DEC-043, and PR #62 aligned DEC-038–DEC-041 status references. The subsequent cross-document review found inconsistent wording that treated the Finance Portal as an approved separate deployment even though the actor model leaves the deployment arrangement unresolved. This documentation pass clarifies the accepted Finance responsibility boundary without approving a separate portal, protected module, or deployment architecture. Full reconciliation, technical contracts, detailed acceptance-test specifications, and production-readiness evidence planning remain open. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
 
 > This tracker records the current documented working state. Verify the live repository, current branch/PR state, and dated test results before treating any item as complete.
 
@@ -22,11 +22,11 @@
 
 ### Current milestone — Milestone 4: Platform-wide SDD Reconciliation and Implementation Readiness
 
-- **Baseline:** The initial read-only SDD baseline review was PR #52; current `main` is PR #61 merge commit `157d3e2c24f09694f80033fb09c26b02812bd5d1`. PRs #53–#61 were documentation-only.
+- **Baseline:** The initial read-only SDD baseline review was PR #52; current `main` is PR #62 merge commit `bcbbca289eb1eef8a4535fb81ab24b3e3fd1a32f`. PRs #53–#61 were documentation-only.
 - **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` remains the active source-inspection snapshot. Repository-history comparison through PR #61 found documentation-only intervening changes. Do not infer runtime behaviour from this comparison.
 - **Milestones 1–3:** Complete at the owner-approved policy/documentation level. Milestone 1 DEC-038 (PR #45); Milestone 2 DEC-039–DEC-041 (PRs #46–#48); Milestone 3 DEC-042–DEC-044 (PRs #49–#51). PR #52 records Milestone 3 completion.
 - **Accepted policy:** D-01–D-15 / DEC-022–DEC-036; DEC-037 logistics-first product hierarchy; DEC-038 independent shipment booking; DEC-039 pricing boundaries; DEC-040 measurement adjustment/customer resolution; DEC-041 payment/settlement; DEC-042 physical intake/custody; DEC-043 location capabilities/authority; DEC-044 custody transfers/physical exceptions. PM-01–PM-12 and BP-01–BP-22 remain accepted at their documented policy levels.
-- **Current continuity work:** Complete the cross-document status/reference review across all 23 SDD documents, correct stale metadata/ranges, then continue detailed section-level dependency reconciliation. The current proposal changes documentation only.
+- **Current continuity work:** Continue detailed section-level dependency reconciliation across all SDD documents, including finance responsibility/deployment wording, Admin scope, workflows, actors/permissions, acceptance, and source evidence. The current proposal changes documentation only.
 - **Remaining platform work:** Reconcile all approved decisions across workflows, lifecycle/domain contracts, actors/permissions, requirement traceability, acceptance matrices, source findings, and Admin requirements/design/audit. Specify unresolved operational/technical details without inventing values or contracts. Define executable acceptance-test specifications and production-readiness evidence.
 - **Implementation gate:** No application-code changes until the complete platform-wide SDD is reconciled and explicitly approved by the owner.
 
@@ -1033,3 +1033,16 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Complete platform-wide reconciliation, detailed acceptance-test specifications, and production-readiness evidence planning; obtain explicit owner approval of the complete SDD before any application-code changes.
 
 **Evidence boundary:** This is a documentation review only. It does not approve service-specific pricing values, measurement thresholds, payment methods/providers, financial authority limits, technical contracts, schema, APIs, permissions, or implementation. No tests were executed, no application source was re-inspected, and no runtime/deployment/production behaviour was verified. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
+
+
+## 48. Milestone 4 Step 2D — Finance responsibility and deployment-boundary clarification — 31 October 2026
+
+- [x] Verified PR #62 merged into `main` at `bcbbca289eb1eef8a4535fb81ab24b3e3fd1a32f`; compared that merge commit with `main` and confirmed they are identical before opening this follow-up.
+- [x] Compared DEC-014, Admin Portal design and requirements/audit, the platform actor model, finance-related acceptance priority, and the platform completeness audit.
+- [x] Confirmed that accepted policy separates Admin operational financial visibility from the full Finance responsibility, while the actor model explicitly leaves deployment as a separate portal, protected module, or combination unresolved.
+- [x] Recorded the owner's agreement that references to a “Finance Portal” describe the full-finance responsibility boundary and do not constitute approval for a separate deployed portal.
+- [x] Clarified the decision and affected Admin, actor, priority, audit, and continuity documents without changing DEC-014's accepted responsibility boundary or approving a portal/module architecture.
+- [ ] Continue the remaining A-01–A-20 review, workflow/lifecycle and actor/permission reconciliation, source-evidence review, detailed contracts, executable acceptance specifications, and production-readiness evidence planning.
+- [ ] Obtain explicit owner approval of the complete reconciled platform-wide SDD before any application-code changes.
+
+**Evidence boundary:** Documentation-only clarification. No owner policy was reopened or amended; no separate portal, protected module, permission model, schema, API, route, or deployment architecture was approved. No application source was re-inspected, no tests were executed, and no runtime/deployment/production behaviour was verified. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
