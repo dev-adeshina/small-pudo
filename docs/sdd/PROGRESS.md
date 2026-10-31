@@ -3,11 +3,11 @@
 **Last updated:** 31 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest verified main baseline for this work:** `bcbbca289eb1eef8a4535fb81ab24b3e3fd1a32f` — PR #62 merged.  
-**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #62 found intervening changes to SDD documentation only; no later application-source commit was identified. This does not establish runtime or production behaviour.  
+**Latest verified main baseline for this work:** `d02b2d69156aea45c07b5e2db5511b2486e50471` — PR #64 merged.  
+**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #64 found intervening changes to SDD documentation only; no later application-source commit was identified. This does not establish runtime or production behaviour.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
-**Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. Step 1 continuity baseline and Step 2A inventory are complete; corrective decision crosswalks in PRs #55–#58 are merged, PR #60 completed the first cross-document status/reference scan, and PR #61 corrected the A-10 approval wording against DEC-043; PR #62 aligned DEC-038–DEC-041 status references. The subsequent cross-document review found inconsistent wording that treated the Finance Portal as an approved separate deployment even though the actor model leaves the deployment arrangement unresolved. This documentation pass clarifies the accepted Finance responsibility boundary without approving a separate portal, protected module, or deployment architecture. Full reconciliation, technical contracts, detailed acceptance-test specifications, and production-readiness evidence planning remain open. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
+**Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. Step 1 continuity baseline and Step 2A inventory are complete; corrective decision crosswalks in PRs #55–#58 are merged, PR #60 completed the first cross-document status/reference scan, and PR #61 corrected the A-10 approval wording against DEC-043; PR #62 aligned DEC-038–DEC-041 status references; PR #63 clarified the Finance responsibility/deployment boundary; PR #64 reconciled DEC-044 custody acceptance evidence. The subsequent cross-document review found inconsistent wording that treated the Finance Portal as an approved separate deployment even though the actor model leaves the deployment arrangement unresolved. This documentation pass clarifies the accepted Finance responsibility boundary without approving a separate portal, protected module, or deployment architecture. Full reconciliation, technical contracts, detailed acceptance-test specifications, and production-readiness evidence planning remain open. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
 
 > This tracker records the current documented working state. Verify the live repository, current branch/PR state, and dated test results before treating any item as complete.
 
@@ -22,8 +22,8 @@
 
 ### Current milestone — Milestone 4: Platform-wide SDD Reconciliation and Implementation Readiness
 
-- **Baseline:** The initial read-only SDD baseline review was PR #52; current `main` is PR #62 merge commit `bcbbca289eb1eef8a4535fb81ab24b3e3fd1a32f`. PRs #53–#61 were documentation-only.
-- **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` remains the active source-inspection snapshot. Repository-history comparison through PR #61 found documentation-only intervening changes. Do not infer runtime behaviour from this comparison.
+- **Baseline:** The initial read-only SDD baseline review was PR #52; current `main` is PR #64 merge commit `d02b2d69156aea45c07b5e2db5511b2486e50471`. PRs #53–#64 were documentation-only.
+- **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` remains the active source-inspection snapshot. Repository-history comparison through PR #64 found documentation-only intervening changes. Do not infer runtime behaviour from this comparison.
 - **Milestones 1–3:** Complete at the owner-approved policy/documentation level. Milestone 1 DEC-038 (PR #45); Milestone 2 DEC-039–DEC-041 (PRs #46–#48); Milestone 3 DEC-042–DEC-044 (PRs #49–#51). PR #52 records Milestone 3 completion.
 - **Accepted policy:** D-01–D-15 / DEC-022–DEC-036; DEC-037 logistics-first product hierarchy; DEC-038 independent shipment booking; DEC-039 pricing boundaries; DEC-040 measurement adjustment/customer resolution; DEC-041 payment/settlement; DEC-042 physical intake/custody; DEC-043 location capabilities/authority; DEC-044 custody transfers/physical exceptions. PM-01–PM-12 and BP-01–BP-22 remain accepted at their documented policy levels.
 - **Current continuity work:** Continue detailed section-level dependency reconciliation across all SDD documents, including finance responsibility/deployment wording, Admin scope, workflows, actors/permissions, acceptance, and source evidence. The current proposal changes documentation only.
@@ -1060,3 +1060,15 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Obtain explicit owner approval of the complete reconciled platform-wide SDD before any application-code changes.
 
 **Evidence boundary:** Documentation-only reconciliation. No accepted policy was reopened or amended; no technical contract, status vocabulary, schema, API, permission model or implementation was approved. No tests were executed. Application-source findings remain tied to `e0f69055d33dd9399c23e1d793f359468229c856`; repository tree/history review is not runtime or production verification.
+
+
+## 50. Milestone 4 continuity and source-history refresh after PR #64 — 31 October 2026
+
+- [x] Verified PR #64 merged into `main` at `d02b2d69156aea45c07b5e2db5511b2486e50471`.
+- [x] Compared the active application-source inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856` with the PR #64 merge commit. GitHub's comparison reports 320 commits ahead and lists SDD documentation paths only; no application-source path appears in the comparison result.
+- [x] Confirmed that PR #64 changes nine SDD documents only. It preserves the 80 unique P0 evidence case IDs and does not change application source, schema, Firebase rules/configuration, APIs, permissions, or deployment.
+- [x] Refreshed the current repository baseline references in the README, handoff, issue register, reconciliation tracker, completeness audit, source-traceability history, and this progress tracker.
+- [ ] Continue section-level reconciliation of A-01–A-20, shared workflows, lifecycle/domain contracts, actor and permission boundaries, booking-party authority, Admin requirements/design, and source evidence.
+- [ ] Complete detailed technical contracts, executable acceptance-test specifications, and production-readiness evidence planning; obtain explicit owner approval of the complete reconciled SDD before any application-code changes.
+
+**Evidence boundary:** The comparison establishes that the intervening commits changed SDD documentation only relative to the stated inspected source baseline. It does not mean application source was re-inspected at PR #64, and it does not establish runtime, deployment, or production behaviour. No tests were executed by this documentation refresh. The application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
