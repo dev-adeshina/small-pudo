@@ -1,5 +1,8 @@
 # VeriLyft Progress Tracker
 
+> **Current direction (31 October 2026):** DEC-045 records the owner's instruction to begin bounded implementation now. The previous blanket freeze pending Reviews 3–5 is superseded for starting implementation. Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. Accepted policy remains authoritative; unresolved prices, thresholds, service rules, permissions, evidence standards and operational authorities remain capability gates and must not be invented. This does not mean the platform is launch-ready or waive DEC-036 P0 acceptance and release requirements.
+
+
 **Last updated:** 31 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
