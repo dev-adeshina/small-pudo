@@ -1117,7 +1117,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 
 ## 29. A-17 Support and controlled exception reconciliation — 31 October 2026
 
-- [x] Verified PR #69 merged to `main` at `d17828292f2a0e0424de9461affe4aebc2c94e0b`.
+- [x] Verified PR #69 merged to `main` at `c20493c04c2323e70cc6570426afbecced649846`.
 - [x] Reconciled A-17 with DEC-022, DEC-029–DEC-035, DEC-040–DEC-044, PM-05–PM-08, PM-11–PM-12, and BP-04–BP-05, BP-08, BP-12–BP-13, BP-17, BP-19–BP-22.
 - [x] Clarified Support as request intake, verification, acknowledgement, routing and escalation—not independent booking-party, financial, custody, dispatch or unrestricted audit authority.
 - [x] Added workflow guidance and A17-05–A17-07 evidence scenarios for Support handling, unavailable/compromised booking-party and collection-authority holds, and dispute/appeal independence.
