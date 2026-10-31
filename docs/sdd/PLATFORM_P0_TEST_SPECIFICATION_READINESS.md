@@ -2,7 +2,7 @@
 
 **Document status:** Reconciled readiness/navigation baseline — decision crosswalk merged in PR #58; not approval of executable specifications, test execution or release  
 **Prepared:** 31 October 2026  
-**Repository baseline:** `main` after PR #59 merge `94c0ac87374248a32b606d82e6d418267a5b0218`  
+**Repository baseline:** `main` after PR #60 merge `97f48a530254da8e1e072639116a6a3e09eca1c7`  
 **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32)  
 **Inputs:** `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`, `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`, `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ISSUES.md`, and accepted DEC/PM/BP policy records.
 
@@ -244,4 +244,4 @@ A case is not ready for execution until all applicable items are true:
 - [ ] Individual P0/Conditional P0 test specifications are authored and approved.
 - [ ] Non-production environment is approved and evidenced before test execution.
 
-**Current status:** Reconciled through PR #58, with continuity baseline refreshed through PR #59, as a readiness/navigation baseline only. The existing 80 scenario rows and 45 P0 / 6 Conditional P0 / 3 P1 classifications remain unchanged; 0 of 51 P0/Conditional P0 Admin requirements are approved for test execution by this assessment. DEC-037–DEC-044 are now mapped into the existing case families, but the technical/operational blockers, individual case specifications, approved non-production environment and evidence remain open. No test was executed and no application code was changed.
+**Current status:** Reconciled through PR #58, with continuity baseline refreshed through PR #60, as a readiness/navigation baseline only. The existing 80 scenario rows and 45 P0 / 6 Conditional P0 / 3 P1 classifications remain unchanged; 0 of 51 P0/Conditional P0 Admin requirements are approved for test execution by this assessment. DEC-037–DEC-044 are now mapped into the existing case families, but the technical/operational blockers, individual case specifications, approved non-production environment and evidence remain open. No test was executed and no application code was changed.

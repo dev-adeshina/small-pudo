@@ -2,7 +2,7 @@
 
 **Status:** Owner-reviewed scenario refinements — test-design baseline only; not approved executable test specifications, implementation or release approval  
 **Created:** 30 October 2026  
-**Documentation baseline:** `main` at `94c0ac87374248a32b606d82e6d418267a5b0218` (PR #59 merge; PRs #42–#59 after the original catalogue approval changed SDD documentation only)
+**Documentation baseline:** `main` at `97f48a530254da8e1e072639116a6a3e09eca1c7` (PR #60 merge; PRs #42–#60 after the original catalogue approval changed SDD documentation only)
 **Active-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
 **Authority:** DEC-018, DEC-022–DEC-044, accepted PM-01–PM-12 and BP-01–BP-22 policy records, and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
 **Related:** `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
@@ -380,6 +380,6 @@ The following values/rules must be resolved in the owning SDD sections before th
 
 At the baseline above, the source-traceability pass identifies source foundations for storefront catalogue/checkout, customer access, Admin allowlist guards, Paystack payment integration and basic storefront fulfilment. It identifies material gaps for independent shipment, PUDO, intake/custody, shared shipment pricing/quotes, route/movement, delivery proof, general audit, refunds/credits and reconciliation. The Admin dashboard contains demo values rather than verified live operational metrics.
 
-This catalogue is **test design**, not test execution. No scenarios in this document are claimed passed. No tests were run to create this document. No production data, deployed secrets/configuration, provider dashboards, physical parcel operations or root `pudo.zip` archive were inspected. The active-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge), as refreshed in PR #32. The repository comparison through PR #59 shows documentation-only changes after that source baseline; no later application-source change is recorded. This remains source evidence only, not runtime verification.
+This catalogue is **test design**, not test execution. No scenarios in this document are claimed passed. No tests were run to create this document. No production data, deployed secrets/configuration, provider dashboards, physical parcel operations or root `pudo.zip` archive were inspected. The active-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge), as refreshed in PR #32. The repository comparison through PR #60 shows documentation-only changes after that source baseline; no later application-source change is recorded. This remains source evidence only, not runtime verification.
 
 **Catalogue reconciliation status:** DEC-037–DEC-044 are cross-referenced to the existing case rows in Section 3.2 (PR #58 merged at `d67a8bcd33713b0bcc64b6841237a7e9b0ee78b7`). The 80-case catalogue remains test design only. Complete SDD approval, individual executable test-specification approval, test execution and application-code changes remain separately gated.

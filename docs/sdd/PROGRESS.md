@@ -3,11 +3,11 @@
 **Last updated:** 31 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest verified main baseline for this work:** `94c0ac87374248a32b606d82e6d418267a5b0218` — PR #59 merged.  
-**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #59 found intervening changes to SDD documentation only; no later application-source commit was identified. This does not establish runtime or production behaviour.  
+**Latest verified main baseline for this work:** `97f48a530254da8e1e072639116a6a3e09eca1c7` — PR #60 merged.  
+**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #60 found intervening changes to SDD documentation only; no later application-source commit was identified. This does not establish runtime or production behaviour.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
-**Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. Step 1 continuity baseline and Step 2A inventory are complete; corrective decision crosswalks in PRs #55–#58 are merged and continuity metadata was refreshed in PR #59. The first cross-document status/reference scan found no confirmed policy contradiction requiring an accepted decision to be reopened, but identified stale metadata and decision-range references being corrected. Full reconciliation, technical contracts, detailed acceptance-test specifications, and production-readiness evidence planning remain open. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
+**Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. Step 1 continuity baseline and Step 2A inventory are complete; corrective decision crosswalks in PRs #55–#58 are merged and continuity metadata was refreshed through PR #60. The first cross-document status/reference scan found no confirmed policy contradiction requiring an accepted decision to be reopened. The targeted section-level review has begun and identified stale approval wording in the base A-10 acceptance row; DEC-043 remains accepted, while detailed capability/authority specifications remain open. Full reconciliation, technical contracts, detailed acceptance-test specifications, and production-readiness evidence planning remain open. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
 
 > This tracker records the current documented working state. Verify the live repository, current branch/PR state, and dated test results before treating any item as complete.
 
@@ -22,8 +22,8 @@
 
 ### Current milestone — Milestone 4: Platform-wide SDD Reconciliation and Implementation Readiness
 
-- **Baseline:** The initial read-only SDD baseline review was PR #52; current `main` is PR #59 merge commit `94c0ac87374248a32b606d82e6d418267a5b0218`. PRs #53–#59 were documentation-only.
-- **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` remains the active source-inspection snapshot. Repository-history comparison through PR #59 found documentation-only intervening changes. Do not infer runtime behaviour from this comparison.
+- **Baseline:** The initial read-only SDD baseline review was PR #52; current `main` is PR #60 merge commit `97f48a530254da8e1e072639116a6a3e09eca1c7`. PRs #53–#60 were documentation-only.
+- **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` remains the active source-inspection snapshot. Repository-history comparison through PR #60 found documentation-only intervening changes. Do not infer runtime behaviour from this comparison.
 - **Milestones 1–3:** Complete at the owner-approved policy/documentation level. Milestone 1 DEC-038 (PR #45); Milestone 2 DEC-039–DEC-041 (PRs #46–#48); Milestone 3 DEC-042–DEC-044 (PRs #49–#51). PR #52 records Milestone 3 completion.
 - **Accepted policy:** D-01–D-15 / DEC-022–DEC-036; DEC-037 logistics-first product hierarchy; DEC-038 independent shipment booking; DEC-039 pricing boundaries; DEC-040 measurement adjustment/customer resolution; DEC-041 payment/settlement; DEC-042 physical intake/custody; DEC-043 location capabilities/authority; DEC-044 custody transfers/physical exceptions. PM-01–PM-12 and BP-01–BP-22 remain accepted at their documented policy levels.
 - **Current continuity work:** Complete the cross-document status/reference review across all 23 SDD documents, correct stale metadata/ranges, then continue detailed section-level dependency reconciliation. The current proposal changes documentation only.
@@ -1002,3 +1002,18 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Complete production-readiness evidence planning and present the fully reconciled platform-wide SDD for explicit owner approval before any application-code changes.
 
 **Step 2C boundary:** This first status/reference scan is not final SDD reconciliation or approval. No accepted policy was changed, no new technical contract was approved, no tests were executed, and no application source, schema, API, permission implementation, configuration, deployment, or runtime behaviour was changed or verified. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
+
+
+## 46. Milestone 4 Step 2D — targeted workflow/lifecycle/acceptance cross-check — 31 October 2026
+
+- [x] Verified PR #60 merged into `main` at `97f48a530254da8e1e072639116a6a3e09eca1c7`; compared the merge commit with `main` and confirmed they are identical.
+- [x] Began read-only section-level comparison of the shared workflows, lifecycle boundaries, cross-domain acceptance matrix, actor responsibilities, and staff permission matrix against DEC-037–DEC-044, PM-01–PM-12, and BP-01–BP-22.
+- [x] Cross-checked the location-capability policy in the workflow DEC-043 addendum, lifecycle Section 4.4B, actor Section 10, staff-permission Section 9, and acceptance-matrix A-10 refinement. These later sections consistently preserve the accepted separation between location/service/action eligibility and the actor's assigned authority.
+- [x] Identified stale approval wording in the original A-10 matrix row: it says the location type/capability model requires owner approval, although DEC-043 has already been owner-approved. The later A-10 refinement correctly records the accepted policy and leaves the exact service/location/action matrix, capability catalogue, assignment granularity, partner arrangements, and related technical details open. Align the base row with that refinement without changing policy.
+- [ ] Continue detailed comparison of pricing and payment workflows, measurement/adjustment, route assignment, dispatch, delivery, notifications, and audit/evidence against their authoritative decisions and lifecycle contracts.
+- [ ] Review all A-01–A-20 acceptance rows and their later refinements for stale approval states, duplicated criteria, missing dependencies, and unresolved test prerequisites.
+- [ ] Continue actor/permission and booking-party authority checks, then reconcile requirement dependencies, Admin page design, and source-evidence claims.
+- [ ] Reassess root `pudo.zip` scope/authority before including it in source evidence; it remains uninspected.
+- [ ] Complete platform-wide reconciliation, detailed acceptance-test specifications, and production-readiness evidence planning; obtain explicit owner approval of the complete SDD before any application-code changes.
+
+**Evidence boundary:** This checkpoint records a limited documentation review only. It does not establish that every workflow/lifecycle section is reconciled, approve new policy or technical contracts, execute tests, re-inspect application source, or verify runtime/deployment/production behaviour. PR #60 and this proposed follow-up are documentation-only; the active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
