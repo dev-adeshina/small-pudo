@@ -17,7 +17,7 @@ export default function ContactPage() {
         <span className="eyebrow">Contact us</span>
 
         <h1>
-          Let's talk about
+          Let&apos;s talk about
           <br />
           what you need.
         </h1>
