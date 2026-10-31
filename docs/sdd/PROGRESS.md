@@ -26,7 +26,7 @@
 - **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` remains the active source-inspection snapshot. Repository-history comparison through PR #59 found documentation-only intervening changes. Do not infer runtime behaviour from this comparison.
 - **Milestones 1–3:** Complete at the owner-approved policy/documentation level. Milestone 1 DEC-038 (PR #45); Milestone 2 DEC-039–DEC-041 (PRs #46–#48); Milestone 3 DEC-042–DEC-044 (PRs #49–#51). PR #52 records Milestone 3 completion.
 - **Accepted policy:** D-01–D-15 / DEC-022–DEC-036; DEC-037 logistics-first product hierarchy; DEC-038 independent shipment booking; DEC-039 pricing boundaries; DEC-040 measurement adjustment/customer resolution; DEC-041 payment/settlement; DEC-042 physical intake/custody; DEC-043 location capabilities/authority; DEC-044 custody transfers/physical exceptions. PM-01–PM-12 and BP-01–BP-22 remain accepted at their documented policy levels.
-- **Current continuity work:** Align `README.md`, `PROGRESS.md`, `SESSION_HANDOFF.md`, `SDD_COMPLETENESS_AUDIT.md`, and `ISSUES.md` with the verified repository state and current Milestone 4 sequence. This proposal changes documentation only.
+- **Current continuity work:** Complete the cross-document status/reference review across all 23 SDD documents, correct stale metadata/ranges, then continue detailed section-level dependency reconciliation. The current proposal changes documentation only.
 - **Remaining platform work:** Reconcile all approved decisions across workflows, lifecycle/domain contracts, actors/permissions, requirement traceability, acceptance matrices, source findings, and Admin requirements/design/audit. Specify unresolved operational/technical details without inventing values or contracts. Define executable acceptance-test specifications and production-readiness evidence.
 - **Implementation gate:** No application-code changes until the complete platform-wide SDD is reconciled and explicitly approved by the owner.
 
@@ -975,7 +975,7 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 
 ## 44. Milestone 4 Step 2B — P0 evidence and test-readiness reconciliation merged — 31 October 2026
 
-- [x] Verified PR #54, PR #55, PR #56 and PR #57 merge states and used PR #59 merge commit `94c0ac87374248a32b606d82e6d418267a5b0218` as the current documentation baseline.
+- [x] Verified PRs #54–#59 merge states and used PR #59 merge commit `94c0ac87374248a32b606d82e6d418267a5b0218` as the current documentation baseline.
 - [x] Confirmed PR #56 reconciled actor responsibilities and the staff permission matrix with DEC-037–DEC-044.
 - [x] Confirmed PR #57 reconciled requirement dependency traceability and the owner-approved priority matrix with DEC-037–DEC-044 without changing priority classifications.
 - [x] Mapped DEC-037–DEC-044 to the existing A-area/case families in the P0 acceptance catalogue and test-readiness assessment; retained all 80 case rows.
