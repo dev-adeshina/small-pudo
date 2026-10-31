@@ -44,8 +44,8 @@ A missing reference does not reverse an accepted decision. A proposed workflow, 
 | `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md` | **Corrective crosswalk proposed in this PR** for DEC-037–DEC-044; existing 80 case rows and test-design-only boundary are retained. | The crosswalk maps accepted policy to existing cases; unresolved procedures, technical contracts and evidence requirements still block executable approval. |
 | `PLATFORM_P0_TEST_SPECIFICATION_READINESS.md` | **Corrective crosswalk proposed in this PR** for DEC-037–DEC-044; no executable test approval is implied. | The 80-case count, 45 P0 / 6 Conditional P0 / 3 P1 classifications and zero execution approvals remain unchanged. |
 | `IMPLEMENTATION_SOURCE_TRACEABILITY.md` | Source inspection is tied to commit `e0f69055d33dd9399c23e1d793f359468229c856`. | Source baseline remains valid because PR #53 is documentation-only. Repository-history comparison refreshed through PR #57; active source-inspection baseline remains unchanged. No runtime/production verification is implied. |
-| `ADMIN_REQUIREMENTS.md` | Admin requirements and P0/P1 inventory. | Final status still says the consolidated priority baseline is pending, although the owner-reviewed requirement priority baseline merged in PR #31. |
-| `ADMIN_REQUIREMENTS_AUDIT.md` | Historical source/runtime audit. | PR-state section incorrectly describes PR #3 and PR #4 as open. Current state: PR #3 merged; PR #4 closed without merge. Dated source/runtime limitations should remain historical. |
+| `ADMIN_REQUIREMENTS.md` | **Reconciled in PR #55** with the owner-reviewed priority baseline from PR #31, including ADM-R01–ADM-R54. | Detailed page specifications, source reconciliation, runtime verification and implementation remain open. |
+| `ADMIN_REQUIREMENTS_AUDIT.md` | **Reconciled in PR #55**: PR #3 is merged; PR #4 is closed without merge. | Dated source/runtime findings remain historical and are not current runtime verification. |
 | `ADMIN_PORTAL.md` | Page-by-page design with Draft/Agreed statuses and implementation acceptance boundaries. | No new approval is implied. Cross-check page/action descriptions against current actor, permission, workflow, and lifecycle contracts. |
 | `SPEC.md` | Earlier product/technical specification with historical archive baseline. | Contains earlier roadmap and source descriptions. Keep its historical status clear; current product policy and work order are governed by current decision, workflow, progress, and handoff documents. |
 | `README.md` | SDD index and authority/evidence guidance. | Updated to identify this reconciliation report; continuity metadata is being advanced through PR #57. |
@@ -62,9 +62,9 @@ The accepted DEC-037–DEC-044 sequence is now reflected in actor responsibiliti
 
 ### 4.2 Stale status and history
 
-- The Admin requirement inventory's "priority baseline pending" statement conflicts with the owner-reviewed/merged priority baseline in PR #31.
-- The Admin repository audit's PR #3/#4 states conflict with current GitHub records. PR #3 merged at `c56be9b121e6007e1e99c6df2d3984e709771a92`; PR #4 is closed without merge.
-- The owner decision register's old PR #13 metadata was stale; its baseline metadata is refreshed in this branch.
+- The Admin requirement inventory's stale "priority baseline pending" statement was corrected in PR #55 to reflect the owner-reviewed/merged priority baseline in PR #31.
+- The Admin repository audit's PR #3/#4 states were corrected in PR #55: PR #3 merged at `c56be9b121e6007e1e99c6df2d3984e709771a92`; PR #4 is closed without merge.
+- The owner decision register's old PR #13 metadata was refreshed in PR #54.
 - Source-traceability comparison metadata is refreshed through PR #57, while preserving the inspected application-source commit and historical evidence limitations.
 
 ### 4.3 Approval-state distinctions to preserve
