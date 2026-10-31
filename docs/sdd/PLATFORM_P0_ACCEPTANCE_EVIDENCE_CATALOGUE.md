@@ -1,5 +1,8 @@
 # VeriLyft P0 Acceptance Scenarios and Evidence Catalogue
 
+> **Execution status update (31 October 2026):** DEC-045 authorizes bounded implementation to begin under accepted policy. This catalogue remains a test-design/evidence baseline and does not approve platform-wide acceptance or release. Focused tests may be written and run alongside each implementation slice when expected behaviour is established. Unresolved policy inputs remain capability gates; the P0 and Conditional P0 release requirements are unchanged.
+
+
 **Status:** Owner-reviewed scenario refinements — test-design baseline only; not approved executable test specifications, implementation or release approval  
 **Created:** 30 October 2026  
 **Documentation baseline:** PR #83 merge commit `986f4ad79232ce1700f4edaa972a17522ed319c8` (PRs #67–#83 continued documentation-only reconciliation)
@@ -12,7 +15,7 @@
 This catalogue converts the P0 and Conditional P0 requirements in A-01–A-20 and ADM-R01–ADM-R54 into observable acceptance-scenario outlines and evidence requirements. It is intended to make later test design, execution, review and release sign-off auditable.
 
 It does **not**:
-- approve the complete platform SDD or authorize implementation;
+- approve platform-wide P0 acceptance or launch readiness;
 - define Firestore collections, fields, routes, payloads, enums, token formats, indexes, roles or permission claims;
 - invent numeric limits, pricing formulas, quote periods, retention periods, proof methods, approval thresholds, retry counts or operational timeouts where the accepted decisions leave them open;
 - treat existing source code, a successful build, or a test report without reproducible artifacts as proof of acceptance;
