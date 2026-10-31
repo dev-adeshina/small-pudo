@@ -4,9 +4,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #53 is merged; merge commit `d17b6440a8c9aca4a07b3797ae4bc1b24520e95c`.
-- PR #52 records Milestone 3 completion; PR #53 reconciles the Milestone 4 continuity baseline.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Comparison through PR #53 found only SDD documentation changes after that source baseline. This does not verify runtime behaviour or production readiness.
+- Current `main` baseline: PR #57 is merged; merge commit `de067c0a872de6e5cffaa2c7cf7c5bbcccab3269`.
+- PRs #54–#57 are merged documentation-only reconciliation changes; PR #58 is open for owner review and carries DEC-037–DEC-044 into the P0 catalogue/readiness documents.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32; repository-history comparison refreshed through PR #57). Comparison through PR #57 found only SDD documentation changes after that source baseline. This does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -35,15 +35,15 @@ Milestones 1–3 are complete at the owner-approved policy/documentation level. 
 
 **Milestone:** Platform-wide SDD Reconciliation and Implementation Readiness.
 
-Milestone 4 Step 1 is complete following PR #53. Step 2A has inventoried all 23 Markdown SDD documents and recorded missing decision references and stale Admin metadata in `PLATFORM_DECISION_DOCUMENT_RECONCILIATION.md`. Corrective cross-document reconciliation remains active; do not treat the inventory as full SDD approval.
+Milestone 4 Step 1 is complete following PR #53. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#57 corrected Admin baseline/history, actor and staff-permission references, and requirement dependency/priority crosswalks. PR #58 proposes the remaining DEC-037–DEC-044 crosswalks in the 80-case P0 catalogue and readiness assessment. Corrective cross-document reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
 
 ### Milestone 4 sequence
 
-1. Establish and maintain one authoritative documentation/repository baseline — complete through PR #53.
-2. Reconcile accepted decisions across all SDD documents; identify contradictions, stale references, omissions, and unresolved dependencies without silently reopening accepted policy — Step 2A inventory complete; corrective reconciliation remains open.
+1. Establish and maintain one authoritative documentation/repository baseline — complete through PR #53; refreshed through PR #57.
+2. Reconcile accepted decisions across all SDD documents; identify contradictions, stale references, omissions, and unresolved dependencies without silently reopening accepted policy — Step 2A inventory complete; corrective updates in PRs #55–#57 merged; P0 catalogue/readiness crosswalk proposed in PR #58; full review remains open.
 3. Trace requirements and policy to the existing application source read-only; distinguish present, partial, absent, not inspected, and not verified.
 4. Complete workflow, actor/permission, lifecycle, data/API/security, integration, and exception contracts.
-5. Turn approved requirements into detailed, executable acceptance-test specifications and evidence requirements. The existing P0 readiness assessment/catalogue is a navigation/design baseline, not approval to execute tests.
+5. Turn approved requirements into detailed, executable acceptance-test specifications and evidence requirements. The existing P0 readiness assessment/catalogue is a navigation/design baseline, not approval to execute tests. The current 80-case catalogue carries DEC-037–DEC-044 references in PR #58; no P0/Conditional P0 test is approved for execution.
 6. Assess production readiness: environment/configuration, security, deployment, monitoring, backup/restore, incident response, rollback, recovery, and release evidence.
 7. Present the complete reconciled SDD for explicit owner approval before any application-code changes.
 
