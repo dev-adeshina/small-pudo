@@ -145,7 +145,7 @@ export default function ProductsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     let active = true;
@@ -202,7 +202,7 @@ export default function ProductsPage() {
       active = false;
       unsubscribe();
     };
-  }, [router]);
+  }, [loadData, router]);
 
 
 
@@ -618,6 +618,7 @@ export default function ProductsPage() {
 
             <div className="category-modal-body">
               <ProductForm
+                key={editingProduct?.id ?? "new"}
                 product={
                   editingProduct
                 }
