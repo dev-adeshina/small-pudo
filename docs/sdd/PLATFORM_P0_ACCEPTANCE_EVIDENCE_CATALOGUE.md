@@ -2,7 +2,7 @@
 
 **Status:** Owner-reviewed scenario refinements — test-design baseline only; not approved executable test specifications, implementation or release approval  
 **Created:** 30 October 2026  
-**Documentation baseline:** PR #69 merge commit `c20493c04c2323e70cc6570426afbecced649846` (PRs #67–#69 continued documentation-only reconciliation)
+**Documentation baseline:** PR #70 merge commit `ad6189a598d3fcbb79c90679a7dac33914ea0474` (PRs #67–#69 continued documentation-only reconciliation)
 **Active-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
 **Authority:** DEC-018, DEC-022–DEC-044, accepted PM-01–PM-12 and BP-01–BP-22 policy records, and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
 **Related:** `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
@@ -390,3 +390,6 @@ This catalogue is **test design**, not test execution. No scenarios in this docu
 
 
 **A-15 policy alignment note (PM-01–PM-12):** The owner has accepted the minimal hybrid staff responsibility model and action-level permission assignment. This case is a test-design outline only. The permission catalogue, technical enforcement surfaces, exact scope representation, approver eligibility/materiality thresholds, emergency-access parameters, and retention remain blocked specification inputs. Do not interpret those open details as a reversal or absence of the accepted PM policy. Existing case IDs are retained; no new case row is added.
+
+
+**Repository-history note (PR #70):** Current `main` is identical to PR #70 merge commit `ad6189a598d3fcbb79c90679a7dac33914ea0474`. The source inspection snapshot remains `e0f69055d33dd9399c23e1d793f359468229c856`; comparison to current `main` lists only SDD documentation paths after that snapshot. This does not establish fresh runtime or production evidence and does not change any case's execution status.
