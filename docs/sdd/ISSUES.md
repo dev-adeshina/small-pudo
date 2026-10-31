@@ -367,3 +367,14 @@ The owner has approved the high-level rejection-resolution boundary: customer re
 - **Milestone status:** Milestones 1–3 are complete at the owner-approved policy/documentation level. DEC-038–DEC-044 are merged in PRs #45–#51; PR #52 records Milestone 3 completion.
 - **Current next action:** Reconcile all accepted decisions against the complete SDD; identify stale references, omissions, genuine contradictions, and open dependencies; then complete read-only source traceability, executable acceptance-test specifications, and production-readiness evidence planning.
 - **Implementation gate:** VLY-019 remains open and blocks application-code implementation until the complete platform-wide SDD is explicitly approved by the owner.
+
+
+## Milestone 4 Step 2A — decision/document reconciliation inventory — 31 October 2026
+
+- **Repository baseline:** PR #53 merged at `d17b6440a8c9aca4a07b3797ae4bc1b24520e95c`; PR #53 is documentation-only. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
+- **Scope:** Initial inventory of all 23 Markdown SDD documents against DEC-001–DEC-044, PM-01–PM-12, and BP-01–BP-22.
+- **Findings:** Missing DEC-037–DEC-044 propagation in requirement traceability/priority, actor, staff-permission, P0 evidence, and readiness documents; stale owner-register metadata; outdated Admin requirement priority status; and incorrect historical PR #3/#4 state descriptions.
+- **Verified PR states:** PR #3 merged at `c56be9b121e6007e1e99c6df2d3984e709771a92`; PR #4 closed without merge. Do not describe PR #4 as open or merged.
+- **Policy assessment:** No confirmed contradiction requiring an accepted owner decision to be reopened was identified in this initial pass. Full reconciliation remains incomplete until each affected document is corrected and rechecked.
+- **Next action:** Complete the focused corrective updates listed in `PLATFORM_DECISION_DOCUMENT_RECONCILIATION.md`; then continue source traceability, executable acceptance-test specification, and production-readiness evidence planning.
+- **Implementation gate:** VLY-019 remains open. No application-code changes until the complete platform-wide SDD is reconciled and explicitly approved by the owner.
