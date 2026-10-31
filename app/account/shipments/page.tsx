@@ -47,29 +47,6 @@ export default function ShipmentDraftsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
-      if (!currentUser) {
-        router.replace("/account/sign-in");
-        return;
-      }
-
-      if (!currentUser.emailVerified) {
-        try {
-          await signOutCustomer();
-        } finally {
-          router.replace("/account/sign-in");
-        }
-        return;
-      }
-
-      setUser(currentUser);
-      setCheckingAuth(false);
-    });
-
-    return () => unsubscribe();
-  }, [router]);
-
   const loadDrafts = useCallback(async (currentUser: User) => {
     setLoading(true);
     setError("");
@@ -99,8 +76,29 @@ export default function ShipmentDraftsPage() {
   }, []);
 
   useEffect(() => {
-    if (user) void loadDrafts(user);
-  }, [user, loadDrafts]);
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      if (!currentUser) {
+        router.replace("/account/sign-in");
+        return;
+      }
+
+      if (!currentUser.emailVerified) {
+        try {
+          await signOutCustomer();
+        } finally {
+          router.replace("/account/sign-in");
+        }
+        return;
+      }
+
+      setUser(currentUser);
+      setCheckingAuth(false);
+      void loadDrafts(currentUser);
+    });
+
+    return () => unsubscribe();
+  }, [loadDrafts, router]);
+
 
   function startEditing(draft: ShipmentDraft) {
     setEditingId(draft.id);
