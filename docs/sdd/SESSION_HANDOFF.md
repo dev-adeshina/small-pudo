@@ -2,9 +2,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #78 is merged; merge commit `8b0c9d5e04669f3051f992b6524c1928b40518db`.
-- PRs #54–#78 are merged documentation-only reconciliation/design changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The repository-history comparison through PR #78 reflects documentation-only changes after the source-inspection baseline; The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
+- Current `main` baseline: PR #79 is merged; merge commit `d9532b2173500d36057a2d2cdb4e64a30853e32f`.
+- PRs #54–#79 are merged documentation-only reconciliation/design changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The repository-history comparison through PR #79 reflects documentation-only changes after the source-inspection baseline; The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -204,3 +204,10 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - Review 3 is not yet ready to present. In particular, DB-01–DB-12, detailed action/scope/location capability definitions, service-specific operational evidence and correction authority, provider-specific recovery, and production ownership/targets remain open.
 - The next work is to close only those gaps that can be resolved from already accepted policy and existing documents, and to isolate genuinely owner-dependent decisions for the consolidated review. Do not invent defaults or implement.
 - Reviews 1–2 remain approved; Reviews 4–5 remain future gates. No application-code, schema, API, Firebase rules/configuration, provider activation or deployment before explicit Review 5 approval.
+
+
+## Current Review 3 owner-input triage — proposed follow-up
+
+- The current documentation proposal adds `PLATFORM_REVIEW_3_OWNER_INPUT_TRIAGE.md`. It classifies DB-01–DB-12 individually, identifies which accepted DEC/BP/PM policies already settle part of each question, and separates genuine owner choices from technical/source-verification work and future implementation evidence.
+- Use this triage to prepare consolidated owner-input packages. Do not reopen accepted policy wholesale, send twelve separate DB questions, or create extra approval exchanges. The owner has set a strict maximum of five back-and-forth approval exchanges and will provide the countdown.
+- The proposed triage does not approve a data model or implementation. Reviews 1–2 remain approved; Review 3 is still in preparation; Reviews 4–5 remain future gates. Keep the implementation freeze until explicit Review 5 approval.
