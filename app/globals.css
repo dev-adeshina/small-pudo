@@ -6272,7 +6272,7 @@ footer {
 }
 
 .shipment-heading h1 em {
-  color: var(--accent);
+  color: var(--yellow);
   font-style: normal;
 }
 
@@ -6287,8 +6287,8 @@ footer {
   margin-bottom: 22px;
   padding: 20px 24px;
   border: 1px solid var(--line);
-  border-left: 3px solid var(--accent);
-  background: var(--surface);
+  border-left: 3px solid var(--yellow);
+  background: var(--white);
 }
 
 .shipment-policy-note strong {
@@ -6343,7 +6343,7 @@ footer {
 
 .shipment-form input:focus,
 .shipment-form textarea:focus {
-  border-color: var(--accent);
+  border-color: var(--yellow);
 }
 
 .shipment-form label small {
@@ -6361,6 +6361,11 @@ footer {
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
+}
+
+.shipment-form-actions .customer-primary-action {
+  margin-top: 0;
+  cursor: pointer;
 }
 
 .shipment-form-actions button:disabled {
