@@ -60,7 +60,7 @@ When sources conflict, do not silently favour code or documentation. Record the 
 
 ### Current Milestone 4 status
 
-The latest verified `main` baseline is PR #66 merge commit `f5b274874693db1dbd7a46f17f3e1840a0d372d6`. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; repository-history comparison through PR #66 found documentation-only changes after that source baseline. The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is source/path-history evidence, not runtime or production verification.
+The latest verified `main` baseline is PR #77 merge commit `61c6d5de8a4d28be916856db9e6c715fc24cad36`. PRs #67–#77 are documentation-only reconciliation/design updates. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; repository-history comparison through PR #77 indicates documentation-only changes after that source baseline. This is repository-history continuity evidence, not a fresh semantic source review, runtime test, deployed-configuration review, or production verification.
 
 Milestones 1–3 are complete at the owner-approved policy/documentation level: DEC-038 through DEC-044 are recorded in the SDD, with the relevant documentation PRs merged through PR #51. PR #52 reconciled the Milestone 3 completion record. The 15 high-level owner decisions D-01–D-15, staff permission policies PM-01–PM-12, and booking-party authority policies BP-01–BP-22 remain accepted at their recorded policy levels.
 
@@ -93,3 +93,6 @@ The domain and identity decision crosswalk is tracked in `PLATFORM_DOMAIN_BOUNDA
 
 
 - `PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md` — Review 3 synthesis index mapping A-01–A-20 across authoritative facts, lifecycle, API/persistence/authorization, external effects, acceptance evidence and unresolved dependencies; no implementation architecture is approved.
+
+
+The current Review 3 technical-design synthesis is tracked in `PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md`; its API/persistence/integration, lifecycle/state, mutation/authorization/recovery, domain-boundary, and production-readiness companion contracts are listed above. PR #77 is merged. Review 3 remains in preparation until the completeness checklist and all cross-document dependencies are reconciled; Reviews 4 and 5 remain future approval gates. The 80 P0/Conditional P0 case rows remain design inputs, not approved executable tests. No implementation is authorized before explicit Review 5 approval.
