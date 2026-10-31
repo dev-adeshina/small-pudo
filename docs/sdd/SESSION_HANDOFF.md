@@ -211,3 +211,11 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - The current documentation proposal adds `PLATFORM_REVIEW_3_OWNER_INPUT_TRIAGE.md`. It classifies DB-01–DB-12 individually, identifies which accepted DEC/BP/PM policies already settle part of each question, and separates genuine owner choices from technical/source-verification work and future implementation evidence.
 - Use this triage to prepare consolidated owner-input packages. Do not reopen accepted policy wholesale, send twelve separate DB questions, or create extra approval exchanges. The owner has set a strict maximum of five back-and-forth approval exchanges and will provide the countdown.
 - The proposed triage does not approve a data model or implementation. Reviews 1–2 remain approved; Review 3 is still in preparation; Reviews 4–5 remain future gates. Keep the implementation freeze until explicit Review 5 approval.
+
+
+## Proposed Review 3 action/capability crosswalk follow-up
+
+- PR #80 merged at `92f3f421500332ea9588f189046757b734e1330f`; the owner-input triage is part of main.
+- The current documentation proposal adds `PLATFORM_REVIEW_3_ACTION_CAPABILITY_CROSSWALK.md`. It maps principal staff actions to the independent action-permission, scope, location/service capability, lifecycle/hold, approval and evidence checks already established by PM-01–PM-12 and DEC-033/DEC-037–DEC-044.
+- The crosswalk is descriptive technical-design synthesis only. It does not create permission IDs, role bundles, location capability IDs, schema, APIs, Firebase rules, thresholds or new owner policy. Exact catalogue, scopes, location combinations, thresholds, exceptional approvals and runtime verification remain open.
+- The owner has confirmed that one of five approval exchanges has been used; four remain. Do not create additional approval rounds. Continue technical/document reconciliation and consolidate all genuinely owner-dependent decisions into the remaining exchanges. Implementation remains frozen until Review 5.
