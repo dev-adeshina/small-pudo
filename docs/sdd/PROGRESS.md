@@ -40,14 +40,14 @@ VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentic
 - Launch readiness requires the evidence specified by DEC-036; source presence or a passing build alone is insufficient.
 - Historical roadmap/checkpoint sections below are retained as history, not the current task pointer.
 
-### Current technical workstream — production readiness and operational evidence contract (PR #75 preparation)
+### Completed technical workstream — production readiness and operational evidence contract (PR #75 merged)
 
-- **Verified documentation baseline:** PR #74 merged at `804f51d56def5a6dc6ba9518464886333b9be43a`; the merge commit is identical to `main`.
-- **New artifact:** `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md` defines environment/configuration, secret and privilege controls, deployment/rollback, observability/alerting, backup/restore, incident response, continuity/manual fallback, provider unknown outcomes and evidence-gated release.
-- **A-20 alignment:** The artifact expands the existing A20-01–A20-05 acceptance obligations without adding case IDs, changing priority, inventing service levels, or claiming tests passed.
+- **Verified merge:** PR #75 merged at `f9ad98fe0c76929d139849bde1376592e21a4454`; GitHub comparison confirmed `main` and the merge commit are identical.
+- **Artifact:** `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md` defines environment/configuration, secret and privilege controls, deployment/rollback, observability/alerting, backup/restore, incident response, continuity/manual fallback, provider unknown outcomes and evidence-gated release.
+- **A-20 alignment:** The artifact expands existing A20-01–A20-05 obligations without adding case IDs, changing priorities, inventing service levels or claiming tests passed.
 - **Open inputs:** Environment topology, monitoring products/thresholds, backup interval/retention, RTO/RPO, response targets, named owners and manual fallback scope remain explicit owner decisions.
-- **Evidence boundary:** No source/runtime/deployment/provider/production inspection or test execution was performed for this documentation change. The application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
-- **Gate:** Reviews 1 and 2 of 5 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. No implementation is authorized before explicit Review 5 approval.
+- **Evidence boundary:** Documentation-only; the application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. No source/runtime/deployment/provider/production verification or test execution was performed for that change.
+- **Gate:** Reviews 1 and 2 of 5 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. Implementation remains frozen until explicit Review 5 approval.
 
 ### Current technical workstream — API, persistence and integration boundaries (PR #76 preparation)
 
