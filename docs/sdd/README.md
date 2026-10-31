@@ -90,3 +90,6 @@ The domain and identity decision crosswalk is tracked in `PLATFORM_DOMAIN_BOUNDA
 
 
 - `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md` — conceptual API/query/provider/evidence responsibilities, authoritative fact ownership, persistence invariants, candidate transaction boundaries, integration contracts and source-reuse guardrails; no schema or API is pre-approved.
+
+
+- `PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md` — Review 3 synthesis index mapping A-01–A-20 across authoritative facts, lifecycle, API/persistence/authorization, external effects, acceptance evidence and unresolved dependencies; no implementation architecture is approved.

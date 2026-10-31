@@ -258,3 +258,8 @@ The detailed operational control objectives, responsibility areas, minimum evide
 ## 16. API, persistence and integration boundary contract cross-reference
 
 `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md` consolidates conceptual command/query/provider/evidence responsibilities, authoritative fact ownership, source-reuse boundaries, persistence invariants, candidate transaction/consistency boundaries, API/query requirements and provider integration obligations. It refines this document's Sections 3–10 without approving route paths, payloads, schemas, collection/field names, enums, cardinalities, new services, generalized event infrastructure or provider choices. DB-01–DB-12 and related owner inputs remain unresolved. The contract is bounded by the existing source-inspection baseline and does not establish runtime or production verification.
+
+
+## 17. Technical design coherence and dependency matrix cross-reference
+
+`PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md` is the Review 3 synthesis index across A-01–A-20. It cross-checks authoritative fact/lifecycle ownership, API/persistence/authorization boundaries, provider and physical side effects, acceptance/evidence traceability, source-reuse limits and unresolved owner dependencies. It introduces no new business decisions or implementation architecture and does not resolve DB-01–DB-12. Use it to identify inconsistencies across this reconciliation and the domain, lifecycle, identity, mutation, API/persistence and production-readiness contracts before the consolidated Review 3 presentation.
