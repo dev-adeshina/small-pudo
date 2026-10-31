@@ -505,6 +505,7 @@ export default function CategoriesPage() {
 
             <div className="category-modal-body">
               <CategoryForm
+                key={editingCategory?.id ?? "new"}
                 category={editingCategory}
                 onSuccess={handleSaved}
                 onCancel={closeForm}
