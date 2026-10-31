@@ -1,6 +1,6 @@
 # VeriLyft Admin Portal — Page-by-Page Design
 
-**Last updated:** 28 October 2026  
+**Last updated:** 31 October 2026  
 **Design status:** Under Review  
 **Implementation status:** Not approved for implementation yet  
 **Scope:** Admin Portal design only. This document records the decisions agreed so far; it is not a claim that these pages or functions are implemented.
