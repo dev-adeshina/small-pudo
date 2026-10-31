@@ -2,7 +2,7 @@
 
 **Status:** Owner-reviewed scenario refinements — test-design baseline only; not approved executable test specifications, implementation or release approval  
 **Created:** 30 October 2026  
-**Documentation baseline:** `main` at `97f48a530254da8e1e072639116a6a3e09eca1c7` (PR #60 merge; PRs #42–#60 after the original catalogue approval changed SDD documentation only)
+**Documentation baseline:** PR #65 merge commit `c9698417f6d4e024484d608655a1e4149584dcc4` (PRs #42–#65 after the original catalogue approval changed SDD documentation only)
 **Active-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
 **Authority:** DEC-018, DEC-022–DEC-044, accepted PM-01–PM-12 and BP-01–BP-22 policy records, and the owner-reviewed `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`  
 **Related:** `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ADMIN_REQUIREMENTS.md`, `DECISIONS.md`, `ISSUES.md`
@@ -211,14 +211,14 @@ A screenshot alone is insufficient for transactional, authorization, payment, st
 | A14-04 | Telegram notification proposed for paid order | Attempt send before and after Admin “Assign For Delivery” | No Telegram send before required Admin gate; even after gate, send only if separate purpose/audience/disclosure policy is approved | Feature/config gate; Admin action audit; Telegram sandbox record or denial |
 
 ### A-15 — Admin and Operations access (P0)
-**Requirement links:** ADM-R01–R04, R07, R51; DEC-022, DEC-025, DEC-030–033, DEC-037–038, DEC-042–044
+**Requirement links:** ADM-R01–R04, R07, R51; DEC-022, DEC-025, DEC-030–033, DEC-037–038, DEC-042–044; PM-01–PM-12
 
 | Case | Scenario and setup | Action | Required observable result | Evidence |
 |---|---|---|---|---|
 | A15-01 | Signed-out visitor, ordinary customer, unverified user, authorized Admin | Navigate directly to protected pages and call protected APIs | Each page and API independently enforces server-side authorization; UI hiding is not the control | Automated auth matrix; direct request/response; logs |
 | A15-02 | Staff authenticated but lacks action-specific permission | Call sensitive action API directly | Denied even when page is bypassed; protected record unchanged | Permission matrix; API denial; unchanged data |
 | A15-03 | Token expired/revoked or role/capability removed | Repeat protected action | Access denied safely; customer session is not unnecessarily destroyed; no partial action | Token/claim fixture; response; session state |
-| A15-04 | Admin/Operations performs permitted and prohibited actions | Exercise action matrix across locations and responsibilities | Shared routine actions work only when granted; sensitive actions/approvals follow DEC-022 and preserve actor/location/time/reason | Owner-approved action matrix; automated role matrix; audit records |
+| A15-04 | Admin/Operations performs permitted and prohibited actions; permission grant/revocation, location-dependent work, sensitive approval, audit access and emergency access are represented in the approved policy fixtures | Exercise permitted and denied actions across staff identities, action permissions, location capabilities, requester/approver pairs and emergency-access lifecycle | Each action requires its explicit assigned permission; location-dependent work additionally requires the active location capability; only designated Admin users grant/revoke permissions; applicable second approvals cannot be self-approved; audit viewing/export/disclosure permissions remain separate; emergency access is minimum-scope, time-limited, reviewed and revoked; all consequential decisions remain attributable | PM-01–PM-12 policy matrix; automated action/permission matrix; location-capability fixtures; requester/approver evidence; emergency-access audit; unchanged protected records on denial |
 
 ### A-16 — Audit and evidence (P0)
 **Requirement links:** ADM-R07, R24, R48–R51; DEC-022, DEC-033, DEC-042, DEC-044
@@ -383,3 +383,6 @@ At the baseline above, the source-traceability pass identifies source foundation
 This catalogue is **test design**, not test execution. No scenarios in this document are claimed passed. No tests were run to create this document. No production data, deployed secrets/configuration, provider dashboards, physical parcel operations or root `pudo.zip` archive were inspected. The active-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge), as refreshed in PR #32. Repository comparison through PR #63 shows documentation-only changes after that source baseline; a current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This remains source/path evidence only, not runtime verification.
 
 **Catalogue reconciliation status:** DEC-037–DEC-044 are cross-referenced to the existing case rows in Section 3.2 (PR #58 merged at `d67a8bcd33713b0bcc64b6841237a7e9b0ee78b7`). The 80-case catalogue remains test design only. Complete SDD approval, individual executable test-specification approval, test execution and application-code changes remain separately gated.
+
+
+**A-15 policy alignment note (PM-01–PM-12):** The owner has accepted the minimal hybrid staff responsibility model and action-level permission assignment. This case is a test-design outline only. The permission catalogue, technical enforcement surfaces, exact scope representation, approver eligibility/materiality thresholds, emergency-access parameters, and retention remain blocked specification inputs. Do not interpret those open details as a reversal or absence of the accepted PM policy. Existing case IDs are retained; no new case row is added.
