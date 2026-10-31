@@ -321,3 +321,28 @@ No confirmed contradiction requiring an accepted owner policy to be reopened was
 - Reassess root `pudo.zip` scope/authority before including it in source evidence; it remains uninspected.
 
 **Current status:** Step 2D has begun; this is a targeted first pass, not full workflow/lifecycle/acceptance reconciliation. VLY-019 remains open and blocks application-code changes until the complete platform-wide SDD is explicitly approved. No new policy or technical contract was approved, no tests were executed, and no application source or runtime behaviour was changed or verified.
+
+
+## 15. Pricing, measurement-adjustment, and financial-policy status cross-check — 31 October 2026
+
+### Review baseline and scope
+
+- PR #61 merged into `main` at `157d3e2c24f09694f80033fb09c26b02812bd5d1`; `main` was compared with the merge commit and confirmed identical.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. PRs #53–#61 were documentation-only; no runtime, deployment, or production verification is implied.
+- Compared Workflow D/E, lifecycle Sections 4.2–4.3 and DEC-040/DEC-041 addenda, acceptance rows A-06–A-09 and their relevant refinements, and the D-05/D-06/VLY-019 issue records against DEC-038–DEC-041.
+
+### Findings
+
+1. **DEC-038 quote expiry:** Accepted policy already states that expiry of an accepted quote does not silently cancel or rewrite the confirmed booking or accepted terms. The D-05 issue record's open-dependency list still implied this point was unresolved. The correction retains service-specific quote-validity durations and handover-deadline configuration as open.
+2. **DEC-040 adjustment rejection:** Accepted high-level policy already requires an authorized service-resolution decision, prohibits automatic cancellation/refund/credit/charge, permits continuation under original terms only where safe and commercially feasible, requires separately accepted pricing for an alternative service, and blocks dispatch under a rejected revised price. Workflow and D-06 issue wording still described the operational resolution as unresolved. The correction retains detailed authority, eligibility, feasibility, response-period, and non-response rules as open.
+3. **DEC-041 financial boundaries:** Accepted policy already defines the high-level boundaries for advance and intake payment, evidence, partial/under/overpayment, pending/failed/late success, refunds/credits/reversals/chargebacks, reconciliation, and the default full-settlement dispatch gate. The acceptance/issue records are aligned so these accepted boundaries are not presented as pending, while detailed service/location eligibility, methods, limits, authorities, reconciliation parameters, chargeback procedures, and technical contracts remain open.
+4. These are stale document-status/reference issues, not contradictions in accepted owner policy and not reasons to reopen DEC-038, DEC-040, or DEC-041.
+
+### Remaining review work
+
+- Complete service-specific pricing models/inputs/rates, measurement standards/conversions/thresholds, adjustment approval and service-resolution authority, customer response/non-response handling, and financial event/reconciliation contracts.
+- Continue the A-01–A-20 acceptance-matrix review and compare actor/permission and booking-party authority documents with workflows, lifecycle, requirements, Admin design, and source-evidence claims.
+- Reassess root `pudo.zip` scope/authority before including it in source evidence; it remains uninspected.
+- Continue executable acceptance-test design and production-readiness evidence planning without claiming test execution or runtime verification.
+
+**Current status:** Step 2D remains in progress. This is a targeted documentation review, not complete platform-wide SDD approval. VLY-019 remains open and blocks application-code changes until the complete SDD is explicitly approved. No owner policy was changed, no new technical contract was approved, no tests were executed, and no application source/runtime behaviour was changed or verified.

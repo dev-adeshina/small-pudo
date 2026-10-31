@@ -142,7 +142,7 @@ Required guards:
 - Adjustment proposals identify changed facts and reason and link to the original quote; they do not overwrite it or constitute settlement.
 - A disputed additional charge remains held pending review; a rejected adjustment follows the service-resolution policy and does not automatically imply a refund, credit, or cancellation.
 
-Open policy: exact formulas/rates and service mapping, input sources, units and conversion rules, distance sources/bands, rounding, effective dates, tax/fee/discount treatment, minimums, service-specific input configuration, quote-validity durations, required measurements, numeric discrepancy thresholds, approval limits/separation of duties, and detailed consequences if the customer rejects an adjustment. DEC-039 resolves the pricing input, server-authority, and charge-transparency boundaries but supplies no numeric rates or formulas. DEC-038 resolves the booking-confirmation point and accepted-quote expiry policy.
+Open specification: exact formulas/rates and service mapping, input sources, units and conversion rules, distance sources/bands, rounding, effective dates, tax/fee/discount treatment, minimums, service-specific input configuration, quote-validity durations, required measurements, numeric discrepancy thresholds, approval limits/separation of duties, DEC-040 service-resolution authority/eligibility, safe and commercially feasible continuation criteria, alternative-service eligibility, customer response periods, and non-response handling. DEC-039 resolves the pricing input, server-authority, and charge-transparency boundaries but supplies no numeric rates or formulas. DEC-038 resolves the booking-confirmation point and accepted-quote expiry policy. DEC-040 resolves the high-level adjustment-rejection outcomes; detailed operational criteria remain open.
 
 ### 4.3 Payment and financial-event lifecycle
 
@@ -161,7 +161,7 @@ Required guards:
 - A refund request is not a completed refund; a reversal/chargeback is not the same as a normal refund.
 - Financial resolution must not silently rewrite physical shipment state.
 
-Open policy: payment-at-intake methods/evidence, partial payments, late success after cancellation, refund/credit authority, reconciliation tolerances, and separation of duties.
+Open specification: enabled payment methods/providers by service and location; method-specific evidence and cash controls; services eligible for partial payment and their conditions; under/overpayment resolution authority; refund/credit limits, approval separation and timelines; late-payment disposition; reconciliation cadence, ownership, tolerances and escalation; chargeback investigation; DEC-030 exception eligibility/limits/evidence; and detailed financial-event, idempotency, recovery, and acceptance contracts. DEC-041 already establishes the high-level payment-path, evidence, partial/under/overpayment, late-success, refund/credit/reversal/chargeback, reconciliation, and default dispatch-gate boundaries.
 
 ### 4.4 Intake and custody lifecycle
 

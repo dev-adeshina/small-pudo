@@ -1,8 +1,8 @@
 # VeriLyft Platform Decision-to-Document Reconciliation
 
-**Status:** Step 2A inventory complete; DEC-037–DEC-044 corrective crosswalks merged in PRs #56–#58; full cross-document reconciliation remains in progress.  
+**Status:** Step 2A inventory and Step 2C first status/reference scan complete; targeted Step 2D review remains in progress. PR #61 corrected the A-10/DEC-043 approval wording; this follow-up aligns DEC-038–DEC-041 status references without reopening accepted policy.  
 **Date:** 31 October 2026  
-**Repository baseline:** PR #60 merge commit `97f48a530254da8e1e072639116a6a3e09eca1c7`.  
+**Repository baseline:** PR #61 merge commit `157d3e2c24f09694f80033fb09c26b02812bd5d1`.  
 **Application-source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`.  
 **Scope:** All 23 Markdown documents under `docs/sdd/`.  
 **Authority:** This report inventories existing decisions; it does not create, amend, or reopen owner policy.
@@ -78,7 +78,7 @@ The accepted DEC-037–DEC-044 sequence is now reflected in actor responsibiliti
 
 ## 5. Contradiction assessment
 
-The initial Step 2A inventory and the first cross-document status/reference scan found no confirmed contradiction in accepted owner-policy outcomes. The targeted section-level review against the PR #60 baseline has identified a document-level approval-status inconsistency in the original A-10 acceptance row: it still says the location capability model requires owner approval even though DEC-043 is accepted. The later A-10 refinement correctly records the accepted policy and its remaining detailed dependencies. This does not require reopening DEC-043; align the base row with the later refinement.
+The initial Step 2A inventory and the first cross-document status/reference scan found no confirmed contradiction in accepted owner-policy outcomes. The targeted review identified stale approval wording in the original A-10 row, corrected by PR #61, and stale status wording around DEC-038, DEC-040 and DEC-041 in the pricing, measurement and financial records. The latter is corrected in this pass. These are document-status/reference inconsistencies, not contradictions in accepted owner policy and not reasons to reopen those decisions. Preserve detailed service-specific and technical dependencies as open.
 
 This is not yet a final declaration that every workflow, lifecycle, actor, permission, requirement, acceptance, Admin, and source-evidence section is fully consistent. The detailed contract/dependency review remains open. Accepted policies remain authoritative unless the owner explicitly changes them or new evidence establishes a genuine conflict.
 
@@ -93,15 +93,18 @@ Do not guess service-specific pricing formulas/rates/units/rounding/fees/taxes/d
 3. [x] Complete P0 acceptance-catalogue and test-readiness decision crosswalks, retaining the 80 existing cases and test-design-only boundary (PR #58 merged at `d67a8bcd33713b0bcc64b6841237a7e9b0ee78b7`).
 4. [x] Correct Admin requirement-baseline status and PR #3/#4 history (PR #55 merged).
 5. [x] Refresh source-history metadata through PR #60 while retaining the active source inspection baseline.
-6. [x] Complete the first cross-document status/reference scan of all 23 SDD documents (PR #60 merged); no contradiction in accepted owner policy was identified in that scan. [~] Continue targeted section-level review of workflow, lifecycle, actor, permission, requirement, acceptance, Admin, and source-evidence dependencies; the initial A-10 review found stale approval wording that is being aligned with DEC-043.
+6. [x] Complete the first cross-document status/reference scan of all 23 SDD documents (PR #60 merged); no contradiction in accepted owner policy was identified in that scan. [~] Continue targeted section-level review: PR #61 corrected the A-10/DEC-043 approval wording; this pass aligns stale DEC-038/DEC-040/DEC-041 status references. Continue workflow, lifecycle, actor, permission, requirement, acceptance, Admin, and source-evidence checks.
 7. [ ] Record the completed reconciliation and remaining blockers in progress, issues, audit, and handoff documents after owner review/merge.
 
 
 ## 8. Evidence boundary and implementation gate
 
-This report is a documentation inventory and reconciliation tracker. The first cross-document status/reference scan was completed through PR #60; PRs #52–#60 after the active source-inspection baseline were documentation-only. No application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed or verified. The active source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
+This report is a documentation inventory and reconciliation tracker. The first cross-document status/reference scan was completed through PR #60; targeted review corrections were merged in PR #61 and this follow-up. PRs #52–#61 after the active source-inspection baseline were documentation-only. No application source, schema, Firebase configuration/rules, APIs, permissions, deployment, runtime behaviour, or tests were changed or verified. The active source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
 
 **Implementation remains blocked** until the complete platform-wide SDD is reconciled and explicitly approved by the owner.
 
 
 **Step 2D update:** The targeted review findings and PR #60 baseline are recorded in Section 14 of `SDD_COMPLETENESS_AUDIT.md` and Section 46 of `PROGRESS.md`. Full section-level reconciliation remains open.
+
+
+**Step 2D update:** The targeted A-10/DEC-043 correction was merged in PR #61. The pricing/measurement/financial status findings and current baseline are recorded in Section 15 of `SDD_COMPLETENESS_AUDIT.md` and Section 47 of `PROGRESS.md`. Full section-level reconciliation remains open.
