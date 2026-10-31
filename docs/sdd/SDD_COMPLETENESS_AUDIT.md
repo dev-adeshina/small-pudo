@@ -482,3 +482,12 @@ Exact service rates/formulas, units/conversions/materiality thresholds, quote/ha
 The next owner review is Review 3 — consolidated technical design and architecture. Before that review, complete section-level A-01–A-20 reconciliation, workflow/lifecycle and exception dependency review, source-aware technical contracts, and cross-document status/reference correction. Reviews 4 and 5 remain reserved for complete SDD/acceptance-specification review and final consistency/implementation-gate approval.
 
 This update is documentation-only. It does not approve a schema, collection, field, endpoint, status enum, role/claim, permission implementation, integration, pricing value, operational threshold, retention schedule, or application-code change. No tests were executed. The 80 P0 evidence cases remain design/evidence scenarios, not completed tests. The application-source comparison is not runtime or production verification. Application-code changes remain blocked until explicit Review 5 approval of the complete SDD.
+
+
+## Latest reconciliation addendum — PR #69 — 31 October 2026
+
+- **Current repository baseline:** PR #69 merge commit `c20493c04c2323e70cc6570426afbecced649846`; current `main` was verified identical to this commit. PRs #67–#69 are documentation-only reconciliation changes.
+- **A-17 status:** PR #69 aligns the cross-domain matrix, shared workflows, and P0 acceptance evidence with the accepted Support, staff-permission, booking-party, financial, custody, audit/evidence, and appeal policies. Support is limited to intake, verification, acknowledgement, routing and escalation; it does not gain authority merely from the Support function.
+- **Acceptance evidence:** A17-05–A17-07 now cover Support-assisted requests, unavailable/compromised booking-party and disputed collection authority, and dispute/appeal review. Existing A17-01–A17-04 remain, with second-person approval limited to policy-defined consequential cases.
+- **Limit:** This is a documentation reconciliation, not implementation or runtime evidence. No application code or tests were changed/run. Exact permission catalogue, reviewer assignment, identity methods, thresholds, service-specific exception eligibility, evidence requirements, retention, and technical enforcement remain open.
+- **Review gates:** Reviews 1 and 2 of 5 are approved. Review 3 remains pending completion of source-aware technical contracts; Reviews 4 and 5 remain future consolidated approval gates. Application-code changes remain frozen until Review 5.
