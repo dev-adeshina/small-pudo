@@ -24,16 +24,6 @@ interface PaystackInitializeResponse {
   };
 }
 
-function isRecord(
-  value: unknown
-): value is Record<string, unknown> {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    !Array.isArray(value)
-  );
-}
-
 function tokenMatches(
   token: string,
   storedHash: unknown
