@@ -2,8 +2,8 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #75 is merged; merge commit `f9ad98fe0c76929d139849bde1376592e21a4454`.
-- PRs #54–#75 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
+- Current `main` baseline: PR #76 is merged; merge commit `da4fa5407d899ed5999ce29e61a43be1ef8a89bb`.
+- PRs #54–#76 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
 - The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The comparison from the source-inspection baseline through PR #75 reflects documentation-only changes; PRs #71–#75 themselves are documentation-only; The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
@@ -167,12 +167,21 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - Reviews 1 and 2 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. Implementation remains frozen until explicit Review 5 approval.
 
 
-## Latest API, persistence and integration boundary workstream — PR #76 preparation
+## Completed API, persistence and integration boundary workstream — PR #76 merged
 
-- PR #75 merged at `f9ad98fe0c76929d139849bde1376592e21a4454`; `main` was compared with the merge commit and found identical.
-- Added `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md` as a Review 3 technical-design support artifact. It defines conceptual command/query/provider/evidence boundaries, authoritative fact ownership, persistence invariants, candidate transaction/consistency boundaries, API contract requirements, query/projection constraints and current/future provider integration obligations.
+- PR #76 merged at `da4fa5407d899ed5999ce29e61a43be1ef8a89bb`; GitHub comparison confirmed `main` and the merge commit are identical.
+- `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md` defines conceptual command/query/provider/evidence boundaries, authoritative fact ownership, persistence invariants, candidate transaction/consistency boundaries, API contract requirements, query/projection constraints and provider integration obligations.
 - Source reuse remains bounded to the recorded inspection baseline: storefront order/stock, guest access, customer account access, Paystack, Admin authorization, catalogue rules, Cloudinary upload and storefront fulfilment. Missing logistics, general financial, audit/evidence and operational capabilities remain gaps, not existing services.
 - No route paths, payloads, Firestore collections/fields, schema, enums, cardinalities, new services, event bus, CQRS/event-sourcing/workflow engine, provider selection or deployment design are approved.
 - DB-01–DB-12 and related owner/operational inputs remain explicit blockers. No numeric or business defaults are invented.
 - Documentation-only; no new source/runtime/deployment/production verification or test execution is claimed. Source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
+- Reviews 1 and 2 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. Implementation remains frozen until explicit Review 5 approval.
+
+## Latest technical-design coherence workstream — PR #77 preparation
+
+- PR #76 is the verified current-main baseline: merge commit `da4fa5407d899ed5999ce29e61a43be1ef8a89bb`.
+- Added `PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md` as a Review 3 synthesis index. It traces A-01–A-20 across authoritative facts/lifecycles, API/persistence/authorization boundaries, external effects/recovery, acceptance/evidence and unresolved owner decisions.
+- It includes cross-domain dependency sequencing, source reuse vs capability gaps, DB-01–DB-12 and other open blockers, and a Review 3 completeness checklist.
+- It does not resolve business rules/cardinality, approve schema/API/service/provider/operational targets, or authorize implementation.
+- Documentation-only; no fresh source/runtime/deployment/production verification or tests are claimed. Source inspection remains at `e0f69055d33dd9399c23e1d793f359468229c856`.
 - Reviews 1 and 2 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. Implementation remains frozen until explicit Review 5 approval.
