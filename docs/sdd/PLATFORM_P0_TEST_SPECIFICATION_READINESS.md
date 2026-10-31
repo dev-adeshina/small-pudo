@@ -2,7 +2,7 @@
 
 **Document status:** Reconciled readiness/navigation baseline — decision crosswalk merged in PR #58; not approval of executable specifications, test execution or release  
 **Prepared:** 31 October 2026  
-**Documentation repository baseline:** `main` at PR #70 merge `ad6189a598d3fcbb79c90679a7dac33914ea0474`  
+**Documentation repository baseline:** `main` at PR #72 merge `${neu}`  
 **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32)  
 **Inputs:** `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md`, `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`, `PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `ISSUES.md`, and accepted DEC/PM/BP policy records.
 
@@ -248,3 +248,8 @@ A case is not ready for execution until all applicable items are true:
 
 
 **Baseline clarification (PR #70):** This assessment is aligned to the current documentation baseline `ad6189a598d3fcbb79c90679a7dac33914ea0474`. The active source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; repository comparison shows only SDD documentation paths changed after that snapshot. No test execution, runtime verification, or production readiness is implied.
+
+
+## 11. Mutation-contract dependency — PR #72 baseline
+
+The action-level guard, authorization, replay/concurrency, unknown-provider-outcome, recovery-owner and evidence obligations are cross-referenced in `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`. These requirements inform the case-specific executable specifications; they do not constitute test execution or close any open P0 policy/owner decision. Existing readiness status remains unchanged.
