@@ -1,5 +1,8 @@
 # P0 and Conditional P0 Test-Specification Readiness Assessment
 
+> **Execution status update (31 October 2026):** DEC-045 authorizes bounded application implementation to begin before every P0 case is formally approved for execution. The 0/51 formal-execution readiness finding remains unchanged. Draft and run focused tests for each implementation slice where expected behaviour is established; do not claim platform-wide P0 acceptance or launch readiness until the full required case specifications and evidence are approved and executed. Unresolved policy values remain capability gates.
+
+
 **Document status:** Reconciled readiness/navigation baseline — decision crosswalk merged in PR #58; not approval of executable specifications, test execution or release  
 **Prepared:** 31 October 2026  
 **Documentation repository baseline:** PR #83 merge commit `986f4ad79232ce1700f4edaa972a17522ed319c8` (documentation-only changes after the recorded application-source inspection)  
