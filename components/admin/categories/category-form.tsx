@@ -236,7 +236,7 @@ export function CategoryForm({
           <strong>Category status</strong>
 
           <p>
-            Inactive categories won't appear in the
+            Inactive categories won&apos;t appear in the
             storefront.
           </p>
         </div>
