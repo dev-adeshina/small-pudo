@@ -87,3 +87,6 @@ The domain and identity decision crosswalk is tracked in `PLATFORM_DOMAIN_BOUNDA
 
 
 - `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md` — production control objectives, ownership/evidence expectations, environment/configuration, deployment/rollback, observability, backup/restore, incident response, continuity and evidence-gated release; no topology or numeric operational targets are pre-approved.
+
+
+- `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md` — conceptual API/query/provider/evidence responsibilities, authoritative fact ownership, persistence invariants, candidate transaction boundaries, integration contracts and source-reuse guardrails; no schema or API is pre-approved.

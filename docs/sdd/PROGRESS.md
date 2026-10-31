@@ -3,8 +3,8 @@
 **Last updated:** 31 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest verified main baseline for this work:** `804f51d56def5a6dc6ba9518464886333b9be43a` — PR #74 merged.  
-**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #74 reflects documentation-only changes after this source snapshot; no later application-source commit was identified. This is not a fresh semantic source review, runtime verification, or production verification.  
+**Latest verified main baseline for this work:** `f9ad98fe0c76929d139849bde1376592e21a4454` — PR #75 merged.  
+**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository-history comparison through PR #75 reflects documentation-only changes after this source snapshot; no later application-source commit was identified. This is not a fresh semantic source review, runtime verification, or production verification.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
 **Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. Step 1 continuity baseline and Step 2A inventory are complete; corrective decision crosswalks in PRs #55–#58 are merged, PR #60 completed the first cross-document status/reference scan, and PR #61 corrected the A-10 approval wording against DEC-043; PR #62 aligned DEC-038–DEC-041 status references; PR #63 clarified the Finance responsibility/deployment boundary; PR #64 reconciled DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 reconciles A-16 audit/evidence policy; PR #68 refreshes the closure direction/baseline; PR #69 reconciles A-17 Support, exception and manual-override boundaries and adds acceptance evidence. The subsequent cross-document review found inconsistent wording that treated the Finance Portal as an approved separate deployment even though the actor model leaves the deployment arrangement unresolved. This documentation pass clarifies the accepted Finance responsibility boundary without approving a separate portal, protected module, or deployment architecture. Full reconciliation, technical contracts, detailed acceptance-test specifications, and production-readiness evidence planning remain open. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
@@ -40,14 +40,24 @@ VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentic
 - Launch readiness requires the evidence specified by DEC-036; source presence or a passing build alone is insufficient.
 - Historical roadmap/checkpoint sections below are retained as history, not the current task pointer.
 
-### Current technical workstream — production readiness and operational evidence contract (PR #75 preparation)
+### Completed technical workstream — production readiness and operational evidence contract (PR #75 merged)
 
-- **Verified documentation baseline:** PR #74 merged at `804f51d56def5a6dc6ba9518464886333b9be43a`; the merge commit is identical to `main`.
-- **New artifact:** `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md` defines environment/configuration, secret and privilege controls, deployment/rollback, observability/alerting, backup/restore, incident response, continuity/manual fallback, provider unknown outcomes and evidence-gated release.
-- **A-20 alignment:** The artifact expands the existing A20-01–A20-05 acceptance obligations without adding case IDs, changing priority, inventing service levels, or claiming tests passed.
+- **Verified merge:** PR #75 merged at `f9ad98fe0c76929d139849bde1376592e21a4454`; GitHub comparison confirmed `main` and the merge commit are identical.
+- **Artifact:** `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md` defines environment/configuration, secret and privilege controls, deployment/rollback, observability/alerting, backup/restore, incident response, continuity/manual fallback, provider unknown outcomes and evidence-gated release.
+- **A-20 alignment:** The artifact expands existing A20-01–A20-05 obligations without adding case IDs, changing priorities, inventing service levels or claiming tests passed.
 - **Open inputs:** Environment topology, monitoring products/thresholds, backup interval/retention, RTO/RPO, response targets, named owners and manual fallback scope remain explicit owner decisions.
-- **Evidence boundary:** No source/runtime/deployment/provider/production inspection or test execution was performed for this documentation change. The application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
-- **Gate:** Reviews 1 and 2 of 5 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. No implementation is authorized before explicit Review 5 approval.
+- **Evidence boundary:** Documentation-only; the application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. No source/runtime/deployment/provider/production verification or test execution was performed for that change.
+- **Gate:** Reviews 1 and 2 of 5 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. Implementation remains frozen until explicit Review 5 approval.
+
+### Current technical workstream — API, persistence and integration boundaries (PR #76 preparation)
+
+- **Verified documentation baseline:** PR #75 merged at `f9ad98fe0c76929d139849bde1376592e21a4454`; `main` was compared with the merge commit and found identical.
+- **New artifact:** `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md` translates accepted domain boundaries into conceptual command/query/provider/evidence responsibilities, authoritative fact ownership, persistence invariants, transaction/consistency candidates, API requirements, projection rules and integration contracts.
+- **Source reuse:** the artifact preserves the recorded source-backed boundaries for storefront orders/stock, guest access, customer identity, Paystack, Admin authorization, Firestore catalogue rules, Cloudinary uploads and storefront fulfilment. It explicitly distinguishes these from logistics/finance/audit capabilities not found in the inspected source baseline.
+- **Architecture guardrails:** no route names, HTTP payloads, Firestore schema, collection/field names, enums, cardinalities, new service, CQRS/event-sourcing/event-bus/workflow-engine mandate or provider choice is approved.
+- **Open blockers:** DB-01–DB-12 and the related pricing, party entitlement, location capability, physical evidence, financial, permission, provider and reporting decisions remain unresolved; no defaults have been selected.
+- **Evidence boundary:** documentation-only. Application-source inspection remains at `e0f69055d33dd9399c23e1d793f359468229c856`; no fresh source/runtime/deployment/production verification or tests are claimed.
+- **Gate:** Reviews 1 and 2 of 5 remain approved; Review 3 remains in preparation; Reviews 4 and 5 remain future gates. Implementation remains frozen until explicit Review 5 approval.
 
 ## 2. Feature tracker
 

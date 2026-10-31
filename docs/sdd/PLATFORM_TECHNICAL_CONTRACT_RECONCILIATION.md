@@ -253,3 +253,8 @@ The action-specific mutation, authorization, concurrency, unknown-outcome, recov
 ## 15. Production-readiness evidence contract cross-reference
 
 The detailed operational control objectives, responsibility areas, minimum evidence, failure dispositions, environment/configuration requirements, deployment/rollback, observability, backup/restore, incident response, continuity/manual fallback, provider unknown-outcome handling and release gates are consolidated in `PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md`. Apply it alongside Section 11 and A20-01–A20-05 when preparing executable acceptance specifications. It adds no approved deployment topology, tool, numeric service level, RTO/RPO, backup interval, retention period, alert threshold or named owner; those remain owner decisions. It does not establish that any control is implemented or verified.
+
+
+## 16. API, persistence and integration boundary contract cross-reference
+
+`PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md` consolidates conceptual command/query/provider/evidence responsibilities, authoritative fact ownership, source-reuse boundaries, persistence invariants, candidate transaction/consistency boundaries, API/query requirements and provider integration obligations. It refines this document's Sections 3–10 without approving route paths, payloads, schemas, collection/field names, enums, cardinalities, new services, generalized event infrastructure or provider choices. DB-01–DB-12 and related owner inputs remain unresolved. The contract is bounded by the existing source-inspection baseline and does not establish runtime or production verification.
