@@ -160,3 +160,16 @@ The reconciled acceptance direction now explicitly distinguishes: (1) actor/syst
 Open specification remains: full event/evidence catalogue and mandatory evidence by event; reviewer-to-permission mapping; evidence integrity/verification; retention periods; hold activation/release authority; correction/redaction procedures; two-person disclosure cases; detailed government-request handling; and executable acceptance specifications. VLY-023 remains open. Source findings remain tied to `e0f69055d33dd9399c23e1d793f359468229c856`; this reconciliation does not claim a fresh source review or runtime verification.
 
 No schema, API, permission implementation, audit architecture, retention mechanism or disclosure integration is approved. The 80-case P0 catalogue and all priority classifications remain unchanged.
+
+
+## 14. Owner-approved closure direction — Reviews 1 and 2 — 31 October 2026
+
+The owner approved the consolidated SDD closure approach (Review 1) and the policy direction for completing the specification (Review 2). This is a closure-direction approval, not a new DEC decision family and not an amendment to accepted DEC-022–DEC-044, PM-01–PM-12, or BP-01–BP-22.
+
+The accepted direction is to preserve existing policy and complete its operational/technical expression across the affected documents. Service-specific commercial rules remain configurable and must preserve accepted quote context. Measurement adjustments, customer responses, payment verification, settlement and financial reconciliation require controlled procedures. Booking-party authority remains distinct from sender, receiver, payer and handover-person relationships. Support remains bounded. Intake, custody, movement, delivery and exception outcomes require event-appropriate evidence; status updates, assignments and audit entries alone do not prove physical events. Location capability and staff action-level authorization are independent cumulative checks. Audit/evidence originals remain preserved, with attributable corrections/redactions and controlled disclosure. Production release remains evidence-gated.
+
+The owner explicitly approved deferring exact service rates/formulas, units/conversions/materiality thresholds, quote/handover durations, payment/refund/credit limits and tolerances, proof methods, permission thresholds, retention periods, and operational/recovery targets until their relevant service, legal, financial, or operating context is established. These are open specifications, not rejected requirements. The SDD must identify accountable owners, configuration boundaries, dependencies and acceptance evidence rather than inventing values.
+
+**Next review:** Review 3 — one consolidated technical design and architecture package. It will be presented only after the remaining cross-domain reconciliation and source-aware technical contracts have been assembled. Review 4 will cover the complete SDD and detailed acceptance specifications; Review 5 will be the final consistency audit and explicit implementation-gate approval.
+
+No schema, field, collection, endpoint, status enum, permission implementation, integration, pricing value, retention schedule, operational threshold, application-code change or runtime behaviour is approved by this closure-direction record. The 80 P0 evidence cases remain design/evidence outlines, not completed tests.

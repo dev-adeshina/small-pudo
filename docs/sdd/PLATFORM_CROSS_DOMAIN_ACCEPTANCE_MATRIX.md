@@ -2,7 +2,7 @@
 
 **Document status:** Draft for owner review — not approved for implementation  
 **Created:** 29 October 2026  
-**Repository baseline:** PR #66 merge commit `f5b274874693db1dbd7a46f17f3e1840a0d372d6`  
+**Repository baseline:** PR #67 merge commit `04c093927c8d47f9e1fe8351c9f8ecb48920b753`  
 **Purpose:** Turn the existing platform SDD drafts into a reviewable matrix of business workflows, responsible actors, lifecycle boundaries, security requirements, failure recovery, evidence, and acceptance criteria.  
 **Related documents:** `README.md`, `SPEC.md`, `DECISIONS.md`, `ISSUES.md`, `PROGRESS.md`, `SDD_COMPLETENESS_AUDIT.md`, `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`
 
@@ -364,3 +364,7 @@ The A-15 access boundary must reflect the accepted policy outcomes in `PLATFORM_
 **Remaining specification:** the exact action/permission catalogue, permission-set contents, staff identity lifecycle, designated-admin recovery, location/staff scope representation, server-side enforcement across pages/APIs/jobs/data access, approver eligibility, materiality thresholds, emergency duration/renewal, audit retention and executable denial/approval tests. These are technical and operational specification gaps, not unresolved owner policy on whether permissions are action-level.
 
 No new roles, claims, routes, collections, fields, or implementation decisions are introduced. The existing architecture must be inspected and reused after the complete SDD is approved.
+
+
+
+**Repository baseline refresh — 31 October 2026:** PR #67 is merged at `04c093927c8d47f9e1fe8351c9f8ecb48920b753`. The owner has approved Reviews 1 and 2 of the five-review SDD closure process, including the policy direction to preserve accepted decisions, define service-specific configurable rules, defer unsupported numerical values until context is established, and require evidence-backed operations and production release. This refresh does not approve every proposed criterion, convert the matrix into executable test specifications, or authorize implementation. The application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; the repository comparison through PR #67 lists SDD documentation paths only and is not runtime or production verification.

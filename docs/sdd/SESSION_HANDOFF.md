@@ -4,9 +4,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #66 is merged; merge commit `f5b274874693db1dbd7a46f17f3e1840a0d372d6`.
+- Current `main` baseline: PR #67 is merged; merge commit `04c093927c8d47f9e1fe8351c9f8ecb48920b753`.
 - PRs #54–#66 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository comparison through PR #66 found documentation-only changes after that source baseline; the current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This does not mean source was re-inspected at PR #66 and does not verify runtime behaviour or production readiness.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Repository comparison through PR #67 found documentation-only changes after that source baseline; the current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This does not mean source was re-inspected at PR #66 and does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -35,11 +35,11 @@ Milestones 1–3 are complete at the owner-approved policy/documentation level. 
 
 **Milestone:** Platform-wide SDD Reconciliation and Implementation Readiness.
 
-Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #64. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#58 corrected Admin baseline/history, actor and staff-permission references, requirement dependency/priority crosswalks, and P0 catalogue/readiness crosswalks; PR #60 completed the first status/reference scan. Step 2D targeted section-level review continues. PR #61 corrected stale owner-approval wording in the original A-10 row against accepted DEC-043. PR #62 aligned DEC-038–DEC-041 status wording. PR #63 clarified the Finance responsibility/deployment boundary. PR #64 aligns DEC-044 custody acceptance criteria and evidence cases while preserving service-specific proof, authority, investigation, hold, retention and technical details as open. Detailed reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
+Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed through PR #67. Step 2A inventoried all 23 Markdown SDD documents. PRs #55–#58 corrected Admin baseline/history, actor and staff-permission references, requirement dependency/priority crosswalks, and P0 catalogue/readiness crosswalks; PR #60 completed the first status/reference scan. Step 2D targeted section-level review continues. PR #61 corrected stale owner-approval wording in the original A-10 row against accepted DEC-043. PR #62 aligned DEC-038–DEC-041 status wording. PR #63 clarified the Finance responsibility/deployment boundary. PR #64 aligns DEC-044 custody acceptance criteria and evidence cases while preserving service-specific proof, authority, investigation, hold, retention and technical details as open. Detailed reconciliation remains active; do not treat the inventory or crosswalks as full SDD approval.
 
 ### Milestone 4 sequence
 
-1. Establish and maintain one authoritative documentation/repository baseline — complete through PR #53; refreshed through PR #64.
+1. Establish and maintain one authoritative documentation/repository baseline — complete through PR #53; refreshed through PR #67.
 2. Reconcile accepted decisions across all SDD documents; identify contradictions, stale references, omissions, and unresolved dependencies without silently reopening accepted policy — Step 2A inventory complete; corrective updates in PRs #55–#58 merged; full review remains open.
 3. Trace requirements and policy to the existing application source read-only; distinguish present, partial, absent, not inspected, and not verified.
 4. Complete workflow, actor/permission, lifecycle, data/API/security, integration, and exception contracts.
@@ -91,3 +91,19 @@ A-15/A15-04 and ADM-R03 are aligned with the accepted action-level permission mo
 ## Latest A-16 reconciliation — DEC-033 and PM-08
 
 A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 are reconciled with accepted DEC-033 accountable recordkeeping and PM-08's separate audit-view, export and external-disclosure permissions. The four existing A-16 cases remain; the P0 catalogue retains 80 unique case IDs. Event/evidence catalogue, reviewer-to-permission mapping, integrity controls, retention schedule, legal-hold authority, correction/redaction procedures, second-approval cases and executable specifications remain open. VLY-023 remains open; `pudo.zip` remains uninspected. No source/runtime verification or implementation is claimed. Do not make application-code changes before explicit owner approval of the complete reconciled SDD.
+
+
+
+## Latest verified baseline and approved closure direction — PR #67 / Reviews 1–2 — 31 October 2026
+
+- Current `main` baseline: PR #67 merged at `04c093927c8d47f9e1fe8351c9f8ecb48920b753`.
+- The repository comparison from application-source inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856` to PR #67 reports 360 commits ahead and SDD documentation paths only. This is repository-history evidence, not a fresh semantic source review or runtime/production verification. Keep the source-inspection baseline unchanged.
+- Owner approved Reviews 1 and 2 of the five-review closure process. Review 1 approved the gap assessment and closure sequence. Review 2 approved the consolidated policy direction and the deliberate deferral of exact service-specific or numerical values until their operating context is established.
+- Preserve all accepted DEC-022–DEC-044, PM-01–PM-12 and BP-01–BP-22 policy outcomes. Do not reopen them absent genuine contradictory evidence.
+- Approved closure direction: use service-specific configurable commercial rules; controlled adjustment and settlement procedures; explicit booking-party authority; bounded Support; evidence-backed physical custody and delivery; independent location capability and staff authorization; action-level staff permissions and controlled second approvals; preserved audit/evidence history; and evidence-gated production release.
+- Exact rates/formulas, units/thresholds, quote and handover durations, payment/refund/credit tolerances, service-specific proof methods, permission thresholds, retention periods, and recovery/monitoring targets remain open until the relevant service, legal, financial, or operating context is established. Record owners, configuration boundaries, dependencies, and required evidence rather than inventing values.
+- The next consolidated owner review is Review 3 — technical design and architecture. Before requesting it, finish the cross-domain reconciliation and assemble source-aware contracts, including data boundaries, APIs, authorization, idempotency, integration, failure/recovery, and evidence contracts. Do not invent parallel architecture or alter application code.
+- The five review occasions are approval gates, not a limit of five work sessions. Continue autonomous documentation reconciliation between them. The owner reviews and merges every PR.
+- The 80 P0 evidence case IDs remain specification/evidence outlines; they are not 80 executed or passed tests. No tests were executed by the baseline refresh. `pudo.zip` remains uninspected and outside source claims unless explicitly brought into scope.
+
+**Implementation gate:** Application-code freeze remains active until Review 5 and explicit owner approval of the complete reconciled platform-wide SDD.

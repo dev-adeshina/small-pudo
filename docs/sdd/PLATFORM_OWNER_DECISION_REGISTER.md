@@ -2,7 +2,7 @@
 
 **Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-044 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
 **Last updated:** 31 October 2026  
-**Current repository baseline:** PR #53 merged at `d17b6440a8c9aca4a07b3797ae4bc1b24520e95c`.
+**Current repository baseline:** PR #67 merged at `04c093927c8d47f9e1fe8351c9f8ecb48920b753`.
 **Related documents:** `DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, and `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`  
 **Implementation gate:** No application-code changes until the platform-wide SDD is reconciled and explicitly approved.
 
@@ -374,3 +374,13 @@ The owner approved DEC-044 on 30 October 2026.
 **Still unresolved:** Service-specific proof methods; who may confirm/dispute/correct transfers; second-approver requirements; missing-parcel investigation ownership; damage assessment/liability procedures; hold ownership/review/maximum periods; compensation/insurance/refund/credit/customer entitlements; detailed lifecycle and technical contracts; evidence retention; and executable acceptance tests.
 
 DEC-044 is high-level business policy only. It does not approve a schema, field, collection, endpoint, status enum, proof technology, permission implementation, automatic escalation, financial outcome, or application-code change.
+
+
+
+## Owner-approved SDD closure direction — Reviews 1 and 2 — 31 October 2026
+
+The owner approved the five-review closure process and the consolidated policy direction for completing the SDD. This approval is not a new DEC decision family and does not amend the accepted decision records. Preserve accepted decisions; reconcile their operational and technical implications across the SDD; use service-specific configurable commercial and operational rules; keep Support and staff authority bounded; require evidence for physical and consequential actions; and make production release evidence-gated.
+
+Exact rates/formulas, units and thresholds, quote/handover durations, payment/refund/credit tolerances, service-specific proof methods, approval thresholds, retention periods, and operational/recovery targets remain deliberately deferred until their governing context is established. These should remain visible as open specifications with accountable owners, configuration boundaries, dependencies, and acceptance evidence. Do not invent values or technical representation to force closure.
+
+The next consolidated owner checkpoint is Review 3 — technical design and architecture. Reviews 4 and 5 remain reserved for complete SDD/acceptance specification review and final consistency/implementation-gate approval.
