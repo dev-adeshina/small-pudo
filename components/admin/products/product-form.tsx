@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Loader2, Plus, X } from "lucide-react"
 
 import type { Category } from "@/lib/types/category"
@@ -53,8 +53,23 @@ export function ProductForm({
 }: Props) {
   const isEditing = Boolean(product)
 
-  const [form, setForm] =
-    useState<ProductFormData>(emptyForm)
+  const [form, setForm] = useState<ProductFormData>(() =>
+    product
+      ? {
+          categoryId: product.categoryId,
+          name: product.name,
+          slug: product.slug,
+          description: product.description,
+          price: product.price,
+          currency: product.currency,
+          images: product.images,
+          stock: product.stock,
+          isActive: product.isActive,
+          featured: product.featured,
+          features: product.features,
+        }
+      : emptyForm
+  )
 
   const [errors, setErrors] =
     useState<Record<string, string>>({})
@@ -63,36 +78,12 @@ export function ProductForm({
     useState(false)
 
   const [slugManuallyEdited, setSlugManuallyEdited] =
-    useState(false)
+    useState(Boolean(product))
 
   const [featureInput, setFeatureInput] =
     useState("")
 
-  useEffect(() => {
-    if (product) {
-      setForm({
-        categoryId: product.categoryId,
-        name: product.name,
-        slug: product.slug,
-        description: product.description,
-        price: product.price,
-        currency: product.currency,
-        images: product.images,
-        stock: product.stock,
-        isActive: product.isActive,
-        featured: product.featured,
-        features: product.features,
-      })
 
-      setSlugManuallyEdited(true)
-    } else {
-      setForm(emptyForm)
-      setSlugManuallyEdited(false)
-    }
-
-    setErrors({})
-    setFeatureInput("")
-  }, [product])
 
   function updateField<
     K extends keyof ProductFormData

@@ -143,6 +143,31 @@ export default function AdminOrdersPage() {
   // }, [router]);
 
 
+  const loadOrders = useCallback(async (quiet = false) => {
+    if (quiet) setRefreshing(true);
+    else setLoading(true);
+    setError("");
+    setNotice("");
+
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("Your session has expired. Please sign in again.");
+      const token = await user.getIdToken();
+      const response = await fetch("/api/admin/orders", {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Unable to load orders.");
+      setOrders(Array.isArray(data.orders) ? data.orders : []);
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : "Unable to load orders.");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
   useEffect(() => {
     let active = true;
 
@@ -170,6 +195,7 @@ export default function AdminOrdersPage() {
 
         setAdminEmail(email);
         setCheckingAuth(false);
+        void loadOrders();
       } catch (error) {
         if (!active) return;
 
@@ -197,36 +223,11 @@ export default function AdminOrdersPage() {
       active = false;
       unsubscribe();
     };
-  }, [router]);
+  }, [loadOrders, router]);
 
-  const loadOrders = useCallback(async (quiet = false) => {
-    if (quiet) setRefreshing(true);
-    else setLoading(true);
-    setError("");
-    setNotice("");
 
-    try {
-      const user = auth.currentUser;
-      if (!user) throw new Error("Your session has expired. Please sign in again.");
-      const token = await user.getIdToken();
-      const response = await fetch("/api/admin/orders", {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: "no-store",
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "Unable to load orders.");
-      setOrders(Array.isArray(data.orders) ? data.orders : []);
-    } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : "Unable to load orders.");
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
 
-  useEffect(() => {
-    if (!checkingAuth) void loadOrders();
-  }, [checkingAuth, loadOrders]);
+
 
   async function handleLogout() {
     await logoutAdmin();

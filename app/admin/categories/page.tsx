@@ -2,20 +2,17 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeft,
   CheckCircle2,
-  Edit3,
   Loader2,
   LogOut,
   Plus,
   Search,
-  Tags,
-  Trash2,
   X,
 } from "lucide-react";
 
@@ -80,6 +77,29 @@ export default function CategoriesPage() {
   //   return () => unsubscribe();
   // }, [router]);
 
+  const loadCategories = useCallback(async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const data = await getCategories();
+
+      setCategories(data);
+
+      const counts = await getCategoryProductCounts(data);
+
+      setProductCounts(counts);
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to load categories."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     let active = true;
 
@@ -107,6 +127,7 @@ export default function CategoriesPage() {
 
         setAdminEmail(email);
         setCheckingAuth(false);
+        void loadCategories();
       } catch (error) {
         if (!active) return;
 
@@ -134,41 +155,16 @@ export default function CategoriesPage() {
       active = false;
       unsubscribe();
     };
-  }, [router]);
+  }, [loadCategories, router]);
 
   async function handleLogout() {
     await logoutAdmin();
     router.replace("/admin/sign-in");
   }
 
-  async function loadCategories() {
-    setLoading(true);
-    setError("");
 
-    try {
-      const data = await getCategories();
 
-      setCategories(data);
 
-      const counts = await getCategoryProductCounts(data);
-
-      setProductCounts(counts);
-    } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : "Unable to load categories."
-      );
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (!checkingAuth) {
-      loadCategories();
-    }
-  }, [checkingAuth]);
 
   const filteredCategories = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -509,6 +505,7 @@ export default function CategoriesPage() {
 
             <div className="category-modal-body">
               <CategoryForm
+                key={editingCategory?.id ?? "new"}
                 category={editingCategory}
                 onSuccess={handleSaved}
                 onCancel={closeForm}

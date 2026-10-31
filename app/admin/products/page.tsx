@@ -121,6 +121,32 @@ export default function ProductsPage() {
   // }, [router])
 
 
+  const loadData = useCallback(async () => {
+    setLoading(true)
+    setError("")
+
+    try {
+      const [
+        productData,
+        categoryData,
+      ] = await Promise.all([
+        getProducts(),
+        getCategories(),
+      ])
+
+      setProducts(productData)
+      setCategories(categoryData)
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to load products."
+      )
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     let active = true;
 
@@ -148,6 +174,7 @@ export default function ProductsPage() {
 
         setAdminEmail(email);
         setCheckingAuth(false);
+        void loadData();
       } catch (error) {
         if (!active) return;
 
@@ -175,39 +202,9 @@ export default function ProductsPage() {
       active = false;
       unsubscribe();
     };
-  }, [router]);
+  }, [loadData, router]);
 
-  useEffect(() => {
-    if (!checkingAuth) {
-      loadData()
-    }
-  }, [checkingAuth])
 
-  async function loadData() {
-    setLoading(true)
-    setError("")
-
-    try {
-      const [
-        productData,
-        categoryData,
-      ] = await Promise.all([
-        getProducts(),
-        getCategories(),
-      ])
-
-      setProducts(productData)
-      setCategories(categoryData)
-    } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : "Unable to load products."
-      )
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const filteredProducts =
     useMemo(() => {
@@ -621,6 +618,7 @@ export default function ProductsPage() {
 
             <div className="category-modal-body">
               <ProductForm
+                key={editingProduct?.id ?? "new"}
                 product={
                   editingProduct
                 }

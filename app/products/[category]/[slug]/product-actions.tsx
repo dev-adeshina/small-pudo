@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
 
@@ -34,7 +34,7 @@ export default function ProductActions({
     updateQuantity,
   } = useCart();
 
-  const [quantity, setQuantity] = useState(1);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   const [added, setAdded] = useState(false);
 
@@ -45,16 +45,11 @@ export default function ProductActions({
     (item) => item.productId === productId
   );
 
-  // Keep the quantity selector synchronized with the cart.
-  useEffect(() => {
-    if (!isReady) return;
-
-    if (cartItem) {
-      setQuantity(Math.min(stock, cartItem.quantity));
-    } else {
-      setQuantity(1);
-    }
-  }, [isReady, cartItem?.quantity, productId, stock]);
+  const quantity = isReady
+    ? cartItem
+      ? Math.min(stock, cartItem.quantity)
+      : 1
+    : selectedQuantity;
 
   // Synchronize the requested quantity with the cart.
   const syncCartQuantity = (nextQuantity: number) => {
@@ -90,7 +85,7 @@ export default function ProductActions({
 
     const nextQuantity = quantity + 1;
 
-    setQuantity(nextQuantity);
+    setSelectedQuantity(nextQuantity);
     syncCartQuantity(nextQuantity);
   };
 
@@ -100,7 +95,7 @@ export default function ProductActions({
 
     const nextQuantity = quantity - 1;
 
-    setQuantity(nextQuantity);
+    setSelectedQuantity(nextQuantity);
     syncCartQuantity(nextQuantity);
   };
 

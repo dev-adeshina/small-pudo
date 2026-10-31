@@ -146,54 +146,57 @@ export default function TrackOrderPage() {
 
 
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const requestedOrderId = params.get("orderId");
+        const frame = window.requestAnimationFrame(() => {
+            const params = new URLSearchParams(window.location.search);
+            const requestedOrderId = params.get("orderId");
 
-        if (!requestedOrderId) return;
+            if (!requestedOrderId) return;
 
-        setOrderId(requestedOrderId);
+            setOrderId(requestedOrderId);
 
-        // Recover the token saved during checkout, when available.
-        try {
-            const savedToken = sessionStorage.getItem(
-                `order-access:${requestedOrderId}`
-            );
-
-            if (savedToken && /^[a-f0-9]{64}$/i.test(savedToken)) {
-                setOrderAccessToken(savedToken);
-            }
-        } catch {
-            // Manual token entry remains available if session storage fails.
-        }
-
-        // Email links carry the token in the URL fragment, not the query string.
-        const fragmentParams = new URLSearchParams(
-            window.location.hash.slice(1)
-        );
-
-        const emailedToken = fragmentParams.get("token");
-
-        if (emailedToken && /^[a-f0-9]{64}$/i.test(emailedToken)) {
-            setOrderAccessToken(emailedToken);
-
+            // Recover the token saved during checkout, when available.
             try {
-                sessionStorage.setItem(
-                    `order-access:${requestedOrderId}`,
-                    emailedToken
+                const savedToken = sessionStorage.getItem(
+                    `order-access:${requestedOrderId}`
                 );
-            } catch {
-                // The token remains in component state for this page session.
-            }
-        }
 
-        // Remove the fragment so the token no longer appears in the address bar.
-        if (window.location.hash) {
-            window.history.replaceState(
-                window.history.state,
-                "",
-                `${window.location.pathname}${window.location.search}`
+                if (savedToken && /^[a-f0-9]{64}$/i.test(savedToken)) {
+                    setOrderAccessToken(savedToken);
+                }
+            } catch {
+                // Manual token entry remains available if session storage fails.
+            }
+
+            // Email links carry the token in the URL fragment, not the query string.
+            const fragmentParams = new URLSearchParams(
+                window.location.hash.slice(1)
             );
-        }
+            const emailedToken = fragmentParams.get("token");
+
+            if (emailedToken && /^[a-f0-9]{64}$/i.test(emailedToken)) {
+                setOrderAccessToken(emailedToken);
+
+                try {
+                    sessionStorage.setItem(
+                        `order-access:${requestedOrderId}`,
+                        emailedToken
+                    );
+                } catch {
+                    // The token remains in component state for this page session.
+                }
+            }
+
+            // Remove the fragment so the token no longer appears in the address bar.
+            if (window.location.hash) {
+                window.history.replaceState(
+                    window.history.state,
+                    "",
+                    `${window.location.pathname}${window.location.search}`
+                );
+            }
+        });
+
+        return () => window.cancelAnimationFrame(frame);
     }, []);
 
 
