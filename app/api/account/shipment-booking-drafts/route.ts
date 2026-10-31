@@ -2,6 +2,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { validateShipmentBookingDraft } from "@/lib/validations/shipment-booking-draft";
 
 export const runtime = "nodejs";
 
@@ -57,44 +58,6 @@ function toISOString(value: unknown): string | null {
   }
 
   return null;
-}
-
-function validateDraft(body: unknown) {
-  if (typeof body !== "object" || body === null) {
-    return { error: "Enter the shipment details before saving." };
-  }
-
-  const candidate = body as Record<string, unknown>;
-  const origin =
-    typeof candidate.origin === "string" ? candidate.origin.trim() : "";
-  const destination =
-    typeof candidate.destination === "string"
-      ? candidate.destination.trim()
-      : "";
-  const parcelDescription =
-    typeof candidate.parcelDescription === "string"
-      ? candidate.parcelDescription.trim()
-      : "";
-
-  if (!origin || !destination || !parcelDescription) {
-    return {
-      error: "Origin, destination and parcel description are required.",
-    };
-  }
-
-  if (origin.length > 180 || destination.length > 180) {
-    return {
-      error: "Origin and destination must each be 180 characters or fewer.",
-    };
-  }
-
-  if (parcelDescription.length > 1000) {
-    return {
-      error: "Parcel description must be 1,000 characters or fewer.",
-    };
-  }
-
-  return { origin, destination, parcelDescription };
 }
 
 /**
@@ -167,9 +130,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const validated = validateDraft(body);
+  const validated = validateShipmentBookingDraft(body);
 
-  if ("error" in validated) {
+  if (!validated.success) {
     return NextResponse.json(
       { error: validated.error },
       { status: 400 }
@@ -185,10 +148,9 @@ export async function POST(request: NextRequest) {
 
     await draftRef.create({
       bookingPartyUid: customer.uid,
-      bookingPartyEmail: customer.email,
-      origin: validated.origin,
-      destination: validated.destination,
-      parcelDescription: validated.parcelDescription,
+      origin: validated.data.origin,
+      destination: validated.data.destination,
+      parcelDescription: validated.data.parcelDescription,
       status: "draft",
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
@@ -199,9 +161,9 @@ export async function POST(request: NextRequest) {
         success: true,
         draft: {
           id: draftRef.id,
-          origin: validated.origin,
-          destination: validated.destination,
-          parcelDescription: validated.parcelDescription,
+          origin: validated.data.origin,
+          destination: validated.data.destination,
+          parcelDescription: validated.data.parcelDescription,
           status: "draft",
         },
       },
