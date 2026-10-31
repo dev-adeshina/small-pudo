@@ -43,14 +43,14 @@ A missing reference does not reverse an accepted decision. A proposed workflow, 
 | `PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md` | **Updated in PR #57** with DEC-037–DEC-044 policy cross-references. | Owner-approved P0/Conditional P0/P1 classifications remain unchanged; no priority re-opening is proposed. |
 | `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md` | **Reconciled in PR #58** with the DEC-037–DEC-044 crosswalk; existing 80 case rows and test-design-only boundary are retained. | The crosswalk maps accepted policy to existing cases; unresolved procedures, technical contracts and evidence requirements still block executable approval. |
 | `PLATFORM_P0_TEST_SPECIFICATION_READINESS.md` | **Reconciled in PR #58** with the DEC-037–DEC-044 crosswalk; no executable test approval is implied. | The 80-case count, 45 P0 / 6 Conditional P0 / 3 P1 classifications and zero execution approvals remain unchanged. |
-| `IMPLEMENTATION_SOURCE_TRACEABILITY.md` | Source inspection is tied to commit `e0f69055d33dd9399c23e1d793f359468229c856`. | Source baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; repository-history comparison refreshed through PR #59. PRs #53–#59 were documentation-only; no runtime/production verification is implied. |
+| `IMPLEMENTATION_SOURCE_TRACEABILITY.md` | Source inspection is tied to commit `e0f69055d33dd9399c23e1d793f359468229c856`. | Source baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; repository-history comparison refreshed through PR #60. PRs #53–#60 were documentation-only; no runtime/production verification is implied. |
 | `ADMIN_REQUIREMENTS.md` | **Reconciled in PR #55** with the owner-reviewed priority baseline from PR #31, including ADM-R01–ADM-R54. | Detailed page specifications, source reconciliation, runtime verification and implementation remain open. |
 | `ADMIN_REQUIREMENTS_AUDIT.md` | **Reconciled in PR #55**: PR #3 is merged; PR #4 is closed without merge. | Dated source/runtime findings remain historical and are not current runtime verification. |
 | `ADMIN_PORTAL.md` | Page-by-page design with Draft/Agreed statuses and implementation acceptance boundaries. | No new approval is implied. Cross-check page/action descriptions against current actor, permission, workflow, and lifecycle contracts. |
 | `SPEC.md` | Earlier product/technical specification with historical archive baseline. | Contains earlier roadmap and source descriptions. Keep its historical status clear; current product policy and work order are governed by current decision, workflow, progress, and handoff documents. |
-| `README.md` | SDD index and authority/evidence guidance. | Updated through PR #59 to identify this reconciliation report and the current repository baseline. |
-| `PROGRESS.md` | Active status and milestone history. | Step 1, Step 2A and PR #58 Step 2B P0 catalogue/readiness reconciliation are recorded; PR #59 refreshed continuity metadata. |
-| `SESSION_HANDOFF.md` | Current-session continuity instructions. | Updated through PR #59; full cross-document reconciliation remains open. |
+| `README.md` | SDD index and authority/evidence guidance. | Updated through PR #60 to identify this reconciliation report and the current repository baseline. |
+| `PROGRESS.md` | Active status and milestone history. | Step 1, Step 2A, PR #58 Step 2B P0 catalogue/readiness reconciliation, PR #60 Step 2C, and the initial Step 2D review are recorded. |
+| `SESSION_HANDOFF.md` | Current-session continuity instructions. | Updated through PR #60; full cross-document reconciliation remains open. |
 | `SDD_COMPLETENESS_AUDIT.md` | Platform-wide completeness findings and work sequence. | Step 2A findings retained as history; PR #58 corrections and the current cross-document review are being recorded. |
 | `ISSUES.md` | Open gaps and issue ownership. | VLY-019 remains open and blocks implementation pending complete SDD approval. |
 
@@ -92,7 +92,7 @@ Do not guess service-specific pricing formulas/rates/units/rounding/fees/taxes/d
 2. [x] Map DEC-037–DEC-044 into requirement dependency traceability and the owner-approved priority matrix without changing classifications (PR #57 merged).
 3. [x] Complete P0 acceptance-catalogue and test-readiness decision crosswalks, retaining the 80 existing cases and test-design-only boundary (PR #58 merged at `d67a8bcd33713b0bcc64b6841237a7e9b0ee78b7`).
 4. [x] Correct Admin requirement-baseline status and PR #3/#4 history (PR #55 merged).
-5. [x] Refresh source-history metadata through PR #59 while retaining the active source inspection baseline.
+5. [x] Refresh source-history metadata through PR #60 while retaining the active source inspection baseline.
 6. [x] Complete the first cross-document status/reference scan of all 23 SDD documents (PR #60 merged); no contradiction in accepted owner policy was identified in that scan. [~] Continue targeted section-level review of workflow, lifecycle, actor, permission, requirement, acceptance, Admin, and source-evidence dependencies; the initial A-10 review found stale approval wording that is being aligned with DEC-043.
 7. [ ] Record the completed reconciliation and remaining blockers in progress, issues, audit, and handoff documents after owner review/merge.
 
