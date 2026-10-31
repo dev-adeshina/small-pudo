@@ -2,10 +2,10 @@
 
 **Status:** Draft technical-contract crosswalk — source-aware and policy-constrained; not an approved implementation specification  
 **Prepared:** 31 October 2026  
-**Documentation baseline:** PR #70 merge commit `ad6189a598d3fcbb79c90679a7dac33914ea0474`  
+**Documentation baseline:** PR #72 merge commit `${neu}`  
 **Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32)  
 **Authority:** Accepted DEC-018, DEC-022–DEC-044, PM-01–PM-12 and BP-01–BP-22 policy records; existing SDD workflow, lifecycle, actor, permission, traceability and acceptance documents  
-**Related:** `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, `PLATFORM_STAFF_PERMISSION_MATRIX.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`, `PLATFORM_P0_TEST_SPECIFICATION_READINESS.md`
+**Related:** `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`, `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_SHARED_WORKFLOWS.md`, `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, `PLATFORM_STAFF_PERMISSION_MATRIX.md`, `IMPLEMENTATION_SOURCE_TRACEABILITY.md`, `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`, `PLATFORM_P0_TEST_SPECIFICATION_READINESS.md`
 
 ## 1. Purpose and non-goals
 
@@ -243,3 +243,8 @@ Review 3 must not be presented until all are true:
 - [ ] No application code, schema, API or deployment implementation has been introduced during the documentation phase.
 
 **Current gate:** This addendum strengthens the Review 3 work package but does not by itself make Review 3 ready. Reviews 1 and 2 of 5 remain approved; Review 3 is still pending; Reviews 4 and 5 remain future consolidated approvals. Application-code changes remain prohibited until explicit Review 5 approval of the complete reconciled SDD.
+
+
+## 14. Mutation and recovery contract cross-reference
+
+The action-specific mutation, authorization, concurrency, unknown-outcome, recovery ownership and acceptance-evidence obligations are consolidated in `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`. That matrix refines this document's Sections 4–10 without approving an API, persistence schema, universal idempotency mechanism, retry/timeout value or provider integration design.

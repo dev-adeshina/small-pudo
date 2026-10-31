@@ -2,9 +2,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #71 is merged; merge commit `37a6ca57f1619d124ebb9718aa6067ed8d40f978`.
-- PRs #54–#71 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The comparison from the source-inspection baseline through PR #71 reflects documentation-only changes; PR #71 itself is documentation-only. The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
+- Current `main` baseline: PR #72 is merged; merge commit `d17828292f2a0e0424de9461affe4aebc2c94e0b`.
+- PRs #54–#72 are merged documentation-only reconciliation changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
+- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The comparison from the source-inspection baseline through PR #72 reflects documentation-only changes; PRs #71 and #72 themselves are documentation-only. The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - No application-code changes are authorized until the owner explicitly approves the complete reconciled platform-wide SDD.
 
@@ -127,14 +127,22 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 
 ## Latest continuation checkpoint — after PR #71
 
-- PR #71 merged at `37a6ca57f1619d124ebb9718aa6067ed8d40f978`; this is the current verified documentation baseline.
+- PR #71 merged at `d17828292f2a0e0424de9461affe4aebc2c94e0b`; this is the current verified documentation baseline.
 - `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md` now separates domain responsibility, identity/party entitlements, record ownership, unresolved booking/parcel/route/payment relationships (DB-01–DB-12), transaction consistency candidates and source-reuse boundaries.
 - The matrix does not settle owner decisions or schema. Resolve launch-essential relationships through the existing owner decision process before finalizing data/API contracts. Do not invent defaults.
 - Reviews 1 and 2 of 5 remain approved. Review 3 is still being assembled; Reviews 4 and 5 remain future gates. No application code before Review 5 approval.
 
 
-## Latest domain-boundary workstream — PR #72 preparation
+## Latest domain-boundary workstream — after PR #72
 
 - `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md` maps record responsibilities, identity/party entitlements, DB-01–DB-12 unresolved relationship/cardinality questions, record ownership, consistency boundaries and source reuse.
 - The matrix is not an approved data model. Owner decisions remain required before launch-essential relationships can be finalized. Do not infer one booking equals one parcel, one payment equals one booking, or one parcel equals one route leg.
 - Reviews 1 and 2 of 5 remain approved. Review 3 remains in preparation; no application-code changes before explicit Review 5 approval.
+
+
+## Latest mutation, authorization, and recovery workstream — PR #73 preparation
+
+- `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md` provides a common mutation guard sequence and an action-specific contract matrix across commercial, physical, financial, operational, Support, audit and notification domains.
+- It specifies reliability obligations for duplicate/concurrent/stale/replayed/delayed/out-of-order requests and unknown provider outcomes, plus recovery ownership and evidence requirements. It does not prescribe schema, endpoints, enums, key formats, retry values or provider-specific mechanisms.
+- PR #72 is the verified current documentation baseline at `d17828292f2a0e0424de9461affe4aebc2c94e0b`; the source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
+- Reviews 1 and 2 of 5 remain approved. Review 3 is not yet presented; Reviews 4 and 5 remain future gates. No application-code changes before explicit Review 5 approval.
