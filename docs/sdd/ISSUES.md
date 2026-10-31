@@ -396,3 +396,13 @@ The owner has approved the high-level rejection-resolution boundary: customer re
 ## A-15 permission policy consistency update — PR #66
 
 The A-15 acceptance matrix and A15-04 evidence scenario now reflect PM-01–PM-12. The misleading “role granularity unresolved” phrase is replaced with the accurate boundary: action-level permission assignment is accepted; the exact permission catalogue, technical enforcement, staff/location scope representation, approver eligibility/thresholds, emergency-access parameters, and runtime evidence remain open. VLY-009 and VLY-010 remain investigating. No source or runtime claim is upgraded by this documentation update.
+
+
+## Milestone 4 owner-approved closure direction — Reviews 1 and 2 — 31 October 2026
+
+- **Status:** Closure approach and consolidated policy direction approved; full SDD remains in progress.
+- **Repository baseline:** PR #67 merged at `04c093927c8d47f9e1fe8351c9f8ecb48920b753`.
+- **Accepted direction:** Preserve all accepted decision families; reconcile their implications across workflows, lifecycles, actors, permissions, requirements, evidence, Admin and source-traceability documents. Use service-specific configurable commercial/operational rules; do not invent exact numerical values without service/legal/financial/operating context. Preserve booking-party distinctions, bounded Support, evidence-backed physical events, independent location capability and staff authorization, action-level permissions, controlled approvals, audit/evidence integrity, and evidence-gated production release.
+- **Deferred specification:** Exact rates/formulas, units/thresholds, quote/handover durations, payment/refund/credit tolerances, proof methods, permission thresholds, retention periods, and recovery/monitoring targets remain open with owners, configuration boundaries, dependencies and acceptance evidence to be identified.
+- **Next action:** Continue section-level A-01–A-20 and workflow/lifecycle/exception reconciliation; then complete source-aware technical contracts, detailed executable acceptance specifications and production-readiness evidence planning. Review 3 will consolidate the technical design/architecture package.
+- **Evidence boundary:** Documentation-only. The 80 P0 evidence cases remain design outlines, not executed tests. No application source, schema, API, permissions, deployment or runtime behaviour changed or was verified. Application-code freeze remains active until explicit Review 5 approval of the complete SDD.
