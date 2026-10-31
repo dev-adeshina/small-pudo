@@ -2,7 +2,7 @@
 
 **Document status:** Owner-reviewed traceability baseline (PR #41); DEC-037–DEC-044 dependency crosswalk reconciled in PR #57; detailed technical/source/runtime contracts remain open  
 **Prepared:** 31 October 2026  
-**Repository baseline:** `main` after PR #59 merge `94c0ac87374248a32b606d82e6d418267a5b0218` (documentation-only)  
+**Repository baseline:** `main` after PR #60 merge `97f48a530254da8e1e072639116a6a3e09eca1c7` (documentation-only)  
 **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32)  
 **Authority:** Derived from the owner-approved priority matrix, A-01–A-20 catalogue, DEC-022–DEC-044, PM-01–PM-12, BP-01–BP-22, and the current actor/workflow/lifecycle drafts. This register is a traceability aid, not a new source of product policy or implementation authorization.
 
