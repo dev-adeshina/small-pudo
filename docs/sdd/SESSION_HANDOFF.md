@@ -204,3 +204,10 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - Review 3 is not yet ready to present. In particular, DB-01–DB-12, detailed action/scope/location capability definitions, service-specific operational evidence and correction authority, provider-specific recovery, and production ownership/targets remain open.
 - The next work is to close only those gaps that can be resolved from already accepted policy and existing documents, and to isolate genuinely owner-dependent decisions for the consolidated review. Do not invent defaults or implement.
 - Reviews 1–2 remain approved; Reviews 4–5 remain future gates. No application-code, schema, API, Firebase rules/configuration, provider activation or deployment before explicit Review 5 approval.
+
+
+## Current Review 3 owner-input triage — proposed follow-up
+
+- The current documentation proposal adds `PLATFORM_REVIEW_3_OWNER_INPUT_TRIAGE.md`. It classifies DB-01–DB-12 individually, identifies which accepted DEC/BP/PM policies already settle part of each question, and separates genuine owner choices from technical/source-verification work and future implementation evidence.
+- Use this triage to prepare consolidated owner-input packages. Do not reopen accepted policy wholesale, send twelve separate DB questions, or create extra approval exchanges. The owner has set a strict maximum of five back-and-forth approval exchanges and will provide the countdown.
+- The proposed triage does not approve a data model or implementation. Reviews 1–2 remain approved; Review 3 is still in preparation; Reviews 4–5 remain future gates. Keep the implementation freeze until explicit Review 5 approval.
