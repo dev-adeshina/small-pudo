@@ -4,13 +4,13 @@
 **Last updated:** 30 October 2026  
 **Scope:** Primary independent-shipment logistics workflows and attached storefront-order fulfilment, including their shared operational fulfilment boundary  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, ADMIN_REQUIREMENTS.md, ADMIN_PORTAL.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-039
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-044
 
 ## 1. Purpose, status, and boundaries
 
 This document turns the accepted launch operating model into a first-pass, platform-wide workflow description. It identifies the major participants, sequence, decision gates, records that must remain distinct, exceptions, and open policy questions. It does not assert that these workflows or all related screens/services already exist in the application.
 
-Owner-policy outcomes under DEC-022–DEC-038, PM-01–PM-12, and BP-01–BP-22 are accepted at the levels recorded in their authoritative decision documents. The workflow sequences, detailed operational parameters, technical contracts, and evidence plans in this document remain draft work and are not implementation authorization. This document does not prescribe Firestore collections, field names, API routes, enum values, or a migration. Existing source must be inspected before any future technical proposal.
+Owner-policy outcomes under DEC-022–DEC-044, PM-01–PM-12, and BP-01–BP-22 are accepted at the levels recorded in their authoritative decision documents. The workflow sequences, detailed operational parameters, technical contracts, and evidence plans in this document remain draft work and are not implementation authorization. This document does not prescribe Firestore collections, field names, API routes, enum values, or a migration. Existing source must be inspected before any future technical proposal.
 
 Use these evidence labels consistently:
 
