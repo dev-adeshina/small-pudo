@@ -81,7 +81,7 @@ export default function CustomerForgotPasswordPage() {
         <section className="auth-intro">
           <p className="eyebrow">ACCOUNT RECOVERY</p>
 
-          <h1>Let's get you back in.</h1>
+          <h1>Let&apos;s get you back in.</h1>
 
           <p>
             Forgot your password? Request a secure reset link using
@@ -127,7 +127,7 @@ export default function CustomerForgotPasswordPage() {
                 <h2>Forgot your password?</h2>
 
                 <p>
-                  Enter your email address and we'll send reset
+                  Enter your email address and we&apos;ll send reset
                   instructions if an account matches it.
                 </p>
               </div>
