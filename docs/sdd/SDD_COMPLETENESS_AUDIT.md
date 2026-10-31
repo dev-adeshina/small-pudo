@@ -371,3 +371,27 @@ This is a documentation clarification, not a change to DEC-014. It does not appr
 - Continue remaining workflow, lifecycle, actor/permission, acceptance, source-evidence, executable test-specification, and production-readiness reconciliation.
 
 **Current status:** This is a targeted documentation clarification, not complete platform-wide SDD approval. No owner policy was reopened or amended, no new technical contract was approved, no tests were executed, and no application source/runtime/deployment behaviour was verified. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. Application-code changes remain blocked until the complete reconciled SDD is explicitly approved.
+
+## 17. DEC-044 custody-transfer and physical-exception reconciliation — 31 October 2026
+
+### Review baseline and scope
+
+- PR #63 merged into `main` at `9c764e9f0c3a43ee7cae92f607480e1fc386c704`; the review branch was created from that baseline.
+- Compared the DEC-044 addenda in `PLATFORM_SHARED_WORKFLOWS.md` and lifecycle Section 4.4C with actor responsibilities, staff permissions, A-09/A-12/A-13/A-16/A-17 acceptance criteria, the P0 evidence cases, requirement dependency traceability, and VLY-026.
+- Compared the active source-inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856` with current `main`. Intervening changes are SDD documentation only. The current recursive repository tree contains no dedicated shipment, parcel, custody, handover, route, or location API/library path; this is a path-level inventory, not a complete semantic source review.
+
+### Findings and reconciliation
+
+1. **Core custody invariant is consistent.** Workflow, lifecycle, actor and permission documents consistently require actual physical handover and receiving-party possession before custody changes. Route assignment, dispatch authorization/record, arrival, or an attempted handover is not proof of transfer.
+2. **Actor attribution is consistent.** The physical handover actor, actual receiving actor, external reporting source, and internal recorder remain distinguishable. A correction must be separately attributable and reasoned; original event/evidence and custody history are preserved.
+3. **Exception boundaries are consistent.** Failed/disputed/incomplete handovers preserve last confirmed custody; missing/damaged parcels, incorrect assignments and prolonged holds require controlled, evidence-preserving resolution. Administrative location correction is not physical movement. No automatic fault, liability, refund, credit, compensation, insurance, or customer entitlement is inferred.
+4. **Acceptance coverage needed clearer propagation.** The original A-09 matrix row did not explicitly carry the DEC-044 transfer/history invariant, and the existing P0 cases were broad. The matrix and existing A09/A12/A16/A17 cases are refined to make actual receipt, last-confirmed-custody preservation, evidence-source attribution, controlled correction and investigation outcomes observable. Existing case IDs and the 80-case catalogue count are retained.
+5. **Source boundary remains unchanged.** Current repository comparison shows no application-source changes after the inspected source baseline. The path inventory corroborates that no dedicated independent-shipment/intake/custody/route/location API/library surface is present in the current tree. Existing storefront order/payment/Admin source must not be treated as shipment custody implementation.
+
+### Remaining open work
+
+- Service-specific handover proof and verification methods; authority to confirm, dispute and correct transfers; second-approver cases; investigation ownership and resolution procedures.
+- Damage assessment, liability, insurance and compensation policy; hold ownership, review intervals and maximum duration; evidence retention and customer/financial entitlements.
+- Exact lifecycle vocabulary, data/API/security/idempotency/recovery contracts, source-level semantic review where needed, safe fixtures and executable acceptance specifications.
+
+**Current status:** DEC-044's high-level owner policy remains unchanged and is consistently propagated across the reviewed policy documents. This is a targeted reconciliation, not complete platform-wide SDD approval or implementation authorization. No tests were executed; no application source, schema, Firebase configuration/rules, API, permission implementation, deployment or runtime behaviour was changed or verified. The active source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. Application-code changes remain blocked until explicit owner approval of the complete reconciled SDD.
