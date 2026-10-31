@@ -373,7 +373,7 @@ export default function App() {
           <h2>Ready to move<br /><em>further?</em></h2>
         </div>
         <div className="cta-side">
-          <p>Stay ahead of Africa's logistics and commerce evolution.</p>
+          <p>Stay ahead of Africa&apos;s logistics and commerce evolution.</p>
           <form onSubmit={handleSubmit}>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Drop your email to get our latest roadmap updates, insights, and ecosystem news." aria-label="Email address" required />
             <button type="submit" aria-label="Submit email"><ArrowUpRight size={22} /></button>
