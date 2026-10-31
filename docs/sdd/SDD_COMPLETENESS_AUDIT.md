@@ -395,3 +395,18 @@ This is a documentation clarification, not a change to DEC-014. It does not appr
 - Exact lifecycle vocabulary, data/API/security/idempotency/recovery contracts, source-level semantic review where needed, safe fixtures and executable acceptance specifications.
 
 **Current status:** DEC-044's high-level owner policy remains unchanged and is consistently propagated across the reviewed policy documents. This is a targeted reconciliation, not complete platform-wide SDD approval or implementation authorization. No tests were executed; no application source, schema, Firebase configuration/rules, API, permission implementation, deployment or runtime behaviour was changed or verified. The active source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. Application-code changes remain blocked until explicit owner approval of the complete reconciled SDD.
+
+
+## 18. Repository/source-history baseline refresh after PR #64 — 31 October 2026
+
+### Review baseline and comparison
+
+- PR #64 merged into `main` at `d02b2d69156aea45c07b5e2db5511b2486e50471`.
+- Compared the active application-source inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856` with the PR #64 merge commit. The repository comparison reports 320 commits ahead and lists SDD documentation files only; no application-source path appears in the returned changed-file set.
+- PR #64 itself changes nine SDD documents only. Its DEC-044 acceptance-evidence refinement retains the existing 80 unique P0 case IDs and adds no new case IDs.
+
+### Interpretation and limits
+
+The source findings in this audit remain tied to the previously inspected application-source commit `e0f69055d33dd9399c23e1d793f359468229c856`. The repository-history comparison supports the conclusion that no application-source path changed between that inspected snapshot and PR #64. It does not constitute a fresh semantic source review, runtime test, browser/API verification, deployed-configuration review, production-data inspection, or production-readiness assessment. The recursive tree-path inventory recorded in the PR #64 review remains a path-level observation, not proof of runtime behaviour.
+
+No tests were executed and no application source, schema, Firebase rules/configuration, APIs, permissions, or deployment were changed by this refresh. The active application-source inspection baseline remains unchanged. Continue the platform-wide section-level reconciliation, technical-contract work, executable acceptance-test specification, and production-readiness evidence planning. **Application-code changes remain blocked until the owner explicitly approves the complete reconciled SDD.**
