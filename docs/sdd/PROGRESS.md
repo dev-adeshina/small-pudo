@@ -975,15 +975,30 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 
 ## 44. Milestone 4 Step 2B — P0 evidence and test-readiness reconciliation merged — 31 October 2026
 
-- [x] Verified PR #54, PR #55, PR #56 and PR #57 merge states and used PR #57 merge commit `de067c0a872de6e5cffaa2c7cf7c5bbcccab3269` as the current documentation baseline.
+- [x] Verified PR #54, PR #55, PR #56 and PR #57 merge states and used PR #59 merge commit `94c0ac87374248a32b606d82e6d418267a5b0218` as the current documentation baseline.
 - [x] Confirmed PR #56 reconciled actor responsibilities and the staff permission matrix with DEC-037–DEC-044.
 - [x] Confirmed PR #57 reconciled requirement dependency traceability and the owner-approved priority matrix with DEC-037–DEC-044 without changing priority classifications.
 - [x] Mapped DEC-037–DEC-044 to the existing A-area/case families in the P0 acceptance catalogue and test-readiness assessment; retained all 80 case rows.
-- [x] Refreshed source-history comparison through PR #57 while preserving active source-inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856`.
-- [x] Updated the decision/document reconciliation inventory to distinguish merged corrections from the current proposal.
+- [x] Refreshed source-history comparison through PR #59 while preserving active source-inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856`.
+- [x] Updated the decision/document reconciliation inventory to distinguish merged corrections from the current cross-document review.
 - [x] Owner reviewed and merged PR #58 at `d67a8bcd33713b0bcc64b6841237a7e9b0ee78b7`.
 - [ ] Continue full cross-document contradiction/dependency review across the 23 SDD documents; accepted policy is not reopened absent genuine conflicting evidence.
 - [ ] Complete detailed workflow, lifecycle, data/API/security, integration and exception contracts; do not infer technical implementation from policy crosswalks.
 - [ ] Continue production-readiness evidence planning and obtain explicit owner approval of the complete platform-wide SDD before any application-code changes.
 
-**Step 2B boundary:** PR #58 was documentation-only and is merged. The P0 catalogue and readiness document remain design/navigation artefacts; 45 P0 and 6 Conditional P0 Admin requirements remain unapproved for test execution (0/51 approved). No test was executed, no runtime/production evidence was added, and no application source, schema, API, permission implementation, configuration or deployment was changed. The active source-inspection baseline remains the commit above.
+**Step 2B boundary:** PR #58 was documentation-only and is merged. The P0 catalogue and readiness document remain design/navigation artefacts; 45 P0 and 6 Conditional P0 Admin requirements remain unapproved for test execution (0/51 approved). No test was executed, no runtime/production evidence was added, and no application source, schema, API, permission implementation, configuration or deployment was changed. The active source-inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
+
+
+## 45. Milestone 4 Step 2C — first cross-document status/reference scan — 31 October 2026
+
+- [x] Verified PR #59 merged at `94c0ac87374248a32b606d82e6d418267a5b0218` and refreshed the current repository baseline.
+- [x] Scanned all 23 Markdown SDD documents inventoried in Step 2A for decision-family references, status/approval wording, repository/PR metadata, continuity pointers, and unresolved dependency labels.
+- [x] Confirmed no missing case ID in the DEC-037–DEC-044 P0 catalogue crosswalk: 80 unique existing case rows remain; this is a reference-integrity check only, not executable-test approval.
+- [x] Found no confirmed contradiction requiring an accepted owner decision to be reopened in this first status/reference pass.
+- [x] Identified stale status and decision-range metadata in README, workflow/lifecycle/acceptance headers, requirement traceability, source/P0 history, issues, and continuity records; corrections are proposed in the current documentation PR.
+- [ ] Complete detailed section-level comparison of workflows, lifecycle boundaries, actor/permission authority, requirement dependencies, acceptance criteria, Admin page design, and source-evidence claims.
+- [ ] Resolve or explicitly preserve remaining operational/technical contracts, including service configuration, pricing, measurement, financial settlement, custody proof/exceptions, location capability, party consent/delegation, lifecycle/data/API/security, retention, idempotency/recovery, and test fixtures.
+- [ ] Reassess root `pudo.zip` scope/authority before including it in source evidence; it remains uninspected.
+- [ ] Complete production-readiness evidence planning and present the fully reconciled platform-wide SDD for explicit owner approval before any application-code changes.
+
+**Step 2C boundary:** This first status/reference scan is not final SDD reconciliation or approval. No accepted policy was changed, no new technical contract was approved, no tests were executed, and no application source, schema, API, permission implementation, configuration, deployment, or runtime behaviour was changed or verified. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
