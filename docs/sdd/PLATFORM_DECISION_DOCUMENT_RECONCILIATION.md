@@ -1,6 +1,6 @@
 # VeriLyft Platform Decision-to-Document Reconciliation
 
-**Status:** Step 2A inventory and Step 2C first status/reference scan complete; targeted Step 2D review remains in progress. PR #61 corrected A-10/DEC-043 wording, PR #62 aligned DEC-038–DEC-041 status references, and the current pass clarifies the Finance responsibility/deployment boundary.  
+**Status:** Step 2A inventory and Step 2C first status/reference scan complete; targeted Step 2D review remains in progress. PR #61 corrected A-10/DEC-043 wording, PR #62 aligned DEC-038–DEC-041 status references, PR #63 clarified the Finance responsibility/deployment boundary, and the current pass reconciles DEC-044 custody acceptance/evidence coverage.  
 **Date:** 31 October 2026  
 **Repository baseline:** PR #62 merge commit `bcbbca289eb1eef8a4535fb81ab24b3e3fd1a32f`.  
 **Application-source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`.  
@@ -48,8 +48,8 @@ A missing reference does not reverse an accepted decision. A proposed workflow, 
 | `ADMIN_REQUIREMENTS_AUDIT.md` | **Reconciled in PR #55**: PR #3 is merged; PR #4 is closed without merge. | Dated source/runtime findings remain historical and are not current runtime verification. |
 | `ADMIN_PORTAL.md` | Page-by-page design with Draft/Agreed statuses and implementation acceptance boundaries. | No new approval is implied. Cross-check page/action descriptions against current actor, permission, workflow, and lifecycle contracts. |
 | `SPEC.md` | Earlier product/technical specification with historical archive baseline. | Contains earlier roadmap and source descriptions. Keep its historical status clear; current product policy and work order are governed by current decision, workflow, progress, and handoff documents. |
-| `README.md` | SDD index and authority/evidence guidance. | Updated through PR #60 to identify this reconciliation report and the current repository baseline. |
-| `PROGRESS.md` | Active status and milestone history. | Step 1, Step 2A, PR #58 Step 2B P0 catalogue/readiness reconciliation, PR #60 Step 2C, and the initial Step 2D review are recorded. |
+| `README.md` | SDD index and authority/evidence guidance. | Updated through PR #63 for the current repository/source-history baseline and DEC-044 reconciliation status. |
+| `PROGRESS.md` | Active status and milestone history. | Step 1, Step 2A, PR #58 Step 2B P0 catalogue/readiness reconciliation, PR #60 Step 2C, and targeted Step 2D reviews through the DEC-044 custody/evidence pass are recorded. |
 | `SESSION_HANDOFF.md` | Current-session continuity instructions. | Updated through PR #60; full cross-document reconciliation remains open. |
 | `SDD_COMPLETENESS_AUDIT.md` | Platform-wide completeness findings and work sequence. | Step 2A findings retained as history; PR #58 corrections and the current cross-document review are being recorded. |
 | `ISSUES.md` | Open gaps and issue ownership. | VLY-019 remains open and blocks implementation pending complete SDD approval. |
@@ -118,7 +118,7 @@ The inconsistency was in deployment wording. Some Admin documents described a se
 
 This clarification does not reopen or amend DEC-014, create a new owner decision, approve a Finance role/permission model, or settle portal/module architecture. The full-finance workflows, access boundaries, audit requirements, and eventual deployment arrangement remain open SDD work. A-08 remains a P0 financial-integrity area and is not reduced by this clarification.
 
-**Step 2D update:** The affected Admin, actor, priority, decision, completeness-audit, progress, README, and handoff references are aligned in this documentation-only pass. Full platform-wide reconciliation remains open; application-code changes remain blocked pending explicit owner approval of the complete SDD.
+**Step 2D update:** The affected Admin, actor, priority, decision, completeness-audit, progress, README, and handoff references were aligned through PR #63. The DEC-044 custody review and acceptance-evidence refinement are recorded in Section 17 of `SDD_COMPLETENESS_AUDIT.md` and Section 49 of `PROGRESS.md`. Full platform-wide reconciliation remains open; application-code changes remain blocked pending explicit owner approval of the complete SDD.
 
 ## 10. DEC-044 custody-transfer and physical-exception review
 
