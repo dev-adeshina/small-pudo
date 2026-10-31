@@ -234,7 +234,7 @@ The table records source presence only. A row marked partial/present is **not** 
 
 | ID | Current finding | Required follow-up |
 |---|---|---|
-| SRC-01 | The active source-inspection commit remains `e0f69055d33dd9399c23e1d793f359468229c856`; repository-history comparison is refreshed through PR #54. | Keep source findings tied to the inspected commit; perform a new source inspection only after a later source-changing commit or an explicitly approved deeper review. |
+| SRC-01 | The active source-inspection commit remains `e0f69055d33dd9399c23e1d793f359468229c856`; repository-history comparison is refreshed through PR #57. | Keep source findings tied to the inspected commit; perform a new source inspection only after a later source-changing commit or an explicitly approved deeper review. |
 | SRC-02 | Customer/Admin authorization source exists but has not been reproduced end-to-end. | Test ordinary customer direct navigation, protected API calls, valid Admin sign-in, expired/revoked token, and denial without breaking customer session. |
 | SRC-03 | Paystack order paths have transaction/replay controls but no current runtime matrix. | Test duplicate/concurrent initialization, duplicate webhook, late success after cancellation, amount/currency/reference mismatch, provider success/local save failure, and stock consistency. |
 | SRC-04 | Cloudinary validation/auth source exists; previous 401 and successful upload remain unresolved. | Test authorized valid upload, unauthorized upload, wrong folder, spoofed MIME/signature, oversized file, persistence and deployed configuration. |
@@ -251,9 +251,9 @@ The table records source presence only. A row marked partial/present is **not** 
 
 ## 7. Repository-history comparison refresh — 31 October 2026
 
-- **Current repository baseline:** PR #54 merged into `main` at `44445997506b97004cb02cc04a4972a4b5ce80c7`.
+- **Current repository baseline:** PR #57 merged into `main` at `de067c0a872de6e5cffaa2c7cf7c5bbcccab3269`.
 - **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (the source tree previously inspected and mapped in this document).
-- **Comparison result:** PRs #52, #53, and #54 after the source-inspection baseline contain SDD documentation changes only. No later application-source commit was identified in this comparison.
+- **Comparison result:** PRs #52–#57 after the source-inspection baseline contain SDD documentation changes only. No later application-source commit was identified in this comparison.
 - **Interpretation:** The source findings in Sections 1–6 remain tied to the stated inspected source commit. The repository baseline has advanced, but this does not mean the application source was re-inspected at PR #54.
 - **Evidence limits:** No runtime/browser/API test, deployed configuration review, production data inspection, provider-dashboard check, or production-readiness verification was performed by this documentation update. The root `pudo.zip` archive remains uninspected and outside source claims until its authority/scope is established.
 
