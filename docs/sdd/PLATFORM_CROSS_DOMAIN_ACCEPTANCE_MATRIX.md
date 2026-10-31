@@ -368,3 +368,8 @@ No new roles, claims, routes, collections, fields, or implementation decisions a
 
 
 **Repository baseline refresh — 31 October 2026:** PR #67 is merged at `04c093927c8d47f9e1fe8351c9f8ecb48920b753`. The owner has approved Reviews 1 and 2 of the five-review SDD closure process, including the policy direction to preserve accepted decisions, define service-specific configurable rules, defer unsupported numerical values until context is established, and require evidence-backed operations and production release. This refresh does not approve every proposed criterion, convert the matrix into executable test specifications, or authorize implementation. The application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`; the repository comparison through PR #67 lists SDD documentation paths only and is not runtime or production verification.
+
+
+## Lifecycle event/state contract cross-reference
+
+When converting the cross-domain acceptance rows into executable cases, apply `PLATFORM_LIFECYCLE_EVENT_AND_STATE_CONTRACT_MATRIX.md` to distinguish commands, decisions, provider/physical observations, authoritative facts, state projections, evidence and corrections. Include applicable late/out-of-order, disputed-event, projection-recovery and correction cases. This does not change current P0 status or approve a new event architecture.
