@@ -80,6 +80,29 @@ export default function CategoriesPage() {
   //   return () => unsubscribe();
   // }, [router]);
 
+  async function loadCategories() {
+    setLoading(true);
+    setError("");
+
+    try {
+      const data = await getCategories();
+
+      setCategories(data);
+
+      const counts = await getCategoryProductCounts(data);
+
+      setProductCounts(counts);
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to load categories."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     let active = true;
 
@@ -107,6 +130,7 @@ export default function CategoriesPage() {
 
         setAdminEmail(email);
         setCheckingAuth(false);
+        void loadCategories();
       } catch (error) {
         if (!active) return;
 
@@ -141,34 +165,9 @@ export default function CategoriesPage() {
     router.replace("/admin/sign-in");
   }
 
-  async function loadCategories() {
-    setLoading(true);
-    setError("");
 
-    try {
-      const data = await getCategories();
 
-      setCategories(data);
 
-      const counts = await getCategoryProductCounts(data);
-
-      setProductCounts(counts);
-    } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : "Unable to load categories."
-      );
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (!checkingAuth) {
-      loadCategories();
-    }
-  }, [checkingAuth]);
 
   const filteredCategories = useMemo(() => {
     const term = search.trim().toLowerCase();
