@@ -1046,3 +1046,17 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [ ] Obtain explicit owner approval of the complete reconciled platform-wide SDD before any application-code changes.
 
 **Evidence boundary:** Documentation-only clarification. No owner policy was reopened or amended; no separate portal, protected module, permission model, schema, API, route, or deployment architecture was approved. No application source was re-inspected, no tests were executed, and no runtime/deployment/production behaviour was verified. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`.
+
+## 49. Milestone 4 Step 2D — DEC-044 custody-transfer and physical-exception reconciliation — 31 October 2026
+
+- [x] Verified PR #63 merged into `main` at `9c764e9f0c3a43ee7cae92f607480e1fc386c704`; created this documentation-only review branch from that baseline.
+- [x] Compared Workflow C and its DEC-044 addendum, lifecycle Section 4.4C, actor responsibilities, staff permissions, acceptance criteria, P0 evidence cases, requirement dependency traceability, and VLY-026.
+- [x] Confirmed consistent policy propagation: actual handover plus receiving-party possession is required for custody transfer; assignment/dispatch/arrival/attempt is insufficient; preserve last confirmed custody, original evidence and attributable correction history.
+- [x] Reconciled the A-09 matrix row and existing A09-04, A12-01/A12-04, A16-01/A16-03 and A17-03/A17-04 evidence cases to make DEC-044 outcomes more observable without adding case IDs or changing priority.
+- [x] Compared source-inspection baseline `e0f69055d33dd9399c23e1d793f359468229c856` with current `main`; intervening repository changes are SDD documentation only. Current recursive tree inventory contains no dedicated shipment/parcel/custody/handover/route/location API/library path.
+- [x] Updated the reconciliation tracker, completeness audit, source-traceability history, issue record and session handoff.
+- [ ] Keep service-specific proof, confirmation/dispute/correction authority, second-approver cases, investigation ownership, damage/liability/insurance/compensation, hold review/maximum periods, evidence retention and customer entitlements open.
+- [ ] Continue remaining A-01–A-20 acceptance review, detailed workflow/lifecycle/actor/permission contracts, source evidence, executable test specifications and production-readiness planning.
+- [ ] Obtain explicit owner approval of the complete reconciled platform-wide SDD before any application-code changes.
+
+**Evidence boundary:** Documentation-only reconciliation. No accepted policy was reopened or amended; no technical contract, status vocabulary, schema, API, permission model or implementation was approved. No tests were executed. Application-source findings remain tied to `e0f69055d33dd9399c23e1d793f359468229c856`; repository tree/history review is not runtime or production verification.
