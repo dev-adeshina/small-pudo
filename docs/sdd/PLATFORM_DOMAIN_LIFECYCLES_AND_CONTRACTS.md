@@ -613,3 +613,8 @@ This section states owner-approved business invariants. It does not establish an
 10. **Resolution and financial separation:** Preserve evidence/source and investigation findings; record authorized decision, authority, reason, and any separate correction. Do not silently close an unresolved exception. Refund, credit, compensation, insurance, and liability are not automatic consequences and remain subject to their separate policies.
 
 **Open contract questions:** Service-specific proof/verification methods; transfer confirmation/dispute/correction authority; second-person approval; investigation ownership; damage assessment; hold review/maximum duration; financial/customer entitlements; exact lifecycle vocabulary, fields, API/security contracts, evidence retention, and executable acceptance tests. Reconcile these with current source before technical approval. No implementation is authorized by DEC-044.
+
+
+## Lifecycle event/state contract cross-reference
+
+Use `PLATFORM_LIFECYCLE_EVENT_AND_STATE_CONTRACT_MATRIX.md` alongside these lifecycle boundaries. It distinguishes command, decision, physical/provider observation, domain-owned fact, current state and projection; defines late/out-of-order event and correction requirements; and provides a transition specification template. It does not impose event sourcing, a generalized event bus, schema, event names or status enums.
