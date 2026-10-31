@@ -3,8 +3,8 @@
 **Last updated:** 31 October 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest verified main baseline for this work:** `61b8b65777d98950b6a4b6c5c311490e064f3d47` — PR #52 merged. The current Milestone 4 proposal is documentation-only and is not yet part of `main`.  
-**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Comparison through PR #52 found intervening changes to SDD documentation only; no later application-source commit was identified. This does not establish runtime or production behaviour.  
+**Latest verified main baseline for this work:** `d17b6440a8c9aca4a07b3797ae4bc1b24520e95c` — PR #53 merged.  
+**Application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). Comparison through PR #53 found intervening changes to SDD documentation only; no later application-source commit was identified. This does not establish runtime or production behaviour.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
 **Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness. The initial read-only baseline inventory is complete. This documentation-only proposal aligns the continuity records with PR #52, the merged DEC-038–DEC-044 policy sequence, and Milestone 3 completion. Next, reconcile the accepted decisions and cross-domain dependencies across every SDD document, then complete source traceability, detailed acceptance-test specifications, and production-readiness evidence planning. Milestones 1–3 are complete at the owner-approved policy/documentation level only. The complete platform-wide SDD remains unapproved. **No application-code changes are authorized until the owner explicitly approves the complete reconciled SDD.**
