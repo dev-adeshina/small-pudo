@@ -380,7 +380,7 @@ export default function CustomerAccountPage() {
             ) : ordersError ? (
               <div className="customer-state">
                 <Package size={27} />
-                <h3>We couldn't load your orders</h3>
+                <h3>We couldn&apos;t load your orders</h3>
                 <p>{ordersError}</p>
 
                 <button
@@ -398,7 +398,7 @@ export default function CustomerAccountPage() {
                 </span>
                 <h3>Your story starts here.</h3>
                 <p>
-                  You haven't placed an order yet. Explore VeriLyft and find
+                  You haven&apos;t placed an order yet. Explore VeriLyft and find
                   something you love.
                 </p>
                 <Link href="/products" className="customer-secondary-action">
