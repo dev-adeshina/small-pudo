@@ -428,3 +428,25 @@ The A-15 matrix, A15-04 scenario, and ADM-R03 priority qualification now disting
 ### Evidence boundary
 
 The update is a cross-document policy consistency correction, not a source review or runtime authorization test. VLY-009 and VLY-010 remain open. No application code, schema, claims, APIs, routes, Firebase rules, or deployment configuration changed. The complete SDD remains unapproved and the implementation freeze remains in force.
+
+
+## 20. A-16 audit and evidence reconciliation — 31 October 2026
+
+### Review baseline and scope
+
+- PR #66 merged into `main` at `f5b274874693db1dbd7a46f17f3e1840a0d372d6`; the A-16 review branch was created from that exact baseline.
+- Compared the A-16 row and DEC-033 acceptance direction in `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, A16-01–A16-04 in `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`, Workflow J, the DEC-033 lifecycle boundary, PM-08, actor responsibilities, ADM-R07 and ADM-R46–R51, and VLY-023.
+
+### Findings and reconciliation
+
+1. **Accepted policy is established.** DEC-033 accepts accountable, evidence-based recordkeeping across consequential platform actions. PM-08 separately authorizes audit/evidence viewing, exporting and external-disclosure approval; Admin status alone is not blanket access.
+2. **Attribution and physical evidence remain distinct.** The actor/system or external source, affected resource, time, outcome, applicable reason and evidence must be attributable. Physical actor, actual receiver and staff recorder remain distinguishable. An audit entry or status change does not prove a physical custody, movement or delivery event.
+3. **Originals and corrections remain distinguishable.** Consequential originals/evidence are not silently overwritten or erased. Additions, corrections and redactions must remain separately attributable and traceable to the original, under the applicable authority.
+4. **Government requests do not confer access.** Request authority, reference, stated legal basis, scope, internal review/approval and any resulting disclosure must be recorded. The requester receives no privileged platform access; disclosure remains limited to authorized and necessary information.
+5. **A-16 acceptance coverage is strengthened without expanding the catalogue.** Existing A16-01–A16-04 now make event reconstruction, separate access/export permissions, original/correction traceability, and legal-hold/retention outcomes more observable. No new case IDs or priority changes are introduced.
+6. **Technical and operational details remain open.** The complete event/evidence catalogue, reviewer-to-permission mapping, evidence integrity/verification controls, retention periods, legal-hold activation/release authority, correction/redaction procedure, two-person disclosure cases and detailed executable tests are not selected by this reconciliation.
+7. **Source evidence remains qualified.** Existing source-traceability records found no general cross-domain audit service in the inspected paths, but this review did not re-inspect application source at PR #66. `pudo.zip` remains uninspected and outside source claims pending a scope/authority decision. No new source or runtime conclusion is made.
+
+### Evidence boundary
+
+This is a documentation-only reconciliation of accepted policy and test-design outlines. It does not approve an audit architecture, event schema, storage, endpoint, permission code, retention job, disclosure integration or implementation. No tests were executed; no application source, schema, Firebase rules/configuration, APIs, permissions or deployment were changed or runtime-verified. The complete SDD remains unapproved and the application-code freeze remains active.

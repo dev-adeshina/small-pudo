@@ -2,7 +2,7 @@
 
 **Status:** Step 2A inventory and Step 2C first status/reference scan complete; targeted Step 2D review remains in progress. PR #61 corrected A-10/DEC-043 wording, PR #62 aligned DEC-038–DEC-041 status references, PR #63 clarified the Finance responsibility/deployment boundary, and PR #64 reconciled DEC-044 custody acceptance/evidence coverage; PR #66 aligns A-15 with accepted PM-01–PM-12 staff permission policy.  
 **Date:** 31 October 2026  
-**Repository baseline:** PR #65 merge commit `c9698417f6d4e024484d608655a1e4149584dcc4`.  
+**Repository baseline:** PR #66 merge commit `f5b274874693db1dbd7a46f17f3e1840a0d372d6`.  
 **Application-source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`.  
 **Scope:** All 23 Markdown documents under `docs/sdd/`.  
 **Authority:** This report inventories existing decisions; it does not create, amend, or reopen owner policy.
@@ -149,3 +149,14 @@ The reconciliation records designated permission administrators (PM-01), action-
 Still open are the exact permission catalogue and permission-set contents, staff identity lifecycle and designated-admin recovery, technical enforcement across all server/data/background-job boundaries, scope representation, approver eligibility/materiality thresholds, emergency duration/renewal, retention, and executable/runtime evidence. These details do not reopen accepted policy. The source/runtime authorization findings and VLY-009/VLY-010 remain open; no security behaviour is claimed verified by this documentation reconciliation.
 
 PR #66 changes documentation only. It does not define technical roles/claims, schema, APIs, routes, or implementation and does not lift the application-code freeze.
+
+
+## 13. A-16 audit and evidence reconciliation — DEC-033 / PM-08
+
+The A-16 matrix, existing A16-01–A16-04 scenario outlines, Workflow J, lifecycle boundary and ADM-R07/R46–R51 are aligned with accepted DEC-033 and PM-08 policy.
+
+The reconciled acceptance direction now explicitly distinguishes: (1) actor/system/external-source attribution and physical actor/receiver/recorder roles; (2) audit viewing, exporting and external-disclosure approval as separate permissions, with no blanket access from Admin status; (3) preserved originals and separately attributable additions/corrections/redactions; (4) controlled government-request review and disclosure without requester platform access; and (5) category- and purpose-appropriate retention/legal holds, with active holds preventing routine deletion.
+
+Open specification remains: full event/evidence catalogue and mandatory evidence by event; reviewer-to-permission mapping; evidence integrity/verification; retention periods; hold activation/release authority; correction/redaction procedures; two-person disclosure cases; detailed government-request handling; and executable acceptance specifications. VLY-023 remains open. Source findings remain tied to `e0f69055d33dd9399c23e1d793f359468229c856`; this reconciliation does not claim a fresh source review or runtime verification.
+
+No schema, API, permission implementation, audit architecture, retention mechanism or disclosure integration is approved. The 80-case P0 catalogue and all priority classifications remain unchanged.
