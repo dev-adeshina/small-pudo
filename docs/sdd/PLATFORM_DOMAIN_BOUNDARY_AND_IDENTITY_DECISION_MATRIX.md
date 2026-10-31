@@ -159,7 +159,7 @@ Review 3 may distinguish:
 - **Owner decision required:** business relationship/cardinality or operating rule that blocks final design.
 - **Verification required:** runtime, security, provider or production evidence not yet available.
 
-**Current gate:** Reviews 1 and 2 of 5 remain approved. Review 3 is still in preparation; Reviews 4 and 5 remain future gates. No application code, schema, API, Firebase rules or deployment implementation is authorized before explicit Review 5 approval of the complete SDD.
+**Current gate:** DEC-045 authorizes bounded implementation under accepted policy. This matrix does not approve concrete schema, API, Firebase rules or deployment design. Pending business relationship/cardinality decisions remain capability gates; do not infer technical representation from pending recommendations.
 
 
 ## 10. API, persistence and integration boundary cross-reference
@@ -170,3 +170,8 @@ The conceptual API/query/provider/evidence boundaries, authoritative fact owners
 ## 11. Consolidated owner-decision package reference
 
 The remaining DB-01–DB-12 owner choices are grouped in `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`. Its minimum-launch recommendations are proposals only; they do not resolve the relationship/cardinality questions in this matrix until explicitly accepted by the owner. Do not select a Firestore model or persistence contract from those proposals before owner confirmation and technical reconciliation.
+
+
+## 12. Implementation authorization update — DEC-045
+
+The owner has instructed the project to begin implementation now. The previous blanket freeze pending Reviews 3–5 is superseded for starting bounded work. Preserve all accepted domain distinctions and entitlement boundaries. Pending DB-01–DB-12 recommendations remain proposals, not approved cardinalities or persistence rules. Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` to sequence work and keep affected capabilities unavailable where an unresolved decision is essential.
