@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { type User } from "firebase/auth";
 import {
@@ -149,12 +150,12 @@ export default function ShipmentDraftsPage() {
         throw new Error(data.error || "Unable to save your shipment draft.");
       }
 
+      resetForm();
       setNotice(
         editingId
           ? "Your shipment draft has been updated."
           : "Your shipment draft has been saved."
       );
-      resetForm();
       await loadDrafts(user);
     } catch (saveError) {
       setError(
