@@ -9,7 +9,7 @@
 
 This document defines a first-pass conceptual actor and responsibility model for the existing VeriLyft platform. It is a design artefact, not a claim that the listed roles, screens, permissions, or workflows already exist in source code.
 
-The model preserves the owner-confirmed launch scope: storefront orders and independent shipments are distinct; booking is not physical intake; payment and physical shipment state are separate; Operations reviews route proposals and approves route-leg assignments; the Driver Portal is deferred; and full finance operations are outside the Admin Portal.
+The model preserves the owner-confirmed launch scope: storefront orders and independent shipments are distinct; booking is not physical intake; payment and physical shipment state are separate; Operations reviews route proposals and approves route-leg assignments; the Driver Portal is deferred; and full finance operations are outside the Admin Portal. Finance is a distinct business responsibility from Admin operational visibility; references to a Finance Portal do not settle whether that capability is deployed as a separate portal, a protected module, or a combination.
 
 **Status vocabulary**
 - **Confirmed:** explicitly supported by an accepted decision or owner-confirmed launch requirement.

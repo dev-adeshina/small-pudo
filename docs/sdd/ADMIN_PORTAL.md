@@ -1,6 +1,6 @@
 # VeriLyft Admin Portal — Page-by-Page Design
 
-**Last updated:** 28 October 2026  
+**Last updated:** 31 October 2026  
 **Design status:** Under Review  
 **Implementation status:** Not approved for implementation yet  
 **Scope:** Admin Portal design only. This document records the decisions agreed so far; it is not a claim that these pages or functions are implemented.
@@ -36,7 +36,7 @@ The following is the proposed navigation structure, subject to permission-aware 
 15. Audit Logs
 16. Government Requests — **not a separate page at this stage**
 
-The Finance Portal remains responsible for full finance operations such as expenses, salaries/payroll, commissions, payouts, comprehensive reconciliation, and financial reporting. The Admin Portal may show relevant order/shipment/payment information without replacing Finance Portal responsibilities.
+The Finance function remains responsible for full finance operations such as expenses, salaries/payroll, commissions, payouts, comprehensive reconciliation, and financial reporting. The Admin Portal may show relevant order/shipment/payment information without replacing Finance responsibilities. This is a responsibility boundary, not approval for a separate Finance Portal deployment. Whether the full-finance capability is delivered through a protected module, a separate portal, or a combination remains unresolved.
 
 The navigation is a design proposal, not a declaration that every route exists. Exact routes and page boundaries must be checked against the repository before coding.
 
@@ -76,7 +76,7 @@ Show operational financial information such as:
 - Delivery charges
 - Outstanding balances where supported by real records
 
-Do not label revenue as profit. Expenses, salaries/payroll, full profit-and-loss, commissions/payouts, and comprehensive reconciliation belong in the Finance Portal.
+Do not label revenue as profit. Expenses, salaries/payroll, full profit-and-loss, commissions/payouts, and comprehensive reconciliation belong to the Finance function, beyond Admin's operational financial visibility. The deployment arrangement for that capability remains unresolved.
 
 ### Date filtering
 Support:
@@ -187,7 +187,7 @@ No separate approval engine or special portal is planned unless a concrete busin
 
 ## 10. Finance boundary
 
-The Admin Portal may show order/shipment/payment operational summaries. Full finance work remains in the Finance Portal, including:
+The Admin Portal may show order/shipment/payment operational summaries. Full finance work belongs to the Finance function, including:
 - Expenses
 - Salaries/payroll
 - Commissions and payouts
@@ -195,7 +195,7 @@ The Admin Portal may show order/shipment/payment operational summaries. Full fin
 - Refund processing/financial reporting
 - Profit-and-loss reporting
 
-Operational teams may report a problem or request an adjustment, but financial actions and approvals must follow the eventual agreed Finance permissions and controls. Do not design detailed refund/appeal workflows as part of this Admin dashboard specification.
+This describes a business responsibility boundary only; it does not approve a separate deployed Finance Portal. Whether the full-finance capability is delivered through a protected module, a separate portal, or a combination remains unresolved. Operational teams may report a problem or request an adjustment, but financial actions and approvals must follow the eventual agreed Finance permissions and controls. Do not design detailed refund/appeal workflows as part of this Admin dashboard specification.
 
 ## 11. Page design status
 
@@ -212,7 +212,7 @@ Operational teams may report a problem or request an adjustment, but financial a
 | PUDO Network | Draft | Network concepts agreed; location/connection screens unresolved. |
 | Transport Management | Draft | Assignments, routes, and movements need detailed design. |
 | Users & Access | Draft | Roles, permissions, and admin controls need detailed design. |
-| Finance Overview | Draft | Admin-level operational summary only; full finance belongs in Finance Portal. |
+| Finance Overview | Draft | Admin-level operational summary only; full finance belongs to the Finance function. |
 | Notifications | Draft | Scope agreed; exact event catalogue and settings unresolved. |
 | Reports | Draft | Needs report catalogue and permissions. |
 | Settings | Draft | Need to define only the settings required by approved workflows. |

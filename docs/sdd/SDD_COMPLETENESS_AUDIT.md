@@ -47,7 +47,7 @@ Status meanings:
 | PUDO locations and intake | Launch scope and minimum location requirements appear in Admin documents | Location model and capabilities; advance booking versus walk-in intake; measurement/custody; outgoing acceptance; collection and handover workflows | Partial |
 | Transport providers and movements | Provider directory and route-leg assignment history are mentioned | Provider capabilities and lifecycle; connection/route definitions; assignment and handover evidence; movement history; failed movement handling | Partial |
 | Driver interface | Decision log defers a separate Driver Portal at launch | Explicitly document launch responsibilities owned by Operations, future extension boundary, and criteria for reconsidering driver self-service | Deferred / boundary to document |
-| Finance Portal | Admin documents distinguish operational financial visibility from full finance | Financial record model and workflows for reconciliation, refunds/credits, expenses, commissions, payouts, payroll scope, balances, reporting, access, and audit | Major gap |
+| Finance function / full-finance capability | Admin documents distinguish operational financial visibility from full-finance responsibility; deployment model is unresolved | Financial record model and workflows for reconciliation, refunds/credits, expenses, commissions, payouts, payroll scope, balances, reporting, access, and audit; determine whether delivery is a protected module, separate portal, or combination | Major gap |
 | Management experience | Some dashboard/reporting concepts appear in Admin design | Management users, decisions supported, metric definitions, reporting periods, drill-downs, permissions, and separation from Admin operational tools | Major gap |
 | Shared pricing | Hybrid pricing and measurement adjustment principles are recorded | Exact input units, rate configuration, fixed/calculated selection, route-leg rules, quote validity/snapshot, discrepancy thresholds, approval limits, and settlement paths | Partial |
 | Orders, shipments, movements | Conceptual separation is accepted in `DECISIONS.md` and Admin requirements | Canonical relationships, lifecycle states/transitions, independent shipment booking, multi-leg movement, linked order handling, cancellation/returns, and migration compatibility | Partial |
@@ -346,3 +346,28 @@ No confirmed contradiction requiring an accepted owner policy to be reopened was
 - Continue executable acceptance-test design and production-readiness evidence planning without claiming test execution or runtime verification.
 
 **Current status:** Step 2D remains in progress. This is a targeted documentation review, not complete platform-wide SDD approval. VLY-019 remains open and blocks application-code changes until the complete SDD is explicitly approved. No owner policy was changed, no new technical contract was approved, no tests were executed, and no application source/runtime behaviour was changed or verified.
+
+
+## 16. Finance responsibility versus deployment boundary — 31 October 2026
+
+### Review baseline and scope
+
+- PR #62 merged into `main` at `bcbbca289eb1eef8a4535fb81ab24b3e3fd1a32f`; the follow-up branch was created from that exact baseline.
+- Compared DEC-014, `ADMIN_PORTAL.md`, `ADMIN_REQUIREMENTS.md`, `ADMIN_REQUIREMENTS_AUDIT.md`, `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, the A-08 priority row, and this completeness audit.
+- The owner agreed that references to a “Finance Portal” describe the full-finance responsibility boundary, not approval for a separate deployed portal.
+
+### Finding and correction
+
+The accepted policy separates Admin operational financial visibility from the broader Finance responsibility. Full-finance activities include expenses, payroll, commissions/payouts, comprehensive reconciliation, and full financial reporting. The Admin Portal may surface operational order/shipment/payment information without becoming the full Finance function.
+
+Some Admin design/audit wording treated a separate Finance Portal as though its deployment had been approved. The actor model already left the deployment arrangement unresolved. The aligned interpretation is that full-finance capability may ultimately be delivered through a protected module, a separate portal, or a combination; the platform-wide SDD has not yet settled that architecture.
+
+This is a documentation clarification, not a change to DEC-014. It does not approve a separate portal, protected module, Finance staff role/permission model, schema, API, route, or deployment. The full-finance workflows, access boundaries, evidence/audit requirements, and deployment choice remain open. A-08 remains P0 for minimum financial integrity and reconciliation requirements; it is not a commitment to build a full Finance Portal at launch.
+
+### Remaining review work
+
+- Define the minimum launch financial records, events, reconciliation evidence, and Finance/Admin/Operations authority boundaries in the relevant workflow and technical contracts.
+- Decide the eventual Finance capability deployment arrangement only when the platform-wide SDD reaches that architecture decision; do not infer it from the responsibility boundary.
+- Continue remaining workflow, lifecycle, actor/permission, acceptance, source-evidence, executable test-specification, and production-readiness reconciliation.
+
+**Current status:** This is a targeted documentation clarification, not complete platform-wide SDD approval. No owner policy was reopened or amended, no new technical contract was approved, no tests were executed, and no application source/runtime/deployment behaviour was verified. The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856`. Application-code changes remain blocked until the complete reconciled SDD is explicitly approved.
