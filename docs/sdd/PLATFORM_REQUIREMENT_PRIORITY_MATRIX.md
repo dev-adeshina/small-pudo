@@ -233,7 +233,7 @@ Until those are supplied, the requirement remains **not verified** and cannot be
 
 ## 8. Current evidence position
 
-This priority reconciliation is based on the SDD and the read-only source-traceability inventory. PR #32 refreshed the active-source inspection at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge). The repository comparison from the earlier source snapshot through PR #41 contains documentation changes only, so this remains the current inspected application-source baseline. It does not establish runtime behaviour or replace a future source inspection after any application-code change.
+This priority reconciliation is based on the SDD and the read-only source-traceability inventory. PR #32 refreshed the active-source inspection at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge). The repository comparison from the earlier source snapshot through PR #56 contains documentation changes only, so this remains the current inspected application-source baseline. It does not establish runtime behaviour or replace a future source inspection after any application-code change.
 
 This work did **not** independently:
 - inspect the current application source at the new main head;
@@ -251,7 +251,7 @@ Therefore, no requirement is upgraded to implemented, tested, production-verifie
 - [x] Owner accepts the ADM-R01–ADM-R54 priority reconciliation, including the P1/Conditional P0 adjustments (PR #31 owner-reviewed and merged).
 - [x] Owner confirms the lean/manual launch boundary for P1 and non-enabled conditional capabilities through the merged priority baseline.
 - [ ] Every P0 and Conditional P0 has an approved detailed specification and executable acceptance scenario.
-- [x] Requirement-to-source mapping is refreshed at the inspected application-source baseline `e0f69055`; later merges through PR #41 are documentation-only.
+- [x] Requirement-to-source mapping is refreshed at the inspected application-source baseline `e0f69055`; later merges through PR #56 are documentation-only.
 - [ ] Required runtime and production-like evidence is linked to each acceptance criterion.
 - [ ] All release blockers, owners and approved exceptions are explicit.
 - [ ] The complete platform SDD is reconciled and explicitly approved before application-code changes resume.
