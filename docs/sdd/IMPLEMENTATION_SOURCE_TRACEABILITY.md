@@ -1,7 +1,7 @@
 # VeriLyft Implementation-to-SDD Source Traceability
 
 **Document status:** Read-only source inventory — refreshed active-source pass; policy reconciliation remains separate  
-**Inspection date:** 30 October 2026 (refreshed pass in Section 6)  
+**Inspection date:** 30 October 2026 (source inspection; repository-history comparison refreshed 31 October 2026)  
 **Repository baseline inspected:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
 **Scope:** Active application source mapped to A-01–A-20 and ADM-R01–ADM-R54; the root `pudo.zip` archive and production environment remain uninspected  
 **Authority:** Source facts only. This document does not approve product policy, prove runtime behaviour, or authorize implementation.
@@ -234,7 +234,7 @@ The table records source presence only. A row marked partial/present is **not** 
 
 | ID | Current finding | Required follow-up |
 |---|---|---|
-| SRC-01 | Source-traceability baseline and prior PR references are stale. | Use this refresh at `e0f69055d33dd9399c23e1d793f359468229c856`; update only after a later source-changing commit. |
+| SRC-01 | The active source-inspection commit remains `e0f69055d33dd9399c23e1d793f359468229c856`; repository-history comparison is refreshed through PR #54. | Keep source findings tied to the inspected commit; perform a new source inspection only after a later source-changing commit or an explicitly approved deeper review. |
 | SRC-02 | Customer/Admin authorization source exists but has not been reproduced end-to-end. | Test ordinary customer direct navigation, protected API calls, valid Admin sign-in, expired/revoked token, and denial without breaking customer session. |
 | SRC-03 | Paystack order paths have transaction/replay controls but no current runtime matrix. | Test duplicate/concurrent initialization, duplicate webhook, late success after cancellation, amount/currency/reference mismatch, provider success/local save failure, and stock consistency. |
 | SRC-04 | Cloudinary validation/auth source exists; previous 401 and successful upload remain unresolved. | Test authorized valid upload, unauthorized upload, wrong folder, spoofed MIME/signature, oversized file, persistence and deployed configuration. |
@@ -247,3 +247,14 @@ The table records source presence only. A row marked partial/present is **not** 
 | SRC-11 | Production configuration and operational readiness are not evidenced by repository source. | Obtain environment/deployment, rules, secret, monitoring, backup/restore, incident and rollback evidence in the production-readiness stage. |
 
 **Stage 3 status:** Current active-source tree and selected source paths have been inspected and mapped to A-01–A-20 and ADM-R01–ADM-R54. This is a source-level baseline only. No tests were executed; no deployed configuration or production data were inspected; no application code was changed. P0 gaps remain and block any launch-readiness claim.
+
+
+## 7. Repository-history comparison refresh — 31 October 2026
+
+- **Current repository baseline:** PR #54 merged into `main` at `44445997506b97004cb02cc04a4972a4b5ce80c7`.
+- **Active application-source inspection baseline:** `e0f69055d33dd9399c23e1d793f359468229c856` (the source tree previously inspected and mapped in this document).
+- **Comparison result:** PRs #52, #53, and #54 after the source-inspection baseline contain SDD documentation changes only. No later application-source commit was identified in this comparison.
+- **Interpretation:** The source findings in Sections 1–6 remain tied to the stated inspected source commit. The repository baseline has advanced, but this does not mean the application source was re-inspected at PR #54.
+- **Evidence limits:** No runtime/browser/API test, deployed configuration review, production data inspection, provider-dashboard check, or production-readiness verification was performed by this documentation update. The root `pudo.zip` archive remains uninspected and outside source claims until its authority/scope is established.
+
+This refresh updates repository-history metadata only. It does not change any A-area or ADM-R source status, close source gaps, approve implementation, or authorize test execution.
