@@ -1353,7 +1353,7 @@ Expected `PERMISSION_DENIED` messages were emitted by negative authorization tes
 
 **M1.3 status:** first dashboard slice implemented and locally verified. This does not complete the shipper portal or M1.3 as a whole. The existing `/account/shipments` workspace remains draft preparation only; no confirmed shipment, quote, payment, intake, custody, movement, delivery, collection or dispute capability is implied.
 
-**Next bounded activity:** perform a read-only source and acceptance-coverage review of the existing `/account/shipments` workspace and its draft APIs, using SHP-01–SHP-20 and the accepted BP/PM boundaries. Identify the smallest source-backed usability or test-coverage gap, if any; do not add schema, endpoints, states or permissions. Present a specific next implementation proposal for owner approval before changing application code. M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain separate and open.
+**Next bounded activity at the time of this checkpoint:** perform the read-only source and acceptance-coverage review described above. This historical next-step pointer is superseded by Section 62 and implementation PR #102. M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain separate and open.
 
 ## 62. M1.3 shipment workspace and draft API handler hardening — PR #102 — 1 November 2026
 
