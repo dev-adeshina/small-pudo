@@ -142,3 +142,32 @@ The existing GET/POST/PATCH request handling is extracted behind a dependency-in
 **Verification status:** PR #102 is open and has not yet been locally verified. The handler tests are not Firebase Admin SDK emulator integration tests, deployed HTTP route tests, browser acceptance or production verification. Run the full emulator test command, TypeScript, lint and production build before merge and record actual results.
 
 No service catalogue, pricing, quote, confirmed booking, payment, intake, custody, route, dispatch, delivery, collection, dispute, delegation, party entitlement or new schema capability is introduced. SHP-08–SHP-17 and SHP-19–SHP-20 remain gated by the dependencies in Section 9; DEC-036 release evidence and M0 residual checks remain separate.
+
+## 13. Shipper endpoint selection and system-managed routing clarification — 1 November 2026
+
+The Shipper describes the shipment's origin and destination. The Shipper does not need to understand or select In-PUDO, Out-PUDO, or Trans-PUDO route types.
+
+### Endpoint input
+
+For **From** and **To** independently, the experience supports two alternatives:
+
+1. **Physical address:** the Shipper enters the relevant origin or destination address.
+2. **PUDO centre:** the Shipper selects an eligible registered PUDO centre from a searchable/dropdown selection. The experience should help identify nearby suitable centres. Whether proximity is based on device location, a manually supplied area/postcode, address lookup, map/geocoding provider, or another method remains to be specified; do not assume location permission or a provider.
+
+The two endpoints are independent: either may be an address or a PUDO centre. The specification does not require both endpoints to use the same input type.
+
+### PUDO centre eligibility and classification
+
+- A centre may have one or more configured operational capabilities; it must not be forced into one mutually exclusive type merely for display.
+- In-PUDO, Out-PUDO and Trans-PUDO describe operational classifications/capabilities, not customer-selectable shipment services or a route that the Shipper must construct. “All” is an administrative/list filter, not a centre capability.
+- A centre may be offered for a selected endpoint only when active and explicitly configured for the relevant approved service and requested action, consistent with DEC-043. A centre name, label, or category alone is not proof of eligibility.
+- The approved service catalogue and exact service/location/action matrix remain prerequisites. Until they are defined, the UI must not imply that every centre is eligible for every origin/destination use.
+
+### System-managed route and pricing
+
+The system determines the route after evaluating the selected endpoints, approved service, eligible locations/capabilities and approved routing rules. The route reflects the actual journey and may include direct In-PUDO-to-In-PUDO without an Out-PUDO leg. An address or centre selection does not, by itself, imply a particular route leg or physical custody event. Route proposal, assignment, dispatch and actual custody transfer remain distinct under the existing policies.
+
+The shared, service-specific pricing authority prices the system-determined route and its approved inputs. The Shipper cannot choose an operational category to alter the route or price. No route algorithm, distance source, proximity provider, service mapping, rate, formula, schema, API or status is approved by this experience clarification.
+
+**Acceptance direction (design-level):** Both endpoints can independently be entered as an address or selected as an eligible PUDO centre; ineligible/inactive centres are not presented as selectable for the relevant endpoint; the Shipper is not asked to select operational route types; the system-generated route reflects the actual selected endpoints; and pricing consumes that route without inventing an intermediate stop or charge. Detailed executable cases depend on the approved service/location/action and routing contracts.
+
