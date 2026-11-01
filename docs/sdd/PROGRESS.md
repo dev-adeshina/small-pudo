@@ -6,11 +6,11 @@
 **Last updated:** 1 November 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest verified main baseline for this update:** `90d3708a9455b2715acae368bc2b6f30683a7515` — PR #101 merged. PR #102 contains the next M1.3 shipment-workspace implementation and is not yet merged or locally verified.  
+**Latest reported main baseline for this update:** `5017cc9` — user confirmed PR #104 was reviewed and merged, then synchronized local `main` with `origin/main`. M1.3 automated integration and production smoke verification are recorded in sections 63–64.  
 **Application-source inspection baseline:** `0e4dfd8e198ef2c14ed22ef393ddf801372b7613` for the bounded administrator-authorization source review recorded below. This is a focused review of the named authentication, authorization, admin-page, API and Firestore-rule paths—not a fresh full-repository semantic audit, runtime verification, or production verification.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
-**Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness, with bounded implementation proceeding under DEC-045. The single execution pointer remains `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md`. M0 baseline/regression safety remains active; PRs #91–#92 implemented revocable Firebase administrator access and completed lint cleanup. The focused source review and the user's 1 November production-browser and Firestore Rules Playground checks are recorded in sections 56–57; live administrator revocation and remaining deployment/API checks remain open. M1 is the independent shipment-booking and shipper-portal foundation: M1.1 draft hardening is implemented and verified, M1.2 journey/portal definition is merged in PR #98, and M1.3 first slice (customer-dashboard shipment-draft summary) is implemented in PR #100 and locally verified; the next shipment-workspace hardening slice is under review in PR #102, with user-run local validation pending. See sections 60–62. The existing draft page remains a foundation, not a completed shipper portal. Remaining M0 evidence stays open and must be addressed or explicitly dispositioned. Review 3 SDD reconciliation and the Review 4–5 acceptance/release gates remain in progress; DEC-045 does not imply launch readiness or waive DEC-036 P0 evidence.
+**Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness, with bounded implementation proceeding under DEC-045. The single execution pointer remains `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md`. M0 baseline/regression safety remains active; PRs #91–#92 implemented revocable Firebase administrator access and completed lint cleanup. The focused source review and the user's 1 November production-browser and Firestore Rules Playground checks are recorded in sections 56–57; live administrator revocation and remaining deployment/API checks remain open. M1 is the independent shipment-booking and shipper-portal foundation: M1.1 draft hardening is verified, M1.2 journey/portal definition is merged in PR #98, and the bounded M1.3 draft-workspace foundation is implemented, automated-test verified and production-smoke verified through PRs #100, #102–#104. See sections 60–64. This does not complete the full shipper portal; quotation, booking confirmation and downstream operations remain gated. M0 evidence, Review 3 SDD reconciliation, Reviews 4–5 and DEC-036 P0/Conditional P0 acceptance/release requirements remain open.
 
 > This tracker records the current documented working state. Verify the live repository, current branch/PR state, and dated test results before treating any item as complete.
 
@@ -25,11 +25,11 @@
 
 ### Current execution position — Milestone 4 and bounded implementation
 
-- **Current main baseline for this checkpoint:** PR #100 merge commit `79f59726940ae5fbe56558c13976350e5f2d40f1`. PRs #91–#100 are merged.
+- **Current main baseline for this checkpoint:** `5017cc9` (user-reported synchronized `main` after PR #104 merge). PR #104 is the Firestore-store integration coverage change.
 - **Implementation authority:** DEC-045 supersedes the previous blanket freeze for bounded implementation. The consolidated implementation backlog remains the single execution pointer. Unresolved policy inputs remain capability gates.
 - **M0 — baseline and regression safety:** PR #91 implemented revocable Firebase administrator access and PR #92 completed lint cleanup. The user ran reconciliation against `verilyft-4e691` (two allowlisted emails; one access record activated; zero deactivations, claim changes or refresh-token revocations). User-reported validation: lint clean; production build and TypeScript passed; Firestore Emulator suite 17/17. On 1 November, the user confirmed production browser checks for Google and email/password administrator sign-in, refresh/browser-restart persistence, ordinary-customer admin denial with customer session preserved, and admin-orders API rejection without a bearer token (HTTP 401). Firestore Rules Playground simulations denied ordinary-customer writes to both `categories` and `adminAccess`. Live administrator revocation, revoked-token behaviour, API rejection with an authenticated non-admin token, upload-route denial, and deployed configuration parity remain unverified. See sections 56–57.
 - **Administrator authorization source review:** A bounded review was performed against current `main` at `0e4dfd8e198ef2c14ed22ef393ddf801372b7613`. It covered the password and Google sign-in helpers, administrator verification/claim/registration endpoints, dashboard/categories/products/orders pages, shared server authorization helper, admin order APIs, image-upload API and Firestore rules. The controls are connected across these inspected paths. See section 56 for findings and remaining evidence.
-- **M1 — independent shipment-booking preparation and shipper portal:** M1.1 draft hardening is merged and verified; M1.2 journey/portal definition is merged in PR #98; the first M1.3 dashboard slice is implemented in PR #100. The dashboard now loads and summarizes customer-owned shipment drafts separately from storefront orders. On 1 November, the user reported 29/29 tests, TypeScript, lint and production build passing on the merged main commit. The shipment workspace remains draft-only; quote issuance and booking confirmation remain gated by approved pricing and handover details. See sections 60–61 and source traceability.
+- **M1 — independent shipment-booking preparation and shipper portal:** M1.1 draft hardening and M1.2 journey definition are complete. The bounded M1.3 foundation is now complete: the customer dashboard summarizes drafts, the existing workspace supports draft create/list/edit, the API handlers are tested, and the actual Admin SDK Firestore store has Emulator integration coverage (PR #104). User-reported local checks on 1 November: 48/48 tests, TypeScript, lint, production build and `git diff --check` passed. User-reported production smoke checks also confirmed draft editing survives refresh and a second registered customer sees an empty workspace rather than another customer's drafts. This is not a complete shipper portal; quotation and all later-stage capabilities remain gated. See sections 60–64.
 - **Milestones 1–3:** Complete at the owner-approved policy/documentation level only.
 - **Milestone 4 / SDD reconciliation:** PRs #80–#83 added owner-input triage and the action-capability, lifecycle/recovery and resource-entitlement crosswalks. Review 3 remains in preparation; the consolidated owner decision package and remaining domain/evidence/P0 work must be reconciled before it is presented. Reviews 4 and 5 remain future gates.
 - **Accepted policy:** D-01–D-15 / DEC-022–DEC-045; DEC-037 logistics-first product hierarchy; DEC-038 independent shipment booking; DEC-039 pricing boundaries; DEC-040 measurement adjustment/customer resolution; DEC-041 payment/settlement; DEC-042 physical intake/custody; DEC-043 location capabilities/authority; DEC-044 custody transfers/physical exceptions. PM-01–PM-12 and BP-01–BP-22 remain accepted at their documented policy levels.
@@ -1373,27 +1373,48 @@ Expected `PERMISSION_DENIED` messages were emitted by negative authorization tes
 
 **Evidence and scope boundary:** Existing Firestore Rules tests remain responsible for direct-client denial. The M1.3 workspace still supports draft preparation only; confirmed independent shipments, service discovery, quotation, booking confirmation, payment, intake, custody, routing, dispatch, delivery, collection, disputes, delegation and separate sender/receiver portals remain gated. Remaining M0 evidence and DEC-036 P0/Conditional P0 release requirements remain separate and open.
 
-## 63. M1.3 Firestore shipment-draft store integration coverage — implementation branch — 1 November 2026
+## 63. M1.3 Firestore shipment-draft store integration coverage — PR #104 merged — 1 November 2026
 
-**Baseline:** `main` at `d9dfc22` (PR #103 merge; user's local repository report).  
+**Baseline:** `main` at `5017cc9` (user-reported local synchronization after PR #104 merge).  
 **Implementation branch:** `test/shipment-draft-firestore-store`.  
+**PR:** [#104 — Test/shipment draft firestore store](https://github.com/dev-adeshina/small-pudo/pull/104), reviewed and merged by the user.  
 **Requirement alignment:** M1.3 shipment-draft foundation; SHP-01–SHP-06 and SHP-18; preserve DEC-037, DEC-038, DEC-043; BP-01–BP-22; PM-01–PM-12.
 
-**Implementation prepared:**
+**Implementation delivered:**
 - Extracts the existing Firestore operations into `createShipmentBookingDraftStore` in `lib/server/shipment-booking-draft-store-core.ts`, injecting the Admin Firestore instance, server timestamp provider and existing transactional editability guard.
 - Keeps `lib/server/shipment-booking-draft-store.ts` as the production adapter, exporting the same `shipmentBookingDraftStore` interface and wiring the existing Admin SDK singleton, `FieldValue.serverTimestamp()` and shared guard.
-- Adds `tests/shipment-booking-draft-store.test.mjs`, which connects an Admin SDK instance to the Firestore Emulator when `FIRESTORE_EMULATOR_HOST` is present. The suite covers correct customer-path creation and server timestamps, customer-scoped listing, ISO timestamp serialization, most-recently-updated ordering, the 50-record limit, editable updates and preservation of protected fields, cross-customer update isolation, missing-draft refusal, and non-editable-draft refusal. Test records use unique customer UIDs and are cleaned up after the suite.
-- When the Emulator environment variable is absent, the integration suite is explicitly skipped; it does not fall back to production Firestore.
+- Adds `tests/shipment-booking-draft-store.test.mjs`, which connects an Admin SDK instance to the Firestore Emulator when `FIRESTORE_EMULATOR_HOST` is present. It covers customer-path creation and server timestamps, customer-scoped listing, ISO timestamp serialization, updated-time ordering, the 50-record limit, editable updates and preservation of protected fields, cross-customer update isolation, missing-draft refusal, and non-editable-draft refusal.
+- The integration suite is explicitly skipped when the Emulator environment variable is absent; it does not initialize the production Firebase Admin singleton or fall back to production Firestore.
 
-**Scope controls:** no new collection, field, endpoint, status, role, permission or business rule. Existing customer UID-derived paths, server-only Admin SDK access, ordering, 50-record cap, server timestamps and transactional draft-only update semantics are retained. No quote, confirmed booking, payment or custody capability is introduced.
+**User-reported local verification on 1 November 2026, after checking out the branch:**
 
-**Verification status:** implementation prepared on the branch; TypeScript, lint, full Emulator suite and production build have not yet been run against this branch. Do not mark this slice tested or complete until the user runs:
-- `npx tsc --noEmit`
-- `npx firebase-tools emulators:exec --only firestore "npm test"`
-- `npm run lint`
-- `npm run build`
-- `git diff --check`
+| Command | Result |
+|---|---|
+| `npx tsc --noEmit` | Passed. |
+| `npx firebase-tools emulators:exec --only firestore "npm test"` | **48 passed, 0 failed, 0 skipped** across six suites; includes nine new Firestore Admin-store integration tests. |
+| `npm run lint` | Passed. |
+| `npm run build` | Passed; Next.js 16.4.2 generated 34 static pages. |
+| `git diff --check` | Passed. |
 
-Expected existing negative Firestore Rules tests may continue to emit `PERMISSION_DENIED` log messages while passing. Existing non-fatal Node module-type warnings are not changed by this work. Review any test failure before merge; do not weaken assertions or connect tests to production data.
+Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. Non-fatal `MODULE_TYPELESS_PACKAGE_JSON` and metadata lookup warnings did not fail the run. The test command was executed through `emulators:exec --only firestore`, not against production Firestore.
 
-**Evidence boundary:** this is test code and an injectable adapter refactor, not proof that the new integration suite passes, not deployed HTTP/browser verification, and not production-readiness or DEC-036 release evidence.
+**Scope controls:** no Firestore schema, collection path, persisted field, status, API contract, customer permission, role or business rule was added or changed. Existing customer UID-derived paths, server-only Admin SDK access, ordering, 50-record cap, server timestamps and transactional draft-only update semantics are retained. Drafts remain unconfirmed preparation records; no quote, confirmed booking, payment or custody capability is introduced.
+
+**Evidence boundary:** this verifies the actual store implementation against the Firestore Emulator and records user-reported local checks. It does not establish deployed HTTP configuration, full production data correctness, or DEC-036 release readiness. Production customer-facing behaviour is separately recorded in Section 64.
+
+## 64. M1.3 production smoke verification — 1 November 2026
+
+**Environment and actors:** user-reported production browser checks using two separate registered customer accounts. No real shipment was submitted for booking; the tested records remained drafts.
+
+**Checks and results:**
+- **Draft edit:** the first customer edited existing shipment-draft details in `/account/shipments`; the updated values appeared in the workspace.
+- **Persistence after refresh:** after refreshing the shipment workspace, the edited draft details remained intact. This confirms the observed update was not limited to transient page state.
+- **Customer isolation:** after signing out and signing in with a second registered customer account, `/account/shipments` showed the account-specific empty state and stated that only drafts belonging to the signed-in account are shown. The first customer's two drafts were not displayed.
+- **Draft lifecycle truth:** both records continued to display `DRAFT · NOT CONFIRMED`. No confirmed booking, quote, payment obligation or custody event was created by the edit test.
+- **Earlier production endpoint smoke check:** the user had also reported a successful draft GET (HTTP 200), draft POST (HTTP 201), and retrieval of two persisted drafts in the customer workspace on 1 November. This remains a user-reported production observation, not an automated production test.
+
+**Result:** the scoped production smoke checks for editing, refresh persistence and cross-customer visibility passed. Combined with Section 63, the bounded M1.3 draft-workspace foundation is complete for the currently implemented capabilities.
+
+**Evidence limits:** these were manual browser checks on the production deployment, not a comprehensive security penetration test, deployed configuration audit, or end-to-end test of quote/booking/payment/operational workflows. The empty second-account view is evidence for the tested accounts and path; automated Emulator tests provide additional UID-scoping coverage. M0 residual administrator/deployment evidence and DEC-036 P0/Conditional P0 release requirements remain open.
+
+**M1.3 closeout and next milestone:** close the current M1.3 draft-workspace foundation verification. Do not describe the full shipper portal as complete. The next ordered milestone is **M2 — service pricing and quotation**, but it is not yet ready for feature implementation: approved service rates, required inputs and units, conversions, calculation formula, charge components, currency and rounding, rule versioning, quote validity and handover deadline must be resolved first. The next bounded activity is an M2 readiness/source-and-policy reconciliation, not coding or inventing placeholder pricing. M0 and DEC-036 evidence obligations continue independently.

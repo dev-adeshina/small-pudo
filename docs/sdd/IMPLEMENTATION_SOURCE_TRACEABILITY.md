@@ -382,21 +382,80 @@ The older source inventory and historical statements in this document must not b
 
 **Evidence boundary:** PR #102 has not yet been locally executed. The new tests exercise the extracted request-handler contract with an in-memory persistence adapter; they do not prove the Firebase Admin Firestore adapter against the emulator, deployed HTTP routing, browser behaviour, production configuration or DEC-036 release readiness. Record user-run `npm test` under the Firestore Emulator, TypeScript, lint and production build outcomes before merge. The existing Firestore Rules tests continue to cover direct-client denial; they do not test Admin SDK route access.
 
-## 13. M1.3 Firestore shipment-draft store testability and integration coverage — implementation branch — 1 November 2026
+## 13. M1.3 Firestore shipment-draft store testability and integration coverage — PR #104 merged — 1 November 2026
 
-**Baseline:** `main` at `d9dfc22` (PR #103 merge; user-reported local baseline).  
-**Implementation branch:** `test/shipment-draft-firestore-store`.
+**Baseline:** `main` at `5017cc9` (user-reported local synchronization after PR #104 merge).  
+**Implementation branch:** `test/shipment-draft-firestore-store`.  
+**PR:** [#104 — Test/shipment draft firestore store](https://github.com/dev-adeshina/small-pudo/pull/104), reviewed and merged by the user.
 
-**Source changes prepared:**
-- `lib/server/shipment-booking-draft-store-core.ts` contains the existing store operations as `createShipmentBookingDraftStore`. It accepts the Admin Firestore instance, a server-timestamp provider and the existing transactional editability guard as dependencies. List path, descending `updatedAt` order, 50-record limit, created fields, status, timestamp serialization and update payload are preserved.
-- `lib/server/shipment-booking-draft-store.ts` remains the production adapter and exports the existing `shipmentBookingDraftStore` contract. It supplies the current `adminDb`, `FieldValue.serverTimestamp()` and `updateDraftOnlyWhileEditable`. Existing API route imports do not need to change.
-- `tests/shipment-booking-draft-store.test.mjs` creates a separate named Firebase Admin app for the demo Emulator project and exercises the same factory against the Firestore Emulator. It covers creation/path ownership/server timestamps, customer-scoped listing, ISO timestamp output, updated-time ordering, the 50-record cap (including exclusion of the oldest record), editable update and preservation of `bookingPartyUid`, `status` and `createdAt`, cross-customer update isolation, missing-draft refusal and non-editable-draft refusal. Unique test customer UIDs are tracked and their draft documents are deleted after the suite.
-- The integration suite is skipped when `FIRESTORE_EMULATOR_HOST` is absent. It does not initialize the production Firebase Admin singleton or fall back to production data.
+**Source changes:**
+- `lib/server/shipment-booking-draft-store-core.ts` exposes the existing list/create/update operations through `createShipmentBookingDraftStore`, with injected Firestore, server timestamp provider and the existing transactional editability guard.
+- `lib/server/shipment-booking-draft-store.ts` remains the production adapter and preserves the exported `shipmentBookingDraftStore` interface, using the current Admin SDK singleton and shared guard.
+- `tests/shipment-booking-draft-store.test.mjs` runs the same store factory against a named Admin SDK app connected to the Firestore Emulator. Nine integration tests cover create/path ownership/server timestamps, customer-scoped listing, ISO timestamps, updated-time ordering, the latest-50 limit, editable updates with protected-field preservation, cross-customer update isolation, missing drafts and non-editable drafts.
+- The integration suite skips when `FIRESTORE_EMULATOR_HOST` is absent and does not fall back to production Firestore. Existing API handler tests remain in-memory contract tests; Firestore Rules tests continue to cover client denial.
 
-**Relationship to existing tests:** `tests/shipment-booking-draft-api.test.mjs` continues to test HTTP handler behaviour through its in-memory store. The new suite tests the actual Firestore store implementation. Existing `tests/firestore.rules.test.mjs` continues to test client security rules; Admin SDK integration tests intentionally exercise trusted server persistence and do not replace rules tests.
+**Preserved boundaries:** no Firestore schema, collection path, persisted field, status, API contract, permission, role or business rule was added or changed. Ownership remains derived from the verified Firebase UID, and drafts remain unconfirmed preparation records. Storefront orders remain separate.
 
-**Scope controls:** no Firestore schema, collection path, persisted field, status, API contract, customer permission, role or business rule is added or changed. The production store's exported interface and server-only access pattern are retained. Drafts remain unconfirmed preparation records.
+**User-reported local verification on 1 November 2026:**
+- `npx tsc --noEmit` — passed.
+- `npx firebase-tools emulators:exec --only firestore "npm test"` — 48 passed, 0 failed, 0 skipped; six suites.
+- `npm run lint` — passed.
+- `npm run build` — passed; Next.js 16.4.2 generated 34 static pages.
+- `git diff --check` — passed.
 
-**Verification status:** source/test changes are prepared but have not yet been executed on this branch. The user's previous 39/39 test result belongs to the prior `main` baseline and must not be represented as a result for this new suite. Run the Firestore Emulator suite, TypeScript, lint, production build and `git diff --check` before merge.
+Expected `PERMISSION_DENIED` messages were produced by negative Firestore Rules tests. Non-fatal Node module-type and metadata lookup warnings did not fail the test run.
 
-**Evidence boundary:** this is a focused source/testability change. Passing local tests, production HTTP behaviour, browser acceptance, deployed configuration and DEC-036 release readiness remain separate evidence requirements.
+**Evidence boundary:** this verifies the Admin SDK store against the Firestore Emulator and records user-reported local checks. It is not proof of deployed configuration or DEC-036 release readiness. Manual production browser evidence is recorded separately in Section 14.
+
+## 14. M1.3 production smoke verification — 1 November 2026
+
+**Environment:** user-reported production browser checks with two separate registered customer accounts.
+
+| Check | Observed result |
+|---|---|
+| Edit an existing shipment draft | Updated details appeared in the first customer's workspace. |
+| Refresh persistence | Edited details remained intact after refreshing `/account/shipments`. |
+| Cross-customer visibility | A second registered account showed the correct empty state; the first account's two drafts were not visible. |
+| Lifecycle presentation | Both records remained labelled `DRAFT · NOT CONFIRMED`; no booking, quote, payment or custody action was created. |
+
+The user had also reported earlier production endpoint smoke observations on 1 November: draft GET returned HTTP 200, draft POST returned HTTP 201, and two saved drafts appeared in the workspace. These are manual production observations, not automated production tests.
+
+**Result:** the tested production edit, refresh-persistence and cross-customer visibility checks passed. Combined with the Emulator integration suite in Section 13, the bounded M1.3 draft-workspace foundation is verified for its currently implemented capabilities.
+
+**Limitations:** this is a focused manual smoke test, not a comprehensive penetration test, deployed configuration audit, or verification of quotation, confirmed booking, payment, intake, custody, movement, delivery or other downstream workflows. M0 administrator/deployment evidence and DEC-036 P0/Conditional P0 release requirements remain open.
+
+**Next milestone review:** M2 — service pricing and quotation is next in the implementation order, but is not ready for feature coding until service rates, inputs/units, conversions, calculation formula, charge components, currency/rounding, rule version, quote validity and handover deadline are approved. The next activity is policy/source/readiness reconciliation; no placeholder rates or inferred defaults are permitted.
+
+## 15. M2 pricing and quotation source/readiness review — 1 November 2026
+
+**Inspection baseline:** `main` at `5017cc9` (user-reported synchronized baseline after PR #104). This is a focused read-only review of the pricing-related policy, backlog, technical boundary contract and existing storefront/draft/payment source paths; it is not a full repository audit.
+
+**Accepted policy reviewed:**
+- DEC-019 requires one shared pricing service/rule set for storefront delivery and independent shipment bookings, with fixed or calculated pricing according to the service, and preservation of the original quote and its input/rate context.
+- DEC-026 requires each service to declare an approved fixed, calculated or hybrid model and its own configured inputs; defines quote lifecycle and revision/preservation principles; and keeps quote, booking confirmation, payment and intake distinct.
+- DEC-038 establishes that explicit acceptance of a valid quote by the authenticated booking party confirms the independent booking. Quote validity and the separate service-specific handover deadline must be communicated before acceptance. Payment and physical intake remain separate.
+- DEC-039 requires trusted-server calculation, understandable itemized charges and total, and preservation of input/charge/currency/rule-version/effective context. It prohibits invented rates, formulas, units, conversions, fee assumptions and service mappings.
+- DEC-040 keeps intake measurement discrepancies, proposed adjustments, review, customer consent and financial settlement distinct. A proposed or accepted adjustment does not itself execute an additional payment.
+
+**Existing source findings:**
+- `app/api/orders/route.ts` reads current product records from Firestore, validates each active product's price and stock, recalculates item subtotals on the server, and creates the storefront order transactionally. Its current delivery fee is hard-coded to zero and its order currency is `NGN`.
+- `app/checkout/page.tsx` also previews a zero delivery fee. The browser subtotal/total is a display calculation; the order API performs the authoritative product-price recalculation.
+- `app/api/payments/initialize/route.ts` currently initializes payment for an existing storefront order, requires `NGN`, reads the order total and converts naira to kobo for Paystack. This is not a general shipment quote or multi-purpose payment contract.
+- The existing shipment-draft API/store persists only draft-preparation information and the `draft` status. It does not select a service, calculate a shipment price, issue a quote, accept commercial terms or create a confirmed booking.
+- The API/persistence boundary contract records that no shared shipment quote/rate service was found; quote formulas, units, rounding, validity and rate ownership remain blocked. Existing storefront product-price validation is reusable as a pattern, but it is not itself the shared delivery/shipment pricing authority required by DEC-019.
+
+**M2 readiness blockers — owner-approved inputs required before feature implementation:**
+- Launch service catalogue and per-service eligibility conditions, including applicable origin/destination and location capability constraints.
+- Per-service pricing model (fixed, calculated or hybrid), exact configured input set, authoritative input sources, required units and explicit conversion rules.
+- Approved rates and formulae, including distance source/bands where relevant, minimums, volumetric-weight treatment and special handling where applicable.
+- Currency, precision and rounding method; explicit tax, surcharge, discount, fee and other charge applicability/calculation/presentation/approval.
+- Rate effective dates/versioning and the authority/process for creating, approving and publishing rate changes.
+- Per-service quote validity duration and a separate handover deadline/period, including what happens when an unaccepted quote expires or an accepted booking is not handed over in time.
+- Quote itemization and immutable input/charge/total/currency/rule-version/effective-context snapshot, plus revision/repricing and exact-quote acceptance semantics.
+- Technical relationship/cardinality and authoritative ownership for quote, booking and any shipment/parcel records must be reconciled with DB-01–DB-12 before proposing collections, fields, status enums or APIs.
+
+**M2 boundary:** Do not fold payment, intake measurement, custody or dispatch into quote calculation. Payment/financial events remain governed by DEC-041 and M3; intake measurement adjustments follow DEC-027/DEC-040; quote acceptance's booking-confirmation effect follows DEC-038, but its technical transition and record relationships remain to be designed after the prerequisites are approved.
+
+**Recommended next activity:** prepare an owner-facing, per-service pricing specification/readiness matrix and resolve the listed inputs before implementation planning. Start with the launch service(s) actually approved by the owner; do not create a universal formula, use placeholder rates, assume fees are zero, or begin quote-engine code while the service specifications remain unresolved.
+
+**Evidence boundary:** this review is read-only and identifies current source reuse and gaps. It changes no application source, schema, API, pricing, service eligibility or business policy. M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain independent.
