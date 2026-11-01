@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 
-import { authenticateVerifiedCustomer } from "./customer-auth";
-import {
-  validateShipmentBookingDraft,
-  type ShipmentBookingDraftInput,
-} from "../validations/shipment-booking-draft";
+interface ShipmentBookingDraftInput {
+  origin: string;
+  destination: string;
+  parcelDescription: string;
+}
+
 
 export interface ShipmentBookingDraftRecord extends ShipmentBookingDraftInput {
   id: string;
@@ -13,11 +14,19 @@ export interface ShipmentBookingDraftRecord extends ShipmentBookingDraftInput {
   updatedAt?: string | null;
 }
 
+type CustomerAuthenticationResult =
+  | { success: true; uid: string }
+  | { success: false; status: 401 | 403; error: string };
+
+type DraftValidationResult =
+  | { success: true; data: ShipmentBookingDraftInput }
+  | { success: false; error: string };
+
 interface ShipmentBookingDraftApiDependencies {
-  verifyIdToken: (token: string) => Promise<{
-    uid: string;
-    email_verified?: boolean;
-  }>;
+  authenticateCustomer: (
+    authorization: string | null
+  ) => Promise<CustomerAuthenticationResult>;
+  validateDraft: (body: unknown) => DraftValidationResult;
   listDrafts: (customerUid: string) => Promise<ShipmentBookingDraftRecord[]>;
   createDraft: (
     customerUid: string,
@@ -34,9 +43,8 @@ export function createShipmentBookingDraftHandlers(
   dependencies: ShipmentBookingDraftApiDependencies
 ) {
   async function authenticate(request: Request) {
-    return authenticateVerifiedCustomer(
-      request.headers.get("authorization"),
-      dependencies.verifyIdToken
+    return dependencies.authenticateCustomer(
+      request.headers.get("authorization")
     );
   }
 
@@ -83,7 +91,7 @@ export function createShipmentBookingDraftHandlers(
       );
     }
 
-    const validated = validateShipmentBookingDraft(body);
+    const validated = dependencies.validateDraft(body);
 
     if (!validated.success) {
       return NextResponse.json(
