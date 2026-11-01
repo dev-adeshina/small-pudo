@@ -384,7 +384,7 @@ The older source inventory and historical statements in this document must not b
 
 ## 13. M1.3 Firestore shipment-draft store testability and integration coverage — PR #104 merged — 1 November 2026
 
-**Baseline:** `main` at `5017cc9` (user-reported local synchronization after PR #104 merge).  
+**Baseline:** `main` at `5017cc95cad3a5183702e63a89a4b98944a89004` (user-reported local synchronization after PR #104 merge).  
 **Implementation branch:** `test/shipment-draft-firestore-store`.  
 **PR:** [#104 — Test/shipment draft firestore store](https://github.com/dev-adeshina/small-pudo/pull/104), reviewed and merged by the user.
 
@@ -428,7 +428,7 @@ The user had also reported earlier production endpoint smoke observations on 1 N
 
 ## 15. M2 pricing and quotation source/readiness review — 1 November 2026
 
-**Inspection baseline:** `main` at `5017cc9` (user-reported synchronized baseline after PR #104). This is a focused read-only review of the pricing-related policy, backlog, technical boundary contract and existing storefront/draft/payment source paths; it is not a full repository audit.
+**Inspection baseline:** `main` at `5017cc95cad3a5183702e63a89a4b98944a89004` (user-reported synchronized baseline after PR #104). This is a focused read-only review of the pricing-related policy, backlog, technical boundary contract and existing storefront/draft/payment source paths; it is not a full repository audit.
 
 **Accepted policy reviewed:**
 - DEC-019 requires one shared pricing service/rule set for storefront delivery and independent shipment bookings, with fixed or calculated pricing according to the service, and preservation of the original quote and its input/rate context.
