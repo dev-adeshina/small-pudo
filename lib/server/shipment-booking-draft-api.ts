@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { authenticateVerifiedCustomer } from "@/lib/server/customer-auth";
+import { authenticateVerifiedCustomer } from "./customer-auth";
 import {
   validateShipmentBookingDraft,
   type ShipmentBookingDraftInput,
-} from "@/lib/validations/shipment-booking-draft";
+} from "../validations/shipment-booking-draft";
 
 export interface ShipmentBookingDraftRecord extends ShipmentBookingDraftInput {
   id: string;
