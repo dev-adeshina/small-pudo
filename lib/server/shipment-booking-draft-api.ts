@@ -1,0 +1,176 @@
+import { NextResponse } from "next/server";
+
+import { authenticateVerifiedCustomer } from "@/lib/server/customer-auth";
+import {
+  validateShipmentBookingDraft,
+  type ShipmentBookingDraftInput,
+} from "@/lib/validations/shipment-booking-draft";
+
+export interface ShipmentBookingDraftRecord extends ShipmentBookingDraftInput {
+  id: string;
+  status: "draft";
+  createdAt?: string | null;
+  updatedAt?: string | null;
+}
+
+interface ShipmentBookingDraftApiDependencies {
+  verifyIdToken: (token: string) => Promise<{
+    uid: string;
+    email_verified?: boolean;
+  }>;
+  listDrafts: (customerUid: string) => Promise<ShipmentBookingDraftRecord[]>;
+  createDraft: (
+    customerUid: string,
+    input: ShipmentBookingDraftInput
+  ) => Promise<ShipmentBookingDraftRecord>;
+  updateDraft: (
+    customerUid: string,
+    draftId: string,
+    input: ShipmentBookingDraftInput
+  ) => Promise<boolean>;
+}
+
+export function createShipmentBookingDraftHandlers(
+  dependencies: ShipmentBookingDraftApiDependencies
+) {
+  async function authenticate(request: Request) {
+    return authenticateVerifiedCustomer(
+      request.headers.get("authorization"),
+      dependencies.verifyIdToken
+    );
+  }
+
+  async function GET(request: Request) {
+    const customer = await authenticate(request);
+
+    if (!customer.success) {
+      return NextResponse.json(
+        { error: customer.error },
+        { status: customer.status }
+      );
+    }
+
+    try {
+      const drafts = await dependencies.listDrafts(customer.uid);
+      return NextResponse.json({ success: true, drafts });
+    } catch (error) {
+      console.error("Failed to retrieve shipment booking drafts:", error);
+      return NextResponse.json(
+        { error: "Unable to retrieve your shipment drafts right now." },
+        { status: 500 }
+      );
+    }
+  }
+
+  async function POST(request: Request) {
+    const customer = await authenticate(request);
+
+    if (!customer.success) {
+      return NextResponse.json(
+        { error: customer.error },
+        { status: customer.status }
+      );
+    }
+
+    let body: unknown;
+
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid request body." },
+        { status: 400 }
+      );
+    }
+
+    const validated = validateShipmentBookingDraft(body);
+
+    if (!validated.success) {
+      return NextResponse.json(
+        { error: validated.error },
+        { status: 400 }
+      );
+    }
+
+    try {
+      const draft = await dependencies.createDraft(customer.uid, validated.data);
+      return NextResponse.json({ success: true, draft }, { status: 201 });
+    } catch (error) {
+      console.error("Failed to save shipment booking draft:", error);
+      return NextResponse.json(
+        { error: "Unable to save your shipment draft right now." },
+        { status: 500 }
+      );
+    }
+  }
+
+  async function PATCH(request: Request, draftId: string) {
+    const customer = await authenticate(request);
+
+    if (!customer.success) {
+      return NextResponse.json(
+        { error: customer.error },
+        { status: customer.status }
+      );
+    }
+
+    if (!draftId || draftId.includes("/")) {
+      return NextResponse.json(
+        { error: "The requested shipment draft was not found." },
+        { status: 404 }
+      );
+    }
+
+    let body: unknown;
+
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid request body." },
+        { status: 400 }
+      );
+    }
+
+    const validated = validateShipmentBookingDraft(body);
+
+    if (!validated.success) {
+      return NextResponse.json(
+        { error: validated.error },
+        { status: 400 }
+      );
+    }
+
+    try {
+      const updated = await dependencies.updateDraft(
+        customer.uid,
+        draftId,
+        validated.data
+      );
+
+      if (!updated) {
+        return NextResponse.json(
+          { error: "The requested shipment draft was not found." },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        draft: {
+          id: draftId,
+          ...validated.data,
+          status: "draft",
+        },
+      });
+    } catch (error) {
+      console.error("Failed to update shipment booking draft:", error);
+      return NextResponse.json(
+        { error: "Unable to update your shipment draft right now." },
+        { status: 500 }
+      );
+    }
+  }
+
+  return { GET, POST, PATCH };
+}
