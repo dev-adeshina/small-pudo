@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import { createShipmentBookingDraftHandlers } from "../lib/server/shipment-booking-draft-api.ts";
+import { authenticateVerifiedCustomer } from "../lib/server/customer-auth.ts";
+import { validateShipmentBookingDraft } from "../lib/validations/shipment-booking-draft.ts";
 
 const validDraft = {
   origin: "Lagos",
@@ -15,7 +17,8 @@ function createHarness() {
   const createdFor = [];
 
   const handlers = createShipmentBookingDraftHandlers({
-    async verifyIdToken(token) {
+    authenticateCustomer(authorization) {
+      return authenticateVerifiedCustomer(authorization, async (token) => {
       if (token === "customer-one-token") {
         return { uid: "customer-1", email_verified: true };
       }
@@ -26,7 +29,9 @@ function createHarness() {
         return { uid: "customer-1", email_verified: false };
       }
       throw new Error("Invalid token");
+      });
     },
+    validateDraft: validateShipmentBookingDraft,
     async listDrafts(customerUid) {
       return [...records.values()]
         .filter((draft) => draft.customerUid === customerUid)
