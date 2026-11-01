@@ -30,7 +30,13 @@ function createHarness() {
     async listDrafts(customerUid) {
       return [...records.values()]
         .filter((draft) => draft.customerUid === customerUid)
-        .map(({ customerUid: _customerUid, ...draft }) => draft);
+        .map((draft) => ({
+          id: draft.id,
+          origin: draft.origin,
+          destination: draft.destination,
+          parcelDescription: draft.parcelDescription,
+          status: "draft",
+        }));
     },
     async createDraft(customerUid, input) {
       const id = `draft-${nextId++}`;
@@ -109,6 +115,7 @@ describe("shipment booking draft API handlers", () => {
     assert.equal(response.status, 200);
     assert.equal(data.success, true);
     assert.deepEqual(data.drafts.map((draft) => draft.id), ["draft-a"]);
+    assert.equal(data.drafts[0].customerUid, undefined);
   });
 
   it("creates a draft under the verified customer's identity", async () => {
