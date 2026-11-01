@@ -6,6 +6,30 @@ import { adminDb } from "@/lib/firebase-admin";
 export const runtime = "nodejs";
 
 type FulfilmentStatus = "ready_for_shipping" | "shipped" | "delivered";
+const NEXT_STATUS: Record<string, FulfilmentStatus | undefined> = {
+  processing: "ready_for_shipping",
+  ready_for_shipping: "shipped",
+  shipped: "delivered",
+};
+
+function optionalText(value: unknown, field: string, maxLength: number): string | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null || value === "") return null;
+  if (typeof value !== "string") throw new Error(`INVALID_${field.toUpperCase()}`);
+  const normalized = value.trim();
+  if (normalized.length > maxLength) throw new Error(`INVALID_${field.toUpperCase()}`);
+  return normalized || null;
+}
+
+function optionalDate(value: unknown): Timestamp | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null || value === "") return null;
+  if (typeof value !== "string") throw new Error("INVALID_ESTIMATED_DELIVERY_AT");
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) throw new Error("INVALID_ESTIMATED_DELIVERY_AT");
+  return Timestamp.fromDate(date);
+}
+
 
 export async function PATCH(
   request: Request,
