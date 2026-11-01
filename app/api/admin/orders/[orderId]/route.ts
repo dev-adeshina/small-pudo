@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAuth } from "firebase-admin/auth";
+import { authorizeAdminRequest } from "@/lib/server/admin-authorization";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase-admin";
 
@@ -7,62 +7,11 @@ export const runtime = "nodejs";
 
 type FulfilmentStatus = "ready_for_shipping" | "shipped" | "delivered";
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
-  .split(",")
-  .map((email) => email.trim().toLowerCase())
-  .filter(Boolean);
-
-async function authorizeAdmin(request: Request) {
-  if (ADMIN_EMAILS.length === 0) {
-    return { ok: false as const, response: NextResponse.json({ error: "Admin access is not configured. Set ADMIN_EMAILS on the server." }, { status: 503 }) };
-  }
-
-  const match = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i);
-  if (!match) {
-    return { ok: false as const, response: NextResponse.json({ error: "Authentication required." }, { status: 401 }) };
-  }
-
-  try {
-    const decoded = await getAuth().verifyIdToken(match[1]);
-    const email = decoded.email?.toLowerCase();
-    if (!decoded.email_verified || !email || !ADMIN_EMAILS.includes(email)) {
-      return { ok: false as const, response: NextResponse.json({ error: "You are not authorized to manage orders." }, { status: 403 }) };
-    }
-    return { ok: true as const };
-  } catch {
-    return { ok: false as const, response: NextResponse.json({ error: "Your session is invalid or expired. Sign in again." }, { status: 401 }) };
-  }
-}
-
-const NEXT_STATUS: Record<string, FulfilmentStatus | undefined> = {
-  processing: "ready_for_shipping",
-  ready_for_shipping: "shipped",
-  shipped: "delivered",
-};
-
-function optionalText(value: unknown, field: string, maxLength: number): string | null | undefined {
-  if (value === undefined) return undefined;
-  if (value === null || value === "") return null;
-  if (typeof value !== "string") throw new Error(`INVALID_${field.toUpperCase()}`);
-  const normalized = value.trim();
-  if (normalized.length > maxLength) throw new Error(`INVALID_${field.toUpperCase()}`);
-  return normalized || null;
-}
-
-function optionalDate(value: unknown): Timestamp | null | undefined {
-  if (value === undefined) return undefined;
-  if (value === null || value === "") return null;
-  if (typeof value !== "string") throw new Error("INVALID_ESTIMATED_DELIVERY_AT");
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) throw new Error("INVALID_ESTIMATED_DELIVERY_AT");
-  return Timestamp.fromDate(date);
-}
-
 export async function PATCH(
   request: Request,
   context: { params: Promise<{ orderId: string }> }
 ) {
-  const authorization = await authorizeAdmin(request);
+  const authorization = await authorizeAdminRequest(request, "You are not authorized to manage orders.");
   if (!authorization.ok) return authorization.response;
 
   const { orderId } = await context.params;
