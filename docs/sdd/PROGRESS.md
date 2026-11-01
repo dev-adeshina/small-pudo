@@ -1294,3 +1294,21 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - Added 12 focused Node tests across authentication (5), existing validation (4), and the draft transactional status guard (3), plus the `npm test` script.
 - **Verification boundary:** the test suite, TypeScript, lint and production build have not been executed for this PR in this environment. The tests are helper/validation tests, not full HTTP route or Firestore-emulator integration tests. PR review/merge is complete. Execution of checks remains outstanding.
 - **Scope boundary:** no quotation, booking confirmation, payment, service selection, custody, new data fields or lifecycle states were added. M0 evidence remains open; M1.2 journey definition remains the next product-design task.
+
+
+## 52. Milestone 1 Step M1.2 — shipper journey and portal experience definition — 1 November 2026
+
+- [x] Performed a focused read-only review of current customer account, shipment-draft, customer profile and storefront order source paths after M1.1 PR #97.
+- [x] Recorded the bounded current foundation: customer account/dashboard, profile, storefront order history, and customer-owned shipment draft creation/list/edit. The draft route is not a complete shipper portal.
+- [x] Defined the end-to-end journey from verified account access and draft preparation through gated service discovery, quotation, explicit acceptance, booking, payment, operational visibility, permitted changes/exceptions and communications.
+- [x] Defined one initial booking-party shipper workspace reusing the existing account architecture; separate sender/receiver portals remain undecided and are not assumed.
+- [x] Documented party visibility/action principles preserving BP-01–BP-22 and PM-01–PM-12; no new permission assignment or technical authorization contract was approved.
+- [x] Preserved distinctions between draft, quote, confirmed booking, payment, physical intake, custody transfer, movement, delivery and collection.
+- [x] Specified authentication, loading, empty, validation, success, failure, retry, pending and restricted experience states.
+- [x] Added 20 customer-journey and negative-authorization acceptance scenarios as test-design inputs; existing A-01–A-20, ADM-R01–ADM-R54 and 80 P0 evidence case IDs/priorities remain unchanged.
+- [x] Defined M1.3 portal-foundation boundaries and listed policy/technical dependencies that continue to gate unavailable capabilities.
+- [ ] M1.2 documentation PR review and merge.
+- [ ] M1.1 implementation verification remains outstanding: run `npm test`, `npx tsc --noEmit`, `npm run lint` and `npm run build`; record results and resolve failures before marking M1.1 verified.
+- [ ] M0 remaining live revocation/API/deployment evidence and DEC-036 production-readiness requirements remain tracked separately.
+
+**Evidence boundary:** Documentation-only M1.2 definition. No application source, schema, API, Firebase rules/configuration, permissions, deployment or runtime behaviour changed or was verified. The source review is focused on the listed customer account, shipment-draft, profile and storefront-order paths; it is not a full repository or production audit. This step does not make service discovery, quotation, booking, payment, intake, custody, collection, disputes or notifications operational.

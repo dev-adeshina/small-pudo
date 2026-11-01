@@ -311,3 +311,13 @@ The older source inventory and historical statements in this document must not b
 - Added `tests/shipment-booking-drafts.test.mjs` and the `npm test` script. The 12 authored tests cover authentication (5), existing validation and limits (4), and conditional update guard behaviour (3).
 
 **Evidence limits:** Tests, lint, TypeScript and build have not yet been executed for this PR in this environment. These are focused helper/validation tests, not HTTP route integration tests or Firestore-emulator transaction/ownership tests. No browser, deployed API, or production verification has been performed. Do not mark M1.1 tested or complete until the checks run and any findings are resolved.
+
+
+## 12. M1.2 shipper journey and portal experience definition — 1 November 2026
+
+- **New specification:** `PLATFORM_SHIPPER_JOURNEY_AND_PORTAL_EXPERIENCE.md`.
+- **Focused source review:** current `app/account/page.tsx`, `app/account/shipments/page.tsx`, `app/account/profile/page.tsx`, `app/api/account/shipment-booking-drafts/route.ts`, `app/api/account/shipment-booking-drafts/[draftId]/route.ts`, `lib/validations/shipment-booking-draft.ts`, `app/api/account/orders/route.ts` and `firestore.rules`.
+- **Current bounded finding:** account dashboard, profile, storefront order history and customer-owned shipment draft preparation are present in source. Drafts support create/list/edit; they do not constitute confirmed independent shipment bookings. Storefront order data remains a separate journey.
+- **Experience definition:** the new specification maps the end-to-end shipper journey, one initial booking-party workspace, surface responsibilities, party visibility/action principles, lifecycle truth, customer experience states, 20 acceptance scenarios, M1.3 boundaries and unresolved dependencies.
+- **Policy preservation:** registered authenticated customers only at launch; booking party remains distinct from sender, receiver/collection recipient, payer and physical handover person; no separate sender/receiver portal is assumed; quote, booking, payment, intake, custody, movement and delivery remain distinct.
+- **Evidence boundary:** focused source review and documentation design only. No application code, schema, API, Firebase rules/configuration, permission assignment, test, runtime, deployment or production state changed or was verified. M1.1 verification remains outstanding; M0 and DEC-036 release evidence gaps remain separate.
