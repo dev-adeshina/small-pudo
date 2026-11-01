@@ -1287,10 +1287,10 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 
 ## 59. M1.1 shipment-draft hardening submitted for review — 1 November 2026
 
-- **PR #97:** https://github.com/dev-adeshina/small-pudo/pull/97 — `fix: harden shipment booking draft foundation`; open for review, not merged.
+- **PR #97:** https://github.com/dev-adeshina/small-pudo/pull/97 — `fix: harden shipment booking draft foundation`; merged 1 November 2026 (merge commit `6e87e04617d4fb90da7a420e5e2b2d540f07656b`). PR #96 was superseded and closed without merging.
 - Shared verified-customer token authentication is used by draft GET, POST and PATCH. Existing policy is preserved: valid Firebase ID token and verified email; no new administrator revocation policy is applied to customers.
 - PATCH now reads the current draft status and writes the update inside the same Firestore transaction. Missing or non-draft records continue to return 404; no new lifecycle state or field is introduced.
 - The existing draft page now separates load errors, supports retry, handles non-JSON API failures, and reports update success correctly after resetting the form.
 - Added 12 focused Node tests across authentication (5), existing validation (4), and the draft transactional status guard (3), plus the `npm test` script.
-- **Verification boundary:** the test suite, TypeScript, lint and production build have not been executed for this PR in this environment. The tests are helper/validation tests, not full HTTP route or Firestore-emulator integration tests. Review/merge and execution of checks remain outstanding.
+- **Verification boundary:** the test suite, TypeScript, lint and production build have not been executed for this PR in this environment. The tests are helper/validation tests, not full HTTP route or Firestore-emulator integration tests. PR review/merge is complete. Execution of checks remains outstanding.
 - **Scope boundary:** no quotation, booking confirmation, payment, service selection, custody, new data fields or lifecycle states were added. M0 evidence remains open; M1.2 journey definition remains the next product-design task.
