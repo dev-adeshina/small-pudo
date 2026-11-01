@@ -97,6 +97,22 @@ describe(
       assert.equal(firstCustomerDrafts[0].destination, "Abuja");
     });
 
+    it("does not update a draft stored under another customer's UID", async () => {
+      const ownerUid = customerUid();
+      const otherUid = customerUid();
+      const created = await store.createDraft(ownerUid, validDraft);
+
+      const updated = await store.updateDraft(otherUid, created.id, {
+        ...validDraft,
+        destination: "Ibadan",
+      });
+      const ownerDrafts = await store.listDrafts(ownerUid);
+
+      assert.equal(updated, false);
+      assert.equal(ownerDrafts.length, 1);
+      assert.equal(ownerDrafts[0].destination, "Abuja");
+    });
+
     it("returns timestamps as ISO strings", async () => {
       const uid = customerUid();
       await store.createDraft(uid, validDraft);
@@ -141,16 +157,25 @@ describe(
     it("returns no more than the latest 50 drafts", async () => {
       const uid = customerUid();
 
+      let oldestDraftId;
+      let newestDraftId;
+
       for (let index = 0; index < 51; index += 1) {
-        await store.createDraft(uid, {
+        const created = await store.createDraft(uid, {
           ...validDraft,
           parcelDescription: `Parcel ${index}`,
         });
+
+        if (index === 0) oldestDraftId = created.id;
+        if (index === 50) newestDraftId = created.id;
       }
 
       const drafts = await store.listDrafts(uid);
+      const returnedIds = drafts.map((draft) => draft.id);
 
       assert.equal(drafts.length, 50);
+      assert.equal(returnedIds.includes(oldestDraftId), false);
+      assert.equal(returnedIds.includes(newestDraftId), true);
     });
 
     it("updates editable fields while preserving creation and ownership data", async () => {
