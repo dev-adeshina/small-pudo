@@ -49,7 +49,7 @@ export async function authorizeAdminRequest(
     };
   }
 
-  let decoded;
+  let decoded: Awaited<ReturnType<typeof adminAuth.verifyIdToken>>;
 
   try {
     decoded = await adminAuth.verifyIdToken(match[1], true);
