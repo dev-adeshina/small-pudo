@@ -2,7 +2,7 @@
 
 **Document status:** Read-only source inventory — historical platform pass plus focused M1 shipper-portal source review; policy reconciliation remains separate  
 **Inspection date:** 30 October 2026 (historical platform source pass); focused M1 account/draft source review performed 1 November 2026  
-**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Current focused M1 source-review baseline:** `main` at `71225e3bdd6d827b288a883debb61a03695daef5` (PR #98 merge)  
+**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Current focused M1 source-review baseline:** PR #98 merge `71225e3bdd6d827b288a883debb61a03695daef5`; subsequent dashboard source PR #100 and shipment workspace hardening PR #102 are separately traced in Sections 11–12  
 **Scope:** Active application source mapped to A-01–A-20 and ADM-R01–ADM-R54; the root `pudo.zip` archive and production environment remain uninspected  
 **Authority:** Source facts only. This document does not approve product policy, prove runtime behaviour, or authorize implementation.
 
@@ -364,3 +364,20 @@ The older source inventory and historical statements in this document must not b
 **User-reported local verification (1 November 2026):** Firestore Emulator command `npx firebase-tools emulators:exec --only firestore "npm test"` passed 29/29 tests (17 Firestore rules and 12 draft authentication/validation/transaction-guard tests); `npx tsc --noEmit`, `npm run lint` and `npm run build` passed; Next.js 16.4.2 generated 34 static pages. Expected `PERMISSION_DENIED` output came from negative tests. A non-blocking `MODULE_TYPELESS_PACKAGE_JSON` warning appeared for `lib/server/customer-auth.ts`. The 12 draft tests are not HTTP route integration tests. No browser, deployed API or production verification is claimed.
 
 **Next review:** read-only inspection of `/account/shipments` and the existing draft APIs against SHP-01–SHP-20 and accepted BP/PM boundaries, to identify the smallest source-backed usability or test-coverage gap, if any. Any further application change requires a focused proposal and owner approval. Pricing, quote, booking, payment, intake, custody, movement, delivery, collection, disputes, delegation and separate sender/receiver access remain gated.
+
+## 12. M1.3 shipment workspace and draft API handler hardening — PR #102 — 1 November 2026
+
+**Baseline:** PR #101 merge commit `90d3708a9455b2715acae368bc2b6f30683a7515`.
+**Branch:** `feat/m1-3-shipment-workspace-hardening`.
+**PR:** #102, open and not merged at the time of this record.
+
+**Changed source paths:**
+- `app/account/shipments/page.tsx` — adds latest-50 list-bound disclosure, per-draft update timestamp, field character counts, disables inputs/edit actions while saving, snapshots the submitted form and ignores stale asynchronous list responses after a newer request or unmount.
+- `app/api/account/shipment-booking-drafts/route.ts` and `app/api/account/shipment-booking-drafts/[draftId]/route.ts` — thin Next.js route adapters that wire existing verified-customer authentication and the existing validator to shared request handlers and the Firebase Admin store.
+- `lib/server/shipment-booking-draft-api.ts` — dependency-injected GET/POST/PATCH request handlers; preserves existing HTTP response semantics, authentication-before-access, input validation, and not-found behaviour for missing/non-editable records.
+- `lib/server/shipment-booking-draft-store.ts` — centralizes the existing Firestore user-subcollection list/create/update operations; GET remains ordered by `updatedAt` and capped at 50; create writes the existing fields/status; PATCH remains transactionally guarded by `updateDraftOnlyWhileEditable`.
+- `tests/shipment-booking-draft-api.test.mjs` — adds handler-level tests using an in-memory store for authentication, UID-scoped list/create/update, validation, malformed JSON/IDs and non-draft records.
+
+**Preserved controls:** no client-supplied UID is trusted; customer ownership remains derived from the verified bearer token. No new Firestore path, field, endpoint, persisted state, permission or role is introduced. Draft saving still creates no quote, confirmed booking, payment obligation, intake or custody event. Storefront orders remain separate.
+
+**Evidence boundary:** PR #102 has not yet been locally executed. The new tests exercise the extracted request-handler contract with an in-memory persistence adapter; they do not prove the Firebase Admin Firestore adapter against the emulator, deployed HTTP routing, browser behaviour, production configuration or DEC-036 release readiness. Record user-run `npm test` under the Firestore Emulator, TypeScript, lint and production build outcomes before merge. The existing Firestore Rules tests continue to cover direct-client denial; they do not test Admin SDK route access.
