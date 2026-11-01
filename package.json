@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "admin:reconcile": "node scripts/reconcile-admin-access.mjs"
+    "admin:reconcile": "node scripts/reconcile-admin-access.mjs",
+    "test": "node --test"
   },
   "dependencies": {
     "cloudinary": "^2.11.0",

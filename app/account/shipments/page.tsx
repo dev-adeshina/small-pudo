@@ -43,13 +43,14 @@ export default function ShipmentDraftsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [loadError, setLoadError] = useState("");
   const [notice, setNotice] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
 
   const loadDrafts = useCallback(async (currentUser: User) => {
     setLoading(true);
-    setError("");
+    setLoadError("");
 
     try {
       const idToken = await currentUser.getIdToken();
@@ -57,15 +58,19 @@ export default function ShipmentDraftsPage() {
         headers: { Authorization: `Bearer ${idToken}` },
         cache: "no-store",
       });
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Unable to load shipment drafts.");
+      if (!response.ok || !data?.success) {
+        throw new Error(
+          typeof data?.error === "string"
+            ? data.error
+            : "Unable to load shipment drafts. Please try again."
+        );
       }
 
       setDrafts(data.drafts ?? []);
     } catch (loadError) {
-      setError(
+      setLoadError(
         loadError instanceof Error
           ? loadError.message
           : "Unable to load shipment drafts. Please try again."
@@ -123,6 +128,7 @@ export default function ShipmentDraftsPage() {
     event.preventDefault();
     if (!user || saving) return;
 
+    const wasEditing = editingId !== null;
     setSaving(true);
     setError("");
     setNotice("");
@@ -130,11 +136,11 @@ export default function ShipmentDraftsPage() {
     try {
       const idToken = await user.getIdToken();
       const response = await fetch(
-        editingId
-          ? `/api/account/shipment-booking-drafts/${encodeURIComponent(editingId)}`
+        wasEditing
+          ? `/api/account/shipment-booking-drafts/${encodeURIComponent(editingId!)}`
           : "/api/account/shipment-booking-drafts",
         {
-          method: editingId ? "PATCH" : "POST",
+          method: wasEditing ? "PATCH" : "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${idToken}`,
@@ -142,15 +148,19 @@ export default function ShipmentDraftsPage() {
           body: JSON.stringify(form),
         }
       );
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Unable to save your shipment draft.");
+      if (!response.ok || !data?.success) {
+        throw new Error(
+          typeof data?.error === "string"
+            ? data.error
+            : "Unable to save your shipment draft. Please try again."
+        );
       }
 
       resetForm();
       setNotice(
-        editingId
+        wasEditing
           ? "Your shipment draft has been updated."
           : "Your shipment draft has been saved."
       );
@@ -302,6 +312,17 @@ export default function ShipmentDraftsPage() {
 
           {loading ? (
             <div className="customer-state"><p>Loading your drafts...</p></div>
+          ) : loadError ? (
+            <div className="customer-state" role="alert">
+              <p>{loadError}</p>
+              <button
+                type="button"
+                className="customer-secondary-action"
+                onClick={() => void loadDrafts(user)}
+              >
+                Retry loading drafts
+              </button>
+            </div>
           ) : drafts.length === 0 ? (
             <div className="customer-state">
               <Package size={26} />

@@ -2,47 +2,16 @@ import { FieldValue } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { authenticateVerifiedCustomer } from "@/lib/server/customer-auth";
 import { validateShipmentBookingDraft } from "@/lib/validations/shipment-booking-draft";
 
 export const runtime = "nodejs";
 
 async function authenticateCustomer(request: NextRequest) {
-  const authorization = request.headers.get("authorization");
-
-  if (!authorization?.startsWith("Bearer ")) {
-    return {
-      error: NextResponse.json(
-        { error: "Authentication is required." },
-        { status: 401 }
-      ),
-    };
-  }
-
-  try {
-    const decodedToken = await adminAuth.verifyIdToken(
-      authorization.slice("Bearer ".length).trim()
-    );
-
-    if (decodedToken.email_verified !== true) {
-      return {
-        error: NextResponse.json(
-          { error: "Please verify your email address first." },
-          { status: 403 }
-        ),
-      };
-    }
-
-    return {
-      uid: decodedToken.uid,
-    };
-  } catch {
-    return {
-      error: NextResponse.json(
-        { error: "Your session is invalid or expired. Please sign in again." },
-        { status: 401 }
-      ),
-    };
-  }
+  return authenticateVerifiedCustomer(
+    request.headers.get("authorization"),
+    (token) => adminAuth.verifyIdToken(token)
+  );
 }
 
 function toISOString(value: unknown): string | null {
@@ -67,8 +36,11 @@ function toISOString(value: unknown): string | null {
 export async function GET(request: NextRequest) {
   const customer = await authenticateCustomer(request);
 
-  if ("error" in customer) {
-    return customer.error;
+  if (!customer.success) {
+    return NextResponse.json(
+      { error: customer.error },
+      { status: customer.status }
+    );
   }
 
   try {
@@ -114,8 +86,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const customer = await authenticateCustomer(request);
 
-  if ("error" in customer) {
-    return customer.error;
+  if (!customer.success) {
+    return NextResponse.json(
+      { error: customer.error },
+      { status: customer.status }
+    );
   }
 
   let body: unknown;

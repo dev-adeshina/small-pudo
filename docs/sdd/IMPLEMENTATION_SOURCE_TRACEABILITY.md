@@ -298,3 +298,16 @@ The older source inventory and historical statements in this document must not b
 **Portal boundary:** the reviewed draft surface is not a complete shipper portal. Approved service discovery, quotation and quote acceptance, confirmed independent booking, shipment payment, full shipment visibility and the complete party-specific amendment/collection/dispute journeys are not established by these draft routes.
 
 **Evidence limits:** This is a focused source review, not a full repository audit, test execution, browser/API runtime verification or production verification. The historical A-area/ADM-R mappings remain tied to their stated inspection commit unless separately refreshed. See `PLATFORM_SHIPPER_PORTAL_PRODUCT_SCOPE.md` for the target customer journey and staged dependencies.
+
+
+## 11. M1.1 shipment-draft hardening source update — 1 November 2026
+
+**Implementation under review:** PR #97, `feat/m1-1-shipment-draft-hardening-clean` (open; not merged at the time of this update).
+
+- Added `lib/server/customer-auth.ts` as a shared, dependency-injected verifier for Firebase bearer tokens and verified customer email. GET, POST and PATCH now use the same helper and preserve the existing 401/403 outcomes. The helper intentionally does not apply administrator token-revocation policy to customer sessions.
+- Added `lib/server/shipment-booking-drafts.ts` with a small transactional status guard. PATCH calls it inside `adminDb.runTransaction`, so the current status read and conditional update are part of one Firestore transaction. A missing or non-`draft` record is not updated and retains the existing not-found response.
+- Customer ownership remains derived from the verified token UID: list/create use `users/{uid}/shipmentBookingDrafts`; update resolves the draft beneath the same authenticated UID. No client-supplied owner ID, new field, or lifecycle state is introduced.
+- Updated `app/account/shipments/page.tsx` to handle non-JSON API failures safely, distinguish load failures from form-save errors, provide a retry action, and preserve the correct update-success notice after form reset.
+- Added `tests/shipment-booking-drafts.test.mjs` and the `npm test` script. The 12 authored tests cover authentication (5), existing validation and limits (4), and conditional update guard behaviour (3).
+
+**Evidence limits:** Tests, lint, TypeScript and build have not yet been executed for this PR in this environment. These are focused helper/validation tests, not HTTP route integration tests or Firestore-emulator transaction/ownership tests. No browser, deployed API, or production verification has been performed. Do not mark M1.1 tested or complete until the checks run and review findings are resolved.
