@@ -1359,7 +1359,7 @@ Expected `PERMISSION_DENIED` messages were emitted by negative authorization tes
 
 **Repository baseline:** `main` at PR #101 merge commit `90d3708a9455b2715acae368bc2b6f30683a7515`.
 **Implementation branch:** `feat/m1-3-shipment-workspace-hardening`.
-**PR:** #102 — open; not merged.
+**PR:** #102 — subsequently merged; PR #103 supplied the Node test-runner compatibility correction.
 **Requirement alignment:** M1.3; SHP-01–SHP-06 and SHP-18; DEC-037, DEC-038 and DEC-043; BP-01–BP-22; PM-01–PM-12.
 
 **Implementation in PR #102:**
@@ -1369,10 +1369,31 @@ Expected `PERMISSION_DENIED` messages were emitted by negative authorization tes
 - Improves `/account/shipments` with explicit latest-50 disclosure, per-draft update timestamps, origin/destination/description character counts, disabled editing controls during save, and stale-request/unmount protection.
 - Preserves draft-only truth. No new collection, field, endpoint, status, permission, confirmed-shipment, quote, payment or operational capability is introduced.
 
-**Verification status:** PR #102 has not yet been run locally. The new handler tests exercise the extracted request handlers with an in-memory persistence adapter; they are not Firestore Admin SDK integration tests, deployed HTTP-route tests, browser acceptance or production verification. User-run commands and results must be recorded after the branch is pulled:
-- `npx firebase-tools emulators:exec --only firestore "npm test"`
-- `npx tsc --noEmit`
-- `npm run lint`
-- `npm run build`
+**Verification and merge correction:** PR #102 was subsequently merged, and PR #103 supplied the Node test-runner compatibility correction by using the standard Web `Response.json()` API in the shared handler module. The user's 1 November local verification on the resulting `main` baseline passed 39/39 tests under the Firestore Emulator, `npx tsc --noEmit`, `npm run lint`, `npm run build`, and `git diff --check`. The 10 API-handler tests still use an in-memory persistence adapter; those results do not verify the Admin SDK store against Firestore. See Section 63 for the follow-up Emulator integration coverage.
 
 **Evidence and scope boundary:** Existing Firestore Rules tests remain responsible for direct-client denial. The M1.3 workspace still supports draft preparation only; confirmed independent shipments, service discovery, quotation, booking confirmation, payment, intake, custody, routing, dispatch, delivery, collection, disputes, delegation and separate sender/receiver portals remain gated. Remaining M0 evidence and DEC-036 P0/Conditional P0 release requirements remain separate and open.
+
+## 63. M1.3 Firestore shipment-draft store integration coverage — implementation branch — 1 November 2026
+
+**Baseline:** `main` at `d9dfc22` (PR #103 merge; user's local repository report).  
+**Implementation branch:** `test/shipment-draft-firestore-store`.  
+**Requirement alignment:** M1.3 shipment-draft foundation; SHP-01–SHP-06 and SHP-18; preserve DEC-037, DEC-038, DEC-043; BP-01–BP-22; PM-01–PM-12.
+
+**Implementation prepared:**
+- Extracts the existing Firestore operations into `createShipmentBookingDraftStore` in `lib/server/shipment-booking-draft-store-core.ts`, injecting the Admin Firestore instance, server timestamp provider and existing transactional editability guard.
+- Keeps `lib/server/shipment-booking-draft-store.ts` as the production adapter, exporting the same `shipmentBookingDraftStore` interface and wiring the existing Admin SDK singleton, `FieldValue.serverTimestamp()` and shared guard.
+- Adds `tests/shipment-booking-draft-store.test.mjs`, which connects an Admin SDK instance to the Firestore Emulator when `FIRESTORE_EMULATOR_HOST` is present. The suite covers correct customer-path creation and server timestamps, customer-scoped listing, ISO timestamp serialization, most-recently-updated ordering, the 50-record limit, editable updates and preservation of protected fields, cross-customer update isolation, missing-draft refusal, and non-editable-draft refusal. Test records use unique customer UIDs and are cleaned up after the suite.
+- When the Emulator environment variable is absent, the integration suite is explicitly skipped; it does not fall back to production Firestore.
+
+**Scope controls:** no new collection, field, endpoint, status, role, permission or business rule. Existing customer UID-derived paths, server-only Admin SDK access, ordering, 50-record cap, server timestamps and transactional draft-only update semantics are retained. No quote, confirmed booking, payment or custody capability is introduced.
+
+**Verification status:** implementation prepared on the branch; TypeScript, lint, full Emulator suite and production build have not yet been run against this branch. Do not mark this slice tested or complete until the user runs:
+- `npx tsc --noEmit`
+- `npx firebase-tools emulators:exec --only firestore "npm test"`
+- `npm run lint`
+- `npm run build`
+- `git diff --check`
+
+Expected existing negative Firestore Rules tests may continue to emit `PERMISSION_DENIED` log messages while passing. Existing non-fatal Node module-type warnings are not changed by this work. Review any test failure before merge; do not weaken assertions or connect tests to production data.
+
+**Evidence boundary:** this is test code and an injectable adapter refactor, not proof that the new integration suite passes, not deployed HTTP/browser verification, and not production-readiness or DEC-036 release evidence.
