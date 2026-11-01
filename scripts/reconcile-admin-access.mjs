@@ -110,17 +110,6 @@ do {
       continue;
     }
 
-    if (hasAdminClaim) {
-      const { admin: _removed, ...remainingClaims } = currentClaims;
-      await auth.setCustomUserClaims(user.uid, remainingClaims);
-      counts.claimsRemoved += 1;
-    }
-
-    if (hasAdminClaim || accessWasActive) {
-      await auth.revokeRefreshTokens(user.uid);
-      counts.refreshTokensRevoked += 1;
-    }
-
     if (accessWasActive) {
       await accessCollection.doc(user.uid).set(
         {
@@ -131,6 +120,17 @@ do {
         { merge: true }
       );
       counts.deactivated += 1;
+    }
+
+    if (hasAdminClaim) {
+      const { admin: _removed, ...remainingClaims } = currentClaims;
+      await auth.setCustomUserClaims(user.uid, remainingClaims);
+      counts.claimsRemoved += 1;
+    }
+
+    if (hasAdminClaim || accessWasActive) {
+      await auth.revokeRefreshTokens(user.uid);
+      counts.refreshTokensRevoked += 1;
     }
   }
 
