@@ -22,6 +22,16 @@ import {
 import { auth } from "@/lib/firebase";
 import { signOutCustomer } from "@/lib/customer-auth";
 
+interface ShipmentDraft {
+  id: string;
+  origin: string;
+  destination: string;
+  parcelDescription: string;
+  status: "draft";
+  createdAt?: string | null;
+  updatedAt?: string | null;
+}
+
 interface CustomerOrderItem {
   productId: string;
   name: string;
@@ -114,6 +124,11 @@ export default function CustomerAccountPage() {
   const [ordersError, setOrdersError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
 
+  const [drafts, setDrafts] = useState<ShipmentDraft[]>([]);
+  const [draftsLoading, setDraftsLoading] = useState(true);
+  const [draftsError, setDraftsError] = useState("");
+  const [draftReloadKey, setDraftReloadKey] = useState(0);
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (!currentUser) {
@@ -196,6 +211,59 @@ export default function CustomerAccountPage() {
   }, [user, reloadKey]);
 
 
+
+  useEffect(() => {
+    if (!user) return;
+
+    let active = true;
+
+    async function fetchShipmentDrafts() {
+      setDraftsLoading(true);
+      setDraftsError("");
+
+      try {
+        const idToken = await user!.getIdToken();
+        const response = await fetch("/api/account/shipment-booking-drafts", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+          cache: "no-store",
+        });
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok || !data?.success) {
+          throw new Error(
+            typeof data?.error === "string"
+              ? data.error
+              : "Unable to load your shipment drafts."
+          );
+        }
+
+        if (active) {
+          setDrafts(Array.isArray(data.drafts) ? data.drafts : []);
+        }
+      } catch (loadError) {
+        if (active) {
+          setDraftsError(
+            loadError instanceof Error
+              ? loadError.message
+              : "Unable to load your shipment drafts. Please try again."
+          );
+        }
+      } finally {
+        if (active) {
+          setDraftsLoading(false);
+        }
+      }
+    }
+
+    void fetchShipmentDrafts();
+
+    return () => {
+      active = false;
+    };
+  }, [user, draftReloadKey]);
 
   async function handleSignOut() {
     setError("");
@@ -351,6 +419,89 @@ export default function CustomerAccountPage() {
 
 
 
+
+        <section className="customer-panel shipment-drafts-panel" aria-labelledby="shipment-drafts-heading">
+          <div className="customer-panel-heading">
+            <div>
+              <span className="section-label">01 / SHIPMENT PREPARATION</span>
+              <h2 id="shipment-drafts-heading">My shipment drafts</h2>
+              <p className="customer-panel-description">
+                Review the shipment details you have saved and continue preparing them.
+                Drafts are not confirmed bookings.
+              </p>
+            </div>
+
+            <span className="customer-order-count">
+              {draftsLoading
+                ? "Loading"
+                : draftsError
+                  ? "Unavailable"
+                  : drafts.length === 50
+                    ? "50 latest"
+                    : `${drafts.length} drafts`}
+            </span>
+          </div>
+
+          {draftsLoading ? (
+            <div className="customer-state" aria-live="polite">
+              <Package size={25} />
+              <p>Loading your shipment drafts...</p>
+            </div>
+          ) : draftsError ? (
+            <div className="customer-state" role="alert">
+              <Package size={27} />
+              <h3>We couldn&apos;t load your shipment drafts</h3>
+              <p>{draftsError}</p>
+              <button
+                type="button"
+                className="customer-secondary-action"
+                onClick={() => setDraftReloadKey((key) => key + 1)}
+              >
+                Retry loading drafts <ArrowRight size={16} />
+              </button>
+            </div>
+          ) : drafts.length === 0 ? (
+            <div className="customer-state">
+              <Package size={26} />
+              <h3>No shipment drafts yet.</h3>
+              <p>
+                Save your shipment details to prepare them and return later.
+                Saving a draft does not create a booking or payment obligation.
+              </p>
+              <Link href="/account/shipments" className="customer-secondary-action">
+                Prepare a shipment <ArrowRight size={16} />
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="shipment-draft-list">
+                {drafts.slice(0, 3).map((draft) => (
+                  <article className="shipment-draft-row" key={draft.id}>
+                    <div>
+                      <span className="shipment-draft-status">DRAFT · NOT CONFIRMED</span>
+                      <strong>
+                        {draft.origin} <ArrowRight size={14} /> {draft.destination}
+                      </strong>
+                      <p>{draft.parcelDescription}</p>
+                      <small>Updated {formatDate(draft.updatedAt ?? draft.createdAt ?? null)}</small>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              <div className="shipment-form-actions">
+                <Link href="/account/shipments" className="customer-secondary-action">
+                  View and manage drafts <ArrowRight size={16} />
+                </Link>
+                {drafts.length > 3 && (
+                  <span className="customer-panel-description">
+                    Showing 3 of your {drafts.length === 50 ? "50 latest" : drafts.length} saved drafts.
+                  </span>
+                )}
+              </div>
+            </>
+          )}
+        </section>
 
         <section className="customer-content-grid">
 
