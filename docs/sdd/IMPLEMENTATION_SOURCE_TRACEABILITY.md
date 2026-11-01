@@ -302,7 +302,7 @@ The older source inventory and historical statements in this document must not b
 
 ## 11. M1.1 shipment-draft hardening source update — 1 November 2026
 
-**Implementation under review:** PR #96, `feat/m1-1-shipment-draft-hardening` (open; not merged at the time of this update).
+**Implementation under review:** PR #97, `feat/m1-1-shipment-draft-hardening-clean` (open; not merged at the time of this update).
 
 - Added `lib/server/customer-auth.ts` as a shared, dependency-injected verifier for Firebase bearer tokens and verified customer email. GET, POST and PATCH now use the same helper and preserve the existing 401/403 outcomes. The helper intentionally does not apply administrator token-revocation policy to customer sessions.
 - Added `lib/server/shipment-booking-drafts.ts` with a small transactional status guard. PATCH calls it inside `adminDb.runTransaction`, so the current status read and conditional update are part of one Firestore transaction. A missing or non-`draft` record is not updated and retains the existing not-found response.
