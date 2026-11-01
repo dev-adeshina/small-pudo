@@ -1283,3 +1283,14 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - **Capability gates:** Quote issuance and booking confirmation remain unavailable until approved pricing and handover inputs exist. Payment, intake, custody, delivery, party disclosure, amendments, collection, disputes and notifications remain governed by their respective accepted decisions and evidence requirements.
 - **Implementation status:** Documentation scope only. No application code, route, schema, permission assignment or UI was changed by this work item. No runtime or test result is claimed. Detailed page specifications and implementation remain to be reviewed in their own bounded tasks.
 - **Next:** M0 open evidence remains tracked. For M1, complete the M1.2 journey definition alongside M1.1 draft-foundation hardening, then implement the portal foundation in small PRs.
+
+
+## 59. M1.1 shipment-draft hardening submitted for review — 1 November 2026
+
+- **PR #96:** https://github.com/dev-adeshina/small-pudo/pull/96 — `fix: harden shipment booking draft foundation`; open for review, not merged.
+- Shared verified-customer token authentication is used by draft GET, POST and PATCH. Existing policy is preserved: valid Firebase ID token and verified email; no new administrator revocation policy is applied to customers.
+- PATCH now reads the current draft status and writes the update inside the same Firestore transaction. Missing or non-draft records continue to return 404; no new lifecycle state or field is introduced.
+- The existing draft page now separates load errors, supports retry, handles non-JSON API failures, and reports update success correctly after resetting the form.
+- Added 12 focused Node tests across authentication (5), existing validation (4), and the draft transactional status guard (3), plus the `npm test` script.
+- **Verification boundary:** the test suite, TypeScript, lint and production build have not been executed for this PR in this environment. The tests are helper/validation tests, not full HTTP route or Firestore-emulator integration tests. Review/merge and execution of checks remain outstanding.
+- **Scope boundary:** no quotation, booking confirmation, payment, service selection, custody, new data fields or lifecycle states were added. M0 evidence remains open; M1.2 journey definition remains the next product-design task.
