@@ -1,14 +1,14 @@
 # VeriLyft Implementation-to-SDD Source Traceability
 
-**Document status:** Read-only source inventory — refreshed active-source pass; policy reconciliation remains separate  
-**Inspection date:** 30 October 2026 (source inspection; repository-history comparison refreshed 31 October 2026)  
-**Repository baseline inspected:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32)  
+**Document status:** Read-only source inventory — historical platform pass plus focused M1 shipper-portal source review; policy reconciliation remains separate  
+**Inspection date:** 30 October 2026 (historical platform source pass); focused M1 account/draft source review performed 1 November 2026  
+**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Current focused M1 source-review baseline:** `main` at `71225e3bdd6d827b288a883debb61a03695daef5` (PR #98 merge)  
 **Scope:** Active application source mapped to A-01–A-20 and ADM-R01–ADM-R54; the root `pudo.zip` archive and production environment remain uninspected  
 **Authority:** Source facts only. This document does not approve product policy, prove runtime behaviour, or authorize implementation.
 
 ## 1. Inspection method and evidence limits
 
-The initial inspection narrative in Sections 1–5 is retained as historical context. The refreshed source pass in Section 6 is authoritative where the earlier narrative differs. The refreshed pass inspected the recursive repository tree and selected current source files at the stated baseline; it did not modify or execute application code, inspect production Firestore records, inspect deployed configuration, test provider credentials, or reproduce browser/runtime behaviour. The root `pudo.zip` archive was not unpacked or audited.
+The initial inspection narrative in Sections 1–7 is retained as historical context. The refreshed source pass in Section 6 is authoritative for its stated baseline; the focused M1 account/draft review in Section 8 is authoritative for the inspected shipper-portal paths at PR #98 baseline. The refreshed pass inspected the recursive repository tree and selected current source files at the stated baseline; it did not modify or execute application code, inspect production Firestore records, inspect deployed configuration, test provider credentials, or reproduce browser/runtime behaviour. The root `pudo.zip` archive was not unpacked or audited.
 
 Use this document to separate:
 - **Observed in source:** code/configuration exists at the cited path.
@@ -321,3 +321,28 @@ The older source inventory and historical statements in this document must not b
 - **Experience definition:** the new specification maps the end-to-end shipper journey, one initial booking-party workspace, surface responsibilities, party visibility/action principles, lifecycle truth, customer experience states, 20 acceptance scenarios, M1.3 boundaries and unresolved dependencies.
 - **Policy preservation:** registered authenticated customers only at launch; booking party remains distinct from sender, receiver/collection recipient, payer and physical handover person; no separate sender/receiver portal is assumed; quote, booking, payment, intake, custody, movement and delivery remain distinct.
 - **Evidence boundary:** focused source review and documentation design only. No application code, schema, API, Firebase rules/configuration, permission assignment, test, runtime, deployment or production state changed or was verified. M1.1 verification remains outstanding; M0 and DEC-036 release evidence gaps remain separate.
+
+
+## 8. Focused M1 shipper-portal source review — 1 November 2026
+
+**Repository baseline:** `main` at `71225e3bdd6d827b288a883debb61a03695daef5` (PR #98 merge).  
+**Scope:** Read-only review of the customer dashboard, shipment workspace, profile, order detail, relevant account APIs, shared draft authentication/transaction helpers, and recursive account/API route inventory. This section supersedes older shipment-draft/account statements where they differ for these inspected paths.
+
+| Surface | Current source evidence | Observed behaviour | M1.3 implication |
+|---|---|---|---|
+| Customer dashboard | `app/account/page.tsx`, `app/api/account/orders/route.ts` | Verified Firebase customer session; loads customer-owned storefront orders; shows order totals, order history, payment/order/shipping status, order detail/tracking links, profile and shipment-preparation shortcuts. It does not load or summarize shipment drafts. | Reuse the dashboard as the customer workspace entry point, but separate shipment preparation from storefront orders. |
+| Shipment workspace | `app/account/shipments/page.tsx`, `app/api/account/shipment-booking-drafts/route.ts`, `app/api/account/shipment-booking-drafts/[draftId]/route.ts` | Draft create/list/edit only. UI includes loading, empty, validation, success, failure and retry states and explicitly states that drafts are not quotes, confirmed bookings, payment requests or custody records. | Retain the current page and form; do not invent later-stage functionality. |
+| Draft authentication and ownership | `lib/server/customer-auth.ts`, draft API routes, `users/{uid}/shipmentBookingDrafts` | Server derives UID from a verified bearer token; draft records are nested under the authenticated user's document. GET lists up to 50 latest drafts. PATCH checks current `draft` status and updates within one Firestore transaction. | Reuse the current helper, APIs and ownership model; do not accept a customer UID from browser input. |
+| Firestore draft access | `firestore.rules`, `tests/firestore.rules.test.mjs` | Direct customer reads/writes to draft records and cross-customer access are denied. The user's 1 November Emulator run passed all 17 Firestore rules tests. | Preserve server-mediated draft access and existing rule boundaries. |
+| Profile | `app/account/profile/page.tsx`, `app/api/account/profile/route.ts` | Existing profile surface manages display name, verified email display and phone number. | Keep profile as a distinct account capability; it does not grant shipment authority. |
+| Storefront order detail | `app/account/orders/[orderId]/page.tsx`, `app/api/account/orders/[orderId]/route.ts` | Existing customer order detail remains a storefront order journey with ownership derived from authenticated customer identity. | Keep storefront orders separately labelled; do not treat order fulfilment fields as shipment/custody facts. |
+
+**Account route inventory:** `/account`, `/account/profile`, `/account/shipments`, registration/sign-in/recovery, and storefront order detail are present. Account APIs cover profile, storefront order list/detail and shipment-booking drafts. No account layout component was found in the inspected route tree. No customer-facing confirmed independent-shipment list/detail, quote, payment, intake/custody, collection or dispute route was found in this bounded inventory.
+
+**M1.3 recommended first slice:** compose the existing dashboard into a clearer shipper workspace by loading recent customer-owned shipment drafts and a draft count through the existing GET endpoint; show explicit loading, empty, failure and retry states; link to the existing draft create/list/edit page; and keep storefront order activity in a separately labelled section. Do not display confirmed shipment counts, shipment timelines, quote/payment actions or operational capabilities without approved authoritative records and APIs.
+
+**Reuse:** current Firebase customer authentication, verified-customer helper, draft GET API, Firestore customer ownership path, existing account components and styles, and existing draft form/list.
+
+**Out of scope:** new collection/fields/endpoints/statuses; confirmed shipment creation/detail; service catalogue, pricing, quote acceptance, payment, intake, custody, routing, dispatch, delivery, collection, disputes, delegation, payer/receiver access, or separate sender/receiver portals.
+
+**Evidence boundary:** This is a focused source inventory, not a full repository semantic audit, HTTP integration test, production-data review, deployment verification or launch-readiness assessment. The Emulator/build/lint/TypeScript outcomes are user-reported local results and are recorded in the progress tracker.
