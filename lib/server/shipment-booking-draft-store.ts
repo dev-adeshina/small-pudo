@@ -39,7 +39,7 @@ export const shipmentBookingDraftStore = {
         origin: data.origin,
         destination: data.destination,
         parcelDescription: data.parcelDescription,
-        status: "draft",
+        status: "draft" as const,
         createdAt: toISOString(data.createdAt),
         updatedAt: toISOString(data.updatedAt),
       };
