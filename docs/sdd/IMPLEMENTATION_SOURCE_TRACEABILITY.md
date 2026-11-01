@@ -346,3 +346,21 @@ The older source inventory and historical statements in this document must not b
 **Out of scope:** new collection/fields/endpoints/statuses; confirmed shipment creation/detail; service catalogue, pricing, quote acceptance, payment, intake, custody, routing, dispatch, delivery, collection, disputes, delegation, payer/receiver access, or separate sender/receiver portals.
 
 **Evidence boundary:** This is a focused source inventory, not a full repository semantic audit, HTTP integration test, production-data review, deployment verification or launch-readiness assessment. The Emulator/build/lint/TypeScript outcomes are user-reported local results and are recorded in the progress tracker.
+
+## 11. M1.3 customer-dashboard draft summary — PR #100 — 1 November 2026
+
+**Repository baseline:** `main` at merge commit `79f59726940ae5fbe56558c13976350e5f2d40f1`.  
+**Changed source:** `app/account/page.tsx` only (151 additions, no deletions).  
+**Requirement alignment:** M1 shipper-portal foundation; DEC-037, DEC-038, DEC-043; BP-01–BP-22; customer journey scenarios SHP-03, SHP-05, SHP-06 and SHP-18.
+
+**Implemented source behaviour:**
+- Uses the existing authenticated Firebase customer session and requests `GET /api/account/shipment-booking-drafts` with the user's ID token. The server-side API remains responsible for verified-customer authentication and UID-derived ownership.
+- Displays up to the latest three drafts, origin/destination, parcel description and last-updated date. The count reflects the endpoint's maximum-50 response and displays `50 latest` at the cap rather than claiming a total beyond the returned records.
+- Handles loading, empty, API/network failure and retry independently of storefront-order state; includes a link to the existing draft workspace.
+- Labels each item `DRAFT · NOT CONFIRMED` and explains that draft saving does not create a booking or payment obligation. Storefront orders remain separately labelled.
+
+**Scope controls:** one application file changed. No collection, field, endpoint, status, permission, ownership model, confirmed-shipment record, quote, payment or operational capability was added. The change does not establish a complete shipper portal.
+
+**User-reported local verification (1 November 2026):** Firestore Emulator command `npx firebase-tools emulators:exec --only firestore "npm test"` passed 29/29 tests (17 Firestore rules and 12 draft authentication/validation/transaction-guard tests); `npx tsc --noEmit`, `npm run lint` and `npm run build` passed; Next.js 16.4.2 generated 34 static pages. Expected `PERMISSION_DENIED` output came from negative tests. A non-blocking `MODULE_TYPELESS_PACKAGE_JSON` warning appeared for `lib/server/customer-auth.ts`. The 12 draft tests are not HTTP route integration tests. No browser, deployed API or production verification is claimed.
+
+**Next review:** read-only inspection of `/account/shipments` and the existing draft APIs against SHP-01–SHP-20 and accepted BP/PM boundaries, to identify the smallest source-backed usability or test-coverage gap, if any. Any further application change requires a focused proposal and owner approval. Pricing, quote, booking, payment, intake, custody, movement, delivery, collection, disputes, delegation and separate sender/receiver access remain gated.
