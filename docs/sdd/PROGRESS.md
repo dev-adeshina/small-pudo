@@ -6,7 +6,7 @@
 **Last updated:** 1 November 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest reported main baseline for this update:** `5017cc9` — user confirmed PR #104 was reviewed and merged, then synchronized local `main` with `origin/main`. M1.3 automated integration and production smoke verification are recorded in sections 63–64.  
+**Latest reported main baseline for this update:** `5017cc95cad3a5183702e63a89a4b98944a89004` — user confirmed PR #104 was reviewed and merged, then synchronized local `main` with `origin/main`. M1.3 automated integration and production smoke verification are recorded in sections 63–64.  
 **Application-source inspection baseline:** `0e4dfd8e198ef2c14ed22ef393ddf801372b7613` for the bounded administrator-authorization source review recorded below. This is a focused review of the named authentication, authorization, admin-page, API and Firestore-rule paths—not a fresh full-repository semantic audit, runtime verification, or production verification.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
@@ -25,7 +25,7 @@
 
 ### Current execution position — Milestone 4 and bounded implementation
 
-- **Current main baseline for this checkpoint:** `5017cc9` (user-reported synchronized `main` after PR #104 merge). PR #104 is the Firestore-store integration coverage change.
+- **Current main baseline for this checkpoint:** `5017cc95cad3a5183702e63a89a4b98944a89004` (user-reported synchronized `main` after PR #104 merge). PR #104 is the Firestore-store integration coverage change.
 - **Implementation authority:** DEC-045 supersedes the previous blanket freeze for bounded implementation. The consolidated implementation backlog remains the single execution pointer. Unresolved policy inputs remain capability gates.
 - **M0 — baseline and regression safety:** PR #91 implemented revocable Firebase administrator access and PR #92 completed lint cleanup. The user ran reconciliation against `verilyft-4e691` (two allowlisted emails; one access record activated; zero deactivations, claim changes or refresh-token revocations). User-reported validation: lint clean; production build and TypeScript passed; Firestore Emulator suite 17/17. On 1 November, the user confirmed production browser checks for Google and email/password administrator sign-in, refresh/browser-restart persistence, ordinary-customer admin denial with customer session preserved, and admin-orders API rejection without a bearer token (HTTP 401). Firestore Rules Playground simulations denied ordinary-customer writes to both `categories` and `adminAccess`. Live administrator revocation, revoked-token behaviour, API rejection with an authenticated non-admin token, upload-route denial, and deployed configuration parity remain unverified. See sections 56–57.
 - **Administrator authorization source review:** A bounded review was performed against current `main` at `0e4dfd8e198ef2c14ed22ef393ddf801372b7613`. It covered the password and Google sign-in helpers, administrator verification/claim/registration endpoints, dashboard/categories/products/orders pages, shared server authorization helper, admin order APIs, image-upload API and Firestore rules. The controls are connected across these inspected paths. See section 56 for findings and remaining evidence.
@@ -1375,7 +1375,7 @@ Expected `PERMISSION_DENIED` messages were emitted by negative authorization tes
 
 ## 63. M1.3 Firestore shipment-draft store integration coverage — PR #104 merged — 1 November 2026
 
-**Baseline:** `main` at `5017cc9` (user-reported local synchronization after PR #104 merge).  
+**Baseline:** `main` at `5017cc95cad3a5183702e63a89a4b98944a89004` (user-reported local synchronization after PR #104 merge).  
 **Implementation branch:** `test/shipment-draft-firestore-store`.  
 **PR:** [#104 — Test/shipment draft firestore store](https://github.com/dev-adeshina/small-pudo/pull/104), reviewed and merged by the user.  
 **Requirement alignment:** M1.3 shipment-draft foundation; SHP-01–SHP-06 and SHP-18; preserve DEC-037, DEC-038, DEC-043; BP-01–BP-22; PM-01–PM-12.
