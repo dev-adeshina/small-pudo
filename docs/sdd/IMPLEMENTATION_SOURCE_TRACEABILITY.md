@@ -381,3 +381,22 @@ The older source inventory and historical statements in this document must not b
 **Preserved controls:** no client-supplied UID is trusted; customer ownership remains derived from the verified bearer token. No new Firestore path, field, endpoint, persisted state, permission or role is introduced. Draft saving still creates no quote, confirmed booking, payment obligation, intake or custody event. Storefront orders remain separate.
 
 **Evidence boundary:** PR #102 has not yet been locally executed. The new tests exercise the extracted request-handler contract with an in-memory persistence adapter; they do not prove the Firebase Admin Firestore adapter against the emulator, deployed HTTP routing, browser behaviour, production configuration or DEC-036 release readiness. Record user-run `npm test` under the Firestore Emulator, TypeScript, lint and production build outcomes before merge. The existing Firestore Rules tests continue to cover direct-client denial; they do not test Admin SDK route access.
+
+## 13. M1.3 Firestore shipment-draft store testability and integration coverage — implementation branch — 1 November 2026
+
+**Baseline:** `main` at `d9dfc22` (PR #103 merge; user-reported local baseline).  
+**Implementation branch:** `test/shipment-draft-firestore-store`.
+
+**Source changes prepared:**
+- `lib/server/shipment-booking-draft-store-core.ts` contains the existing store operations as `createShipmentBookingDraftStore`. It accepts the Admin Firestore instance, a server-timestamp provider and the existing transactional editability guard as dependencies. List path, descending `updatedAt` order, 50-record limit, created fields, status, timestamp serialization and update payload are preserved.
+- `lib/server/shipment-booking-draft-store.ts` remains the production adapter and exports the existing `shipmentBookingDraftStore` contract. It supplies the current `adminDb`, `FieldValue.serverTimestamp()` and `updateDraftOnlyWhileEditable`. Existing API route imports do not need to change.
+- `tests/shipment-booking-draft-store.test.mjs` creates a separate named Firebase Admin app for the demo Emulator project and exercises the same factory against the Firestore Emulator. It covers creation/path ownership/server timestamps, customer-scoped listing, ISO timestamp output, updated-time ordering, the 50-record cap, editable update and preservation of `bookingPartyUid`, `status` and `createdAt`, missing-draft refusal and non-editable-draft refusal. Unique test customer UIDs are tracked and their draft documents are deleted after the suite.
+- The integration suite is skipped when `FIRESTORE_EMULATOR_HOST` is absent. It does not initialize the production Firebase Admin singleton or fall back to production data.
+
+**Relationship to existing tests:** `tests/shipment-booking-draft-api.test.mjs` continues to test HTTP handler behaviour through its in-memory store. The new suite tests the actual Firestore store implementation. Existing `tests/firestore.rules.test.mjs` continues to test client security rules; Admin SDK integration tests intentionally exercise trusted server persistence and do not replace rules tests.
+
+**Scope controls:** no Firestore schema, collection path, persisted field, status, API contract, customer permission, role or business rule is added or changed. The production store's exported interface and server-only access pattern are retained. Drafts remain unconfirmed preparation records.
+
+**Verification status:** source/test changes are prepared but have not yet been executed on this branch. The user's previous 39/39 test result belongs to the prior `main` baseline and must not be represented as a result for this new suite. Run the Firestore Emulator suite, TypeScript, lint, production build and `git diff --check` before merge.
+
+**Evidence boundary:** this is a focused source/testability change. Passing local tests, production HTTP behaviour, browser acceptance, deployed configuration and DEC-036 release readiness remain separate evidence requirements.
