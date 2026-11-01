@@ -1,6 +1,6 @@
 import { FieldValue } from "firebase-admin/firestore";
 
-import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { adminDb } from "@/lib/firebase-admin";
 import { updateDraftOnlyWhileEditable } from "@/lib/server/shipment-booking-drafts";
 import type { ShipmentBookingDraftInput } from "@/lib/validations/shipment-booking-draft";
 import type { ShipmentBookingDraftRecord } from "@/lib/server/shipment-booking-draft-api";
@@ -20,8 +20,6 @@ function toISOString(value: unknown): string | null {
 }
 
 export const shipmentBookingDraftStore = {
-  verifyIdToken: (token: string) => adminAuth.verifyIdToken(token),
-
   async listDrafts(customerUid: string): Promise<ShipmentBookingDraftRecord[]> {
     const snapshot = await adminDb
       .collection("users")
