@@ -1,6 +1,6 @@
 # Shipper Journey and Portal Experience Specification
 
-**Status:** M1.2 product/experience definition; PR #98 merged 1 November 2026. First M1.3 dashboard slice delivered in PR #100. This remains a product/experience specification, not an API, schema, permission or status-enum approval.  
+**Status:** M1.2 product/experience definition; PR #98 merged 1 November 2026. First M1.3 dashboard slice delivered in PR #100; shipment workspace hardening is under review in PR #102. This remains a product/experience specification, not an API, schema, permission or status-enum approval.  
 **Date:** 1 November 2026  
 **Authority:** DEC-036–DEC-045 where applicable; BP-01–BP-22; PM-01–PM-12.  
 **Execution pointer:** `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md`.
@@ -132,3 +132,13 @@ The authenticated dashboard retrieves drafts through the existing customer-owned
 The user reported local verification on 1 November 2026: 29/29 tests passed under the Firestore Emulator, `npx tsc --noEmit`, `npm run lint` and `npm run build` passed, and 34 static pages were generated. The test suite comprises 17 Firestore rules tests and 12 draft helper/validation/transaction-guard tests. Expected authorization-denial logs and a non-blocking Node module-type warning were observed. No HTTP route integration, browser acceptance, deployed API or production verification is claimed by these checks.
 
 **M1.3 remains in progress.** The next activity is a read-only review of the existing shipment workspace and draft APIs against SHP-01–SHP-20 and accepted party/permission boundaries. The review should identify the smallest source-backed usability or test-coverage gap, if any, and return a proposal for approval before further application changes. No quote, booking, payment, intake, custody, route, delivery, collection, dispute or separate sender/receiver capability is authorized by this checkpoint.
+
+## 12. M1.3 shipment workspace and draft API handler hardening — PR #102
+
+PR #102 advances the existing draft-only workspace without changing the product boundary. The workspace now communicates the 50-record list cap, shows each draft's last-updated timestamp, provides character counts for all three bounded inputs, disables editing controls while a save is in progress, and ignores stale list responses after a newer request or unmount.
+
+The existing GET/POST/PATCH request handling is extracted behind a dependency-injected handler factory. Next.js route adapters continue to apply verified-customer Firebase authentication and the existing draft validator. The Firestore store retains the same `users/{uid}/shipmentBookingDrafts` path, latest-50 query, existing fields and `draft` status; PATCH continues to use the existing transaction guard. Handler-level tests cover authentication, customer-scoped reads/writes, validation and non-editable/missing records using an in-memory persistence adapter.
+
+**Verification status:** PR #102 is open and has not yet been locally verified. The handler tests are not Firebase Admin SDK emulator integration tests, deployed HTTP route tests, browser acceptance or production verification. Run the full emulator test command, TypeScript, lint and production build before merge and record actual results.
+
+No service catalogue, pricing, quote, confirmed booking, payment, intake, custody, route, dispatch, delivery, collection, dispute, delegation, party entitlement or new schema capability is introduced. SHP-08–SHP-17 and SHP-19–SHP-20 remain gated by the dependencies in Section 9; DEC-036 release evidence and M0 residual checks remain separate.
