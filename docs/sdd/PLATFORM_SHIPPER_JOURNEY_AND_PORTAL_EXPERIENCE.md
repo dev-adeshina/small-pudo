@@ -1,6 +1,6 @@
 # Shipper Journey and Portal Experience Specification
 
-**Status:** M1.2 product/experience definition; PR #98 merged 1 November 2026. Not an API, schema, permission or status-enum approval.  
+**Status:** M1.2 product/experience definition; PR #98 merged 1 November 2026. First M1.3 dashboard slice delivered in PR #100. This remains a product/experience specification, not an API, schema, permission or status-enum approval.  
 **Date:** 1 November 2026  
 **Authority:** DEC-036–DEC-045 where applicable; BP-01–BP-22; PM-01–PM-12.  
 **Execution pointer:** `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md`.
@@ -33,7 +33,7 @@ Use one shipper workspace within the existing customer account architecture. Reu
 
 | Surface | Responsibility | Current boundary |
 |---|---|---|
-| Customer dashboard (`/account`) | Entry point separating shipment drafts, confirmed independent shipments when supported, storefront orders and profile. | Current dashboard includes storefront order history and a shipment-preparation link; it is not a shipment operations dashboard. |
+| Customer dashboard (`/account`) | Entry point separating shipment drafts, confirmed independent shipments when supported, storefront orders and profile. | PR #100 adds a customer-owned latest-drafts summary with count, loading/empty/error/retry states and a link to the draft workspace. Storefront orders remain separate; this is not a shipment operations dashboard. |
 | Shipment workspace (`/account/shipments`) | Draft preparation and, when supported, customer-entitled shipment listing. | Currently draft create/list/edit only; no confirmed independent-shipment listing or detail route. |
 | Shipment detail (future) | Authoritative details, entitled history, available actions and exception/support information. | No route or record contract approved here. |
 | Quote review (future) | Explain approved quote inputs, charges, total, currency and validity; capture explicit booking-party acceptance. | No quote until pricing gates are met. |
@@ -121,3 +121,14 @@ Keep explicit: approved service catalogue and location capabilities; pricing inp
 M1.2 is complete as a documentation deliverable when the current foundation is accurately described; journey and gated stages are mapped; surface responsibilities reuse current architecture; party principles preserve BP-01–BP-22 and PM-01–PM-12; lifecycle facts remain distinct; experience states and acceptance scenarios are covered; M1.3 boundaries/dependencies are explicit; backlog, progress and source traceability point here; and the documentation-only PR is reviewed and merged.
 
 **Evidence boundary:** Product/experience and test-design input only. This specification does not implement, test or verify application capabilities, approve technical contracts, or satisfy DEC-036 release requirements.
+
+
+## 11. M1.3 dashboard implementation checkpoint — 1 November 2026
+
+PR #100 implements the first bounded dashboard slice described by this specification. It is merged into `main` at `79f59726940ae5fbe56558c13976350e5f2d40f1` and changes only `app/account/page.tsx`.
+
+The authenticated dashboard retrieves drafts through the existing customer-owned draft GET API, displays the latest three with origin, destination, parcel description and last-updated date, shows the bounded count without implying more than the API's 50-record limit, and provides loading, empty, error and retry states. Storefront orders remain separately presented. Drafts are explicitly labelled as unconfirmed; the interface does not claim booking or payment obligation.
+
+The user reported local verification on 1 November 2026: 29/29 tests passed under the Firestore Emulator, `npx tsc --noEmit`, `npm run lint` and `npm run build` passed, and 34 static pages were generated. The test suite comprises 17 Firestore rules tests and 12 draft helper/validation/transaction-guard tests. Expected authorization-denial logs and a non-blocking Node module-type warning were observed. No HTTP route integration, browser acceptance, deployed API or production verification is claimed by these checks.
+
+**M1.3 remains in progress.** The next activity is a read-only review of the existing shipment workspace and draft APIs against SHP-01–SHP-20 and accepted party/permission boundaries. The review should identify the smallest source-backed usability or test-coverage gap, if any, and return a proposal for approval before further application changes. No quote, booking, payment, intake, custody, route, delivery, collection, dispute or separate sender/receiver capability is authorized by this checkpoint.
