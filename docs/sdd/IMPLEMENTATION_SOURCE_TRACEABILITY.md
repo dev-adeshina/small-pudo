@@ -302,7 +302,7 @@ The older source inventory and historical statements in this document must not b
 
 ## 11. M1.1 shipment-draft hardening source update — 1 November 2026
 
-**Implementation under review:** PR #97, `feat/m1-1-shipment-draft-hardening-clean` (open; not merged at the time of this update).
+**Implemented in:** PR #97, `feat/m1-1-shipment-draft-hardening-clean` (merged 1 November 2026; merge commit `6e87e04617d4fb90da7a420e5e2b2d540f07656b`). PR #96 was superseded and closed without merging.
 
 - Added `lib/server/customer-auth.ts` as a shared, dependency-injected verifier for Firebase bearer tokens and verified customer email. GET, POST and PATCH now use the same helper and preserve the existing 401/403 outcomes. The helper intentionally does not apply administrator token-revocation policy to customer sessions.
 - Added `lib/server/shipment-booking-drafts.ts` with a small transactional status guard. PATCH calls it inside `adminDb.runTransaction`, so the current status read and conditional update are part of one Firestore transaction. A missing or non-`draft` record is not updated and retains the existing not-found response.
@@ -310,4 +310,4 @@ The older source inventory and historical statements in this document must not b
 - Updated `app/account/shipments/page.tsx` to handle non-JSON API failures safely, distinguish load failures from form-save errors, provide a retry action, and preserve the correct update-success notice after form reset.
 - Added `tests/shipment-booking-drafts.test.mjs` and the `npm test` script. The 12 authored tests cover authentication (5), existing validation and limits (4), and conditional update guard behaviour (3).
 
-**Evidence limits:** Tests, lint, TypeScript and build have not yet been executed for this PR in this environment. These are focused helper/validation tests, not HTTP route integration tests or Firestore-emulator transaction/ownership tests. No browser, deployed API, or production verification has been performed. Do not mark M1.1 tested or complete until the checks run and review findings are resolved.
+**Evidence limits:** Tests, lint, TypeScript and build have not yet been executed for this PR in this environment. These are focused helper/validation tests, not HTTP route integration tests or Firestore-emulator transaction/ownership tests. No browser, deployed API, or production verification has been performed. Do not mark M1.1 tested or complete until the checks run and any findings are resolved.
