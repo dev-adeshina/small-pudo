@@ -19,16 +19,16 @@ function createHarness() {
   const handlers = createShipmentBookingDraftHandlers({
     authenticateCustomer(authorization) {
       return authenticateVerifiedCustomer(authorization, async (token) => {
-      if (token === "customer-one-token") {
-        return { uid: "customer-1", email_verified: true };
-      }
-      if (token === "customer-two-token") {
-        return { uid: "customer-2", email_verified: true };
-      }
-      if (token === "unverified-token") {
-        return { uid: "customer-1", email_verified: false };
-      }
-      throw new Error("Invalid token");
+        if (token === "customer-one-token") {
+          return { uid: "customer-1", email_verified: true };
+        }
+        if (token === "customer-two-token") {
+          return { uid: "customer-2", email_verified: true };
+        }
+        if (token === "unverified-token") {
+          return { uid: "customer-1", email_verified: false };
+        }
+        throw new Error("Invalid token");
       });
     },
     validateDraft: validateShipmentBookingDraft,
