@@ -363,7 +363,7 @@ The older source inventory and historical statements in this document must not b
 
 **User-reported local verification (1 November 2026):** Firestore Emulator command `npx firebase-tools emulators:exec --only firestore "npm test"` passed 29/29 tests (17 Firestore rules and 12 draft authentication/validation/transaction-guard tests); `npx tsc --noEmit`, `npm run lint` and `npm run build` passed; Next.js 16.4.2 generated 34 static pages. Expected `PERMISSION_DENIED` output came from negative tests. A non-blocking `MODULE_TYPELESS_PACKAGE_JSON` warning appeared for `lib/server/customer-auth.ts`. The 12 draft tests are not HTTP route integration tests. No browser, deployed API or production verification is claimed.
 
-**Next review:** read-only inspection of `/account/shipments` and the existing draft APIs against SHP-01–SHP-20 and accepted BP/PM boundaries, to identify the smallest source-backed usability or test-coverage gap, if any. Any further application change requires a focused proposal and owner approval. Pricing, quote, booking, payment, intake, custody, movement, delivery, collection, disputes, delegation and separate sender/receiver access remain gated.
+**Next review at the time of this checkpoint:** read-only inspection of `/account/shipments` and the existing draft APIs. This pointer is superseded by Section 12 and implementation PR #102. Pricing, quote, booking, payment, intake, custody, movement, delivery, collection, disputes, delegation and separate sender/receiver access remain gated.
 
 ## 12. M1.3 shipment workspace and draft API handler hardening — PR #102 — 1 November 2026
 
