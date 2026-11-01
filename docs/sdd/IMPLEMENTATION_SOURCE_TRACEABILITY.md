@@ -425,3 +425,37 @@ The user had also reported earlier production endpoint smoke observations on 1 N
 **Limitations:** this is a focused manual smoke test, not a comprehensive penetration test, deployed configuration audit, or verification of quotation, confirmed booking, payment, intake, custody, movement, delivery or other downstream workflows. M0 administrator/deployment evidence and DEC-036 P0/Conditional P0 release requirements remain open.
 
 **Next milestone review:** M2 — service pricing and quotation is next in the implementation order, but is not ready for feature coding until service rates, inputs/units, conversions, calculation formula, charge components, currency/rounding, rule version, quote validity and handover deadline are approved. The next activity is policy/source/readiness reconciliation; no placeholder rates or inferred defaults are permitted.
+
+## 15. M2 pricing and quotation source/readiness review — 1 November 2026
+
+**Inspection baseline:** `main` at `5017cc9` (user-reported synchronized baseline after PR #104). This is a focused read-only review of the pricing-related policy, backlog, technical boundary contract and existing storefront/draft/payment source paths; it is not a full repository audit.
+
+**Accepted policy reviewed:**
+- DEC-019 requires one shared pricing service/rule set for storefront delivery and independent shipment bookings, with fixed or calculated pricing according to the service, and preservation of the original quote and its input/rate context.
+- DEC-026 requires each service to declare an approved fixed, calculated or hybrid model and its own configured inputs; defines quote lifecycle and revision/preservation principles; and keeps quote, booking confirmation, payment and intake distinct.
+- DEC-038 establishes that explicit acceptance of a valid quote by the authenticated booking party confirms the independent booking. Quote validity and the separate service-specific handover deadline must be communicated before acceptance. Payment and physical intake remain separate.
+- DEC-039 requires trusted-server calculation, understandable itemized charges and total, and preservation of input/charge/currency/rule-version/effective context. It prohibits invented rates, formulas, units, conversions, fee assumptions and service mappings.
+- DEC-040 keeps intake measurement discrepancies, proposed adjustments, review, customer consent and financial settlement distinct. A proposed or accepted adjustment does not itself execute an additional payment.
+
+**Existing source findings:**
+- `app/api/orders/route.ts` reads current product records from Firestore, validates each active product's price and stock, recalculates item subtotals on the server, and creates the storefront order transactionally. Its current delivery fee is hard-coded to zero and its order currency is `NGN`.
+- `app/checkout/page.tsx` also previews a zero delivery fee. The browser subtotal/total is a display calculation; the order API performs the authoritative product-price recalculation.
+- `app/api/payments/initialize/route.ts` currently initializes payment for an existing storefront order, requires `NGN`, reads the order total and converts naira to kobo for Paystack. This is not a general shipment quote or multi-purpose payment contract.
+- The existing shipment-draft API/store persists only draft-preparation information and the `draft` status. It does not select a service, calculate a shipment price, issue a quote, accept commercial terms or create a confirmed booking.
+- The API/persistence boundary contract records that no shared shipment quote/rate service was found; quote formulas, units, rounding, validity and rate ownership remain blocked. Existing storefront product-price validation is reusable as a pattern, but it is not itself the shared delivery/shipment pricing authority required by DEC-019.
+
+**M2 readiness blockers — owner-approved inputs required before feature implementation:**
+- Launch service catalogue and per-service eligibility conditions, including applicable origin/destination and location capability constraints.
+- Per-service pricing model (fixed, calculated or hybrid), exact configured input set, authoritative input sources, required units and explicit conversion rules.
+- Approved rates and formulae, including distance source/bands where relevant, minimums, volumetric-weight treatment and special handling where applicable.
+- Currency, precision and rounding method; explicit tax, surcharge, discount, fee and other charge applicability/calculation/presentation/approval.
+- Rate effective dates/versioning and the authority/process for creating, approving and publishing rate changes.
+- Per-service quote validity duration and a separate handover deadline/period, including what happens when an unaccepted quote expires or an accepted booking is not handed over in time.
+- Quote itemization and immutable input/charge/total/currency/rule-version/effective-context snapshot, plus revision/repricing and exact-quote acceptance semantics.
+- Technical relationship/cardinality and authoritative ownership for quote, booking and any shipment/parcel records must be reconciled with DB-01–DB-12 before proposing collections, fields, status enums or APIs.
+
+**M2 boundary:** Do not fold payment, intake measurement, custody or dispatch into quote calculation. Payment/financial events remain governed by DEC-041 and M3; intake measurement adjustments follow DEC-027/DEC-040; quote acceptance's booking-confirmation effect follows DEC-038, but its technical transition and record relationships remain to be designed after the prerequisites are approved.
+
+**Recommended next activity:** prepare an owner-facing, per-service pricing specification/readiness matrix and resolve the listed inputs before implementation planning. Start with the launch service(s) actually approved by the owner; do not create a universal formula, use placeholder rates, assume fees are zero, or begin quote-engine code while the service specifications remain unresolved.
+
+**Evidence boundary:** this review is read-only and identifies current source reuse and gaps. It changes no application source, schema, API, pricing, service eligibility or business policy. M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain independent.
