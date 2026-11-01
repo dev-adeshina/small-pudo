@@ -38,6 +38,7 @@ The owner's explicit instruction to proceed supersedes the previous blanket impl
 ### M2 — Service pricing and quotation
 **Policy:** DEC-038–DEC-040.
 - Implement only service specifications with approved rates, inputs, units, conversions, calculations and rounding.
+- Shipper endpoint experience: for both From and To independently, support either an entered physical address or selection of an eligible registered PUDO centre. The Shipper does not choose In-PUDO/Out-PUDO/Trans-PUDO route types; the system determines the route from approved service, endpoint and location/action eligibility. A nearby-centre discovery method, service/location/action matrix and routing contract remain open; see the owner-approved clarification in the journey/workflow SDD.
 - Calculate/validate prices on the trusted server.
 - Preserve quote input/charge/rule-version snapshots; repricing creates a new revision.
 - Preserve declared measurements, actual measurements, adjustment proposals, customer decisions and financial settlement as separate facts.

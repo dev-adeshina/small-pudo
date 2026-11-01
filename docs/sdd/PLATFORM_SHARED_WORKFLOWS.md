@@ -648,3 +648,18 @@ This addendum refines physical intake/custody and location operations under DEC-
 - **Resolution:** Assign an authorized investigator/decision-maker as required by the applicable policy; preserve evidence and source; record the resolution, authority, reason, and corrections; and do not silently close an unresolved exception. Refunds, credits, compensation, insurance, and liability remain separate decisions under their own policies.
 
 **Still open:** Service-specific proof methods; who may confirm/dispute/correct transfers; second-approver rules; investigation ownership; damage/liability assessment; hold review and maximum periods; customer/financial outcomes; exact statuses, technical contracts, and executable tests. DEC-044 does not authorize implementation.
+
+
+## Shipper origin/destination selection and system-managed routing clarification — 1 November 2026
+
+This clarification applies to Workflow B (independent shipment booking and quotation) and is aligned with DEC-038 and DEC-043.
+
+1. The Shipper specifies **From** and **To**. Each endpoint independently supports either an entered physical address or selection of an eligible registered PUDO centre.
+2. A PUDO-centre selector should help the Shipper identify nearby suitable centres. The method for proximity discovery, location permission, address lookup/geocoding, mapping, and ranking is not yet approved and must not be assumed.
+3. In-PUDO, Out-PUDO and Trans-PUDO are operational centre/capability classifications, not route types the Shipper must select. “All” is an administrative filter only. A centre may support multiple capabilities; it is not necessarily one mutually exclusive type.
+4. Centre eligibility is evaluated against active state and explicit approved service/action capabilities under DEC-043. The label or category displayed for a centre is not sufficient evidence of eligibility. The exact service/location/action matrix remains open.
+5. The system determines the operational route from the chosen endpoints, approved service, eligible locations/capabilities, and approved routing rules. Direct In-PUDO-to-In-PUDO is a valid possible journey; do not add an Out-PUDO leg by default. No address or centre selection alone proves that an operational leg or custody event occurred.
+6. The shared pricing authority evaluates the actual system-determined route using the approved service-specific pricing configuration. Do not expose route-category selection as a way for the Shipper to select or manipulate price.
+
+**Still open:** Approved launch services and endpoint eligibility; exact location/action capability mapping; nearby-centre discovery method and privacy/permission behaviour; route construction and constraints; how unavailable/ineligible destinations are explained; and the technical representation/API and acceptance tests. This clarification does not approve schema, fields, endpoints, route algorithms, status enums, rates, formulas, or application-code changes.
+
