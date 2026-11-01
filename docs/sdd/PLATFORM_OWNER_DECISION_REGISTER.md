@@ -349,6 +349,10 @@ The owner approved DEC-043 on 30 October 2026.
 - Preserve the no-direct-login launch boundary for external collection-centre operators, carriers, and drivers; distinguish physical actors from internal staff recording events.
 - Keep the lean DEC-025 location model. Automated hours, capacity calculations, and availability scheduling are not introduced by this decision.
 
+
+**Owner-accepted Shipper journey clarification — 1 November 2026:** For each shipment endpoint independently, the Shipper may enter a physical address or select an eligible registered PUDO centre. The customer-facing task is to specify origin and destination; Shippers do not select In-PUDO, Out-PUDO, or Trans-PUDO route types. Those remain operational location/capability classifications. “All” is an administrative filter only. The system determines the route from the selected endpoints, approved service, active eligible locations and configured capabilities, and approved routing rules. A centre may support multiple capabilities, but eligibility requires explicit service/action configuration under DEC-043; its label alone is insufficient. A nearby-centre selector is desired, while geolocation, proximity ranking, mapping and related technical mechanics remain open. The actual system-determined route—including direct In-PUDO-to-In-PUDO where applicable—feeds the shared pricing authority. This clarification does not approve rates, formulas, service mappings, route algorithms, technical representation or implementation.
+
+
 **Still unresolved:** Service/location/action matrix, exact capability catalogue, designated Admin assignment granularity, staff permission scopes, partner arrangements, queued-work treatment, temporary closure procedure, audit retention, technical contracts, and executable acceptance tests.
 
 DEC-043 is high-level business policy only; it does not approve schema, fields, collections, endpoints, status values, permission implementation, or application-code changes.
