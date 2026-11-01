@@ -140,7 +140,7 @@ export function createShipmentBookingDraftHandlers(
       );
     }
 
-    const validated = validateShipmentBookingDraft(body);
+    const validated = dependencies.validateDraft(body);
 
     if (!validated.success) {
       return NextResponse.json(
