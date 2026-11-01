@@ -6,7 +6,7 @@
 **Last updated:** 1 November 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest verified main baseline for this work:** `70de008c0cc971e74a9fa3dd6f40e4e17c7cf4f5` — PR #93 merged. This documentation update records the administrator-authorization runtime checks completed on 1 November 2026.  
+**Latest verified main baseline for this work:** `71225e3bdd6d827b288a883debb61a03695daef5` — PR #98 merged. This update records M1.1 verification and a focused M1.3 shipper-portal source review against this baseline.  
 **Application-source inspection baseline:** `0e4dfd8e198ef2c14ed22ef393ddf801372b7613` for the bounded administrator-authorization source review recorded below. This is a focused review of the named authentication, authorization, admin-page, API and Firestore-rule paths—not a fresh full-repository semantic audit, runtime verification, or production verification.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
@@ -25,11 +25,11 @@
 
 ### Current execution position — Milestone 4 and bounded implementation
 
-- **Current main baseline before this documentation proposal:** PR #93 merge commit `70de008c0cc971e74a9fa3dd6f40e4e17c7cf4f5`. PRs #91–#93 are merged.
+- **Current main baseline for this checkpoint:** PR #98 merge commit `71225e3bdd6d827b288a883debb61a03695daef5`. PRs #91–#98 are merged.
 - **Implementation authority:** DEC-045 supersedes the previous blanket freeze for bounded implementation. The consolidated implementation backlog remains the single execution pointer. Unresolved policy inputs remain capability gates.
 - **M0 — baseline and regression safety:** PR #91 implemented revocable Firebase administrator access and PR #92 completed lint cleanup. The user ran reconciliation against `verilyft-4e691` (two allowlisted emails; one access record activated; zero deactivations, claim changes or refresh-token revocations). User-reported validation: lint clean; production build and TypeScript passed; Firestore Emulator suite 17/17. On 1 November, the user confirmed production browser checks for Google and email/password administrator sign-in, refresh/browser-restart persistence, ordinary-customer admin denial with customer session preserved, and admin-orders API rejection without a bearer token (HTTP 401). Firestore Rules Playground simulations denied ordinary-customer writes to both `categories` and `adminAccess`. Live administrator revocation, revoked-token behaviour, API rejection with an authenticated non-admin token, upload-route denial, and deployed configuration parity remain unverified. See sections 56–57.
 - **Administrator authorization source review:** A bounded review was performed against current `main` at `0e4dfd8e198ef2c14ed22ef393ddf801372b7613`. It covered the password and Google sign-in helpers, administrator verification/claim/registration endpoints, dashboard/categories/products/orders pages, shared server authorization helper, admin order APIs, image-upload API and Firestore rules. The controls are connected across these inspected paths. See section 56 for findings and remaining evidence.
-- **M1 — independent shipment-booking preparation:** Remains the next implementation target after M0 regression safety. Draft preparation remains distinct from confirmed booking; quote issuance and booking confirmation remain gated by approved pricing and handover details.
+- **M1 — independent shipment-booking preparation and shipper portal:** M1.1 draft hardening is merged and verified (29/29 automated tests, TypeScript, lint and production build passed); M1.2 journey/portal definition is merged in PR #98. M1.3 is now the next implementation target. The focused source review found the dashboard currently presents storefront orders and a shipment-preparation link, while `/account/shipments` provides customer-owned draft create/list/edit only. Keep drafts distinct from confirmed bookings; quote issuance and booking confirmation remain gated by approved pricing and handover details. See section 60 and the source traceability update.
 - **Milestones 1–3:** Complete at the owner-approved policy/documentation level only.
 - **Milestone 4 / SDD reconciliation:** PRs #80–#83 added owner-input triage and the action-capability, lifecycle/recovery and resource-entitlement crosswalks. Review 3 remains in preparation; the consolidated owner decision package and remaining domain/evidence/P0 work must be reconciled before it is presented. Reviews 4 and 5 remain future gates.
 - **Accepted policy:** D-01–D-15 / DEC-022–DEC-045; DEC-037 logistics-first product hierarchy; DEC-038 independent shipment booking; DEC-039 pricing boundaries; DEC-040 measurement adjustment/customer resolution; DEC-041 payment/settlement; DEC-042 physical intake/custody; DEC-043 location capabilities/authority; DEC-044 custody transfers/physical exceptions. PM-01–PM-12 and BP-01–BP-22 remain accepted at their documented policy levels.
@@ -1285,17 +1285,17 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - **Next:** M0 open evidence remains tracked. For M1, complete the M1.2 journey definition alongside M1.1 draft-foundation hardening, then implement the portal foundation in small PRs.
 
 
-## 59. M1.1 shipment-draft hardening submitted for review — 1 November 2026
+## 59. M1.1 shipment-draft hardening merged — 1 November 2026
 
 - **PR #97:** https://github.com/dev-adeshina/small-pudo/pull/97 — `fix: harden shipment booking draft foundation`; merged 1 November 2026 (merge commit `6e87e04617d4fb90da7a420e5e2b2d540f07656b`). PR #96 was superseded and closed without merging.
 - Shared verified-customer token authentication is used by draft GET, POST and PATCH. Existing policy is preserved: valid Firebase ID token and verified email; no new administrator revocation policy is applied to customers.
-- PATCH now reads the current draft status and writes the update inside the same Firestore transaction. Missing or non-draft records continue to return 404; no new lifecycle state or field is introduced.
-- The existing draft page now separates load errors, supports retry, handles non-JSON API failures, and reports update success correctly after resetting the form.
+- PATCH reads the current draft status and writes the update inside the same Firestore transaction. Missing or non-draft records continue to return 404; no new lifecycle state or field is introduced.
+- The existing draft page separates load errors, supports retry, handles non-JSON API failures, and reports update success correctly after resetting the form.
 - Added 12 focused Node tests across authentication (5), existing validation (4), and the draft transactional status guard (3), plus the `npm test` script.
-- **Verification boundary:** the test suite, TypeScript, lint and production build have not been executed for this PR in this environment. The tests are helper/validation tests, not full HTTP route or Firestore-emulator integration tests. PR review/merge is complete. Execution of checks remains outstanding.
-- **Scope boundary:** no quotation, booking confirmation, payment, service selection, custody, new data fields or lifecycle states were added. M0 evidence remains open; M1.2 journey definition remains the next product-design task.
-
-
+- **Verification:** completed on local `main` after pulling PR #98. `npx firebase-tools emulators:exec --only firestore "npm test"` passed all 29 tests (17 Firestore rules tests and 12 draft helper/validation/transaction-guard tests); zero failures, cancellations or skips. `npx tsc --noEmit`, `npm run lint` and `npm run build` also passed. The build used Next.js 16.4.2 and generated 34 static pages.
+- Expected `PERMISSION_DENIED` log entries came from negative authorization tests; all corresponding assertions passed. Node emitted a non-blocking module-type warning for `lib/server/customer-auth.ts`; it did not fail the suite.
+- **Evidence limitation:** results are user-reported local checks. The 12 draft tests exercise the shared helper, validation and transaction guard; they are not full HTTP route integration tests. Production deployment and DEC-036 release evidence remain separate.
+- **Scope boundary:** no quotation, booking confirmation, payment, service selection, custody, new data fields or lifecycle states were added. M0 evidence remains open; M1.2 journey definition was completed separately in PR #98.
 ## 52. Milestone 1 Step M1.2 — shipper journey and portal experience definition — 1 November 2026
 
 - [x] Performed a focused read-only review of current customer account, shipment-draft, customer profile and storefront order source paths after M1.1 PR #97.
@@ -1307,8 +1307,25 @@ Review and approve the consolidated P0/P1/deferred baseline in `ADMIN_REQUIREMEN
 - [x] Specified authentication, loading, empty, validation, success, failure, retry, pending and restricted experience states.
 - [x] Added 20 customer-journey and negative-authorization acceptance scenarios as test-design inputs; existing A-01–A-20, ADM-R01–ADM-R54 and 80 P0 evidence case IDs/priorities remain unchanged.
 - [x] Defined M1.3 portal-foundation boundaries and listed policy/technical dependencies that continue to gate unavailable capabilities.
-- [ ] M1.2 documentation PR review and merge.
-- [ ] M1.1 implementation verification remains outstanding: run `npm test`, `npx tsc --noEmit`, `npm run lint` and `npm run build`; record results and resolve failures before marking M1.1 verified.
+- [x] PR #98 reviewed and merged 1 November 2026 at `71225e3bdd6d827b288a883debb61a03695daef5`; documentation-only, 4 files changed.
+- [x] M1.1 implementation verification completed separately and recorded in section 59.
 - [ ] M0 remaining live revocation/API/deployment evidence and DEC-036 production-readiness requirements remain tracked separately.
 
-**Evidence boundary:** Documentation-only M1.2 definition. No application source, schema, API, Firebase rules/configuration, permissions, deployment or runtime behaviour changed or was verified. The source review is focused on the listed customer account, shipment-draft, profile and storefront-order paths; it is not a full repository or production audit. This step does not make service discovery, quotation, booking, payment, intake, custody, collection, disputes or notifications operational.
+**Evidence boundary:** Documentation-only M1.2 definition. No application source, schema, API, Firebase rules/configuration, permissions, deployment or runtime behaviour changed or was verified by PR #98. The focused source review is not a full repository or production audit. This step does not make service discovery, quotation, booking, payment, intake, custody, collection, disputes or notifications operational.
+
+## 60. M1.1 verification and M1.3 shipper-portal source review — 1 November 2026
+
+- **Repository baseline:** `main` at PR #98 merge commit `71225e3bdd6d827b288a883debb61a03695daef5`.
+- **M1.1 verification:** On the local Ubuntu working tree after pulling `main`, the user ran `npx firebase-tools emulators:exec --only firestore "npm test"`. The Firestore Emulator started and shut down successfully. Result: 29 tests passed, 0 failed, 0 cancelled, 0 skipped — 17 Firestore rules tests and 12 shipment-draft authentication/validation/transaction-guard tests.
+- **Additional checks:** `npx tsc --noEmit`, `npm run lint` and `npm run build` passed. The production build completed with Next.js 16.4.2 and generated 34 static pages. The Node module-type warning was non-blocking; expected permission-denied logs were produced by tests asserting unauthorized writes are rejected.
+- **Source review scope:** read-only inspection of `app/account/page.tsx`, `app/account/shipments/page.tsx`, `app/account/profile/page.tsx`, `app/account/orders/[orderId]/page.tsx`, account order/profile/draft API routes, `lib/server/customer-auth.ts`, `lib/server/shipment-booking-drafts.ts`, and the account/API route tree at the stated baseline.
+- **Dashboard finding:** `/account` authenticates a verified Firebase customer, loads customer-owned storefront orders through `/api/account/orders`, and presents order totals/history, order detail/tracking links, profile and shipment-preparation shortcuts. It does not load or summarize shipment drafts and does not distinguish an independent-shipment workspace from storefront activity beyond the preparation link.
+- **Shipment workspace finding:** `/account/shipments` supports draft creation, listing and editing, with authentication, loading, empty, validation, success, failure and retry states. The UI explicitly says a draft is not a quote, confirmed booking, payment request or custody record.
+- **Persistence/authorization finding:** draft GET/POST derive the customer UID from a verified bearer token and use `users/{uid}/shipmentBookingDrafts`. GET returns the customer's latest 50 drafts; PATCH performs its current-status check and update in one transaction. The Firestore rules suite confirms direct customer reads/writes to drafts and cross-customer access are denied.
+- **Other account surfaces:** profile management remains under `/account/profile` and its profile API. Storefront order history/detail remain separate under the account order APIs. No account layout component was found in the inspected route tree; the pages use existing account styling/components and repeated client auth-state checks.
+- **Not found in inspected account/API route tree:** confirmed independent shipment records/listing, shipment detail, quote, payment, intake/custody, collection or dispute customer routes. This is a bounded route/source inventory finding, not a claim about production data.
+- **Recommended M1.3 first slice:** evolve the existing `/account` dashboard into a clear shipper entry point by presenting recent customer-owned shipment drafts and a draft count using the existing draft GET endpoint, with honest loading/empty/error/retry states and a clear link to the existing `/account/shipments` workspace. Keep storefront orders in a separately labelled section. Do not show confirmed-shipment counts or operational actions when no corresponding record/API exists.
+- **Reuse and exclusions:** retain Firebase customer authentication, the existing verified-customer API helper, current draft API and Firestore ownership path, current account components/styles, and the existing shipment form/list. No new collection, field, endpoint, status, permission, sender/receiver portal, quote, booking, payment, custody or delivery capability is proposed in this first slice.
+- **Next:** obtain owner approval of the bounded M1.3 first-slice approach before application-source changes. M0 residual checks and DEC-036 production/release evidence remain separate and open.
+
+**Evidence boundary:** Test/build/lint/type-check outcomes are user-reported local results. The source review is read-only and tied to the stated GitHub main baseline; it is not a complete repository semantic audit, HTTP route integration test, production data review, deployment verification or launch-readiness assessment.
