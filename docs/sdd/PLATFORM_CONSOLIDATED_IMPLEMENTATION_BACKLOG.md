@@ -20,14 +20,19 @@ The owner's explicit instruction to proceed supersedes the previous blanket impl
 - Recheck Cloudinary upload authorization only where test credentials are available.
 - Inspect current source before changing any path; the historical source-inspection commit is not proof of current runtime behaviour.
 
-### M1 — Independent shipment booking preparation
+### M1 — Independent shipment booking preparation and shipper portal foundation
 **Policy:** DEC-037, DEC-038, DEC-043; BP-01–BP-22.
-- Registered, authenticated customers only.
-- Implement customer-owned draft preparation, distinct from a confirmed booking.
+- Registered, authenticated customers only may create independent shipment bookings at launch.
+- The existing customer account and `/account/shipments` draft feature are the foundation only; they are not a completed shipper portal.
+- **M1.1 — Draft foundation hardening:** make draft authentication consistent, protect updates against concurrent status changes, improve UI failure/retry handling, add draft-specific automated tests and refresh source traceability. Reuse current patterns; no new business fields or lifecycle states.
+- **M1.2 — Shipper journey and portal experience definition:** map the customer-facing journey, surfaces, party-specific visibility, action boundaries and acceptance scenarios against BP-01–BP-22. Do this now; explicitly mark capabilities whose backend policy/dependencies remain gated.
+- **M1.3 — Portal foundation delivery:** evolve the existing account and draft surfaces into a coherent customer shipment workspace for enabled capabilities. Do not create separate sender/receiver portals or assume they are required; that product decision remains open.
 - Capture only DEC-038 booking concepts: booking party, origin, destination, eligible service, parcel description and service-required declared information.
-- Keep booking party, sender, receiver/collection recipient, payer and physical handover person distinct.
-- Enforce ownership and authorization server-side; abandoned drafts create no confirmed booking, payment or custody event.
+- Keep booking party, sender, receiver/collection recipient, payer and physical handover person distinct; enforce ownership, authorization and party entitlements server-side.
+- Abandoned drafts create no confirmed booking, payment or custody event.
+- The target shipper journey includes draft preparation, eligible-service selection, quotation review, explicit quote acceptance, booking confirmation, payment, authoritative shipment visibility, permitted changes/collection/disputes and role-aware communications as the relevant capabilities are approved and delivered.
 - Quote issuance and booking confirmation remain gated until the service has approved pricing inputs/formula, charge components, currency, rounding, rule version, quote validity and handover deadline. The authenticated booking party must explicitly accept a valid quote.
+- See `PLATFORM_SHIPPER_PORTAL_PRODUCT_SCOPE.md` for the customer journey, present-versus-target boundary, delivery dependencies and acceptance boundary.
 
 ### M2 — Service pricing and quotation
 **Policy:** DEC-038–DEC-040.
@@ -107,4 +112,4 @@ Keep already deferred scope out of launch: advanced route optimization, full fle
 
 Link every code/test change to existing requirement and case IDs. Record actual commit, command, date, environment, result and limitations. Keep designed, implemented, tested, production-verified and launch-accepted as distinct states. The existing 0/51 P0/Conditional P0 Admin formal-execution readiness finding remains until case-level specifications and required policies/evidence are complete; it does not invalidate previously reported narrower storefront tests.
 
-**Next implementation target:** M0 baseline/regression safety, then M1 independent shipment booking preparation. Quote issuance and booking confirmation remain gated by approved service pricing and handover details.
+**Next implementation target:** complete/disposition remaining M0 baseline/regression evidence; proceed with M1.1 draft hardening and M1.2 shipper-journey definition, then deliver the portal foundation in M1.3. Quote issuance and booking confirmation remain gated by approved service pricing and handover details.
