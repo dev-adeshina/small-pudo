@@ -47,7 +47,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const decoded = await adminAuth.verifyIdToken(match[1]);
+    const decoded = await adminAuth.verifyIdToken(match[1], true);
     const email = decoded.email?.trim().toLowerCase();
 
     if (
