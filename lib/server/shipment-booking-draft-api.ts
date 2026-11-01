@@ -1,5 +1,3 @@
-import { NextResponse } from "next/server";
-
 interface ShipmentBookingDraftInput {
   origin: string;
   destination: string;
@@ -52,7 +50,7 @@ export function createShipmentBookingDraftHandlers(
     const customer = await authenticate(request);
 
     if (!customer.success) {
-      return NextResponse.json(
+      return Response.json(
         { error: customer.error },
         { status: customer.status }
       );
@@ -60,10 +58,10 @@ export function createShipmentBookingDraftHandlers(
 
     try {
       const drafts = await dependencies.listDrafts(customer.uid);
-      return NextResponse.json({ success: true, drafts });
+      return Response.json({ success: true, drafts });
     } catch (error) {
       console.error("Failed to retrieve shipment booking drafts:", error);
-      return NextResponse.json(
+      return Response.json(
         { error: "Unable to retrieve your shipment drafts right now." },
         { status: 500 }
       );
@@ -74,7 +72,7 @@ export function createShipmentBookingDraftHandlers(
     const customer = await authenticate(request);
 
     if (!customer.success) {
-      return NextResponse.json(
+      return Response.json(
         { error: customer.error },
         { status: customer.status }
       );
@@ -85,7 +83,7 @@ export function createShipmentBookingDraftHandlers(
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json(
+      return Response.json(
         { error: "Invalid request body." },
         { status: 400 }
       );
@@ -94,7 +92,7 @@ export function createShipmentBookingDraftHandlers(
     const validated = dependencies.validateDraft(body);
 
     if (!validated.success) {
-      return NextResponse.json(
+      return Response.json(
         { error: validated.error },
         { status: 400 }
       );
@@ -102,10 +100,10 @@ export function createShipmentBookingDraftHandlers(
 
     try {
       const draft = await dependencies.createDraft(customer.uid, validated.data);
-      return NextResponse.json({ success: true, draft }, { status: 201 });
+      return Response.json({ success: true, draft }, { status: 201 });
     } catch (error) {
       console.error("Failed to save shipment booking draft:", error);
-      return NextResponse.json(
+      return Response.json(
         { error: "Unable to save your shipment draft right now." },
         { status: 500 }
       );
@@ -116,14 +114,14 @@ export function createShipmentBookingDraftHandlers(
     const customer = await authenticate(request);
 
     if (!customer.success) {
-      return NextResponse.json(
+      return Response.json(
         { error: customer.error },
         { status: customer.status }
       );
     }
 
     if (!draftId || draftId.includes("/")) {
-      return NextResponse.json(
+      return Response.json(
         { error: "The requested shipment draft was not found." },
         { status: 404 }
       );
@@ -134,7 +132,7 @@ export function createShipmentBookingDraftHandlers(
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json(
+      return Response.json(
         { error: "Invalid request body." },
         { status: 400 }
       );
@@ -143,7 +141,7 @@ export function createShipmentBookingDraftHandlers(
     const validated = dependencies.validateDraft(body);
 
     if (!validated.success) {
-      return NextResponse.json(
+      return Response.json(
         { error: validated.error },
         { status: 400 }
       );
@@ -157,13 +155,13 @@ export function createShipmentBookingDraftHandlers(
       );
 
       if (!updated) {
-        return NextResponse.json(
+        return Response.json(
           { error: "The requested shipment draft was not found." },
           { status: 404 }
         );
       }
 
-      return NextResponse.json({
+      return Response.json({
         success: true,
         draft: {
           id: draftId,
@@ -173,7 +171,7 @@ export function createShipmentBookingDraftHandlers(
       });
     } catch (error) {
       console.error("Failed to update shipment booking draft:", error);
-      return NextResponse.json(
+      return Response.json(
         { error: "Unable to update your shipment draft right now." },
         { status: 500 }
       );
