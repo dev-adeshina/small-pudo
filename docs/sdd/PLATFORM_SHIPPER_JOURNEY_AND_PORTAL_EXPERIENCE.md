@@ -1,6 +1,6 @@
 # Shipper Journey and Portal Experience Specification
 
-**Status:** M1.2 product/experience definition; not an API, schema, permission or status-enum approval.  
+**Status:** M1.2 product/experience definition; PR #98 merged 1 November 2026. Not an API, schema, permission or status-enum approval.  
 **Date:** 1 November 2026  
 **Authority:** DEC-036–DEC-045 where applicable; BP-01–BP-22; PM-01–PM-12.  
 **Execution pointer:** `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md`.
@@ -16,7 +16,7 @@ This document defines the customer journey, surface responsibilities, party visi
 | Stage | Customer outcome | Availability / gate |
 |---|---|---|
 | Account access | Register, sign in and use an eligible verified account. | Existing customer-auth foundation; independent booking launch is for registered, authenticated customers with verified email. |
-| Prepare shipment | Enter origin, destination and parcel description; save, review and edit a draft. | Existing draft foundation; M1.1 hardening merged, verification tracked separately. |
+| Prepare shipment | Enter origin, destination and parcel description; save, review and edit a draft. | Existing draft foundation; M1.1 hardening merged and verified (29/29 tests; TypeScript, lint and build passed). |
 | Select eligible service | See only services eligible for the journey and supported by approved location/service capabilities. | Gated by approved service catalogue and DEC-043 capability policy. |
 | Review quotation | Understand server-calculated amount, charges, inputs, currency, rule/version and validity. | Gated by approved pricing formula/inputs, units, charges, currency, rounding, rule version, quote validity and handover deadline. |
 | Accept and confirm | Booking party explicitly accepts a valid quote before confirmation. | Gated by DEC-038 and quote/booking prerequisites. Draft or quote is not a booking. |
@@ -34,7 +34,7 @@ Use one shipper workspace within the existing customer account architecture. Reu
 | Surface | Responsibility | Current boundary |
 |---|---|---|
 | Customer dashboard (`/account`) | Entry point separating shipment drafts, confirmed independent shipments when supported, storefront orders and profile. | Current dashboard includes storefront order history and a shipment-preparation link; it is not a shipment operations dashboard. |
-| Shipment workspace (`/account/shipments`) | Draft preparation and, when supported, customer-entitled shipment listing. | Currently draft create/list/edit only. |
+| Shipment workspace (`/account/shipments`) | Draft preparation and, when supported, customer-entitled shipment listing. | Currently draft create/list/edit only; no confirmed independent-shipment listing or detail route. |
 | Shipment detail (future) | Authoritative details, entitled history, available actions and exception/support information. | No route or record contract approved here. |
 | Quote review (future) | Explain approved quote inputs, charges, total, currency and validity; capture explicit booking-party acceptance. | No quote until pricing gates are met. |
 | Payment view (future) | Present amount due and authoritative payment/financial outcomes. | Do not infer settlement from redirects, client state or booking status. |
