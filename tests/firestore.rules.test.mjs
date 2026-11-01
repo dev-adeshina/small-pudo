@@ -155,6 +155,21 @@ describe("Firestore security rules", () => {
     );
   });
 
+  it("denies catalogue writes when an administrator token has no access record", async () => {
+    const db = testEnv
+      .authenticatedContext("admin-without-marker", {
+        email_verified: true,
+        admin: true,
+      })
+      .firestore();
+
+    await assertFails(
+      setDoc(doc(db, "categories/admin-without-marker-category"), {
+        name: "Administrator without access marker",
+      }),
+    );
+  });
+
   it("denies catalogue writes when an old administrator token has an inactive access record", async () => {
     await seedAdminAccess("admin-revoked", false);
     const db = testEnv
