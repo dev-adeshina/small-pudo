@@ -1418,3 +1418,21 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 **Evidence limits:** these were manual browser checks on the production deployment, not a comprehensive security penetration test, deployed configuration audit, or end-to-end test of quote/booking/payment/operational workflows. The empty second-account view is evidence for the tested accounts and path; automated Emulator tests provide additional UID-scoping coverage. M0 residual administrator/deployment evidence and DEC-036 P0/Conditional P0 release requirements remain open.
 
 **M1.3 closeout and next milestone:** close the current M1.3 draft-workspace foundation verification. Do not describe the full shipper portal as complete. The next ordered milestone is **M2 — service pricing and quotation**, but it is not yet ready for feature implementation: approved service rates, required inputs and units, conversions, calculation formula, charge components, currency and rounding, rule versioning, quote validity and handover deadline must be resolved first. The next bounded activity is an M2 readiness/source-and-policy reconciliation, not coding or inventing placeholder pricing. M0 and DEC-036 evidence obligations continue independently.
+
+
+## 65. M2 Shipper endpoint and PUDO-centre selection clarification — 1 November 2026
+
+**Owner direction:** The Shipper specifies the parcel's origin and destination. For each endpoint independently, the experience should offer either a physical-address input or selection of an eligible registered PUDO centre. The PUDO selector should help identify nearby suitable centres.
+
+**Policy reconciliation:**
+- Shippers do not select In-PUDO, Out-PUDO or Trans-PUDO as shipment services or route types. These are operational centre/capability classifications. “All” is an administrative filter only.
+- A centre may support multiple capabilities. It is eligible only when active and explicitly configured for the approved service and requested action, consistent with DEC-043; a label/category alone is insufficient.
+- The system determines the actual route from the selected endpoints, approved service, eligible locations/capabilities and approved routing rules. Direct In-PUDO-to-In-PUDO remains a valid possible journey; no default Out-PUDO leg is inserted.
+- Pricing consumes the system-determined actual route through the shared service-specific pricing authority.
+
+**Documents updated by this documentation-only proposal:** DECISIONS.md, PLATFORM_OWNER_DECISION_REGISTER.md, PLATFORM_SHIPPER_JOURNEY_AND_PORTAL_EXPERIENCE.md, PLATFORM_SHARED_WORKFLOWS.md, and PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md.
+
+**Still unresolved:** Launch service catalogue and endpoint eligibility; exact service/location/action matrix; proximity discovery, location permission, geocoding/map provider and ranking; route construction/constraints; unavailable-centre behaviour; and technical contracts/source reconciliation/acceptance tests. This clarification approves no rates, formulas, service mappings, route algorithm, schema, fields, API, status values or application-code changes.
+
+**Evidence boundary:** Documentation-only. No application source, Firebase data/rules, schema, API, permission, runtime behaviour or production capability changed or was verified. M2 pricing and quotation remain blocked by their existing approved-input prerequisites; M0 and DEC-036 release evidence remain independently open.
+
