@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
+import { adminAuth, adminDb } from "@/lib/firebase-admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const decoded = await adminAuth.verifyIdToken(match[1]);
+    const decoded = await adminAuth.verifyIdToken(match[1], true);
     const email = decoded.email?.trim().toLowerCase();
 
     if (
@@ -45,6 +46,15 @@ export async function POST(request: Request) {
 
     const user = await adminAuth.getUser(decoded.uid);
     const existingClaims = user.customClaims ?? {};
+
+    await adminDb.collection("adminAccess").doc(decoded.uid).set(
+      {
+        active: true,
+        updatedAt: FieldValue.serverTimestamp(),
+        updatedBy: "admin-auth-claim",
+      },
+      { merge: true }
+    );
 
     if (existingClaims.admin !== true) {
       await adminAuth.setCustomUserClaims(decoded.uid, {

@@ -35,6 +35,14 @@ after(async () => {
   await testEnv?.cleanup();
 });
 
+async function seedAdminAccess(uid, active = true) {
+  await testEnv.withSecurityRulesDisabled(async (context) => {
+    await setDoc(doc(context.firestore(), `adminAccess/${uid}`), {
+      active,
+    });
+  });
+}
+
 describe("Firestore security rules", () => {
   it("allows public reads of categories", async () => {
     const db = testEnv.unauthenticatedContext().firestore();
@@ -115,7 +123,8 @@ describe("Firestore security rules", () => {
     );
   });
 
-  it("allows category writes with both required administrator claims", async () => {
+  it("allows category writes with an administrator claim and active access record", async () => {
+    await seedAdminAccess("admin-1");
     const db = testEnv
       .authenticatedContext("admin-1", {
         email_verified: true,
@@ -130,7 +139,8 @@ describe("Firestore security rules", () => {
     );
   });
 
-  it("allows product writes with both required administrator claims", async () => {
+  it("allows product writes with an administrator claim and active access record", async () => {
+    await seedAdminAccess("admin-1");
     const db = testEnv
       .authenticatedContext("admin-1", {
         email_verified: true,
@@ -142,6 +152,51 @@ describe("Firestore security rules", () => {
       setDoc(doc(db, "products/authorized-product"), {
         name: "Authorized product",
       }),
+    );
+  });
+
+  it("denies catalogue writes when an administrator token has no access record", async () => {
+    const db = testEnv
+      .authenticatedContext("admin-without-marker", {
+        email_verified: true,
+        admin: true,
+      })
+      .firestore();
+
+    await assertFails(
+      setDoc(doc(db, "categories/admin-without-marker-category"), {
+        name: "Administrator without access marker",
+      }),
+    );
+  });
+
+  it("denies catalogue writes when an old administrator token has an inactive access record", async () => {
+    await seedAdminAccess("admin-revoked", false);
+    const db = testEnv
+      .authenticatedContext("admin-revoked", {
+        email_verified: true,
+        admin: true,
+      })
+      .firestore();
+
+    await assertFails(
+      setDoc(doc(db, "categories/revoked-admin-category"), {
+        name: "Revoked administrator category",
+      }),
+    );
+  });
+
+  it("denies clients direct access to administrator access records", async () => {
+    const db = testEnv
+      .authenticatedContext("admin-1", {
+        email_verified: true,
+        admin: true,
+      })
+      .firestore();
+
+    await assertFails(getDoc(doc(db, "adminAccess/admin-1")));
+    await assertFails(
+      setDoc(doc(db, "adminAccess/admin-1"), { active: true }),
     );
   });
 

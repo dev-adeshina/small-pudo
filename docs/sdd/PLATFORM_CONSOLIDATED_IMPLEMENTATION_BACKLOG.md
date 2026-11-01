@@ -11,6 +11,8 @@ The owner's explicit instruction to proceed supersedes the previous blanket impl
 ## Implementation order
 
 ### M0 — Baseline and regression safety
+- Enforce current administrator authorization using both the Firebase admin custom claim and a server-managed `adminAccess/{uid}` active marker; clients cannot read or write these records.
+- Run `npm run admin:reconcile` once after deploying this control and after every `ADMIN_EMAILS` change to reconcile Firebase administrator claims, active markers and refresh-token revocation. An empty allowlist requires the explicit `--confirm-empty-admin-list` argument.
 - Confirm branch, commit and clean working tree.
 - Run existing TypeScript, build and available tests; record baseline failures.
 - Recheck customer/Admin session separation and server-side authorization.
