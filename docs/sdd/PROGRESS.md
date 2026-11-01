@@ -6,11 +6,11 @@
 **Last updated:** 1 November 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest verified main baseline for this update:** `79f59726940ae5fbe56558c13976350e5f2d40f1` — PR #100 merged. This update records the first M1.3 dashboard delivery and user-reported local verification.  
+**Latest verified main baseline for this update:** `90d3708a9455b2715acae368bc2b6f30683a7515` — PR #101 merged. PR #102 contains the next M1.3 shipment-workspace implementation and is not yet merged or locally verified.  
 **Application-source inspection baseline:** `0e4dfd8e198ef2c14ed22ef393ddf801372b7613` for the bounded administrator-authorization source review recorded below. This is a focused review of the named authentication, authorization, admin-page, API and Firestore-rule paths—not a fresh full-repository semantic audit, runtime verification, or production verification.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
-**Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness, with bounded implementation proceeding under DEC-045. The single execution pointer remains `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md`. M0 baseline/regression safety remains active; PRs #91–#92 implemented revocable Firebase administrator access and completed lint cleanup. The focused source review and the user's 1 November production-browser and Firestore Rules Playground checks are recorded in sections 56–57; live administrator revocation and remaining deployment/API checks remain open. M1 is the independent shipment-booking and shipper-portal foundation: M1.1 draft hardening is implemented and verified, M1.2 journey/portal definition is merged in PR #98, and M1.3 first slice (customer-dashboard shipment-draft summary) is implemented in PR #100 and locally verified; the next bounded task is a read-only source/acceptance review of the existing shipment workspace before proposing another code slice. See sections 60–61. The existing draft page remains a foundation, not a completed shipper portal. Remaining M0 evidence stays open and must be addressed or explicitly dispositioned. Review 3 SDD reconciliation and the Review 4–5 acceptance/release gates remain in progress; DEC-045 does not imply launch readiness or waive DEC-036 P0 evidence.
+**Current phase:** Milestone 4 — Platform-wide SDD Reconciliation and Implementation Readiness, with bounded implementation proceeding under DEC-045. The single execution pointer remains `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md`. M0 baseline/regression safety remains active; PRs #91–#92 implemented revocable Firebase administrator access and completed lint cleanup. The focused source review and the user's 1 November production-browser and Firestore Rules Playground checks are recorded in sections 56–57; live administrator revocation and remaining deployment/API checks remain open. M1 is the independent shipment-booking and shipper-portal foundation: M1.1 draft hardening is implemented and verified, M1.2 journey/portal definition is merged in PR #98, and M1.3 first slice (customer-dashboard shipment-draft summary) is implemented in PR #100 and locally verified; the next shipment-workspace hardening slice is under review in PR #102, with user-run local validation pending. See sections 60–62. The existing draft page remains a foundation, not a completed shipper portal. Remaining M0 evidence stays open and must be addressed or explicitly dispositioned. Review 3 SDD reconciliation and the Review 4–5 acceptance/release gates remain in progress; DEC-045 does not imply launch readiness or waive DEC-036 P0 evidence.
 
 > This tracker records the current documented working state. Verify the live repository, current branch/PR state, and dated test results before treating any item as complete.
 
@@ -1353,4 +1353,26 @@ Expected `PERMISSION_DENIED` messages were emitted by negative authorization tes
 
 **M1.3 status:** first dashboard slice implemented and locally verified. This does not complete the shipper portal or M1.3 as a whole. The existing `/account/shipments` workspace remains draft preparation only; no confirmed shipment, quote, payment, intake, custody, movement, delivery, collection or dispute capability is implied.
 
-**Next bounded activity:** perform a read-only source and acceptance-coverage review of the existing `/account/shipments` workspace and its draft APIs, using SHP-01–SHP-20 and the accepted BP/PM boundaries. Identify the smallest source-backed usability or test-coverage gap, if any; do not add schema, endpoints, states or permissions. Present a specific next implementation proposal for owner approval before changing application code. M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain separate and open.
+**Next bounded activity at the time of this checkpoint:** perform the read-only source and acceptance-coverage review described above. This historical next-step pointer is superseded by Section 62 and implementation PR #102. M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain separate and open.
+
+## 62. M1.3 shipment workspace and draft API handler hardening — PR #102 — 1 November 2026
+
+**Repository baseline:** `main` at PR #101 merge commit `90d3708a9455b2715acae368bc2b6f30683a7515`.
+**Implementation branch:** `feat/m1-3-shipment-workspace-hardening`.
+**PR:** #102 — open; not merged.
+**Requirement alignment:** M1.3; SHP-01–SHP-06 and SHP-18; DEC-037, DEC-038 and DEC-043; BP-01–BP-22; PM-01–PM-12.
+
+**Implementation in PR #102:**
+- Extracts the existing draft GET/POST/PATCH request handling into a small dependency-injected handler factory. Route adapters continue to use verified Firebase customer authentication and the existing validation helper.
+- Moves Firestore list/create/update operations into a server store module. All operations remain scoped to the UID derived from the verified bearer token; PATCH retains the transactionally guarded editable-draft check.
+- Adds handler-level tests using an in-memory store for missing/unverified authentication, customer-scoped listing and creation, invalid/malformed input, cross-customer update denial, valid owned-draft update, non-draft rejection and malformed identifiers.
+- Improves `/account/shipments` with explicit latest-50 disclosure, per-draft update timestamps, origin/destination/description character counts, disabled editing controls during save, and stale-request/unmount protection.
+- Preserves draft-only truth. No new collection, field, endpoint, status, permission, confirmed-shipment, quote, payment or operational capability is introduced.
+
+**Verification status:** PR #102 has not yet been run locally. The new handler tests exercise the extracted request handlers with an in-memory persistence adapter; they are not Firestore Admin SDK integration tests, deployed HTTP-route tests, browser acceptance or production verification. User-run commands and results must be recorded after the branch is pulled:
+- `npx firebase-tools emulators:exec --only firestore "npm test"`
+- `npx tsc --noEmit`
+- `npm run lint`
+- `npm run build`
+
+**Evidence and scope boundary:** Existing Firestore Rules tests remain responsible for direct-client denial. The M1.3 workspace still supports draft preparation only; confirmed independent shipments, service discovery, quotation, booking confirmation, payment, intake, custody, routing, dispatch, delivery, collection, disputes, delegation and separate sender/receiver portals remain gated. Remaining M0 evidence and DEC-036 P0/Conditional P0 release requirements remain separate and open.

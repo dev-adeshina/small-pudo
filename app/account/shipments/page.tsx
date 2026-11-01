@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { type User } from "firebase/auth";
@@ -29,14 +29,33 @@ interface ShipmentDraft {
   updatedAt?: string | null;
 }
 
+const MAX_DRAFTS = 50;
+
 const emptyForm = {
   origin: "",
   destination: "",
   parcelDescription: "",
 };
 
+function formatDraftDate(value: string | null | undefined) {
+  if (!value) return "Updated date unavailable";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return "Updated date unavailable";
+
+  return `Updated ${new Intl.DateTimeFormat("en-NG", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date)}`;
+}
+
 export default function ShipmentDraftsPage() {
   const router = useRouter();
+  const requestId = useRef(0);
   const [user, setUser] = useState<User | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [drafts, setDrafts] = useState<ShipmentDraft[]>([]);
@@ -49,6 +68,7 @@ export default function ShipmentDraftsPage() {
   const [form, setForm] = useState(emptyForm);
 
   const loadDrafts = useCallback(async (currentUser: User) => {
+    const currentRequestId = ++requestId.current;
     setLoading(true);
     setLoadError("");
 
@@ -68,15 +88,21 @@ export default function ShipmentDraftsPage() {
         );
       }
 
-      setDrafts(data.drafts ?? []);
+      if (currentRequestId === requestId.current) {
+        setDrafts(Array.isArray(data.drafts) ? data.drafts : []);
+      }
     } catch (loadError) {
-      setLoadError(
-        loadError instanceof Error
-          ? loadError.message
-          : "Unable to load shipment drafts. Please try again."
-      );
+      if (currentRequestId === requestId.current) {
+        setLoadError(
+          loadError instanceof Error
+            ? loadError.message
+            : "Unable to load shipment drafts. Please try again."
+        );
+      }
     } finally {
-      setLoading(false);
+      if (currentRequestId === requestId.current) {
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -104,8 +130,15 @@ export default function ShipmentDraftsPage() {
     return () => unsubscribe();
   }, [loadDrafts, router]);
 
+  useEffect(() => {
+    return () => {
+      requestId.current += 1;
+    };
+  }, []);
 
   function startEditing(draft: ShipmentDraft) {
+    if (saving) return;
+
     setEditingId(draft.id);
     setForm({
       origin: draft.origin,
@@ -118,6 +151,8 @@ export default function ShipmentDraftsPage() {
   }
 
   function resetForm() {
+    if (saving) return;
+
     setEditingId(null);
     setForm(emptyForm);
     setError("");
@@ -128,7 +163,10 @@ export default function ShipmentDraftsPage() {
     event.preventDefault();
     if (!user || saving) return;
 
-    const wasEditing = editingId !== null;
+    const currentEditingId = editingId;
+    const wasEditing = currentEditingId !== null;
+    const submittedForm = { ...form };
+
     setSaving(true);
     setError("");
     setNotice("");
@@ -137,7 +175,7 @@ export default function ShipmentDraftsPage() {
       const idToken = await user.getIdToken();
       const response = await fetch(
         wasEditing
-          ? `/api/account/shipment-booking-drafts/${encodeURIComponent(editingId!)}`
+          ? `/api/account/shipment-booking-drafts/${encodeURIComponent(currentEditingId)}`
           : "/api/account/shipment-booking-drafts",
         {
           method: wasEditing ? "PATCH" : "POST",
@@ -145,7 +183,7 @@ export default function ShipmentDraftsPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${idToken}`,
           },
-          body: JSON.stringify(form),
+          body: JSON.stringify(submittedForm),
         }
       );
       const data = await response.json().catch(() => null);
@@ -158,7 +196,8 @@ export default function ShipmentDraftsPage() {
         );
       }
 
-      resetForm();
+      setEditingId(null);
+      setForm(emptyForm);
       setNotice(
         wasEditing
           ? "Your shipment draft has been updated."
@@ -234,11 +273,11 @@ export default function ShipmentDraftsPage() {
         {error && <p className="customer-error" role="alert">{error}</p>}
         {notice && <p className="shipment-success" role="status">{notice}</p>}
 
-        <section className="customer-panel shipment-form-panel">
+        <section className="customer-panel shipment-form-panel" aria-labelledby="shipment-form-heading">
           <div className="customer-panel-heading">
             <div>
               <span className="section-label">01 / SHIPMENT DETAILS</span>
-              <h2>{editingId ? "Update your draft" : "New shipment draft"}</h2>
+              <h2 id="shipment-form-heading">{editingId ? "Update your draft" : "New shipment draft"}</h2>
               <p className="customer-panel-description">
                 The signed-in customer is recorded as the booking party.
                 Other party roles are not assumed to be the same person.
@@ -247,7 +286,7 @@ export default function ShipmentDraftsPage() {
             <Package size={22} />
           </div>
 
-          <form className="shipment-form" onSubmit={handleSubmit}>
+          <form className="shipment-form" onSubmit={handleSubmit} aria-busy={saving}>
             <label>
               <span>Origin</span>
               <input
@@ -255,8 +294,10 @@ export default function ShipmentDraftsPage() {
                 onChange={(event) => setForm({ ...form, origin: event.target.value })}
                 maxLength={180}
                 required
+                disabled={saving}
                 placeholder="Enter the shipment origin"
               />
+              <small>{form.origin.length}/180 characters</small>
             </label>
 
             <label>
@@ -266,8 +307,10 @@ export default function ShipmentDraftsPage() {
                 onChange={(event) => setForm({ ...form, destination: event.target.value })}
                 maxLength={180}
                 required
+                disabled={saving}
                 placeholder="Enter the shipment destination"
               />
+              <small>{form.destination.length}/180 characters</small>
             </label>
 
             <label className="shipment-form-wide">
@@ -278,6 +321,7 @@ export default function ShipmentDraftsPage() {
                 maxLength={1000}
                 rows={4}
                 required
+                disabled={saving}
                 placeholder="Describe what you intend to send. Do not include payment details or sensitive identity documents."
               />
               <small>{form.parcelDescription.length}/1,000 characters</small>
@@ -290,7 +334,12 @@ export default function ShipmentDraftsPage() {
                 <ArrowUpRight size={16} />
               </button>
               {editingId && (
-                <button type="button" className="customer-secondary-action" onClick={resetForm}>
+                <button
+                  type="button"
+                  className="customer-secondary-action"
+                  onClick={resetForm}
+                  disabled={saving}
+                >
                   Cancel editing
                 </button>
               )}
@@ -298,20 +347,31 @@ export default function ShipmentDraftsPage() {
           </form>
         </section>
 
-        <section className="customer-panel shipment-drafts-panel">
+        <section
+          className="customer-panel shipment-drafts-panel"
+          aria-labelledby="shipment-drafts-heading"
+          aria-busy={loading}
+        >
           <div className="customer-panel-heading">
             <div>
               <span className="section-label">02 / SAVED PREPARATIONS</span>
-              <h2>Your shipment drafts</h2>
+              <h2 id="shipment-drafts-heading">Your shipment drafts</h2>
               <p className="customer-panel-description">
                 Only drafts belonging to your signed-in account are shown.
               </p>
+              {drafts.length === MAX_DRAFTS && !loading && !loadError && (
+                <p className="customer-panel-description">
+                  Showing the 50 most recently updated drafts.
+                </p>
+              )}
             </div>
             <MapPin size={22} />
           </div>
 
           {loading ? (
-            <div className="customer-state"><p>Loading your drafts...</p></div>
+            <div className="customer-state" aria-live="polite">
+              <p>Loading your drafts...</p>
+            </div>
           ) : loadError ? (
             <div className="customer-state" role="alert">
               <p>{loadError}</p>
@@ -337,11 +397,13 @@ export default function ShipmentDraftsPage() {
                     <span className="shipment-draft-status">DRAFT · NOT CONFIRMED</span>
                     <strong>{draft.origin} <ArrowRight size={14} /> {draft.destination}</strong>
                     <p>{draft.parcelDescription}</p>
+                    <small>{formatDraftDate(draft.updatedAt ?? draft.createdAt)}</small>
                   </div>
                   <button
                     type="button"
                     className="customer-secondary-action"
                     onClick={() => startEditing(draft)}
+                    disabled={saving}
                   >
                     Edit draft <ArrowUpRight size={15} />
                   </button>
