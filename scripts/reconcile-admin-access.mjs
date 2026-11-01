@@ -123,7 +123,8 @@ do {
     }
 
     if (hasAdminClaim) {
-      const { admin: _removed, ...remainingClaims } = currentClaims;
+      const remainingClaims = { ...currentClaims };
+      delete remainingClaims.admin;
       await auth.setCustomUserClaims(user.uid, remainingClaims);
       counts.claimsRemoved += 1;
     }
