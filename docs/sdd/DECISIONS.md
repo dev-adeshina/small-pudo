@@ -520,6 +520,20 @@ These decisions are accepted at the design level only. They do not mean the corr
 - **Lean launch scope:** Preserve DEC-025's lean location record and capability model. Automated operating-hours management, capacity calculations, availability scheduling, and elaborate location administration are not added to the initial scope by this decision.
 - **Cross-domain separation:** Location capability does not establish booking acceptance, payment settlement, custody, dispatch eligibility, or delivery. Existing DEC-038, DEC-040, DEC-041, and DEC-042 boundaries continue to apply.
 
+
+### Shipper-facing origin/destination and PUDO selection clarification — 1 November 2026
+
+The owner confirmed that Shippers should describe **where a parcel starts and where it must go**, rather than choose operational route types. For each endpoint independently, the booking experience should allow the Shipper to either enter a physical address or select an eligible registered PUDO centre. A PUDO-centre dropdown should help the Shipper find a nearby suitable centre; proximity discovery, location permission, geocoding, map presentation, and ranking mechanics remain technical/product details to specify and verify.
+
+- The Shipper does not select In-PUDO, Out-PUDO, or Trans-PUDO as a shipment service or route. These are operational location/capability classifications, not customer-facing route choices. “All” is an administrative/list filter, not a centre capability or Shipper selection.
+- A PUDO centre may support one or more relevant operational capabilities. A centre is eligible for a particular endpoint only when it is active and explicitly configured for the relevant service and requested action under DEC-043. A label or category alone is insufficient.
+- The system determines the operational route from the selected origin and destination, the approved service, eligible location capabilities, and approved routing rules. The route must reflect the actual journey and may include direct In-PUDO-to-In-PUDO movement without an Out-PUDO leg.
+- The system must not assume that every address requires the same pickup/delivery pattern or that every PUDO selection creates a particular route leg. Exact route construction, location/action mapping, service eligibility, and availability rules remain open.
+- Pricing follows the system-determined actual route through the shared, service-specific pricing authority; the Shipper does not choose a route category to influence price.
+
+**Boundary:** This is a Shipper-journey and product-policy clarification under DEC-043/DEC-038, not approval of service names, rates, formulas, location capability assignments, route algorithms, geolocation providers, data fields, collections, endpoints, status values, or application-code changes. Those details remain subject to the existing M2/M4/M5 gates and source/technical reconciliation.
+
+
 **Still unresolved:** Exact service-to-location/action matrix; capability catalogue and any future additions; which designated Admin users may configure each category; staff permission assignment and scope; partner/collection-centre operating arrangements; temporary closure/unavailability procedure beyond the accepted no-new-work guard; treatment of queued work not yet physically received; capability-change notification/review; detailed audit/evidence retention; technical representation, API/security contracts, correction authority, and executable acceptance tests.
 
 **Implementation boundary:** DEC-043 records high-level business policy only. It does not approve a schema, fields, collections, endpoints, status vocabulary, permission implementation, operating-hours/capacity system, or application-code change. Read-only source reconciliation and complete platform-wide SDD approval remain required before implementation.
