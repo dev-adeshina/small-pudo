@@ -278,3 +278,23 @@ The active source-inspection baseline remains unchanged. Do not upgrade any sour
 - **Evidence boundary:** PR #71 was documentation-only. Repository-history continuity and the earlier comparison from the source snapshot do not constitute fresh semantic source inspection, runtime/API/browser testing, production data inspection, deployed Firebase rules/configuration verification, provider-dashboard review or production readiness.
 - **New design crosswalk:** `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md` defines conceptual record responsibilities, party entitlement separation, unresolved cardinality questions DB-01–DB-12, consistency boundaries and existing source reuse constraints. These are technical design inputs, not approved persistence objects or implementation evidence.
 - **Interpretation:** Source observations in Sections 1–6 remain tied to the stated source-inspection baseline. Do not upgrade any source status based on documentation-only commits.
+
+
+## 10. Shipment-draft source correction and shipper-portal boundary — 1 November 2026
+
+The older source inventory and historical statements in this document must not be read as a current claim that no shipment-booking API exists. A later focused read-only review of current `main` inspected these paths:
+
+- `app/account/shipments/page.tsx` — customer draft list/create/edit interface.
+- `app/api/account/shipment-booking-drafts/route.ts` — verified-customer GET/POST routes.
+- `app/api/account/shipment-booking-drafts/[draftId]/route.ts` — customer-owned draft update route.
+- `lib/validations/shipment-booking-draft.ts` — draft input validation.
+- `app/account/page.tsx` — account navigation entry.
+- `firestore.rules` — direct client access to shipment drafts is denied; server routes use the Admin SDK.
+
+**Current bounded source finding:** an independent shipment-booking *draft-preparation* foundation exists. The routes derive ownership from the verified Firebase UID and store drafts under that customer's `users/{uid}/shipmentBookingDrafts` subcollection. Draft creation/editing does not itself create a confirmed booking, quote, payment obligation or custody event.
+
+**Known source-level follow-ups:** GET/POST share a local customer-authentication helper while PATCH duplicates token verification; PATCH checks draft status and updates in separate operations; draft UI failure handling and retry behaviour need focused review; dedicated draft API/UI automated tests were not found in the reviewed surface. These are M1.1 review targets, not permission to change business policy or add fields.
+
+**Portal boundary:** the reviewed draft surface is not a complete shipper portal. Approved service discovery, quotation and quote acceptance, confirmed independent booking, shipment payment, full shipment visibility and the complete party-specific amendment/collection/dispute journeys are not established by these draft routes.
+
+**Evidence limits:** This is a focused source review, not a full repository audit, test execution, browser/API runtime verification or production verification. The historical A-area/ADM-R mappings remain tied to their stated inspection commit unless separately refreshed. See `PLATFORM_SHIPPER_PORTAL_PRODUCT_SCOPE.md` for the target customer journey and staged dependencies.
