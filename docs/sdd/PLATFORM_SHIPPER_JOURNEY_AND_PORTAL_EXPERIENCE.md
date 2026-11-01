@@ -131,7 +131,7 @@ The authenticated dashboard retrieves drafts through the existing customer-owned
 
 The user reported local verification on 1 November 2026: 29/29 tests passed under the Firestore Emulator, `npx tsc --noEmit`, `npm run lint` and `npm run build` passed, and 34 static pages were generated. The test suite comprises 17 Firestore rules tests and 12 draft helper/validation/transaction-guard tests. Expected authorization-denial logs and a non-blocking Node module-type warning were observed. No HTTP route integration, browser acceptance, deployed API or production verification is claimed by these checks.
 
-**M1.3 remains in progress.** The next activity is a read-only review of the existing shipment workspace and draft APIs against SHP-01–SHP-20 and accepted party/permission boundaries. The review should identify the smallest source-backed usability or test-coverage gap, if any, and return a proposal for approval before further application changes. No quote, booking, payment, intake, custody, route, delivery, collection, dispute or separate sender/receiver capability is authorized by this checkpoint.
+**M1.3 remained in progress at this checkpoint.** The read-only review identified the bounded workspace/API hardening work recorded in Section 12 and PR #102. No quote, booking, payment, intake, custody, route, delivery, collection, dispute or separate sender/receiver capability is authorized by this checkpoint.
 
 ## 12. M1.3 shipment workspace and draft API handler hardening — PR #102
 
