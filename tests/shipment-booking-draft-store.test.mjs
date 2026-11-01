@@ -26,7 +26,7 @@ describe(
 
     before(() => {
       app = initializeApp(
-        { projectId: "demo-verilyft-shipment-draft-store" },
+        { projectId: process.env.GCLOUD_PROJECT || "demo-verilyft-shipment-draft-store" },
         `shipment-draft-store-tests-${randomUUID()}`
       );
       db = getFirestore(app);
