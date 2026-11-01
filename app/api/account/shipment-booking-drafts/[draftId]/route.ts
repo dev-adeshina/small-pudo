@@ -2,6 +2,8 @@ import { FieldValue } from "firebase-admin/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
 import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { authenticateVerifiedCustomer } from "@/lib/server/customer-auth";
+import { updateDraftOnlyWhileEditable } from "@/lib/server/shipment-booking-drafts";
 import { validateShipmentBookingDraft } from "@/lib/validations/shipment-booking-draft";
 
 export const runtime = "nodejs";
@@ -11,32 +13,15 @@ type RouteContext = {
 };
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
-  const authorization = request.headers.get("authorization");
+  const customer = await authenticateVerifiedCustomer(
+    request.headers.get("authorization"),
+    (token) => adminAuth.verifyIdToken(token)
+  );
 
-  if (!authorization?.startsWith("Bearer ")) {
+  if (!customer.success) {
     return NextResponse.json(
-      { error: "Authentication is required." },
-      { status: 401 }
-    );
-  }
-
-  let decodedToken;
-
-  try {
-    decodedToken = await adminAuth.verifyIdToken(
-      authorization.slice("Bearer ".length).trim()
-    );
-  } catch {
-    return NextResponse.json(
-      { error: "Your session is invalid or expired. Please sign in again." },
-      { status: 401 }
-    );
-  }
-
-  if (decodedToken.email_verified !== true) {
-    return NextResponse.json(
-      { error: "Please verify your email address first." },
-      { status: 403 }
+      { error: customer.error },
+      { status: customer.status }
     );
   }
 
@@ -72,25 +57,30 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
     const draftRef = adminDb
       .collection("users")
-      .doc(decodedToken.uid)
+      .doc(customer.uid)
       .collection("shipmentBookingDrafts")
       .doc(draftId);
 
-    const snapshot = await draftRef.get();
+    const updated = await adminDb.runTransaction(async (transaction) =>
+      updateDraftOnlyWhileEditable(
+        () => transaction.get(draftRef),
+        () => {
+          transaction.update(draftRef, {
+            origin: validated.data.origin,
+            destination: validated.data.destination,
+            parcelDescription: validated.data.parcelDescription,
+            updatedAt: FieldValue.serverTimestamp(),
+          });
+        }
+      )
+    );
 
-    if (!snapshot.exists || snapshot.data()?.status !== "draft") {
+    if (!updated) {
       return NextResponse.json(
         { error: "The requested shipment draft was not found." },
         { status: 404 }
       );
     }
-
-    await draftRef.update({
-      origin: validated.data.origin,
-      destination: validated.data.destination,
-      parcelDescription: validated.data.parcelDescription,
-      updatedAt: FieldValue.serverTimestamp(),
-    });
 
     return NextResponse.json({
       success: true,
