@@ -1359,7 +1359,7 @@ Expected `PERMISSION_DENIED` messages were emitted by negative authorization tes
 
 **Repository baseline:** `main` at PR #101 merge commit `90d3708a9455b2715acae368bc2b6f30683a7515`.
 **Implementation branch:** `feat/m1-3-shipment-workspace-hardening`.
-**PR:** #102 — open; not merged.
+**PR:** #102 — subsequently merged; PR #103 supplied the Node test-runner compatibility correction.
 **Requirement alignment:** M1.3; SHP-01–SHP-06 and SHP-18; DEC-037, DEC-038 and DEC-043; BP-01–BP-22; PM-01–PM-12.
 
 **Implementation in PR #102:**
