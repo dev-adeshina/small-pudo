@@ -1,15 +1,15 @@
 # VeriLyft DB-01–DB-12 Technical Contracts and Acceptance Specifications
 
-**Status:** Consolidated technical-contract proposal and case-level acceptance specification for owner review; no physical schema, API routes, status enums, permission catalogue, provider activation, or application implementation is approved by this document.  
+**Status:** Owner-reviewed logical technical-contract and case-level acceptance baseline, reconciled with DEC-049; no physical schema, API routes, status enums, permission catalogue, provider activation, or application implementation is approved by this document.  
 **Prepared:** 2 November 2026  
 **Repository/source baseline:** `main` at `730581ba6b4a6f5ea25718d8d11face40aaed0dd` (PR #111 merge; confirmed identical to the user's synchronized baseline).  
 **Fresh source-review scope:** Current M1.3 shipment-draft UI, API, authentication, Firestore store and tests; existing storefront order/payment paths; current Firestore rules and Firebase Admin boundary. This is a bounded read-only review, not a full repository semantic audit, runtime verification, deployed-configuration review, or production inspection.  
-**Authority:** DEC-018, DEC-019, DEC-023–DEC-048 as applicable, PM-01–PM-12, BP-01–BP-22, and the existing approved workflow/lifecycle/authorization/evidence documents.  
+**Authority:** DEC-018, DEC-019, DEC-023–DEC-049 as applicable, PM-01–PM-12, BP-01–BP-22, and the existing approved workflow/lifecycle/authorization/evidence documents.  
 **Related:** `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`, `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md`, `PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md`, `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md`, `PLATFORM_TECHNICAL_CONTRACT_RECONCILIATION.md`, `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`, `PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md`, `PLATFORM_LIFECYCLE_EVENT_AND_STATE_CONTRACT_MATRIX.md`, `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md`.
 
 ## 1. Purpose and decision boundary
 
-This document consolidates the remaining DB-01–DB-12 relationship, ownership, cardinality, API, persistence, authorization, transaction, replay, recovery and acceptance requirements after DEC-048.
+This document consolidates DB-01–DB-12 relationship, ownership, cardinality, API, persistence, authorization, transaction, replay, recovery and acceptance requirements. DEC-049 subsequently resolves the logical DB-01/DB-02/DB-05 booking, parcel and quote relationships; their physical representation remains open.
 
 It has four jobs:
 
@@ -187,8 +187,8 @@ Logical separation does not require a separate Firestore collection or service f
 |---|---|---|---|
 | Storefront order + stock reservation | Preserve the existing transaction that validates current product/stock and creates the order/reservation together. | Payment provider initialization happens outside the transaction. | Regression-test concurrent stock, duplicate submission, transaction failure and cancellation/payment races. |
 | Draft update | Preserve owner scoping and transactional status check before updating an editable draft. | No external side effect is present in the current draft update. | Test owner isolation, non-draft update denial, missing record and concurrent state change. |
-| Quote acceptance + booking confirmation | Accepted quote version and booking confirmation must not diverge. | Concurrent expiry/revision or duplicate acceptance. | Select local consistency mechanism only after DB-01/DB-05 representation and quote-version semantics are approved. |
-| Booking + parcel relationship | Preserve the approved one-parcel commercial limit and explicit creation timing. | Physical parcel may be presented later or intake may be refused. | Do not create physical receipt/custody at booking acceptance; define whether/when a parcel identity is created separately. |
+| Quote acceptance + booking confirmation | Accepted quote version and booking confirmation must not diverge. | Concurrent expiry/revision or duplicate acceptance. | Implement the approved logical consistency objective (DEC-049) only after a separate physical design selects a local consistency mechanism and executable acceptance fixtures. |
+| Booking + parcel relationship | Preserve the approved one-parcel commercial limit and explicit creation timing. | Physical parcel may be presented later or intake may be refused. | Do not create a parcel or physical receipt/custody at booking acceptance; create the parcel identity only when authorized intake accepts actual possession, with refusal-before-possession and receipt-under-hold distinguished. |
 | Payment provider + local financial state | Bind provider request/result to a defined obligation and verified amount/currency/purpose. | Provider can succeed while local persistence/callback fails; event may be delayed/replayed. | Provider-specific unknown-outcome and reconciliation; no blind repeat of a potentially successful external side effect. |
 | Intake/custody event | Persist an accepted physical fact and its required evidence consistently. | Evidence upload/capture may fail or be delayed; physical event may already have occurred. | Define controlled incomplete-evidence investigation and preserve last confirmed custody. |
 | Route assignment + movement | Assignment decision and observed movement remain distinct. | Capacity or assignment may change after proposal; movement event may arrive late. | Detect stale assignments; preserve history; do not infer departure, arrival or transfer. |
@@ -283,7 +283,7 @@ The next implementation step must not start with quote calculation or confirmed 
 - DEC-047 actual eligibility outcomes and Operations evidence for the twelve service/endpoint combinations;
 - per-service pricing model, approved input/source/unit/conversion mapping, rates/formulas, currency/arithmetic and explicit fee/tax treatment;
 - quote validity and separate physical handover deadlines, including triggers and missed-deadline outcomes;
-- DB-01 shipment/parcel creation timing and DB-02/DB-05 technical relationship/snapshot representation;
+- Physical representation, transaction mechanism and API/security enforcement of the accepted DEC-049 DB-01/DB-02/DB-05 logical rules;
 - DB-03 parcel-to-route-leg relationship and capacity/movement evidence rules;
 - DB-06 payment allocation and DB-11 financial-event linkage/reconciliation rules;
 - DB-07/DB-08 relationship verification, delegation and business authority evidence;
@@ -292,16 +292,16 @@ The next implementation step must not start with quote calculation or confirmed 
 - DB-12 recipient/field/channel/consent/retry/failure ownership;
 - exact API/security/concurrency/replay/recovery contracts and the case-level acceptance fixtures for the capability being enabled.
 
-After this document is reviewed and merged, proceed with the smallest source-aligned implementation slice whose policy, relationship, security, acceptance cases and evidence are Ready. Keep every blocked capability unavailable. If no safe confirmed-booking slice is yet Ready, continue with technical verification or an independently approved foundation rather than creating a placeholder booking/quote schema.
+Following the owner review/merge of this technical-contract baseline and the DEC-049 relationship reconciliation, proceed with a separate source-aligned physical persistence/API/security design review. Only after that design and the relevant commercial/operational prerequisites are approved may an implementation slice be selected. Keep every blocked capability unavailable; do not create a placeholder booking/quote schema.
 
 ### 9.1 Recommended execution order
 
-1. Close the technical relationship and source contracts for DB-01–DB-12 without approving physical schema prematurely.
-2. Resolve only owner/operational inputs that block the next intended capability; preserve deferred capabilities under DEC-045/DEC-047.
-3. Finalize executable acceptance cases and synthetic fixtures for the exact implementation slice.
-4. Obtain owner review/merge of this technical-contract and acceptance package.
-5. Begin implementation only for the approved Ready slice, preserving the existing application architecture.
-6. Add automated tests and non-production verification alongside each implementation PR. Do not claim launch readiness until DEC-036 P0/Conditional P0 evidence and operational release requirements are satisfied.
+1. Treat DEC-049 as the accepted logical authority for DB-01/DB-02/DB-05; keep DB-03, DB-04, DB-06–DB-12 open where marked.
+2. Conduct a separate read-only source-aligned physical persistence/API/security design review for the accepted booking/parcel/quote rules, including local consistency, access enforcement, indexes, migration/recovery and source reuse.
+3. Resolve only owner/operational inputs that block the next intended capability; preserve deferred capabilities under DEC-045/DEC-047.
+4. Finalize executable acceptance cases and synthetic fixtures for the exact implementation slice.
+5. Obtain owner review/merge of the physical design before any physical schema/API implementation.
+6. Begin implementation only for the approved Ready slice, preserving the existing application architecture; add automated tests and non-production verification alongside each implementation PR. Do not claim launch readiness until DEC-036 P0/Conditional P0 evidence and operational release requirements are satisfied.
 
 ## 10. Explicit non-approvals
 
@@ -317,7 +317,7 @@ This document does not approve:
 - physical proof methods, evidence retention periods, legal-hold authority, disclosure recipients or notification retry counts/timeouts;
 - production deployment, provider activation, runtime behaviour, launch readiness or release sign-off.
 
-**Approval boundary:** Review and merge of this document accepts only the explicitly stated technical invariants and case-level acceptance direction. Any physical schema, endpoint, permission implementation, provider configuration, operational numeric value or capability activation still requires its own approved specification and evidence.
+**Approval boundary:** The owner-reviewed technical baseline and DEC-049 accept only the explicitly stated logical invariants and case-level acceptance direction. Any physical schema, endpoint, permission implementation, provider configuration, operational numeric value or capability activation still requires its own approved specification and evidence.
 
 
 ## 17. DEC-049 relationship decision reconciliation — 2 November 2026
