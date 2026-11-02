@@ -250,3 +250,16 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - **Still open:** Actual eligible/conditional/not-eligible outcomes and conditions for all twelve combinations; concrete service/location/action coverage; proximity discovery/privacy; operational coverage/capacity sources; estimate methodology and numerical timeframes; guarantee policy; Scheduled windows/cutoffs/reservation/expiry/change rules; pricing specifications; quote validity and separate handover deadlines; technical/evidence contracts and executable tests.
 - **Evidence boundary:** Documentation-only. No application source, schema, API, permissions, provider, route/scheduling algorithm, runtime behaviour, production capability or tests were changed or verified. Do not treat any of the twelve combinations as operationally eligible. M0 and DEC-036 P0/Conditional P0 release evidence remain independent.
 - **Next action:** Review the single consolidated documentation PR. After merge, continue M2 by resolving actual service-specific pricing/quotation inputs and remaining operational dependencies without inventing rates, formulas, units, timeframes or technical contracts.
+
+
+## Latest M2 pricing and quotation readiness work — PR preparation — 2 November 2026
+
+- **Baseline:** PR #108 merge commit `047a234cc641493d8a44a88e41ab722e6818ab5c`.
+- **New specification:** `PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md` consolidates service-specific pricing inputs, calculation authority, charge transparency, rate governance, quote preservation/acceptance, expiry/handover, shared storefront pricing and technical blockers.
+- **Accepted policy preserved:** DEC-019, DEC-026, DEC-038–DEC-041 and DEC-046–DEC-047. No new DEC or business-policy default is introduced.
+- **Service model status:** Standard, Express and Scheduled have no selected fixed/calculated/hybrid model yet. Rates/formulas, input mappings/sources, units/conversions, currency/rounding, fees/taxes, quote validity and handover deadlines remain pending.
+- **Eligibility status:** All twelve DEC-047 service/endpoint combinations remain pending verification and unavailable by default. No service is quote-ready.
+- **Source findings:** Current storefront order API recalculates product prices server-side but hard-codes delivery fee zero and NGN. Product catalogue price is distinct from delivery pricing. Paystack initialization/verification is storefront-order scoped. Shipment drafts remain draft-only. No shared shipment quote/rate service was identified in the bounded review.
+- **Technical blockers:** DB-01–DB-03 and DB-05 block final booking/shipment/parcel/route and quote-scope design; DB-04, DB-06 and DB-11 require cross-domain reconciliation. The existing one-quote-per-booking recommendation is pending, not accepted.
+- **Evidence boundary:** Documentation-only; no application source, schema, API, rules, permissions, provider, runtime or production behaviour changed. No tests/build/lint were run.
+- **Next:** Review the single consolidated M2 pricing/quotation documentation PR. Do not begin quote-engine implementation until service-specific configurations, DB-05 quote scope, DEC-047 operational evidence, service commitments, technical relationships and executable acceptance specifications are approved. M0 and DEC-036 release evidence remain independent.
