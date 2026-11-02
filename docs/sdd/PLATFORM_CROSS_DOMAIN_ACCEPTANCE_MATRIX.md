@@ -416,3 +416,28 @@ These are policy-derived acceptance requirements for later executable test desig
 | No substitution | If no approved and currently available service exists, explain that the journey cannot be booked; do not silently substitute a service, endpoint or route. |
 
 **Still required before executable tests:** Actual eligible/conditional/not-eligible outcomes and conditions for all twelve combinations; operational coverage/capacity sources and evidence procedures; proximity discovery/privacy; estimate methodology and numerical durations; guarantee policy; Scheduled windows/cutoffs/reservation/expiry/change rules; pricing and quote/handover terms; technical/source/security contracts; and approved test data. DEC-047 does not approve schemas, APIs, status values, providers, algorithms or application implementation.
+
+
+## M2 pricing and quotation acceptance refinement — DEC-019 / DEC-039 / DEC-046 / DEC-047 — 2 November 2026
+
+These are required future acceptance outcomes, not evidence of implementation or test execution. Detailed readiness requirements are in `PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md`.
+
+| Acceptance family | Required observable outcome |
+|---|---|
+| Service-specific model | Standard, Express and Scheduled each use only their individually approved fixed/calculated/hybrid model; no model or input set is inherited by assumption. |
+| Eligibility before quote | Pending, unavailable, stale or revoked DEC-047 evidence prevents quote issuance; conditional eligibility is accepted only when every condition is satisfied and revalidated server-side. |
+| Trusted input validation | The server validates every configured input against its approved source, unit and explicit conversion; browser-supplied totals are ignored. |
+| Actual journey | Pricing consumes the approved system-determined route; direct In-PUDO-to-In-PUDO remains valid and no Out-PUDO leg is presumed. |
+| Shared rule authority | Storefront delivery and independent shipment pricing use one approved rule authority where inputs overlap; product catalogue price remains distinct from delivery pricing. |
+| Charge transparency | The quote itemizes applicable approved components and total; tax, surcharge, discount and other fee treatment matches explicit configuration and is never silently assumed. |
+| Arithmetic | Currency, precision and rounding match the approved service configuration; invalid or unrepresentable totals fail closed. |
+| Version/effective context | Quote records the exact approved rule/rate version and effective context used; later changes do not rewrite issued or accepted history. |
+| Exact acceptance | Only the authenticated booking party can accept the exact valid issued quote version; stale, expired or superseded versions are rejected. |
+| Expiry and handover | Unaccepted expired quote requires a fresh quote; quote validity and handover deadline are distinct; accepted booking is not silently cancelled or repriced by quote expiry. |
+| Repricing | Recalculation creates a new revision and preserves prior quote history; concurrent revision/acceptance cannot bind the booking to a different version. |
+| Measurement adjustment | Declared and actual measurements remain distinct; proposed price adjustment follows DEC-040 review and explicit customer consent; acceptance does not mark payment settled. |
+| Payment and custody separation | Quote acceptance does not mark payment successful, parcel received, custody transferred or dispatch authorized. |
+| Scheduled commitment | Available date/time is revalidated before confirmation and the confirmed commitment is preserved; quote validity and handover deadline remain separate. |
+| Failure/replay | Duplicate submissions, concurrent quote revisions, stale eligibility evidence, failed writes and unknown outcomes cannot create duplicate or mismatched commercial agreements. |
+
+**Coverage note:** The twelve DEC-047 service/endpoint combinations remain pending verification and unavailable by default. No test may treat a combination as eligible without attributable service/location/action, coverage, route, capacity and Operations evidence. DB-01–DB-03 and DB-05 block final persistence/cardinality acceptance.
