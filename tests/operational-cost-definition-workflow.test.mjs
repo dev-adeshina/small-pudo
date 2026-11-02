@@ -72,6 +72,29 @@ describe("operational cost approval workflow", { skip: !enabled }, () => {
     assert.equal(events.size, 4);
     await assert.rejects(workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: approver, action: "approve" }), /pending independent approval state/);
   });
+  it("allows an unsubmitted draft to be superseded and the new version submitted", async () => {
+    const d = await draft();
+    const revised = await definitions.reviseDefinition({ definitionId: d.definitionId, expectedCurrentVersionNumber: 1, actorUid: d.proposer, definition: { ...definition, activityName: "Revised unsubmitted draft" } });
+    assert.equal(revised.outcome, "updated");
+    await workflow.transition({ definitionId: d.definitionId, versionId: revised.versionId, actorUid: d.proposer, action: "submit" });
+    const previousWorkflow = await db.collection("operationalCostDefinitions").doc(d.definitionId).collection("versions").doc(d.versionId).collection("approval").doc("workflow").get();
+    assert.equal(previousWorkflow.exists, false);
+  });
+
+  it("prevents superseding a version while review is active or after rejection", async () => {
+    const d = await draft(), ops = `ops-${randomUUID()}`, finance = `finance-${randomUUID()}`, approver = `approver-${randomUUID()}`;
+    await grant(ops, permissions[1]); await grant(finance, permissions[2]); await grant(approver, permissions[3]);
+    const revise = () => definitions.reviseDefinition({ definitionId: d.definitionId, expectedCurrentVersionNumber: 1, actorUid: d.proposer, definition });
+    await workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: d.proposer, action: "submit" });
+    await assert.rejects(revise(), /cannot be revised while review is in progress/);
+    await workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: ops, action: "validate" });
+    await assert.rejects(revise(), /cannot be revised while review is in progress/);
+    await workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: finance, action: "finance_review" });
+    await assert.rejects(revise(), /cannot be revised while review is in progress/);
+    await workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: approver, action: "reject", reason: "Not approved" });
+    await assert.rejects(revise(), /cannot be revised while review is in progress/);
+  });
+
   it("requires a revised version after a changes-requested decision", async () => {
     const d = await draft(), ops = `ops-${randomUUID()}`;
     await grant(ops, permissions[1]);
