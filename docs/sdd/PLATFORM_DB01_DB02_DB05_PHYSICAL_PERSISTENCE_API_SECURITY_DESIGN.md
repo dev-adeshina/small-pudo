@@ -1,9 +1,9 @@
 # DB-01 / DB-02 / DB-05 — Physical Persistence, API and Security Design
 
-**Status:** Source-aligned technical proposal for owner review. No physical schema, API route, permission identifier, provider, or application implementation is approved until this contract is reviewed and merged.  
+**Status:** Owner-approved physical persistence/API/security contract for the bounded quote-lineage and immutable-version foundation. Approved by PR #117. This approval does not enable quote issuance, quote acceptance, booking creation, parcel intake, or any other gated capability.  
 **Prepared:** 2 November 2026.  
-**Repository baseline:** `main` at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90` (PR #116 merge).  
-**Source inspection baseline:** The same commit, with the bounded source paths listed in Section 2 re-fetched read-only. This is not a full-repository semantic audit, runtime verification, deployed-rules review or production inspection.  
+**Approval baseline:** PR #117 merged; the user's synchronized local `main` reports `feb8019`.  
+**Source inspection baseline:** the original bounded physical-design source review used `0ca77ea2cff30d38ea10e279810f4e0cae65cd90`; relevant Firebase Admin, draft-store, Rules/configuration, package and test paths were re-fetched read-only from current `main` after PR #117 (`feb8019`). PR #117 changed SDD documentation only. This is not a full-repository semantic audit, runtime verification, deployed-rules review or production inspection.  
 **Policy authority:** DEC-038, DEC-043, DEC-044, DEC-045, DEC-047, DEC-048, DEC-049; BP-01–BP-22; PM-01–PM-12; the lifecycle, authorization and acceptance contracts.  
 **Logical contract:** `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`.  
 **Execution pointer:** `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md`.
@@ -80,7 +80,7 @@ Use three separate top-level record families:
 | Confirmed booking | `shipmentBookings/{bookingId}` | One confirmed commercial booking created only by acceptance of the exact current valid quote version by its authorized booking party. |
 | Parcel | `shipmentParcels/{parcelId}` | One physical parcel created only after authorized staff accept actual physical possession. |
 
-These are proposed names and paths, not approved schema.
+These root collection names and paths are approved for the physical foundation. Their approval does not authorize implementation of the separately gated booking, parcel, intake or custody capabilities.
 
 **Why root-level quote, booking and parcel records:** staff and operational services will need to locate records across customers. Root-level records avoid making staff operations depend on enumerating user subcollections or using a collection-group query over customer-owned paths. Customer ownership remains an explicit server-checked property of each customer-owned quote and booking. Root-level placement does not grant client access.
 
@@ -270,17 +270,17 @@ The following are required future tests. They are specifications, not a claim th
 
 | Slice | Readiness | Required action |
 |---|---|---|
-| Quote lineage and immutable-version persistence foundation | **Conditionally ready after this contract is approved.** | Implement only the repository/types/validation/transaction primitives and Emulator tests needed to create and revise synthetic lineage/version records. No customer route, UI, pricing calculation, issued quote or acceptance command. |
+| Quote lineage and immutable-version persistence foundation | **Approved for the bounded foundation by PR #117.** | Implement only the repository/types/validation/transaction primitives and Emulator tests needed to create and revise synthetic lineage/version records. No customer route, UI, pricing calculation, issued quote or acceptance command. |
 | Quote issuance | **Blocked.** | Requires approved pricing configuration, authoritative inputs, quote validity, DEC-047 eligibility and executable operational evidence. |
 | Quote acceptance and booking creation | **Blocked.** | Requires all quote prerequisites plus explicit customer revocation policy, booking-party authorization, API contract and executable acceptance evidence. |
 | Parcel/intake and initial custody | **Blocked.** | Requires staff authentication/action permissions, location/service/action capability, physical-possession proof, DB-10 evidence, correction/investigation and recovery authority. |
 | Staff queues, customer history indexes, routing and reporting | **Not specified here.** | Define exact query and entitlement contracts before adding indexes or projections. |
 
-**Recommended next implementation PR after approval:** a focused technical foundation that adds the quote-lineage/version persistence core and synthetic Emulator tests, plus the direct-client Firestore Rules denial tests. It must not add public routes or expose the records to customers. The existing draft workspace, storefront and Paystack paths must remain unchanged.
+**Approved implementation direction:** PR #117 authorizes a focused technical foundation that adds the quote-lineage/version persistence core and synthetic Emulator tests, plus direct-client Firestore Rules denial tests. It must not add public routes or expose the records to customers. The existing draft workspace, storefront and Paystack paths must remain unchanged.
 
 ## 10. Open decisions that remain explicit
 
-1. Owner approval of the proposed root collection paths, candidate fields and immutable-version representation.
+1. **Resolved by PR #117:** owner approval of the root collection paths, candidate fields and immutable-version representation for the bounded persistence foundation.
 2. Exact quote snapshot structure, pricing input/value provenance, service terms, validity and handover deadline representation.
 3. Customer token-revocation check for consequential mutation.
 4. Stable operation identity for quote creation/revision and exact booking acceptance replay.
@@ -293,14 +293,14 @@ The following are required future tests. They are specifications, not a claim th
 
 A missing or stale prerequisite keeps the affected capability unavailable. No recommendation in this document should be interpreted as acceptance of a business-policy value or operational authority.
 
-## 11. Approval requested
+## 11. Approval record
 
-Please review the physical representation and its boundaries, especially:
+The owner reviewed and merged PR #117 on 2 November 2026. That merge approves the physical representation and its stated boundaries for the specified technical foundation:
 
 - root-level quote, booking and parcel records, with immutable quote versions nested under the quote lineage;
-- the one-time quote-to-booking and booking-to-parcel links enforced through Firestore transactions;
+- the one-time quote-to-booking and booking-to-parcel links to be enforced through their separately gated transactions;
 - the immutable quote-version document as the canonical accepted snapshot;
 - server-only access, default-deny Firestore Rules and no speculative indexes;
 - the narrow first implementation slice: persistence foundation and synthetic tests only, with no quote issuance, booking acceptance endpoint or parcel/intake capability.
 
-Approval of this document would authorize the specified technical foundation only. It would not approve any of the blocked capabilities listed above.
+This approval does not approve the unresolved commercial, authorization, evidence, operational or release gates listed above.
