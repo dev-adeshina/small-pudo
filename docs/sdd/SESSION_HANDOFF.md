@@ -263,3 +263,15 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - **Technical blockers:** DB-01–DB-03 and DB-05 block final booking/shipment/parcel/route and quote-scope design; DB-04, DB-06 and DB-11 require cross-domain reconciliation. The existing one-quote-per-booking recommendation is pending, not accepted.
 - **Evidence boundary:** Documentation-only; no application source, schema, API, rules, permissions, provider, runtime or production behaviour changed. No tests/build/lint were run.
 - **Next:** Review the single consolidated M2 pricing/quotation documentation PR. Do not begin quote-engine implementation until service-specific configurations, DB-05 quote scope, DEC-047 operational evidence, service commitments, technical relationships and executable acceptance specifications are approved. M0 and DEC-036 release evidence remain independent.
+
+
+## Latest M2 commercial pricing owner decision package — 2 November 2026
+
+- **Baseline:** PR #109 merge commit `dcaeb9e82b027e6bb98fc2e665bf10f22eb3e38d`.
+- **New owner package:** `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md` groups seven decisions: commercial unit (DB-01/02/05), per-service model-selection method, input/source/unit matrix, rates/formulas and monetary treatment, quote validity/handover deadline, pricing governance and DEC-019 shared authority.
+- **Recommended minimum launch:** one parcel and one itemized quote per independent booking, subject to explicit owner acceptance and technical reconciliation. Multi-parcel/cross-obligation complexity is deferred.
+- **Pricing model status:** no model is selected for Standard, Express or Scheduled. Recommend evidence-first selection based on each service's cost and operational facts.
+- **Commercial values:** actual rates/formulas, units/conversions, currency, rounding, taxes/fees and numerical quote/handover durations remain unprovided and unapproved.
+- **Accepted policy preserved:** DEC-019, DEC-026, DEC-038–DEC-041 and DEC-046–DEC-047. DEC-047's twelve service/endpoint combinations remain pending verification and unavailable by default.
+- **Status:** recommendations only; no new DEC or owner approval inferred. No application code, schema, API, permission, provider, runtime or production change. No application tests/build/lint run.
+- **Next:** request one consolidated owner response. After response, reconcile accepted decisions into authoritative SDD, then complete technical ownership/cardinality/source/API/security and executable acceptance contracts before pricing/quote implementation. M0 and DEC-036 release requirements remain independent.
