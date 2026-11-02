@@ -1,6 +1,6 @@
 Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`.
 
-## Current owner direction — 31 October 2026
+## Current owner direction — 31 October 2026 (continuity; current task pointer at end of file)
 
 - DEC-045 records the owner's explicit instruction to stop extending the planning cycle and begin implementation using accepted policy. The previous blanket freeze pending Reviews 3–5 is superseded for starting bounded implementation work.
 - Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. Start with M0 baseline/regression safety, then M1 independent shipment booking preparation.
@@ -52,7 +52,7 @@ Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed t
 4. Complete workflow, actor/permission, lifecycle, data/API/security, integration, and exception contracts.
 5. Turn approved requirements into detailed, executable acceptance-test specifications and evidence requirements. The existing P0 readiness assessment/catalogue is a navigation/design baseline, not approval to execute tests. The current 80-case catalogue carries DEC-037–DEC-044 references merged in PR #58; no P0/Conditional P0 test is approved for execution.
 6. Assess production readiness: environment/configuration, security, deployment, monitoring, backup/restore, incident response, rollback, recovery, and release evidence.
-7. Present the complete reconciled SDD for explicit owner approval before any application-code changes.
+7. For each capability, obtain owner review/merge of the relevant policy, technical contract and acceptance specification before its code change. DEC-045 permits bounded implementation under accepted policy; complete SDD and DEC-036 evidence remain release gates.
 
 ## Important unresolved boundaries
 
