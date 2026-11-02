@@ -3,8 +3,8 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 ## Current owner direction — 31 October 2026 (continuity; current task pointer at end of file)
 
 - DEC-045 records the owner's explicit instruction to stop extending the planning cycle and begin implementation using accepted policy. The previous blanket freeze pending Reviews 3–5 is superseded for starting bounded implementation work.
-- Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. M0 baseline/regression verification remains active; M1.3 draft-workspace foundation is implemented. The current next booking-related gate is the DB-01–DB-12 technical-contract and acceptance proposal referenced in the active work pointer at the end of this file.
-- Do not treat DB-01–DB-12 recommendations as approved policy. Unresolved values and authorities are capability gates; keep affected functionality disabled or excluded rather than inventing defaults.
+- Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. M0 baseline/regression verification remains active; M1.3 draft-workspace foundation is implemented. DEC-049 accepts the DB-01/DB-02/DB-05 logical booking, parcel and quote relationships; the next booking-related activity is a separate source-aligned physical persistence/API/security design review.
+- Do not infer Firestore layout, fields, indexes, APIs, enums or permissions from DEC-049. Quote issuance/acceptance and parcel/intake remain disabled until their independent commercial, DEC-047, location/action and evidence prerequisites are approved.
 - DEC-018/DEC-036 launch scope, P0 acceptance evidence and production release requirements remain in force. Implementation start is not launch approval.
 - Preserve the existing Next.js App Router, TypeScript, Firebase/Firestore/Auth/Admin, Paystack and Cloudinary architecture. Inspect current source before modifying it; the historical source-inspection baseline is not runtime proof.
 
@@ -298,17 +298,31 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - **Source review:** Current-main re-fetch of the M1.3 draft UI/API/authentication/validation/Firestore store/tests and existing storefront order/Paystack/Firestore rules. M1.3 remains draft-only; do not reinterpret its persistence as a confirmed booking or parcel model.
 - **Next:** Review/merge the consolidated technical-contract and acceptance package. Then proceed with the smallest Ready implementation slice under DEC-045; do not wait for every future capability, but keep all blocked services/endpoint combinations and quote issuance disabled.
 - **Accepted commercial boundary:** DEC-048: one parcel and one itemized quote per independent booking for minimum launch; multi-parcel/cross-obligation allocation deferred; service model/rates/arithmetic/fees remain deferred.
-- **Still open:** DB-01 shipment creation timing; DB-02/DB-05 physical representation; DB-03 parcel-to-route-leg relationship; DB-06 payment allocation; DB-11 financial-event linkage; DEC-047 operational evidence; service-specific pricing/quote/handover values; business representation verification; evidence/reviewer/retention; notification matrix; and executable fixtures for blocked cases.
+- **Accepted by DEC-049:** DB-01 booking-confirmation/parcel-creation timing; DB-02 one-booking/one-parcel logical cardinality and actual-possession trigger; DB-05 one quote lineage with immutable versions and exact-version acceptance. Their physical representation/API/security design remains open.
+- **Still open:** DB-03 parcel-to-route-leg relationship; DB-04 storefront delivery association; DB-06 payment allocation; DB-07/08 party/business verification; DB-09 location/action capability; DB-10 evidence/reviewer/retention; DB-11 financial-event linkage; DB-12 notification matrix; DEC-047 operational evidence; service-specific pricing/quote/handover values; and executable fixtures for blocked cases.
 - **No code has been changed in this proposal.** No tests/build/lint were run for this documentation PR. Preserve existing untracked local files and the user's normal review → merge → local pull workflow.
 
 
-## Latest work pointer — DB-01/DB-02/DB-05 relationship decision package — 2 November 2026
+## Latest relationship decision — DEC-049 accepted — 2 November 2026
 
-- PR branch: `docs/db01-db02-db05-relationship-decisions`.
-- New owner package: `PLATFORM_DB01_DB02_DB05_RELATIONSHIP_DECISION_PACKAGE.md`.
-- Recommendation: commercial booking confirms on exact valid quote acceptance; parcel identity is created only when authorized intake accepts physical possession; refusal before possession does not create parcel/custody; receipt retained under hold does.
-- Logical DB-02: zero-or-one parcel before accepted possession, exactly one thereafter for the minimum-launch independent booking; one originating booking per parcel; multi-parcel/split/merge/partial acceptance deferred.
-- Logical DB-05: one quote lineage per booking, immutable issued versions, one current offer version, exact-version acceptance and immutable accepted snapshot.
-- No physical schema/API/permission/code is approved. Quote/booking remain gated by service pricing and DEC-047; intake/parcel creation remains gated by location/action/evidence contracts.
-- Current draft foundation: user-reported Firestore Emulator run after PR #113 completed 49 tests, 0 failures, 0 cancellations. This is draft-workspace evidence only.
-- Next: owner review of the consolidated proposal. If accepted, reconcile the decision register and case-level acceptance specifications; only then review a physical persistence design for a bounded implementation slice.
+- PR #114 merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`; owner acceptance is recorded as DEC-049.
+- Accepted DB-01: exact valid quote acceptance confirms the commercial booking; it creates no parcel or physical/payment/route side effect.
+- Accepted DB-02: zero parcels before accepted physical possession and exactly one thereafter; parcel belongs to one originating booking. Refusal before possession creates no parcel/custody; receipt under hold records actual custody. Walk-in intake remains separate.
+- Accepted DB-05: one quote lineage per independent booking; immutable issued versions, one current offer and exact-version acceptance bound to an immutable accepted snapshot.
+- Physical Firestore representation, API, fields, indexes, permissions and implementation remain unapproved. Quote issuance/acceptance remains blocked by pricing, quote/handover terms and DEC-047 evidence; parcel/intake remains blocked by location/action/evidence contracts.
+- User-reported Firestore Emulator result after PR #113: 49 passed, 0 failed, 0 cancelled. Draft-workspace evidence only.
+- **Next:** source-align the minimum physical persistence/API/security design for the accepted logical relationships before selecting any implementation slice.
+
+
+## Current decision — DEC-049 — 2 November 2026
+
+PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. The owner accepted the consolidated DB-01/DB-02/DB-05 logical contracts:
+
+- Quote acceptance by the authenticated booking party of the exact current, valid version confirms the commercial booking; it does not create a parcel or imply payment/intake/custody/route.
+- A parcel is created only when authorized intake accepts actual physical possession. Refusal before possession creates no parcel/custody; receipt retained under an authorized hold records actual custody. One independent booking has zero parcels before accepted possession and exactly one after. Walk-in intake remains separate.
+- One quote lineage per independent booking, immutable issued versions, one current offer, exact-version acceptance and immutable accepted snapshot. Concurrent/replayed acceptance cannot create multiple bookings; concurrent intake cannot create multiple parcels.
+- DEC-049 approves logical rules only. No Firestore layout, schema, fields, indexes, identifiers, API, enums, permission IDs/claims, pricing values, durations, location eligibility, evidence technology, provider or code is approved.
+- The DB-01/02/05 rows and TCC-BOOK-01/04, TCC-QUOTE-01/02 and TCC-INTAKE-01 assertions are reconciled in `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`.
+- Quote issuance/acceptance remains disabled pending approved pricing, quote/handover terms, DEC-047 eligibility and technical prerequisites. Parcel/intake remains disabled pending location/action authority and physical evidence contracts. DB-03, DB-04, DB-06–DB-12 and M0/DEC-036 remain independent gates.
+
+**Next:** source-align the minimum physical persistence/API/security design to the accepted logical contracts. Do not begin quote or intake implementation until the separate readiness gates are closed.

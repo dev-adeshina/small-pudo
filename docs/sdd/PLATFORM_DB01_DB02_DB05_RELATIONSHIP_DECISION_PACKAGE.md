@@ -1,6 +1,6 @@
 # DB-01, DB-02 and DB-05 — Consolidated Booking, Parcel and Quote Relationship Decision Package
 
-**Status:** Technical and owner-decision proposal for review; not yet accepted. No physical schema, Firestore collection/document layout, fields, indexes, API routes/payloads, status enums, permissions or application implementation is approved by this package.  
+**Status:** Logical recommendations accepted by the owner and recorded as DEC-049 after PR #114 merged. This document is retained as decision rationale. No physical schema, Firestore collection/document layout, fields, indexes, API routes/payloads, status enums, permissions or application implementation is approved by this package.  
 **Prepared:** 2 November 2026  
 **Repository baseline:** `main` after PR #113 merge, `4217c1d`.  
 **Related authority:** DEC-018, DEC-019, DEC-023, DEC-024, DEC-025, DEC-033, DEC-038–DEC-045, DEC-047, DEC-048; BP-01–BP-22; PM-01–PM-12; `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`; `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md`; `PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md`; `PLATFORM_SHARED_WORKFLOWS.md`.
@@ -179,3 +179,10 @@ This package does not approve:
 - production deployment, capability activation or release sign-off.
 
 **Approval requested:** Review the DB-01 timing recommendation in Section 4 and the logical DB-02/DB-05 contracts in Sections 5–7 as one coherent package. Accept, reject with an alternative, or defer the recommendations. If accepted, record the owner decision and reconcile the technical acceptance cases before a source-aligned physical persistence design review.  
+
+
+## 11. Owner decision outcome — DEC-049 — 2 November 2026
+
+The owner reviewed and merged PR #114 at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. The recommendations in Sections 4–7 are accepted as logical business/relationship contracts and are recorded in `DECISIONS.md` as DEC-049. The acceptance cases are reconciled in `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`.
+
+This acceptance does **not** approve physical Firestore representation, fields, indexes, identifiers, APIs, status enums, permission IDs/claims, pricing values, quote/handover durations, DEC-047 eligibility, location capabilities, evidence technology, providers or application code. Quote issuance/acceptance and parcel/intake remain unavailable until their independent prerequisites are approved and verified. A separate source-aligned physical persistence/API/security design review is required before implementation.
