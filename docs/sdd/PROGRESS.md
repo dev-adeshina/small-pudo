@@ -1653,3 +1653,44 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 **Current implementation boundary:** PR #118 quote-lineage/version persistence remains internal and does not enable customer quote issuance. The next candidate is a separate internal activity-cost configuration foundation, not a customer pricing engine. No rates, formulas, currencies, units, conversions, staff payment methods, provider terms, Firestore schema, routes or permissions are approved by this checkpoint.
 
 **Evidence boundary:** The owner-confirmed facts above are discussion-derived operational requirements. No cost observations, rates, financial validation, code, tests or production behaviour are claimed by this update.
+
+## 76. Operational activity catalogue and cost input definition proposed — 2 November 2026
+
+**Repository baseline inspected:** `main` at `515f94e5e51f1f33863bd6af2e49ff96e63720c8`, after PR #122 merge.  
+**Proposal:** `PLATFORM_OPERATIONAL_ACTIVITY_CATALOGUE_AND_COST_INPUT_DEFINITION.md`.  
+**Working branch:** `docs/operational-activity-cost-input-catalogue`.
+
+- [x] Reconciled the current operational cost-definition persistence and approval foundation from PRs #121–#122.
+- [x] Confirmed that activity definitions are independently versioned and can declare activity-specific input metadata; this does not establish the actual operational activity catalogue or approve any cost values.
+- [x] Confirmed the four-person proposer / Operations validator / Finance reviewer / independent approver workflow and action-specific server-side authorization.
+- [x] Prepared a candidate activity catalogue distinguishing owner-confirmed Standard origin-PUDO facts from activities that still require operational validation.
+- [x] Preserved physical-possession custody truth, declared-versus-actual parcel measurements, exception/RTS separation, transport-arrangement boundaries, and direct/shared/included/exception cost distinctions.
+- [x] Marked candidate inputs and service applicability as unapproved until source-backed evidence and Operations/Finance validation exist.
+- [x] Owner review and correction of the candidate activity catalogue completed; see Section 77 for the accepted activity families and workflow requirements.
+- [ ] Validate activity triggers, completion evidence, responsible functions, service applicability and authoritative input sources from actual operating procedures/records.
+- [ ] Obtain Finance review of source-backed cost evidence and duplicate/included treatment; do not infer rates or allocation methods.
+- [ ] Prepare the minimal internal activity-cost configuration technical contract only after the catalogue and input definitions are accepted.
+- [ ] Keep customer pricing, quote calculation/issuance, DEC-047 activation, compensation execution and operational route/intake/custody execution outside this scope.
+
+**Source-review boundary:** Read-only review covered the existing operational cost-definition store, approval workflow, relevant Emulator tests, Firestore Rules and related SDD evidence. It was not a full repository or production audit. No application code, schema, API, permission, Firestore Rules or deployment behaviour changed.
+
+**Evidence boundary:** This proposal is a documentation artifact only. It does not claim operational/Finance validation, test execution, build/lint verification or production readiness. Earlier historical checkpoints in this file remain as history; this section records the later PR #122 and catalogue-proposal checkpoint.
+
+## 77. Owner review of operational activity catalogue and workflow requirements completed — 2 November 2026
+
+**PR:** #123, `docs: propose operational activity and cost input catalogue`.  
+**Working branch:** `docs/operational-activity-cost-input-catalogue`.  
+**Catalogue artifact:** `PLATFORM_OPERATIONAL_ACTIVITY_CATALOGUE_AND_COST_INPUT_DEFINITION.md`.
+
+- [x] Owner marked PR #123 ready for review and confirmed the proposed twelve activity families as the working catalogue.
+- [x] Recorded owner-confirmed workflow requirements for ACT-01–ACT-11: post-acceptance email receipt; origin weight/dimension verification and discrepancy hold; explicit origin custody acceptance reflected in the app; distinct transport assignment/departure/journey/arrival and custody-transfer events; destination PUDO verification/custody acceptance before ready-for-collection notification; recipient/collector authorization and proof of actual handover; phone/email/SMS contact recovery before failed-attempt classification; sender notification before RTS begins; formal incident records and Operations review; and dashboard-first PUDO substitution requests with recorded Operations decision and customer notification/acceptance where required.
+- [x] Confirmed ACT-12 additional support/packaging/storage/handling candidates remain inactive until Operations establishes that the services are actually performed or contractually required.
+- [x] Preserved the distinction between owner-confirmed workflow requirements and independent Operations validation, Finance review, observed operational evidence and cost evidence.
+- [x] Preserved all prior boundaries: no invented units, precision, conversions, thresholds, formulas, rates, allocation policy, staff compensation, partner terms, automatic exception/RTS charges, customer pricing or DEC-047 service activation.
+- [ ] Obtain Operations validation of actual procedures, role ownership, triggers/completion, evidence, exception handling, notification/contact procedures and service/location applicability.
+- [ ] Obtain Finance review of source-backed cost evidence, cost basis, direct/shared/included/exception classification and duplicate-cost prevention.
+- [ ] Map each validated activity to only the necessary authoritative cost inputs and source owners.
+- [ ] Prepare the minimal internal activity-cost configuration technical contract only after Operations and Finance validation; retain the existing PR #121–#122 versioning and approval controls.
+- [ ] Keep customer pricing/quote issuance, DEC-047 activation, compensation execution and route/dispatch/intake/custody execution outside this documentation update.
+
+**Evidence boundary:** This update records owner-confirmed product/operating requirements from the 2 November 2026 discussion. It does not claim independent Operations validation, Finance approval, observed production evidence, code changes, test/build/lint execution or production readiness. PR #123 remains open for review; this documentation update does not merge it.
