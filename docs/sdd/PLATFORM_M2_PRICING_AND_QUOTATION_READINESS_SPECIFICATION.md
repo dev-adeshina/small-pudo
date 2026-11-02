@@ -309,3 +309,22 @@ The owner-facing recommendations and grouped choices are maintained in `PLATFORM
 It proposes one parcel and one itemized commercial quote per independent booking for minimum launch; evidence-first selection of each service's pricing model; minimum-necessary service-specific inputs with trusted sources/units; approved cost/rate evidence and explicit monetary/fee treatment; separate service-specific quote validity and handover deadline; named accountability through the existing PM authority framework; and one shared pricing-rule authority.
 
 No model is selected for Standard, Express or Scheduled. No actual rates, formulas, units, conversions, currency, rounding, tax/fee values or durations are supplied. All twelve DEC-047 service/endpoint combinations remain pending verification and unavailable. Do not treat the recommendation or merge of its documentation PR as owner approval.
+
+
+## 17. Owner-approved commercial direction — DEC-048 — 2 November 2026
+
+The owner accepted the minimum-launch commercial unit, minimum-necessary service-specific input principle, separate quote/handover deadline requirement, pricing-governance separation and shared pricing authority. The owner deferred service model selection and all actual rate/arithmetic decisions.
+
+| Area | Current approved direction | Still required before quote readiness |
+|---|---|---|
+| Independent booking commercial unit | One parcel and one itemized quote per independent booking for minimum launch; multi-parcel and cross-obligation allocation deferred | Technical reconciliation of DB-01/02/05; do not infer Firestore cardinality or record-creation timing from the commercial decision |
+| Service pricing model | No model selected for Standard, Express or Scheduled | Service-specific cost and operating evidence, then explicit model approval for each service |
+| Pricing inputs | Minimum necessary inputs per service; each used input has an approved source, source classification, unit, precision, explicit conversion and validation behaviour | Actual per-service input/source/unit/conversion matrix and missing-source handling |
+| Rates and arithmetic | No actual rates or arithmetic values approved | Cost/rate basis, formula or fixed scope, components, currency, precision, rounding and explicit tax/fee treatment |
+| Quote and handover | Separate service-specific quote validity and physical-handover deadline, both communicated before acceptance | Numerical durations, triggers, expiry/missed-handover consequences and owner-approved customer terms |
+| Governance | Proposal, Operations validation, Finance review and independent approval | Named accountable people, assigned authority, approval controls and effective-date/publication mechanics |
+| Shared authority | One shared pricing-rule authority wherever storefront delivery and independent shipment inputs overlap | Technical integration design that preserves product-price/delivery-price distinction |
+
+**Important technical distinction:** Acceptance of one parcel and one quote per booking settles the minimum-launch commercial scope. It does not settle DB-01's shipment-record creation point or the concrete technical relationship/cardinality, schema and API representation for DB-02/DB-05. DB-03, DB-06 and DB-11 remain unresolved. No database schema or application implementation is approved by DEC-048.
+
+All twelve DEC-047 service/endpoint combinations remain pending verification and unavailable by default. No service is quote-ready until its model, inputs, rates/arithmetic, deadlines, eligibility evidence, technical contracts and executable acceptance criteria are approved and verified. Payment, intake, custody, dispatch, M0 and DEC-036 release gates remain independent.
