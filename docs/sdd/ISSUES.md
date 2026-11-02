@@ -238,7 +238,7 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Accepted:** Use a shared measurement-recording framework with service-specific required measurements and explicitly configured units; preserve declared and actual measurements separately; do not silently overwrite, convert, or reinterpret recorded values; record actual-measurement actor/location/time and applicable evidence; use configurable service-appropriate discrepancy thresholds without inventing numeric values; link proposed adjustments to the original quote and accepted agreement; require review for material discrepancies and adjustments affecting existing payments; notify customers of price-changing adjustments and require explicit acceptance before collecting additional charges; hold disputed additional charges pending review; and keep proposals separate from approved charges and settled financial events.
 - **Accepted DEC-040 refinement:** A customer rejection triggers an authorized service-resolution decision; it does not automatically cancel, refund, credit, or charge. Continuing under original terms is allowed only where safe and commercially feasible; an alternative requires separately accepted pricing; cancellation follows its own policy; dispatch cannot proceed under a rejected revised price. Silence is not acceptance.
 - **Still open:** Required measurements and units by service, conversion rules, numeric thresholds, evidence detail, staff approval limits, second-person rules, service-resolution decision authority and eligibility, feasibility criteria, customer response periods/non-response handling, and detailed tests.
-- **Next action:** Reconcile detailed pricing/measurement contracts and acceptance criteria, then continue remaining SDD dependencies. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+- **Next action:** Reconcile detailed pricing/measurement contracts and acceptance criteria, then continue remaining SDD dependencies. Preserve the relevant SDD review gate for any implementation; DEC-045 permits bounded work under accepted policy. No application code changed or tested for this policy decision.
 
 ### D-08 cancellation, late payment, refunds, credits, and reconciliation — DEC-029
 
@@ -253,7 +253,7 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Status:** High-level owner policy accepted on 30 October 2026 (Option A: narrow, controlled dispatch exceptions).
 - **Accepted:** Verified payment remains the default dispatch prerequisite; exceptions are limited to explicitly defined operational circumstances under an approved policy; only staff with explicitly assigned permission may approve; the requester must not automatically approve their own request; material exceptions require a second approver; exceptions preserve payment status and cannot bypass unrelated safety, custody, identity, legal, or other operational holds; parcel/shipment, reason, requester, approver(s), timestamp, supporting evidence, and outcome must be attributable.
 - **Still open:** Eligible circumstances, exact permission assignment, materiality/second-approval rules, monetary or operational limits, category-specific evidence, pre-dispatch revocation, and detailed acceptance tests.
-- **Next action:** D-10 routing, route-leg assignment, and movement evidence is accepted as DEC-031. Continue to D-11 delivery proof and failed-delivery resolution. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+- **Next action:** D-10 routing, route-leg assignment, and movement evidence is accepted as DEC-031. Continue to D-11 delivery proof and failed-delivery resolution. Preserve the relevant SDD review gate for any implementation; DEC-045 permits bounded work under accepted policy. No application code changed or tested for this policy decision.
 
 
 ### D-10 routing, route-leg assignment, and movement evidence — DEC-031
@@ -261,7 +261,7 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Status:** High-level owner policy accepted on 30 October 2026 (Option A: controlled, evidence-based movement).
 - **Accepted:** Route proposal, approval, route-leg assignment, dispatch, physical handover, and arrival confirmation are distinct; proposal/assignment is not proof of movement; Operations manages launch-time proposals and assignments; route changes require explicitly assigned authority and preserve history, actor, and reason; movement evidence distinguishes physical actor from staff recorder when staff enter provider/driver events; delays, missed handovers, missing parcels, damage, and disputed custody transfers remain explicit exceptions; Driver Portal remains deferred.
 - **Still open:** Route constraints, exact permissions and any two-person approvals, mandatory milestones/evidence, provider/resource/capacity rules, correction authority, detailed exception outcomes, and acceptance tests.
-- **Next action:** Continue to D-11 delivery proof and failed-delivery resolution. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+- **Next action:** Continue to D-11 delivery proof and failed-delivery resolution. Preserve the relevant SDD review gate for any implementation; DEC-045 permits bounded work under accepted policy. No application code changed or tested for this policy decision.
 
 
 ### D-11 delivery proof and failed-delivery resolution — DEC-032
@@ -269,7 +269,7 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Status:** High-level owner policy accepted on 30 October 2026 (Option A: evidence-based delivery with controlled outcomes).
 - **Accepted:** Attempt, successful delivery, failed delivery, customer collection, and return are distinct; successful delivery requires approved service-appropriate evidence and a staff status update alone is insufficient; recipient authority follows DEC-024; proof methods remain flexible by service; failed attempts retain reasons; reattempt, return, holding, refusal, cancellation, and financial adjustments require explicit authority; significant notifications respect party entitlements; disputed delivery preserves original evidence/history.
 - **Still open:** Mandatory methods by service, OTP requirement, attempt limits, resolution authority, holding duration, failure-reason catalogue, loss/damage/refusal/dispute handling, customer-contact details, and detailed acceptance tests.
-- **Next action:** Continue to D-12 audit, evidence retention, correction, and disclosure. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+- **Next action:** Continue to D-12 audit, evidence retention, correction, and disclosure. Preserve the relevant SDD review gate for any implementation; DEC-045 permits bounded work under accepted policy. No application code changed or tested for this policy decision.
 
 
 ### D-12 audit, evidence retention, correction, and disclosure — DEC-033
@@ -381,7 +381,7 @@ The owner has approved the high-level rejection-resolution boundary: customer re
 - **Verified PR states:** PR #3 merged at `c56be9b121e6007e1e99c6df2d3984e709771a92`; PR #4 closed without merge. Do not describe PR #4 as open or merged.
 - **Policy assessment:** No confirmed contradiction requiring an accepted owner decision to be reopened was identified in this initial pass. Full reconciliation remains incomplete until each affected document is corrected and rechecked.
 - **Next action:** Complete the focused corrective updates listed in `PLATFORM_DECISION_DOCUMENT_RECONCILIATION.md`; then continue source traceability, executable acceptance-test specification, and production-readiness evidence planning.
-- **Implementation gate:** VLY-019 remains open. No application-code changes until the complete platform-wide SDD is reconciled and explicitly approved by the owner.
+- **Implementation gate:** VLY-019 remains open. DEC-045 permits bounded implementation under accepted policy; unresolved capabilities remain blocked. Complete SDD reconciliation and DEC-036 evidence remain release gates.
 
 
 ## Milestone 4 continuity baseline update — PR #64 — 31 October 2026
@@ -390,7 +390,7 @@ The owner has approved the high-level rejection-resolution boundary: customer re
 - **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`; repository comparison through PR #64 returned SDD documentation paths only. This is repository-history evidence, not fresh source inspection or runtime/production verification.
 - **DEC-044 evidence:** PR #64 refined the A-09 acceptance row and existing P0 custody/exception cases; the catalogue remains 80 unique case IDs with no duplicates.
 - **Current next action:** Continue targeted section-level reconciliation across A-01–A-20, workflows, lifecycles, actors/permissions, booking-party authority, Admin requirements/design, and source evidence. Then complete technical contracts, executable acceptance-test specifications, and production-readiness evidence planning.
-- **Implementation gate:** No application-code changes until the complete platform-wide SDD is reconciled and explicitly approved by the owner.
+- **Implementation gate:** DEC-045 permits bounded implementation under accepted policy; unresolved capabilities remain blocked. Complete SDD reconciliation and DEC-036 evidence remain release gates.
 
 
 ## A-15 permission policy consistency update — PR #66
