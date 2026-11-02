@@ -298,20 +298,20 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - **Source review:** Current-main re-fetch of the M1.3 draft UI/API/authentication/validation/Firestore store/tests and existing storefront order/Paystack/Firestore rules. M1.3 remains draft-only; do not reinterpret its persistence as a confirmed booking or parcel model.
 - **Next:** Review/merge the consolidated technical-contract and acceptance package. Then proceed with the smallest Ready implementation slice under DEC-045; do not wait for every future capability, but keep all blocked services/endpoint combinations and quote issuance disabled.
 - **Accepted commercial boundary:** DEC-048: one parcel and one itemized quote per independent booking for minimum launch; multi-parcel/cross-obligation allocation deferred; service model/rates/arithmetic/fees remain deferred.
-- **Still open:** DB-01 shipment creation timing; DB-02/DB-05 physical representation; DB-03 parcel-to-route-leg relationship; DB-06 payment allocation; DB-11 financial-event linkage; DEC-047 operational evidence; service-specific pricing/quote/handover values; business representation verification; evidence/reviewer/retention; notification matrix; and executable fixtures for blocked cases.
+- **Accepted by DEC-049:** DB-01 booking-confirmation/parcel-creation timing; DB-02 one-booking/one-parcel logical cardinality and actual-possession trigger; DB-05 one quote lineage with immutable versions and exact-version acceptance. Their physical representation/API/security design remains open.
+- **Still open:** DB-03 parcel-to-route-leg relationship; DB-04 storefront delivery association; DB-06 payment allocation; DB-07/08 party/business verification; DB-09 location/action capability; DB-10 evidence/reviewer/retention; DB-11 financial-event linkage; DB-12 notification matrix; DEC-047 operational evidence; service-specific pricing/quote/handover values; and executable fixtures for blocked cases.
 - **No code has been changed in this proposal.** No tests/build/lint were run for this documentation PR. Preserve existing untracked local files and the user's normal review → merge → local pull workflow.
 
 
-## Latest work pointer — DB-01/DB-02/DB-05 relationship decision package — 2 November 2026
+## Latest relationship decision — DEC-049 accepted — 2 November 2026
 
-- PR branch: `docs/db01-db02-db05-relationship-decisions`.
-- New owner package: `PLATFORM_DB01_DB02_DB05_RELATIONSHIP_DECISION_PACKAGE.md`.
-- Recommendation: commercial booking confirms on exact valid quote acceptance; parcel identity is created only when authorized intake accepts physical possession; refusal before possession does not create parcel/custody; receipt retained under hold does.
-- Logical DB-02: zero-or-one parcel before accepted possession, exactly one thereafter for the minimum-launch independent booking; one originating booking per parcel; multi-parcel/split/merge/partial acceptance deferred.
-- Logical DB-05: one quote lineage per booking, immutable issued versions, one current offer version, exact-version acceptance and immutable accepted snapshot.
-- No physical schema/API/permission/code is approved. Quote/booking remain gated by service pricing and DEC-047; intake/parcel creation remains gated by location/action/evidence contracts.
-- Current draft foundation: user-reported Firestore Emulator run after PR #113 completed 49 tests, 0 failures, 0 cancellations. This is draft-workspace evidence only.
-- Next: owner review of the consolidated proposal. If accepted, reconcile the decision register and case-level acceptance specifications; only then review a physical persistence design for a bounded implementation slice.
+- PR #114 merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`; owner acceptance is recorded as DEC-049.
+- Accepted DB-01: exact valid quote acceptance confirms the commercial booking; it creates no parcel or physical/payment/route side effect.
+- Accepted DB-02: zero parcels before accepted physical possession and exactly one thereafter; parcel belongs to one originating booking. Refusal before possession creates no parcel/custody; receipt under hold records actual custody. Walk-in intake remains separate.
+- Accepted DB-05: one quote lineage per independent booking; immutable issued versions, one current offer and exact-version acceptance bound to an immutable accepted snapshot.
+- Physical Firestore representation, API, fields, indexes, permissions and implementation remain unapproved. Quote issuance/acceptance remains blocked by pricing, quote/handover terms and DEC-047 evidence; parcel/intake remains blocked by location/action/evidence contracts.
+- User-reported Firestore Emulator result after PR #113: 49 passed, 0 failed, 0 cancelled. Draft-workspace evidence only.
+- **Next:** source-align the minimum physical persistence/API/security design for the accepted logical relationships before selecting any implementation slice.
 
 
 ## Current decision — DEC-049 — 2 November 2026
