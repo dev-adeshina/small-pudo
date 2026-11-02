@@ -1540,3 +1540,19 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - [ ] Continue DEC-036 P0/Conditional P0 release evidence and M0 residual verification independently.
 
 **Evidence boundary:** Documentation and read-only source review only. No application code, schema, API, Firestore rules/configuration, permission, provider, deployment or runtime behaviour was changed. No tests, build or lint were run for this proposal. Existing PR #104 test and production-smoke evidence remains attributed to the user's earlier reported execution.
+
+
+## 72. DB-01/DB-02/DB-05 relationship decision package prepared — 2 November 2026
+
+**Baseline:** `main` after PR #113 merge, `4217c1d`.  
+**New artifact:** `PLATFORM_DB01_DB02_DB05_RELATIONSHIP_DECISION_PACKAGE.md`.
+
+- Consolidated DB-01, DB-02 and DB-05 into one owner-facing package, preserving DEC-038, DEC-044 and DEC-048.
+- Recommends confirming the commercial booking at exact quote acceptance, while deferring parcel identity until authorized staff actually accept physical possession.
+- Distinguishes refusal before possession (no parcel/custody) from physical receipt retained under a hold (parcel and actual custody must be recorded).
+- Recommends a logical zero-or-one pre-intake / exactly-one-after-accepted-possession booking-to-parcel relationship for minimum launch; each parcel belongs to one originating independent booking. Multi-parcel, split/merge and partial acceptance remain deferred.
+- Recommends one quote lineage per booking with immutable issued versions, one current offer version and exact-version acceptance linked to one confirmed booking.
+- Adds logical transaction, replay/concurrency, authorization and acceptance assertions without prescribing physical Firestore layout, fields, APIs, enums or permission IDs.
+- Preserves the fact that quote issuance/acceptance remains blocked by unapproved service pricing and DEC-047 operational evidence; parcel/intake remains blocked by location/action/evidence contracts.
+- **Status:** Proposal only, pending owner response. No business decision, physical schema or implementation is approved by this document. No application source/tests/build/lint changed or run for this documentation proposal.
+- **Next:** Owner review of this single consolidated package. If accepted, record the decision and reconcile DB-01/02/05 acceptance cases, then conduct a separate source-aligned physical persistence design review before implementation.
