@@ -1666,7 +1666,7 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - [x] Prepared a candidate activity catalogue distinguishing owner-confirmed Standard origin-PUDO facts from activities that still require operational validation.
 - [x] Preserved physical-possession custody truth, declared-versus-actual parcel measurements, exception/RTS separation, transport-arrangement boundaries, and direct/shared/included/exception cost distinctions.
 - [x] Marked candidate inputs and service applicability as unapproved until source-backed evidence and Operations/Finance validation exist.
-- [ ] Owner review and correction of the candidate activity catalogue.
+- [x] Owner review and correction of the candidate activity catalogue completed; see Section 77 for the accepted activity families and workflow requirements.
 - [ ] Validate activity triggers, completion evidence, responsible functions, service applicability and authoritative input sources from actual operating procedures/records.
 - [ ] Obtain Finance review of source-backed cost evidence and duplicate/included treatment; do not infer rates or allocation methods.
 - [ ] Prepare the minimal internal activity-cost configuration technical contract only after the catalogue and input definitions are accepted.
