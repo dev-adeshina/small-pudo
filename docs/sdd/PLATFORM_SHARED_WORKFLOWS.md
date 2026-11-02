@@ -691,3 +691,24 @@ This availability flow does not collapse quote validity, service-specific handov
 **Still open:** Exact service/location/action matrix; operational coverage and capacity source/method; estimate calculation and numerical delivery timeframes; guarantee policy; scheduling window definitions, cutoffs, capacity reservation/expiry and change/cancellation behaviour; service-specific pricing inputs/rates/formulas; quote validity and handover durations; unavailable-route alternatives; and technical/API/security contracts and executable tests. DEC-043's lean location model is not expanded here into an invented automated operating-hours/capacity scheduler.
 
 **Acceptance direction:** Server-enforced eligibility and revalidation; no unavailable service shown as bookable or accepted; all endpoint combinations representable independently; no customer route-type selection; Standard/Express estimates shown before acceptance and distinguished from guarantees; Scheduled options limited to validated availability; and delivery commitments preserved with the booking. No schema, endpoint, status or implementation is approved by this addendum.
+
+
+## Workflow B addendum — DEC-047 conservative eligibility and operational verification — 2 November 2026
+
+Evaluate Standard, Express and Scheduled independently across address-to-address, address-to-PUDO, PUDO-to-address and PUDO-to-PUDO. The four endpoint patterns are representable for each service, but this does not establish that any particular service/pattern is currently eligible or operationally available.
+
+| Service | Address → Address | Address → PUDO | PUDO → Address | PUDO → PUDO |
+|---|---|---|---|---|
+| Standard | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable |
+| Express | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable |
+| Scheduled | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable |
+
+“Pending verification” is an interim fail-closed state, not a permanent “not eligible” decision. Each combination must ultimately be classified as eligible, conditional (with explicit conditions), or not eligible. No service inherits another service's eligibility.
+
+**Before activating a combination, the responsible Operations authority must verify and approve:** (1) origin/destination coverage for that service and journey; (2) active PUDO centres and each specific required endpoint action; (3) a valid route under approved routing rules; (4) operating availability and capacity for the requested date/time; and (5) the applicable operating scope. Record enough attributable evidence to identify the service, endpoint pattern, relevant locations/actions, coverage/capacity basis, constraints, approving authority and verification basis. This is not approval of a technical record or field design.
+
+The server must independently enforce and revalidate eligibility and live availability at consequential submission. Missing, stale, revoked or insufficient evidence keeps the combination unavailable. Reassess affected combinations when service coverage, centre status/capabilities, route rules, operating availability or capacity changes. PUDO centres may support multiple capabilities; a label/category alone is insufficient. The system determines the route; Shippers do not select operational route types or legs.
+
+Standard/Express estimate and Scheduled commitment rules remain those in DEC-046. No numerical duration, guarantee, scheduling algorithm, coverage provider, capacity system, proximity provider, pricing value or route algorithm is introduced. Quote validity, handover deadline, payment, intake and custody remain separate.
+
+**Still open:** Actual eligibility outcome/conditions for each matrix cell; concrete service/location/action coverage; proximity discovery and privacy/permission; operational coverage/capacity sources; estimate methodology and numerical timeframes; scheduling windows/cutoffs/reservation/expiry/change rules; pricing specification; quote validity and handover deadlines; technical/evidence contracts and executable tests. The matrix above is the approved conservative launch default, not evidence that the combinations have been operationally assessed.
