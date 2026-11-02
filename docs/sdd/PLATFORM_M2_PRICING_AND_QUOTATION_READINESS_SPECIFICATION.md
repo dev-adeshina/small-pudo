@@ -304,11 +304,7 @@ Until then, the existing draft workspace remains draft-only; no quote or confirm
 
 ## 16. Consolidated commercial owner decisions — 2 November 2026
 
-The owner-facing recommendations and grouped choices are maintained in `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md`. That package is a proposal for explicit owner response, not an accepted amendment to DEC-019/026/038–041 or DEC-046/047.
-
-It proposes one parcel and one itemized commercial quote per independent booking for minimum launch; evidence-first selection of each service's pricing model; minimum-necessary service-specific inputs with trusted sources/units; approved cost/rate evidence and explicit monetary/fee treatment; separate service-specific quote validity and handover deadline; named accountability through the existing PM authority framework; and one shared pricing-rule authority.
-
-No model is selected for Standard, Express or Scheduled. No actual rates, formulas, units, conversions, currency, rounding, tax/fee values or durations are supplied. All twelve DEC-047 service/endpoint combinations remain pending verification and unavailable. Do not treat the recommendation or merge of its documentation PR as owner approval.
+The owner-facing recommendations and grouped choices are maintained in `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md`. The owner response is now recorded as DEC-048 in Section 17 below. DEC-048 accepts the minimum-launch commercial unit, minimum-necessary service-specific inputs, separate quote/handover deadlines, separated pricing governance and the shared pricing authority; it defers model selection and actual rates/arithmetic/charge treatment. Section 17 is authoritative for the current accepted/deferred status. All twelve DEC-047 service/endpoint combinations remain pending verification and unavailable.
 
 
 ## 17. Owner-approved commercial direction — DEC-048 — 2 November 2026
