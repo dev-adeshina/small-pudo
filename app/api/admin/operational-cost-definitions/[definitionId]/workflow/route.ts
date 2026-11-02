@@ -70,7 +70,7 @@ export async function POST(
     return NextResponse.json(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : "The workflow action could not be completed.";
-    const status = message.includes("required action permission") ? 403 : 409;
+    const status = message.includes("action permission") ? 403 : 409;
     return NextResponse.json({ error: message }, { status });
   }
 }
