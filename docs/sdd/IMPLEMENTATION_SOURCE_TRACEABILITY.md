@@ -526,3 +526,32 @@ The user had also reported earlier production endpoint smoke observations on 1 N
 This review confirms source structure only. No application tests, build, lint, API runtime, production data, deployed configuration, provider credential or customer browser test was executed for this documentation task. The older focused M1 draft review remains bounded by its stated commit; the current route/product/payment files above were re-fetched from main.
 
 Before implementation, inspect the exact current shipment-draft validation/store/API contracts alongside DB-01–DB-12 and the approved quote scope. Reconcile shared pricing ownership and storefront delivery migration without changing product-price semantics. No collection, field, schema, API, status, permission, provider or code change is approved by this source review.
+
+
+## 19. Current-main M1.3 shipment-draft source contract refresh — 2 November 2026
+
+**Current repository baseline:** `main` at `730581ba6b4a6f5ea25718d8d11face40aaed0dd`. Comparison from the earlier user-synchronized M1.3 source baseline `5017cc9` to current main lists SDD documentation paths only; no application-source paths changed in that interval. The current paths below were re-fetched read-only at the stated current-main baseline.
+
+### Source-backed draft contract
+
+| Surface | Current source fact | Boundary |
+|---|---|---|
+| Customer dashboard/workspace | `app/account/page.tsx`, `app/account/shipments/page.tsx` load and display customer-owned shipment drafts; the workspace supports create/list/edit. | The UI is a preparation workspace, not a quote, booking, parcel, intake or custody workflow. |
+| Draft API | `app/api/account/shipment-booking-drafts/route.ts` provides GET/POST; `app/api/account/shipment-booking-drafts/[draftId]/route.ts` provides PATCH. | No quote, acceptance, booking confirmation, payment, parcel, location, intake, custody or route command is exposed. |
+| Customer authentication | `lib/server/customer-auth.ts` verifies a Firebase bearer ID token and requires `email_verified === true`; the UID is returned from the verified token. | Caller-supplied UID/booking-party identity is not authoritative. The helper is customer authentication, not staff authorization. |
+| Draft API handler | `lib/server/shipment-booking-draft-api.ts` authenticates before listing/mutating, validates input, scopes list/create/update to the verified UID and returns safe denial/not-found outcomes. | The draft endpoint's owner scope must not be generalized into all future party entitlements. |
+| Draft persistence | `lib/server/shipment-booking-draft-store-core.ts` uses the existing user's Firestore document and its `shipmentBookingDrafts` subcollection; creation records the authenticated UID as owner, draft status and server timestamps. | This is the current draft implementation only; it does not approve future booking/quote/parcel collections, fields or cardinalities. |
+| Draft update guard | `lib/server/shipment-booking-drafts.ts` is called within a Firestore transaction and checks that the target exists and remains in draft status before update. | A draft-only edit guard is not a booking lifecycle transition contract. |
+| Validation | `lib/validations/shipment-booking-draft.ts` trims origin/destination/description and enforces existing length limits. | These free-text draft values are not approved final service input sources, address/PUDO identity, measurements or pricing inputs. |
+| Tests | `tests/shipment-booking-draft-api.test.mjs`, `tests/shipment-booking-draft-store.test.mjs`, and `tests/shipment-booking-drafts.test.mjs` cover authentication, validation, ownership isolation, draft status guard and Firestore store behaviour. The Emulator suite is conditional on `FIRESTORE_EMULATOR_HOST`. | Test source presence is not evidence that the suite was run in this review. The project continuity record separately reports the user's prior 48/48 test run and M1.3 production smoke checks. |
+
+### Cross-domain source recheck
+
+- The storefront order API remains the authoritative server-side checkout path and transactionally validates current product/stock facts while creating the commerce order.
+- Existing Paystack initialize/verify/webhook routes remain storefront-order scoped. Their reference, amount, currency, signature and duplicate-event checks are reusable patterns only where a future approved payment-purpose contract permits.
+- The existing Firestore rules deny direct client order access. The draft store uses Firebase Admin, so server endpoint authentication/ownership is the relevant control for draft access.
+- The current source does not establish an independent quote/rate service, confirmed booking API, parcel/physical shipment lifecycle, PUDO capability service, custody service, route-leg/movement service or general financial reconciliation service.
+
+**Result:** M1.3 draft preparation is implemented in source and has recorded automated/production-smoke evidence from PR #104. It does not resolve DB-01–DB-12 or authorize extending draft records into confirmed bookings. See `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md` for the consolidated technical and acceptance contract.
+
+**Evidence boundary:** Read-only source re-fetch. No test, build, lint, runtime, deployed configuration, provider, production data or physical-operation check was executed for this section.
