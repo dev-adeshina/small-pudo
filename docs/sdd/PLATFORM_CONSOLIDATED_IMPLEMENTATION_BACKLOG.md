@@ -166,3 +166,10 @@ The consolidated proposal is `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTAN
 **Owner review gate:** Review/merge the technical-contract and acceptance package before starting the next application-code slice. Approval of logical contracts does not approve Firestore schema, API routes/payloads, enums, permissions, provider activation or unresolved commercial/operational values.
 
 **Implementation direction:** Under DEC-045, begin the smallest implementation slice whose policy, technical relationship, authorization, test fixtures and evidence are Ready. Keep all blocked capabilities disabled. In particular, quote issuance and all twelve DEC-047 service/endpoint combinations remain unavailable until their independent prerequisites are approved and verified.
+
+
+## DB-01/DB-02/DB-05 — next owner review package
+
+Review `PLATFORM_DB01_DB02_DB05_RELATIONSHIP_DECISION_PACKAGE.md` as one package. It recommends: (1) booking confirmation at exact quote acceptance, with parcel identity deferred until actual authorized physical possession; (2) one originating booking to at most one parcel, created only on accepted possession; and (3) one quote lineage per booking with immutable versions and exact-version acceptance.
+
+This is an owner decision proposal, not an approved schema/API. Do not begin confirmed-booking, quote or parcel implementation from the recommendation alone. Quote issuance/acceptance remains blocked by service pricing and DEC-047 eligibility evidence; intake remains blocked by location/action/evidence requirements. After owner response, update the decision register and acceptance contracts, then perform a separate physical persistence design review.
