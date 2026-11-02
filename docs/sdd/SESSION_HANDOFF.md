@@ -376,3 +376,33 @@ PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. T
 - **Next:** owner review of the physical design proposal. If approved, the first implementation PR is limited to quote-lineage/version persistence primitives and synthetic Emulator/Rules tests. No public quote/booking API or UI, quote issuance/acceptance, parcel/intake or custody capability is included.
 - **Keep blocked:** pricing/quote terms, DEC-047 eligibility, customer revocation policy, staff/location/action authority, physical evidence/DB-10, DB-03/04/06–12, M0 and DEC-036 release evidence remain separate gates.
 - **No claims:** no tests, build, lint, Emulator, deployment or production checks were run for this documentation proposal.
+
+
+## Current authoritative handoff — M2 service evidence collection — 2 November 2026
+
+**Repository baseline:** PR #118 merged at `d54f337439947207e1967d1b915a02018e0b856a`; the user reports local `main` synchronized.
+
+**Completed since the earlier handoff:**
+- PR #117 approved the physical DB-01/DB-02/DB-05 persistence/API/security contract.
+- PR #118 implemented internal quote-lineage and immutable-version persistence, synthetic Firestore Emulator integration tests and direct-client Rules-denial tests.
+- The user reported local verification: 57 tests passed with zero failures (including seven quote-store tests); TypeScript, ESLint and Next.js production build passed.
+- M2 readiness documentation has been reconciled with DEC-048/DEC-049 and PRs #117/#118. DB-05 is accepted and the physical quote-lineage foundation is implemented; neither fact enables customer quote issuance or acceptance.
+
+**Current documentation PR:** branch `docs/m2-service-evidence-workbook`; adds `PLATFORM_M2_SERVICE_COST_AND_INPUT_EVIDENCE_WORKBOOK.md`, updates the M2 readiness specification, and refreshes backlog/progress/handoff. It is documentation-only and remains subject to owner review/merge.
+
+**Accepted commercial constraints — DEC-048:**
+- One parcel and one itemized quote per independent booking for minimum launch; multi-parcel/cross-obligation allocation deferred.
+- Minimum necessary pricing inputs for each service, with approved source, source classification, unit, precision, explicit conversion, validation and missing-value behaviour.
+- Separate service-specific quote validity and physical-handover deadline, both communicated before acceptance.
+- Pricing proposal, Operations validation, Finance review and independent approval remain separated under PM-01–PM-12.
+- One shared pricing-rule authority wherever storefront delivery and independent shipment inputs overlap under DEC-019.
+- No fixed/calculated/hybrid model selected for Standard, Express or Scheduled. No rates, formulas, coefficients, distance bands, minimums, currency, precision, rounding, taxes, surcharges, discounts or other fee treatment approved.
+
+**Immediate next work:** collect attributable cost and operating evidence independently for Standard, Express and Scheduled; complete each service's minimum-input/source/unit/precision/conversion/validation matrix; obtain Operations validation and Finance review; then prepare a model recommendation for each service for independent approval. Do not select models before the evidence exists.
+
+**Still blocked:** all 12 DEC-047 service/endpoint combinations remain pending verification and unavailable by default. No customer quote issuance/acceptance, pricing calculation, confirmed booking, parcel/intake or custody capability is enabled by the quote persistence foundation. Quote validity and handover durations/outcomes, estimate methodology, Scheduled windows/cutoffs, shared storefront integration and remaining DB-03/04/06–DB-12 relationships remain open as applicable.
+
+**Do not invent:** commercial rates, formulae, input values, units/conversions, currency, rounding, taxes/fees, timeframes, eligibility outcomes, capacity, evidence standards, permission IDs or approval thresholds. The evidence workbook is a blank collection/decision aid, not approval.
+
+**Independent gates:** M0 residual verification and DEC-036 P0/Conditional P0 release evidence remain independent of M2. Payment, intake, custody, route/movement, delivery and Finance reconciliation are not enabled by this work.
+

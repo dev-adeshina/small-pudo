@@ -2,6 +2,7 @@
 
 **Status:** Consolidated readiness specification incorporating owner-approved commercial direction DEC-048; actual service pricing configurations remain unapproved  
 **Prepared:** 2 November 2026  
+**Latest M2 reconciliation:** PR #118 merge `d54f337439947207e1967d1b915a02018e0b856a`  
 **Baseline:** PR #108 merge, 047a234cc641493d8a44a88e41ab722e6818ab5c  
 **Authority:** DEC-019, DEC-026–DEC-029, DEC-038–DEC-041, DEC-045–DEC-048; BP-01–BP-22; PM-01–PM-12  
 **Related:** PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md; PLATFORM_OWNER_DECISION_REGISTER.md; PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md; PLATFORM_SHARED_WORKFLOWS.md; PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md; PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md; PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md; PLATFORM_SHIPPER_JOURNEY_AND_PORTAL_EXPERIENCE.md; IMPLEMENTATION_SOURCE_TRACEABILITY.md
@@ -218,20 +219,20 @@ The following domain relationships remain unresolved and block final persistence
 | Decision | Pricing/quotation consequence | Current safe boundary |
 |---|---|---|
 | DB-01 Booking → shipment creation | Determines when a confirmed booking becomes linked to an operational shipment obligation | Booking acceptance is not physical receipt; do not invent the record-creation gate |
-| DB-02 Booking → parcel cardinality | Determines whether a quote covers one or multiple parcels and how measurements/adjustments aggregate | No one-to-one or one-to-many assumption |
+| DB-02 Booking → parcel cardinality | Determines how the accepted one-parcel minimum-launch obligation is represented and when a physical parcel record exists | DEC-048 accepts one parcel per independent booking for minimum launch; DEC-049 requires zero parcels before accepted physical possession and exactly one thereafter. Physical design is approved by PR #117; quote-lineage foundation is implemented by PR #118. Multi-parcel remains deferred. |
 | DB-03 Parcel → route-leg cardinality | Affects route context, parcel grouping, re-routing and possible pricing allocation | Route proposal/assignment/movement remain distinct; no parcel-to-leg cardinality assumption |
 | DB-04 Storefront order → shipment | Affects how storefront delivery pricing enters shared logistics fulfilment | Preserve commerce and logistics facts separately |
-| DB-05 Quote scope | Determines whether a quote is per booking, parcel, service component or composite | Explicit owner choice remains pending |
+| DB-05 Quote scope | Determines the commercial obligation represented by a quote and its immutable version lineage | DEC-048/DEC-049 accept one quote lineage and one itemized quote per independent booking. Physical representation is approved by PR #117 and internal lineage/version persistence is implemented by PR #118. Customer quote issuance and acceptance remain disabled pending M2 and independent gates. |
 | DB-06 Payment allocation | Determines whether a later payment can cover one or multiple commercial obligations | Payment purpose and allocation must be explicit; no cross-obligation allocation assumption |
 | DB-11 Financial-event linkage | Determines lineage from quote/obligation to payment, charge, refund, credit and reconciliation | Finance-owned financial history remains distinct and reconstructable |
 
 The technical contract must also reconcile authoritative ownership, entitlement, evidence linkage, query/projection lineage, transaction boundaries, concurrency, replay, unknown outcomes and recovery. No Firestore collection, field, index, API route, payload, status enum or new service is approved by this document.
 
-### DB-05 owner recommendation — pending, not accepted
+### DB-05 accepted decision and implementation boundary
 
-The existing consolidated owner-decision package recommends one commercial quote for the independent booking obligation, with applicable service components itemized inside that quote, while deferring cross-parcel and multi-obligation allocation.
+DEC-048 accepts one itemized commercial quote per independent booking for minimum launch and defers multi-parcel/cross-obligation allocation. DEC-049 accepts one quote lineage per independent booking, immutable versions and exact-version acceptance. PR #117 approves the physical DB-01/DB-02/DB-05 persistence/API/security design; PR #118 implements the bounded internal quote-lineage and immutable-version persistence foundation.
 
-That remains a proposal, not accepted policy. It must be considered together with DB-01 and DB-02. Do not implement this recommendation or infer a quote-to-parcel relationship until the owner confirms the commercial unit and technical reconciliation demonstrates the resulting relationships.
+This does not enable customer quote issuance, quote acceptance, booking confirmation or parcel intake. Those remain gated by approved service pricing, quote/handover terms, DEC-047 eligibility, relevant authorization and executable acceptance criteria. DB-03, DB-04, DB-06 and DB-11 remain separate open relationships.
 
 ## 13. Per-service readiness checklist
 
@@ -248,7 +249,7 @@ A service is quote-ready only when every applicable item below is approved, attr
 | Currency, arithmetic precision and rounding | Pending | Pending | Pending |
 | Tax/surcharge/discount/other-fee treatment | Pending | Pending | Pending |
 | Rate owner, approval, version and effective-date process | Pending | Pending | Pending |
-| Quote itemization and immutable commercial snapshot | Policy accepted; technical contract pending | Policy accepted; technical contract pending | Policy accepted; technical contract pending |
+| Quote itemization and immutable commercial snapshot | Commercial unit and physical lineage foundation approved/implemented; service quote configuration and issuance/acceptance gates pending | Commercial unit and physical lineage foundation approved/implemented; service quote configuration and issuance/acceptance gates pending | Commercial unit and physical lineage foundation approved/implemented; service quote configuration and issuance/acceptance gates pending |
 | Quote validity duration | Pending | Pending | Pending |
 | Separate handover deadline and missed-handover outcome | Pending | Pending | Pending |
 | DEC-047 service/endpoint eligibility and operating evidence | Pending; unavailable | Pending; unavailable | Pending; unavailable |
@@ -274,7 +275,7 @@ Approve quote-validity duration, separate handover deadline, extension authority
 
 ### D. Quote commercial unit
 
-Resolve DB-05 together with DB-01/DB-02. The current owner-decision package's one-quote-per-booking recommendation is available for consideration but remains unaccepted.
+Resolved at the minimum-launch commercial and physical-foundation level: DEC-048/DEC-049 accept one quote lineage and one itemized quote per independent booking; PR #117 approves the physical DB-01/DB-02/DB-05 design; PR #118 implements the internal quote-lineage/version foundation. Do not treat this as quote issuance/acceptance readiness. DB-03, DB-04, DB-06 and DB-11 remain open where they affect later fulfilment and financial relationships.
 
 ### E. Operational evidence dependencies
 
@@ -294,10 +295,10 @@ No quote-engine or service-pricing code should begin until:
 4. formulas, rates, charge components, currency, precision and rounding are approved;
 5. rate ownership, approval, versioning and effective-date behaviour are defined;
 6. quote validity and separate handover terms are approved;
-7. quote scope/cardinality and authoritative ownership are reconciled with DB-01–DB-12;
+7. the approved DB-01/DB-02/DB-05 logical and physical contracts are preserved, with remaining DB-03/04/06/11 dependencies resolved wherever they affect the target service;
 8. exact quote acceptance, historical preservation and repricing behaviour are specified;
 9. storefront delivery integration with the shared pricing authority is designed without conflating product price and delivery price;
-10. executable acceptance, security, concurrency, stale-quote, expiry, revision, failure and replay scenarios are ready.
+10. executable acceptance, security, concurrency, stale-quote, expiry, revision, failure and replay scenarios are ready, including the commercial/operational rules that remain gated.
 
 Until then, the existing draft workspace remains draft-only; no quote or confirmed booking is created. M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain independent gates.
 

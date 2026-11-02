@@ -156,7 +156,7 @@ The owner has now accepted or deferred these commercial choices in DEC-048. The 
 
 The owner accepted the minimum-launch unit of one parcel and one itemized quote per independent booking; minimum-necessary service-specific input requirements; separate quote-validity and physical-handover deadlines; separated pricing governance; and DEC-019's shared pricing authority. Multi-parcel/cross-obligation allocation is deferred. The owner deferred all three service model selections and all actual rates/formulas/arithmetic/charge values pending evidence.
 
-**Next ordered activity:** review and merge `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`. It consolidates the DB-01–DB-12 relationship/ownership/cardinality boundaries, current M1.3 source facts, API/security/transaction/replay/recovery contracts and case-level acceptance specifications. Keep quote issuance and all twelve DEC-047 service/endpoint combinations unavailable until their independent prerequisites are verified. Do not implement placeholder pricing or infer any model/value.
+**Historical next step completed:** the DB-01–DB-12 logical contract was reconciled through DEC-049; the physical DB-01/02/05 contract was approved in PR #117; the bounded quote-lineage/version persistence foundation was implemented in PR #118. The M2 commercial gates remain open.
 
 
 ## DB-01–DB-12 technical-contract and acceptance-specification workstream — 2 November 2026
@@ -195,8 +195,21 @@ The proposal recommends:
 
 **Approval:** PR #117 was reviewed and merged by the owner on 2 November 2026. The physical root paths, quote-version subcollection representation, relationship boundaries, server-only access and bounded first-slice direction are approved as recorded in the design artifact. This does not approve quote issuance, acceptance, booking, parcel/intake or custody capability.
 
-**First implementation slice:** PR #118 is open on branch `feat/shipment-quote-lineage-foundation`; it adds internal quote-lineage/immutable-version persistence primitives, synthetic Firestore Emulator integration tests and direct-client Rules-denial tests. It adds no customer route/UI, quote calculation/issuance, booking acceptance, parcel/intake, indexes or Rules allow access. The persistence adapter is server-side only. Tests/build/lint/TypeScript/Emulator execution have not yet been performed for this branch; record results only after local execution.
+**First implementation slice:** PR #118 was reviewed and merged at `d54f337439947207e1967d1b915a02018e0b856a`. It added internal quote-lineage/immutable-version persistence primitives, synthetic Firestore Emulator integration tests and direct-client Rules-denial tests. It added no customer route/UI, quote calculation/issuance, booking acceptance, parcel/intake, indexes or Rules allow access. The user reported successful local verification: 57 tests passed with zero failures, including the seven quote-store tests; TypeScript, lint and production build also passed.
 
 **Independent gates remain:** pricing model/inputs/rates/arithmetic, quote validity and separate handover terms, DEC-047 service/endpoint eligibility, consequential customer token-revocation policy, booking acceptance authorization, staff/location/action authority, DB-10 physical evidence, and DEC-036 release evidence.
 
 The persistence foundation is a bounded technical prerequisite and does not replace or approve the ordered M2 commercial pricing/quotation readiness work. Quote issuance and acceptance remain disabled until M2 and the other independent prerequisites are approved and evidenced.
+
+
+## Current M2 execution checkpoint — DEC-048 reconciled; evidence collection next — 2 November 2026
+
+- **Repository baseline:** PR #118 merged at `d54f337439947207e1967d1b915a02018e0b856a`; user reports local `main` synchronized.
+- **Completed foundation:** PR #117 approved the DB-01/DB-02/DB-05 physical contract. PR #118 implemented the internal quote-lineage/immutable-version persistence foundation and Rules/Emulator tests. The user reported 57 tests passing with zero failures, and TypeScript, lint and production build passing.
+- **Commercial authority:** DEC-048 remains authoritative. One parcel and one itemized quote per independent booking; minimum-necessary service-specific inputs; separate quote-validity and physical-handover deadlines; separated pricing proposal/Operations validation/Finance review/independent approval; one shared pricing-rule authority under DEC-019. Service models and all actual rates/formulas/arithmetic/monetary treatment remain deferred.
+- **New evidence artifact:** `PLATFORM_M2_SERVICE_COST_AND_INPUT_EVIDENCE_WORKBOOK.md` is an evidence-collection template only. It introduces no commercial defaults or approvals.
+- **M2 readiness specification reconciled:** DB-05 is no longer described as pending. DEC-048/DEC-049 and PRs #117/#118 are reflected as the accepted commercial unit, physical design and implemented persistence foundation. Quote issuance/acceptance remain disabled.
+- **Next ordered activity:** collect attributable service-specific cost and operating evidence for Standard, Express and Scheduled; complete the minimum-input/source/unit matrix; obtain Operations validation and Finance review; then record a model recommendation for each service for independent approval. Do not select any model before the evidence exists.
+- **Separate operational gate:** all twelve DEC-047 service/endpoint combinations remain pending verification and unavailable by default. This evidence workbook does not activate them.
+- **No application implementation next:** do not add pricing calculation, rate configuration, quote issuance or customer acceptance until the corresponding service-specific commercial, operational, authorization and executable acceptance gates are approved.
+- **Independent work:** DB-03, DB-04, DB-06–DB-12, M0 and DEC-036 P0/Conditional P0 release evidence remain separate.

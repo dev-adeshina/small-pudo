@@ -1605,3 +1605,29 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - **First implementation slice after approval:** quote-lineage and immutable-version persistence primitives plus synthetic Emulator and Rules tests only. No customer route/UI, quote issuance, quote acceptance or parcel/intake capability.
 - **Independent gates:** pricing and quote terms, DEC-047 eligibility, customer token-revocation policy, staff authorization/location capability, physical-possession and DB-10 evidence contracts, DB-03/04/06–12, M0 and DEC-036 P0/Conditional P0 remain open as applicable.
 - **Evidence boundary:** documentation-only. No tests, lint, TypeScript check, build, Emulator run, deployed-rules check or production verification is claimed.
+
+
+## 74. M2 service cost and input evidence collection — current checkpoint — 2 November 2026
+
+**Repository baseline:** PR #118 merged at `d54f337439947207e1967d1b915a02018e0b856a`; the user reports local `main` synchronized.
+
+- [x] PR #117 physical DB-01/DB-02/DB-05 persistence/API/security contract reviewed and merged.
+- [x] PR #118 internal quote-lineage and immutable-version persistence foundation reviewed and merged.
+- [x] User-reported verification after PR #118: Firestore Emulator + `npm test` — 57 passed, 0 failures; seven quote-store integration tests passed; TypeScript, ESLint and Next.js production build passed.
+- [x] Reconciled M2 readiness specification with DEC-048/DEC-049 and PRs #117/#118. DB-05 is no longer treated as an undecided commercial unit or an unapproved physical foundation.
+- [x] Added `PLATFORM_M2_SERVICE_COST_AND_INPUT_EVIDENCE_WORKBOOK.md` as an evidence-collection template for Standard, Express and Scheduled. It does not approve any model, rate, formula, unit, currency, fee, tax, duration or service eligibility.
+- [ ] Collect attributable service-specific cost and operating evidence independently for Standard, Express and Scheduled.
+- [ ] Complete the minimum-necessary input/source/classification/unit/precision/conversion/validation matrix for each service.
+- [ ] Obtain Operations validation of service scope, input feasibility, capacity and fulfilment constraints.
+- [ ] Obtain Finance review of cost basis, charge transparency, currency/arithmetic/tax/fee treatment and financial implications.
+- [ ] Record a fixed/calculated/hybrid model recommendation for each service only after evidence is complete; obtain independent approval under PM-01–PM-12.
+- [ ] Approve service-specific quote-validity and separate physical-handover terms, including triggers and missed-handover/refused-intake outcomes.
+- [ ] Continue DEC-047 verification independently; all 12 service/endpoint combinations remain pending and unavailable by default.
+- [ ] Complete remaining DB-03, DB-04, DB-06–DB-12 dependencies, relevant technical/API/security contracts and executable acceptance specifications before enabling affected capabilities.
+- [ ] Continue M0 residual evidence and DEC-036 P0/Conditional P0 release evidence independently.
+
+**Current application boundary:** PR #118 provides internal server-side quote lineage/version persistence only. No customer quote issuance/acceptance, pricing calculation, booking confirmation, parcel/intake or custody capability is enabled. Do not implement actual pricing until service-specific commercial and operational gates are approved.
+
+**Next action:** use the evidence workbook to obtain source-backed Standard, Express and Scheduled cost/operating facts. The assistant must not fill in missing commercial values from assumptions, competitor rates or generic practice.
+
+**Evidence boundary:** The 57/57 test result and TypeScript/lint/build passes are user-reported local verification. No production pricing, quote issuance, operational eligibility or release readiness is established.
