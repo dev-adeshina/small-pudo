@@ -14,7 +14,7 @@ The owner has reviewed and accepted the twelve activity families as the working 
 
 ## 2. Authority and non-negotiable boundaries
 
-1. Each operational activity is to have its own independently configurable unit-cost definition and declare its own applicable variables. The actual catalogue, activity identifiers, units and variable mappings still require confirmation.
+1. Each accepted operational activity is to have its own independently configurable unit-cost definition and declare its own applicable variables. The twelve working activity families are owner-confirmed; stable implementation identifiers, activity-to-input mappings, units and source definitions still require validation.
 2. Staff compensation remains flexible and undecided. No wage model, productivity target, time standard, per-task payment, allocation formula or payroll execution is approved.
 3. The recorded transport arrangements are business-owned vehicles, driver-owned vehicles and external partners. The agreement/payment method may be configurable (including per-trip, distance, per-parcel, fixed, time-based, hybrid or negotiated arrangements), but no arrangement is selected as the default and no provider agreement or rate is approved.
 4. Under the described arrangement, no separate fuel/vehicle operating-expense reimbursement is added to driver-owned-vehicle driver charges or external-partner charges. Business-owned vehicle treatment remains open. This statement must not be generalized beyond the recorded arrangement.
