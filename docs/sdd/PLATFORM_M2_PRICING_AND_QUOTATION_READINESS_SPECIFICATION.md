@@ -300,3 +300,12 @@ No quote-engine or service-pricing code should begin until:
 10. executable acceptance, security, concurrency, stale-quote, expiry, revision, failure and replay scenarios are ready.
 
 Until then, the existing draft workspace remains draft-only; no quote or confirmed booking is created. M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain independent gates.
+
+
+## 16. Consolidated commercial owner decisions — 2 November 2026
+
+The owner-facing recommendations and grouped choices are maintained in `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md`. That package is a proposal for explicit owner response, not an accepted amendment to DEC-019/026/038–041 or DEC-046/047.
+
+It proposes one parcel and one itemized commercial quote per independent booking for minimum launch; evidence-first selection of each service's pricing model; minimum-necessary service-specific inputs with trusted sources/units; approved cost/rate evidence and explicit monetary/fee treatment; separate service-specific quote validity and handover deadline; named accountability through the existing PM authority framework; and one shared pricing-rule authority.
+
+No model is selected for Standard, Express or Scheduled. No actual rates, formulas, units, conversions, currency, rounding, tax/fee values or durations are supplied. All twelve DEC-047 service/endpoint combinations remain pending verification and unavailable. Do not treat the recommendation or merge of its documentation PR as owner approval.
