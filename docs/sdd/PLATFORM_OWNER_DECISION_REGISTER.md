@@ -2,7 +2,7 @@
 
 **Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-046 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
 **Last updated:** 2 November 2026  
-**Latest confirmed main merge:** PR #106 merged at `4af6fc8d524e51c06ab9e1c00aad8fb766d9271c` on 1 November 2026. The current unmerged preparation branch contains a proposed owner decision package; no recommendation in that package is accepted by this register.
+**Latest confirmed main merge:** PR #107 merged at `938ae9718394abcb120aa702727b83cf23b065ff` on 2 November 2026. This register is being extended on a documentation branch; the current change records DEC-047, approved by the owner.
 **Related documents:** `DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, and `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`  
 **Implementation gate:** DEC-045 permits bounded application implementation under accepted policy and explicit capability gates. Unresolved pricing, service eligibility, authority, evidence and technical dependencies must remain unavailable; this register does not imply launch readiness.
 
@@ -418,3 +418,22 @@ The document `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md` groups the remain
 **Status: Prepared for consolidated owner review; no proposal has been accepted by this register.** The owner's instruction to prepare the package is not approval of its contents. Preserve the accepted decisions above. Do not treat proposed booking/parcel/route-leg cardinality, quote/payment allocation, business representation, location operating scope, evidence rules, notification matrix or accountability recommendations as approved policy or an approved data model.
 
 At the consolidated owner review, each proposal must be explicitly accepted, rejected in favour of an alternative, or deferred with the affected launch capability excluded or blocked. Once confirmed, record the accepted choice in the relevant DEC/decision record and reconcile the affected workflow, lifecycle, domain-boundary, API/persistence, acceptance, issue, progress and handoff documents. Until then, technical design must retain the uncertainty. DEC-045 now authorizes bounded implementation under accepted policy; no implementation may assume these proposals are accepted or use them to fill unresolved business rules.
+
+
+## Additional owner-accepted detailed policy — DEC-047
+
+### Conservative service eligibility and operational verification
+
+The owner approved the governing policy on 2 November 2026.
+
+- Evaluate Standard, Express and Scheduled independently across address-to-address, address-to-PUDO, PUDO-to-address and PUDO-to-PUDO.
+- Every evaluated combination must be explicitly classified as eligible, conditional (with stated conditions), or not eligible. Pending verification is a separate interim state.
+- **Launch default:** every combination remains unavailable until its service-specific eligibility, required endpoint actions, coverage, valid route, operating availability/capacity and Operations approval have been verified and recorded. This does not permanently classify unverified combinations as ineligible.
+- A PUDO centre must be active and explicitly configured for each required action. A centre may support multiple capabilities; its label or broad type is not sufficient.
+- Operations must confirm coverage, required centre actions, an operationally valid route, capacity/availability for the requested date/time, and approve the applicable operating scope.
+- Missing, stale, revoked or insufficient verification means fail closed. The server must enforce and revalidate the decision at consequential submission.
+- Reassess affected combinations when coverage, centre status/capabilities, route rules, operating availability or capacity changes.
+
+**Still unresolved:** Actual eligibility outcomes for all twelve combinations; exact service/location/action coverage; proximity method and privacy/permission behaviour; operational coverage/capacity sources; estimates and numerical timeframes; scheduling rules; pricing inputs/rates/formulas/units/charges/currency/rounding; quote validity and handover deadlines; technical/evidence contracts and executable acceptance tests.
+
+DEC-047 is policy only. It approves no specific service/location assignment, numerical value, algorithm, provider, schema, field, collection, endpoint, status, permission or application-code change. Unverified combinations remain unavailable under DEC-045.

@@ -217,3 +217,24 @@ Exact service/location/action eligibility; operational coverage and capacity sou
 **Acceptance direction:** A Shipper sees only server-eligible services; unavailable services cannot be submitted; all four endpoint combinations are independently representable; route types are not customer selections; Standard/Express estimates are shown as non-guaranteed journey-specific estimates with Express shorter than Standard; Scheduled offers only validated available date/time options; and the accepted delivery commitment is preserved with the booking.
 
 **Evidence boundary:** DEC-046 and this section record approved product/business policy and acceptance direction only. They do not demonstrate an implemented service catalogue, availability engine, estimate calculation, scheduling capability, or production behaviour.
+
+
+## 13. M2 service eligibility and operational verification — DEC-047 — 2 November 2026
+
+The Shipper may express endpoints as physical addresses or eligible registered PUDO centres and select Standard, Express or Scheduled. The service catalogue and four endpoint patterns do not imply universal service availability.
+
+The eligibility matrix is evaluated independently for each service and endpoint pattern:
+
+| Service | Address → Address | Address → PUDO | PUDO → Address | PUDO → PUDO |
+|---|---|---|---|---|
+| Standard | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable |
+| Express | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable |
+| Scheduled | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable | Pending verification — unavailable |
+
+Pending verification is an interim unavailable state, not a final decision that a journey is inherently ineligible. Each combination must ultimately be explicitly classified as eligible, conditional with stated conditions, or not eligible. The conservative default is to keep it unavailable until the applicable service rules, endpoint actions, coverage, valid route, date/time availability and capacity have been verified and approved by the responsible Operations authority.
+
+For PUDO endpoints, verify that the centre is active and explicitly supports the particular action required. A centre may support multiple capabilities; the displayed centre type or label is not sufficient. For both address and PUDO endpoints, verify the selected journey's approved coverage. Operations must also verify a valid route under approved routing rules and capacity/operating availability for the requested date/time.
+
+The server is authoritative and revalidates eligibility and live availability at consequential submission. Missing, stale, revoked or insufficient evidence means the service is not bookable. If no service is available, explain that the selected journey cannot currently be booked; do not silently substitute a service, endpoint or route. Changes to coverage, centre capability/status, route rules, availability or capacity require reassessment of affected combinations.
+
+This policy does not select actual matrix outcomes, name launch locations, define the proximity method, specify evidence fields, or approve a technical model. Standard/Express estimate rules and Scheduled commitment rules remain governed by DEC-046; pricing, quote validity, handover deadlines, payment, intake and custody remain separate.

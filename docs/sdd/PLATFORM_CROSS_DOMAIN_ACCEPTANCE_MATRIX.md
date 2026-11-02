@@ -395,3 +395,24 @@ These policy-derived outcomes must be translated into executable cases only afte
 | Event separation | Service selection, quote validity, accepted booking, payment, handover deadline, physical intake, custody and movement remain distinct facts. |
 
 **Still required before executable tests:** Per-service journey/location/action matrix; operational coverage/capacity source and method; estimate calculation and numerical durations; guarantee policy; scheduled windows, cutoffs, reservation/expiry and change rules; pricing configuration and quote/handover terms; unavailable-route alternatives; technical/source/security contracts; and approved test data. DEC-046 does not approve numeric service levels, algorithms, schema, APIs, statuses or application implementation.
+
+
+## A-05 / A-10 refinement — DEC-047 service eligibility and operational verification — 2 November 2026
+
+These are policy-derived acceptance requirements for later executable test design. They do not claim implementation or test execution.
+
+| Acceptance family | Required observable outcome |
+|---|---|
+| Matrix completeness | Standard, Express and Scheduled are each evaluated independently across address-to-address, address-to-PUDO, PUDO-to-address and PUDO-to-PUDO. No service inherits another service's eligibility. |
+| Conservative default | All twelve combinations remain unavailable while verification is pending. Pending is distinct from a final not-eligible decision. |
+| Explicit eligibility outcome | A combination can be activated only after it has an explicit eligible or conditional outcome, with every condition stated; not-eligible combinations remain unavailable. |
+| Coverage verification | Origin and destination must fall within the approved coverage for the selected service and journey. |
+| PUDO action verification | Every required PUDO centre is active and explicitly configured for the specific action required at that endpoint. Multiple capabilities are allowed; a label/category alone is insufficient. |
+| Route verification | An operationally valid route exists under approved routing rules; customer endpoint selection does not select operational route types or prove a physical movement. |
+| Capacity and time availability | Current operating availability and capacity support the requested date/time; Scheduled options are validated for the selected journey and revalidated before confirmation. |
+| Operations approval and evidence | The applicable operating scope has approval from the responsible Operations authority, with attributable evidence identifying the service, journey pattern, locations/actions, coverage/capacity basis and constraints. |
+| Server enforcement and fail-closed behaviour | Browser presentation is not authoritative. The server re-evaluates and revalidates; missing, stale, revoked or insufficient verification blocks submission and creates no quote/booking. |
+| Change/revocation | Changes to coverage, centre status/capabilities, route rules, availability or capacity trigger reassessment of affected combinations; unrelated combinations are not silently changed. |
+| No substitution | If no approved and currently available service exists, explain that the journey cannot be booked; do not silently substitute a service, endpoint or route. |
+
+**Still required before executable tests:** Actual eligible/conditional/not-eligible outcomes and conditions for all twelve combinations; operational coverage/capacity sources and evidence procedures; proximity discovery/privacy; estimate methodology and numerical durations; guarantee policy; Scheduled windows/cutoffs/reservation/expiry/change rules; pricing and quote/handover terms; technical/source/security contracts; and approved test data. DEC-047 does not approve schemas, APIs, status values, providers, algorithms or application implementation.
