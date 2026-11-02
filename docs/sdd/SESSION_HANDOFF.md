@@ -272,9 +272,9 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - **Recommended minimum launch:** one parcel and one itemized quote per independent booking, subject to explicit owner acceptance and technical reconciliation. Multi-parcel/cross-obligation complexity is deferred.
 - **Pricing model status:** no model is selected for Standard, Express or Scheduled. Recommend evidence-first selection based on each service's cost and operational facts.
 - **Commercial values:** actual rates/formulas, units/conversions, currency, rounding, taxes/fees and numerical quote/handover durations remain unprovided and unapproved.
-- **Accepted policy preserved:** DEC-019, DEC-026, DEC-038–DEC-041 and DEC-046–DEC-047. DEC-047's twelve service/endpoint combinations remain pending verification and unavailable by default.
-- **Status:** recommendations only; no new DEC or owner approval inferred. No application code, schema, API, permission, provider, runtime or production change. No application tests/build/lint run.
-- **Next:** request one consolidated owner response. After response, reconcile accepted decisions into authoritative SDD, then complete technical ownership/cardinality/source/API/security and executable acceptance contracts before pricing/quote implementation. M0 and DEC-036 release requirements remain independent.
+- **Accepted policy preserved:** DEC-019, DEC-026, DEC-038–DEC-041 and DEC-046–DEC-048. DEC-047's twelve service/endpoint combinations remain pending verification and unavailable by default.
+- **Status:** the owner response is accepted and recorded as DEC-048 below. No application code, schema, API, permission, provider, runtime or production change. No application tests/build/lint run.
+- **Next:** complete technical ownership/cardinality/source/API/security and executable acceptance contracts before pricing/quote implementation. M0 and DEC-036 release requirements remain independent.
 
 
 ## Current owner decision — DEC-048 — 2 November 2026
