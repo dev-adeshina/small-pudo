@@ -493,3 +493,36 @@ The user had also reported earlier production endpoint smoke observations on 1 N
 **Remaining M2 blockers:** Actual eligible/conditional/not-eligible outcomes and conditions for each of the twelve cells; concrete service/location/action coverage; proximity discovery/privacy; operational coverage/capacity sources and evidence procedures; estimate methodology/numerical timeframes/guarantee policy; Scheduled windows/cutoffs/reservation/expiry/change rules; service-specific pricing models/inputs/rates/formulas/units/conversions/charges/currency/rounding; quote validity and handover deadlines; technical ownership/cardinality/API/security/evidence contracts; and executable acceptance tests.
 
 **Implementation boundary:** Documentation-only. No application code, schema, API, permissions, provider, route/scheduling algorithm, location operating-hours/capacity system, runtime behaviour or production capability was changed or verified. M0 and DEC-036 P0/Conditional P0 release evidence remain independent.
+
+
+## 18. M2 pricing and quotation source reconciliation — current main after PR #108 — 2 November 2026
+
+**Repository baseline:** PR #108 merge commit `047a234cc641493d8a44a88e41ab722e6818ab5c`.  
+**Scope:** Focused read-only recheck of the current storefront order/payment source, product price mapping, shipment-draft source findings and the existing SDD quote/booking/DB relationship contracts. This is not a full repository audit or runtime test.
+
+### Source observations
+
+| Surface | Current source observation | M2 consequence |
+|---|---|---|
+| Storefront order creation — `app/api/orders/route.ts` | Server reads current Firestore product records, validates active state/price/stock, calculates item subtotals and creates the order with stock reservation in a Firestore transaction. It currently sets deliveryFee to 0 and currency to NGN. | Product line-item price validation is a reusable server-authority pattern, not the shared delivery/shipment pricing authority. The zero delivery fee is not an approved shipment rate. |
+| Storefront checkout — `app/checkout/page.tsx` | Browser displays subtotal and total; delivery fee is previewed as zero. The API performs authoritative product-price validation/calculation. | Browser display values are not authoritative. Storefront delivery pricing is not yet connected to a shared approved rule authority. |
+| Product catalogue — `lib/firebase/products.ts`, `lib/types/product.ts` | Product records expose product price and currency as catalogue facts. | Product price must remain distinct from delivery/shipment charges. |
+| Paystack initialization — `app/api/payments/initialize/route.ts` | Initializes payment against an existing storefront order, requires its order access token, reads order total and supports NGN with naira-to-kobo conversion. | This is not a general shipment-quote payment contract; do not reuse as such without a separate approved payment-purpose/entitlement/reconciliation design. |
+| Paystack verification — `app/api/payments/verify/route.ts` | Verifies a stored order payment reference and checks successful status, amount, currency and transaction ID against the storefront order. | Reusable validation patterns may inform later design, but the route is order-scoped and not a quote or general financial-event service. |
+| Shipment draft workspace | Current customer APIs/store support draft preparation and customer-scoped ownership only. | A draft is not a quote, accepted commercial agreement, confirmed booking, payment obligation or custody record. |
+| Pricing/quote source surface | No shared shipment quote/rate service or independent quote/booking API was identified in the bounded current source surface reviewed for this task. | Shared pricing authority and quotation capability remain missing source capabilities; do not create a parallel pricing formula or assume they exist. |
+
+### SDD relationship reconciliation
+
+- DEC-019 requires one shared pricing-rule authority for storefront delivery and independent shipment pricing where inputs overlap.
+- DEC-039 requires service-specific approved models/inputs, trusted server calculation, charge transparency and historical preservation.
+- DB-01–DB-03 and DB-05 block booking/shipment/parcel/route and quote-scope persistence design. DB-04, DB-06 and DB-11 affect storefront fulfilment, payment allocation and financial-event lineage.
+- DEC-038 requires exact valid quote acceptance by the authenticated booking party to confirm the booking; payment and physical intake remain separate.
+- DEC-040 governs proposed measurement-based adjustments; DEC-041 governs payment and settlement; neither is folded into quote calculation.
+- DEC-046/047 govern customer-facing service commitments and the fail-closed eligibility/operational evidence gate. No unverified service/endpoint combination is treated as quoteable.
+
+### Evidence limits and next source work
+
+This review confirms source structure only. No application tests, build, lint, API runtime, production data, deployed configuration, provider credential or customer browser test was executed for this documentation task. The older focused M1 draft review remains bounded by its stated commit; the current route/product/payment files above were re-fetched from main.
+
+Before implementation, inspect the exact current shipment-draft validation/store/API contracts alongside DB-01–DB-12 and the approved quote scope. Reconcile shared pricing ownership and storefront delivery migration without changing product-price semantics. No collection, field, schema, API, status, permission, provider or code change is approved by this source review.
