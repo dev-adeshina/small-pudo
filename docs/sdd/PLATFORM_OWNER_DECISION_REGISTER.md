@@ -1,8 +1,8 @@
 # VeriLyft Platform Owner Decision Register
 
-**Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-046 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
+**Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-048 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
 **Last updated:** 2 November 2026  
-**Latest confirmed main merge:** PR #107 merged at `938ae9718394abcb120aa702727b83cf23b065ff` on 2 November 2026. This register is being extended on a documentation branch; the current change records DEC-047, approved by the owner.
+**Latest confirmed main merge:** PR #110 merged at `6bced955b967d34e674f9807f71d8092bb63bd48` on 2 November 2026. This documentation change records the owner's accepted M2 commercial decisions as DEC-048.
 **Related documents:** `DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, and `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`  
 **Implementation gate:** DEC-045 permits bounded application implementation under accepted policy and explicit capability gates. Unresolved pricing, service eligibility, authority, evidence and technical dependencies must remain unavailable; this register does not imply launch readiness.
 
@@ -454,6 +454,21 @@ No new DEC is created by this readiness work. No rate, formula, model mapping, n
 
 The owner-facing commercial decision package is `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md`. It groups the remaining M2 owner choices into seven decisions: commercial booking/parcel/quote unit (DB-01/02/05); evidence-based model selection for Standard, Express and Scheduled; service-specific input/source/unit configuration; rates/formulas and charge/arithmetic treatment; quote validity and separate handover deadline; pricing governance; and the shared pricing authority under DEC-019.
 
-**Status: recommendations prepared; none accepted by this register.** The minimum-launch recommendation is one parcel and one itemized quote per independent booking, while deferring multi-parcel/cross-obligation complexity. The package recommends selecting each service's fixed/calculated/hybrid model only after cost and operational evidence exists; it does not choose a model for any service or provide a rate.
+**Historical proposal status:** The owner response has since been accepted and recorded as DEC-048 in the section below. The accepted/deferred outcomes there supersede this proposal-status summary. The underlying evidence, operational values and technical contracts remain open; DEC-047's twelve service/endpoint combinations remain pending verification and unavailable by default.
 
-Actual rates/formulas, units/conversions, currency, rounding, tax/fee treatment, quote/handover durations and accountable individuals remain pending. DEC-047's twelve service/endpoint combinations remain pending verification and unavailable by default. No new DEC is created and no technical cardinality/schema/API or code change is approved by this package.
+
+## D-05 M2 commercial pricing owner response — DEC-048 — 2 November 2026
+
+**Status:** Owner response accepted and recorded as DEC-048. This resolves the commercial direction below, not the associated technical representation or operational evidence.
+
+| Group | Owner outcome | Accepted boundary / remaining work |
+|---|---|---|
+| A — Booking/parcel/quote unit | **Accepted** | Minimum launch: one parcel and one itemized quote per independent booking. Multi-parcel and cross-obligation allocation deferred. DB-01 shipment-creation timing and DB-02/DB-05 technical persistence/cardinality remain open. |
+| B — Pricing models | **Deferred** | No fixed/calculated/hybrid model selected for Standard, Express or Scheduled. Select independently after service-specific cost and operating evidence. |
+| C — Pricing inputs | **Accepted** | Minimum-necessary, service-specific inputs with approved authoritative sources, source classification, units, precision, explicit conversions and validation. Actual mappings remain pending evidence/approval. |
+| D — Rates and arithmetic | **Deferred** | No rates, formulas, coefficients, units, currency, rounding, tax, surcharge, discount or other fee treatment approved. Require traceable cost/rate evidence and explicit approval. |
+| E — Quote deadlines | **Accepted as separate requirements** | Communicate quote validity and a distinct physical-handover deadline before acceptance. Numerical durations, triggers and missed-deadline outcomes remain open. |
+| F — Pricing governance | **Accepted** | Separate proposal, Operations validation, Finance review and independent approval, aligned with PM-01–PM-12. Named individuals, permissions and detailed controls remain open. |
+| G — Shared pricing | **Accepted** | One shared pricing-rule authority under DEC-019 wherever inputs overlap; product price remains distinct from delivery/shipment price. |
+
+**Implementation and readiness boundary:** This is business-policy acceptance only. It does not settle DB-01, DB-03, DB-06 or DB-11; does not approve a concrete Firestore relationship, schema, API, permission, rate, formula, provider or application code. DEC-047's twelve service/endpoint combinations remain unavailable pending evidence. Pricing/quote implementation remains gated by approved per-service values, operational evidence, technical contracts and executable acceptance specifications. M0 and DEC-036 release requirements remain independent.

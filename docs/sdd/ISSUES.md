@@ -1,8 +1,8 @@
 # VeriLyft Issues, Risks, and Open Questions
 
-**Last updated:** 31 October 2026  
+**Last updated:** 2 November 2026  
 **Repository:** `dev-adeshina/small-pudo`  
-**Owner decisions:** D-01–D-15 (DEC-022–DEC-036), DEC-037–DEC-044, PM-01–PM-12, and BP-01–BP-22 have accepted owner-policy outcomes at their recorded levels. Detailed operational procedures, technical contracts, acceptance-test specifications, runtime evidence, and production readiness remain open.
+**Owner decisions:** D-01–D-15 (DEC-022–DEC-036), DEC-037–DEC-048, PM-01–PM-12, and BP-01–BP-22 have accepted owner-policy outcomes at their recorded levels. Detailed operational procedures, technical contracts, acceptance-test specifications, runtime evidence, and production readiness remain open.
 
 This is the current issue register. Older archive-based observations have been reconciled where current implementation or later test evidence supersedes them. Source presence is not the same as runtime verification.
 
@@ -428,4 +428,11 @@ The owner-approved DEC-046 service catalogue and DEC-047 eligibility/operational
 
 The consolidated owner proposal is `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md`. It groups the commercial-unit decision, per-service model-selection method, input/source/unit matrix, rates and monetary treatment, quote validity/handover terms, pricing governance and shared pricing authority.
 
-**Status:** awaiting explicit owner response; recommendations are not accepted policy. No service model or rate is selected. Actual formulas, units/conversions, currency, rounding, tax/fee treatment and durations remain pending evidence and approval. The proposed one-parcel/one-quote minimum-launch unit remains pending DB-01/02/05 reconciliation. DEC-047 eligibility evidence and all technical relationship/API/security/acceptance dependencies remain separate blockers. No pricing or quote implementation is authorized by this proposal alone.
+**Status:** owner response accepted and recorded as DEC-048. The accepted commercial unit is one parcel and one itemized quote per independent booking for minimum launch; this does not settle DB-01 shipment creation timing or DB-02/DB-05 technical persistence/cardinality. No service model or rate is selected. Actual formulas, units/conversions, currency, rounding, tax/fee treatment and numerical deadlines remain pending evidence and approval. DEC-047 eligibility evidence and technical relationship/API/security/acceptance dependencies remain blockers; no pricing or quote implementation is authorized yet.
+
+
+## M2 commercial owner response accepted — DEC-048 — 2 November 2026
+
+The owner accepted the minimum-launch commercial unit (one parcel and one itemized quote per independent booking), minimum-necessary service-specific input principle, separate quote validity and physical-handover deadlines, separated pricing governance, and DEC-019 shared pricing authority. Multi-parcel/cross-obligation allocation is deferred. The owner deferred model selection for Standard/Express/Scheduled and all actual rates, formulas, units/conversions, currency, rounding and tax/fee treatment pending evidence and approval.
+
+**Remaining blockers:** per-service cost and operational evidence; approved input/source/unit/conversion matrices; rate/formula and monetary/charge decisions; numerical quote/handover terms; DEC-047 operational eligibility evidence; and technical relationship/cardinality/source/API/security/acceptance contracts. DB-01 shipment creation, DB-03 parcel-to-route-leg, DB-06 payment allocation and DB-11 financial-event linkage remain unresolved; DB-02/DB-05 technical representation remains open despite the accepted commercial unit. No schema, API, permission, provider, pricing runtime or application-code change is approved. Keep quote issuance and all twelve DEC-047 combinations unavailable until their prerequisites are met.
