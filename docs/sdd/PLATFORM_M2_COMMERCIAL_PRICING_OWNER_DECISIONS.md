@@ -270,7 +270,7 @@ Acceptance of this package would settle the stated business direction only. It w
 - a change to Firebase rules, permissions, production configuration or deployed behaviour;
 - quote or booking code implementation before the technical relationship, API/security and acceptance contracts are reconciled.
 
-After owner response, update the authoritative DEC/owner register and affected SDD contracts. Then complete technical source reconciliation and executable acceptance specifications before implementation of the blocked quote/pricing capabilities.
+The owner response is now recorded as DEC-048 in Section 13 and reconciled into the authoritative DEC/owner register and affected SDD contracts. Complete technical source reconciliation and executable acceptance specifications before implementation of the blocked quote/pricing capabilities.
 
 
 ## 13. Owner response recorded — DEC-048 — 2 November 2026
