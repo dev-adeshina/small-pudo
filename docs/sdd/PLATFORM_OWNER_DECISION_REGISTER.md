@@ -500,3 +500,22 @@ The accepted rules are: quote acceptance confirms the commercial booking but cre
 **Not approved:** Firestore schema/layout, fields/indexes/identifiers, APIs/payloads, status enums, permission IDs/claims, rates/formulas/currency/arithmetic/fees, quote/handover numerical durations, DEC-047 outcomes, location capabilities, staff assignments, evidence technology/retention, provider activation or code.
 
 **Next:** Reconcile the DB-01/02/05 acceptance cases and perform a separate source-aligned physical persistence/API/security design review. Keep quote issuance, all twelve DEC-047 combinations and parcel/intake capability unavailable until their independent prerequisites are verified.
+
+
+## Review 5 owner approval record — 2 November 2026
+
+The owner approved the consolidated Reviews 1–5 outcome on 2 November 2026.
+
+**Readiness result:** **CONDITIONALLY READY** for bounded implementation under DEC-045. This record confirms approval of the review outcome and execution sequence; it is not a new business-policy decision and does not silently approve any proposal marked unresolved elsewhere.
+
+**Approved execution sequence:**
+1. Reconcile the Review 5 outcome and current repository baseline in the SDD.
+2. Formalize the source-aligned physical persistence/API/security contract for the accepted DB-01/DB-02/DB-05 logical rules.
+3. Obtain owner review/merge of that physical contract.
+4. Begin the quote-lineage and immutable-version technical foundation as the first new implementation target, limited to what its approved contract supports.
+5. Keep quote issuance/acceptance disabled until pricing, quote/handover terms, DEC-047 eligibility and relevant authorization/acceptance requirements are approved.
+6. Keep parcel/intake disabled until location/action authority and physical evidence contracts are approved.
+
+**Preserved non-approvals:** No pricing model/rate/formula, quote or handover duration, service/endpoint eligibility outcome, Firestore collection/field/index layout, API route/payload, status enum, permission ID/claim, provider activation, physical evidence method, retention period, production target or launch readiness is approved by this Review 5 record.
+
+**Baseline:** PR #115 merged at `acf27604799f5142be0c6b6f14591ee053344b54`. This is the current SDD baseline for this approval record. The bounded application-source baseline remains the one explicitly stated in the technical-contract source review.
