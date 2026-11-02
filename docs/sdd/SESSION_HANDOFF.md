@@ -351,3 +351,15 @@ PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. T
 **Still independent and unresolved:** DB-03, DB-04, DB-06–DB-12; service pricing and operational availability; DEC-047 twelve service/endpoint evidence outcomes; staff/location capability configuration; intake/custody evidence and correction authority; financial reconciliation; notification and retention contracts; M0/DEC-036 P0 release evidence and production operational readiness.
 
 **Protocol:** DEC-045 supersedes the earlier blanket freeze pending Reviews 3–5. Proceed only with a bounded slice whose accepted policy, technical contract, authorization, acceptance cases and evidence are Ready. Keep unresolved capabilities unavailable. Do not invent collections, fields, routes, status enums, permission IDs, rates, durations, evidence standards or production targets. Preserve focused PRs and owner review/merge.
+
+
+## Current authoritative handoff — PR #116 merged; physical design proposal prepared (2 November 2026)
+
+- **Current `main`:** PR #116 merged at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90`; user reports local `main` synchronized.
+- **Review 5:** owner-approved CONDITIONALLY READY for bounded implementation under DEC-045. The approved sequence is to review/merge the physical DB-01/02/05 contract before beginning the quote-lineage and immutable-version technical foundation.
+- **Source baseline:** relevant source paths have been re-fetched at the current commit. The review remains bounded to Firebase Admin, Firestore Rules/configuration, customer/admin authorization, draft persistence/API/validation and associated tests; it is not a full source audit or runtime/production verification.
+- **Current proposal:** `PLATFORM_DB01_DB02_DB05_PHYSICAL_PERSISTENCE_API_SECURITY_DESIGN.md`. Review the recommended root-level quote/booking/parcel records, quote-version subcollection, immutable snapshot, transaction serialization points, server-only access, default-deny Rules and query-driven index policy.
+- **Important open point:** customer token revocation is not currently checked by `authenticateVerifiedCustomer`; the proposal recommends an explicit owner decision before consequential quote acceptance. Staff authorization and location/action capability are not implemented in the inspected source and must not be replaced by admin status.
+- **Next:** owner review of the physical design proposal. If approved, the first implementation PR is limited to quote-lineage/version persistence primitives and synthetic Emulator/Rules tests. No public quote/booking API or UI, quote issuance/acceptance, parcel/intake or custody capability is included.
+- **Keep blocked:** pricing/quote terms, DEC-047 eligibility, customer revocation policy, staff/location/action authority, physical evidence/DB-10, DB-03/04/06–12, M0 and DEC-036 release evidence remain separate gates.
+- **No claims:** no tests, build, lint, Emulator, deployment or production checks were run for this documentation proposal.
