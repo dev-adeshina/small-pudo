@@ -177,3 +177,22 @@ The owner accepted the DB-01/DB-02/DB-05 logical relationship package in PR #114
 - One quote lineage per booking uses immutable issued versions and exact-version acceptance bound to one immutable accepted snapshot.
 
 **Next ordered activity:** conduct a separate source-aligned physical persistence/API/security design review for these accepted logical relationships. This review must not invent schema or make blocked capabilities available. Quote issuance/acceptance remains blocked by service-specific pricing, quote/handover terms and DEC-047 evidence. Parcel/intake remains blocked by location/action authority and physical evidence contracts. DB-03, DB-04, DB-06–DB-12 and M0/DEC-036 remain independent gates.
+
+
+## DB-01 / DB-02 / DB-05 physical persistence/API/security design — 2 November 2026
+
+PR #116 merged at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90`; Review 5 is owner-approved as CONDITIONALLY READY under DEC-045. The relevant Firebase/Firestore, authorization, shipment-draft and test paths were re-fetched at this baseline.
+
+**Design proposal:** `PLATFORM_DB01_DB02_DB05_PHYSICAL_PERSISTENCE_API_SECURITY_DESIGN.md`.
+
+The proposal recommends:
+- root-level, centrally queryable quote-lineage, confirmed-booking and parcel records;
+- immutable quote-version documents nested beneath their quote lineage;
+- exact accepted-version linkage to one booking and a one-time booking-to-parcel link;
+- Firestore transactions as the serialization boundary for quote revision/acceptance and later parcel intake;
+- server-only access, default-deny client Rules, explicit API authorization and no speculative indexes;
+- additive compatibility with existing customer drafts and storefront orders.
+
+**Current status:** proposal prepared for owner review; no physical schema, API, indexes, Rules/configuration, code or capability activation is approved or implemented by this entry.
+
+**After owner approval:** begin the narrow quote-lineage/immutable-version persistence foundation with synthetic Firestore Emulator tests and direct-client Rules-denial tests only. Do not expose quote issuance/acceptance or parcel/intake. Pricing, quote terms, DEC-047 eligibility, customer token-revocation policy, staff/location/action authority and DB-10 evidence remain independent gates.

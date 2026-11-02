@@ -333,3 +333,12 @@ The relationship table and case-level specifications above are reconciled to the
 **Readiness remains blocked:** pricing models/values/arithmetic/quote and handover durations, DEC-047 service/endpoint evidence, location/action authority, physical proof/evidence, and concrete API/persistence/security design remain unresolved. DB-03, DB-04, DB-06–DB-12 and M0/DEC-036 remain independent gates. The case specifications express required behaviour; they are not executable tests and do not make the capabilities available.
 
 **Next:** perform a separate source-aligned physical persistence/API/security design review for only the accepted DB-01/02/05 rules, without implementing quote issuance, booking acceptance or parcel intake while their independent prerequisites remain blocked.
+
+
+## 10. Physical design follow-on — PR #116 baseline (2 November 2026)
+
+The Review 5 sequence is now owner-approved and PR #116 is merged at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90`. The focused source re-fetch at that baseline is recorded in `PLATFORM_DB01_DB02_DB05_PHYSICAL_PERSISTENCE_API_SECURITY_DESIGN.md`.
+
+That companion proposal formalizes the physical representation, transaction/replay boundaries, API and authorization responsibilities, Rules/default-deny implications, query/index policy, additive migration and synthetic acceptance fixtures for DB-01/DB-02/DB-05. It remains a proposal for owner review; this logical contract is not retroactively converted into an approved schema or endpoint specification.
+
+The next implementation slice, after owner approval of the companion physical contract, is limited to quote-lineage and immutable-version persistence primitives and synthetic Emulator/Rules tests. Quote issuance/acceptance and parcel/intake remain disabled until their separate commercial, DEC-047, authorization, location and evidence prerequisites are approved.
