@@ -238,7 +238,7 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Accepted:** Use a shared measurement-recording framework with service-specific required measurements and explicitly configured units; preserve declared and actual measurements separately; do not silently overwrite, convert, or reinterpret recorded values; record actual-measurement actor/location/time and applicable evidence; use configurable service-appropriate discrepancy thresholds without inventing numeric values; link proposed adjustments to the original quote and accepted agreement; require review for material discrepancies and adjustments affecting existing payments; notify customers of price-changing adjustments and require explicit acceptance before collecting additional charges; hold disputed additional charges pending review; and keep proposals separate from approved charges and settled financial events.
 - **Accepted DEC-040 refinement:** A customer rejection triggers an authorized service-resolution decision; it does not automatically cancel, refund, credit, or charge. Continuing under original terms is allowed only where safe and commercially feasible; an alternative requires separately accepted pricing; cancellation follows its own policy; dispatch cannot proceed under a rejected revised price. Silence is not acceptance.
 - **Still open:** Required measurements and units by service, conversion rules, numeric thresholds, evidence detail, staff approval limits, second-person rules, service-resolution decision authority and eligibility, feasibility criteria, customer response periods/non-response handling, and detailed tests.
-- **Next action:** Reconcile detailed pricing/measurement contracts and acceptance criteria, then continue remaining SDD dependencies. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+- **Next action:** Reconcile detailed pricing/measurement contracts and acceptance criteria, then continue remaining SDD dependencies. Preserve the relevant SDD review gate for any implementation; DEC-045 permits bounded work under accepted policy. No application code changed or tested for this policy decision.
 
 ### D-08 cancellation, late payment, refunds, credits, and reconciliation — DEC-029
 
@@ -253,7 +253,7 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Status:** High-level owner policy accepted on 30 October 2026 (Option A: narrow, controlled dispatch exceptions).
 - **Accepted:** Verified payment remains the default dispatch prerequisite; exceptions are limited to explicitly defined operational circumstances under an approved policy; only staff with explicitly assigned permission may approve; the requester must not automatically approve their own request; material exceptions require a second approver; exceptions preserve payment status and cannot bypass unrelated safety, custody, identity, legal, or other operational holds; parcel/shipment, reason, requester, approver(s), timestamp, supporting evidence, and outcome must be attributable.
 - **Still open:** Eligible circumstances, exact permission assignment, materiality/second-approval rules, monetary or operational limits, category-specific evidence, pre-dispatch revocation, and detailed acceptance tests.
-- **Next action:** D-10 routing, route-leg assignment, and movement evidence is accepted as DEC-031. Continue to D-11 delivery proof and failed-delivery resolution. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+- **Next action:** D-10 routing, route-leg assignment, and movement evidence is accepted as DEC-031. Continue to D-11 delivery proof and failed-delivery resolution. Preserve the relevant SDD review gate for any implementation; DEC-045 permits bounded work under accepted policy. No application code changed or tested for this policy decision.
 
 
 ### D-10 routing, route-leg assignment, and movement evidence — DEC-031
@@ -261,7 +261,7 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Status:** High-level owner policy accepted on 30 October 2026 (Option A: controlled, evidence-based movement).
 - **Accepted:** Route proposal, approval, route-leg assignment, dispatch, physical handover, and arrival confirmation are distinct; proposal/assignment is not proof of movement; Operations manages launch-time proposals and assignments; route changes require explicitly assigned authority and preserve history, actor, and reason; movement evidence distinguishes physical actor from staff recorder when staff enter provider/driver events; delays, missed handovers, missing parcels, damage, and disputed custody transfers remain explicit exceptions; Driver Portal remains deferred.
 - **Still open:** Route constraints, exact permissions and any two-person approvals, mandatory milestones/evidence, provider/resource/capacity rules, correction authority, detailed exception outcomes, and acceptance tests.
-- **Next action:** Continue to D-11 delivery proof and failed-delivery resolution. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+- **Next action:** Continue to D-11 delivery proof and failed-delivery resolution. Preserve the relevant SDD review gate for any implementation; DEC-045 permits bounded work under accepted policy. No application code changed or tested for this policy decision.
 
 
 ### D-11 delivery proof and failed-delivery resolution — DEC-032
@@ -269,7 +269,7 @@ When new evidence arrives, update the relevant issue in this file and the matchi
 - **Status:** High-level owner policy accepted on 30 October 2026 (Option A: evidence-based delivery with controlled outcomes).
 - **Accepted:** Attempt, successful delivery, failed delivery, customer collection, and return are distinct; successful delivery requires approved service-appropriate evidence and a staff status update alone is insufficient; recipient authority follows DEC-024; proof methods remain flexible by service; failed attempts retain reasons; reattempt, return, holding, refusal, cancellation, and financial adjustments require explicit authority; significant notifications respect party entitlements; disputed delivery preserves original evidence/history.
 - **Still open:** Mandatory methods by service, OTP requirement, attempt limits, resolution authority, holding duration, failure-reason catalogue, loss/damage/refusal/dispute handling, customer-contact details, and detailed acceptance tests.
-- **Next action:** Continue to D-12 audit, evidence retention, correction, and disclosure. Preserve the platform-wide SDD approval gate; no application code changed or tested for this policy decision.
+- **Next action:** Continue to D-12 audit, evidence retention, correction, and disclosure. Preserve the relevant SDD review gate for any implementation; DEC-045 permits bounded work under accepted policy. No application code changed or tested for this policy decision.
 
 
 ### D-12 audit, evidence retention, correction, and disclosure — DEC-033
@@ -381,7 +381,7 @@ The owner has approved the high-level rejection-resolution boundary: customer re
 - **Verified PR states:** PR #3 merged at `c56be9b121e6007e1e99c6df2d3984e709771a92`; PR #4 closed without merge. Do not describe PR #4 as open or merged.
 - **Policy assessment:** No confirmed contradiction requiring an accepted owner decision to be reopened was identified in this initial pass. Full reconciliation remains incomplete until each affected document is corrected and rechecked.
 - **Next action:** Complete the focused corrective updates listed in `PLATFORM_DECISION_DOCUMENT_RECONCILIATION.md`; then continue source traceability, executable acceptance-test specification, and production-readiness evidence planning.
-- **Implementation gate:** VLY-019 remains open. No application-code changes until the complete platform-wide SDD is reconciled and explicitly approved by the owner.
+- **Implementation gate:** VLY-019 remains open. DEC-045 permits bounded implementation under accepted policy; unresolved capabilities remain blocked. Complete SDD reconciliation and DEC-036 evidence remain release gates.
 
 
 ## Milestone 4 continuity baseline update — PR #64 — 31 October 2026
@@ -390,7 +390,7 @@ The owner has approved the high-level rejection-resolution boundary: customer re
 - **Source baseline:** `e0f69055d33dd9399c23e1d793f359468229c856`; repository comparison through PR #64 returned SDD documentation paths only. This is repository-history evidence, not fresh source inspection or runtime/production verification.
 - **DEC-044 evidence:** PR #64 refined the A-09 acceptance row and existing P0 custody/exception cases; the catalogue remains 80 unique case IDs with no duplicates.
 - **Current next action:** Continue targeted section-level reconciliation across A-01–A-20, workflows, lifecycles, actors/permissions, booking-party authority, Admin requirements/design, and source evidence. Then complete technical contracts, executable acceptance-test specifications, and production-readiness evidence planning.
-- **Implementation gate:** No application-code changes until the complete platform-wide SDD is reconciled and explicitly approved by the owner.
+- **Implementation gate:** DEC-045 permits bounded implementation under accepted policy; unresolved capabilities remain blocked. Complete SDD reconciliation and DEC-036 evidence remain release gates.
 
 
 ## A-15 permission policy consistency update — PR #66
@@ -436,3 +436,14 @@ The consolidated owner proposal is `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIO
 The owner accepted the minimum-launch commercial unit (one parcel and one itemized quote per independent booking), minimum-necessary service-specific input principle, separate quote validity and physical-handover deadlines, separated pricing governance, and DEC-019 shared pricing authority. Multi-parcel/cross-obligation allocation is deferred. The owner deferred model selection for Standard/Express/Scheduled and all actual rates, formulas, units/conversions, currency, rounding and tax/fee treatment pending evidence and approval.
 
 **Remaining blockers:** per-service cost and operational evidence; approved input/source/unit/conversion matrices; rate/formula and monetary/charge decisions; numerical quote/handover terms; DEC-047 operational eligibility evidence; and technical relationship/cardinality/source/API/security/acceptance contracts. DB-01 shipment creation, DB-03 parcel-to-route-leg, DB-06 payment allocation and DB-11 financial-event linkage remain unresolved; DB-02/DB-05 technical representation remains open despite the accepted commercial unit. No schema, API, permission, provider, pricing runtime or application-code change is approved. Keep quote issuance and all twelve DEC-047 combinations unavailable until their prerequisites are met.
+
+
+### VLY-027 — DB-01–DB-12 technical relationships and case-level acceptance specifications require owner review
+
+- **Status:** IN REVIEW — consolidated technical-contract and acceptance proposal prepared on `docs/db01-db12-technical-contract-acceptance`; owner review/merge pending.
+- **Priority:** Blocking for the next independent-booking implementation slice; does not block unrelated Ready work under DEC-045.
+- **Evidence:** PR #111 recorded DEC-048. The current M1.3 shipment-draft workspace is source-backed and remains preparation-only. The bounded current-main review found no independent quote/rate, confirmed-booking, parcel/intake/custody, location-capability, route/movement or general financial-reconciliation service.
+- **Proposal:** `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md` consolidates DB-01–DB-12 ownership/relationship/cardinality boundaries, API/security/transaction/replay/recovery invariants and case-level acceptance specifications.
+- **Still open:** DB-01 shipment/parcel creation timing; DB-02/DB-05 physical relationship and quote snapshot representation; DB-03 parcel-to-route-leg; DB-06 payment allocation; DB-11 financial-event linkage; DB-07/DB-08 relationship verification/delegation/business authority; DB-09 actual location/service/action matrix and accountable operating model; DB-10 event evidence/reviewer/retention/legal hold; DB-12 recipient/field/channel/consent/retry; DEC-047 operational evidence; service-specific pricing model/inputs/rates/arithmetic; and quote/handover durations.
+- **Next action:** Review/merge the consolidated proposal, then implement only a slice whose accepted policy, technical representation, authorization, acceptance fixtures and evidence are Ready. Keep quote issuance and all twelve DEC-047 combinations unavailable until their independent gates are met.
+- **Implementation boundary:** DEC-045 permits bounded implementation; this issue does not reinstate the previous blanket freeze. No schema, API, permission, provider or application-code change is authorized by the documentation proposal itself.

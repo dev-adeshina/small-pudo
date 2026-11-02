@@ -1,9 +1,9 @@
 Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`.
 
-## Current owner direction — 31 October 2026
+## Current owner direction — 31 October 2026 (continuity; current task pointer at end of file)
 
 - DEC-045 records the owner's explicit instruction to stop extending the planning cycle and begin implementation using accepted policy. The previous blanket freeze pending Reviews 3–5 is superseded for starting bounded implementation work.
-- Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. Start with M0 baseline/regression safety, then M1 independent shipment booking preparation.
+- Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. M0 baseline/regression verification remains active; M1.3 draft-workspace foundation is implemented. The current next booking-related gate is the DB-01–DB-12 technical-contract and acceptance proposal referenced in the active work pointer at the end of this file.
 - Do not treat DB-01–DB-12 recommendations as approved policy. Unresolved values and authorities are capability gates; keep affected functionality disabled or excluded rather than inventing defaults.
 - DEC-018/DEC-036 launch scope, P0 acceptance evidence and production release requirements remain in force. Implementation start is not launch approval.
 - Preserve the existing Next.js App Router, TypeScript, Firebase/Firestore/Auth/Admin, Paystack and Cloudinary architecture. Inspect current source before modifying it; the historical source-inspection baseline is not runtime proof.
@@ -11,9 +11,9 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 ## Current verified repository state
 
-- Current `main` baseline: PR #83 is merged; merge commit `986f4ad79232ce1700f4edaa972a17522ed319c8`. The current documentation working branch is `docs/sdd/consolidated-owner-decision-package`; it is not merged.
+- Current `main` baseline: PR #111 is merged; merge commit `730581ba6b4a6f5ea25718d8d11face40aaed0dd`. The user's local `main` is synchronized to this commit. The current documentation review branch is `docs/db01-db12-technical-contract-acceptance`.
 - PRs #54–#83 are merged documentation-only reconciliation/design changes; PR #58 carries DEC-037–DEC-044 into the P0 catalogue/readiness documents, PR #60 completes the first cross-document status/reference pass, PR #61 aligns the A-10 acceptance row with DEC-043, PR #62 aligns DEC-038–DEC-041 status references, PR #63 clarifies the Finance responsibility/deployment boundary, and PR #64 reconciles DEC-044 custody acceptance evidence; PR #66 aligns A-15 with accepted PM-01–PM-12 permission policy; PR #67 aligns A-16 with DEC-033/PM-08; PR #68 records the approved closure direction; PR #69 reconciles A-17 Support and controlled exception handling.
-- The active application-source inspection baseline remains `e0f69055d33dd9399c23e1d793f359468229c856` (refreshed in PR #32). The repository-history comparison through PR #83 reflects documentation-only changes after the source-inspection baseline; The current tree-path inventory found no dedicated shipment/custody/route/location API/library path. This is not a fresh semantic source review and does not verify runtime behaviour or production readiness.
+- The current bounded source re-fetch is at PR #111 baseline `730581ba6b4a6f5ea25718d8d11face40aaed0dd`; the M1.3 source baseline `5017cc9` has no intervening application-source changes through PR #111. The current draft workspace is implemented but remains draft-only. No independent quote, confirmed-booking, parcel/intake/custody, PUDO capability, route/movement or general financial-reconciliation service was established by the bounded review. This is not a full repository semantic audit or runtime/production verification.
 - Admin PR #3 is merged. PR #4 is closed without merge; do not describe it as open or merged.
 - DEC-045 authorizes bounded implementation under accepted policy; the old blanket freeze pending Reviews 3–5 is superseded. P0 acceptance and production release gates remain.
 
@@ -52,7 +52,7 @@ Milestone 4 Step 1 continuity baseline was established in PR #53 and refreshed t
 4. Complete workflow, actor/permission, lifecycle, data/API/security, integration, and exception contracts.
 5. Turn approved requirements into detailed, executable acceptance-test specifications and evidence requirements. The existing P0 readiness assessment/catalogue is a navigation/design baseline, not approval to execute tests. The current 80-case catalogue carries DEC-037–DEC-044 references merged in PR #58; no P0/Conditional P0 test is approved for execution.
 6. Assess production readiness: environment/configuration, security, deployment, monitoring, backup/restore, incident response, rollback, recovery, and release evidence.
-7. Present the complete reconciled SDD for explicit owner approval before any application-code changes.
+7. For each capability, obtain owner review/merge of the relevant policy, technical contract and acceptance specification before its code change. DEC-045 permits bounded implementation under accepted policy; complete SDD and DEC-036 evidence remain release gates.
 
 ## Important unresolved boundaries
 
@@ -75,12 +75,12 @@ Use `ISSUES.md`, `DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.md`, `PLATFOR
 - Preserve the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, Cloudinary, and existing component/service/type/style patterns.
 - Do not invent parallel architecture, collections, fields, routes, services, status enums, roles, or permissions.
 - Keep intended behaviour, owner-approved policy, source presence, implemented behaviour, runtime verification, and production-readiness evidence distinct.
-- Keep PRs focused and documentation-only while the complete SDD remains unapproved. The owner reviews and merges every PR.
+- Keep PRs focused. Documentation remains the right deliverable while policy/technical inputs are unresolved; bounded application changes may proceed under DEC-045 only when the relevant SDD contract, authorization, acceptance cases and evidence are Ready. The owner reviews and merges every PR.
 - Never claim a test, build, browser check, deployment check, or production verification was performed unless it actually was.
 - Preserve historical roadmap/checkpoint entries as history; use `PROGRESS.md` for the current work pointer.
 - Do not reopen completed D-01–D-15, PM-01–PM-12, BP-01–BP-22, or Milestones 1–3 absent genuine contradictory evidence.
 
-**Implementation gate:** No application-code change until the owner explicitly approves the complete reconciled platform-wide SDD.
+**Implementation gate:** DEC-045 permits bounded implementation under accepted policy; it supersedes the earlier blanket freeze pending completion of Reviews 3–5. Do not implement a capability whose business inputs, technical relationships, authorization, acceptance criteria or evidence remain unresolved. DEC-036 P0/Conditional P0 release requirements remain independent.
 
 
 ## Latest baseline verification — PR #64
@@ -123,7 +123,7 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - Reviews 1 and 2 of 5 are approved. Continue autonomous reconciliation; do not request Review 3 until a coherent source-aware technical architecture/contract package is ready.
 - The next focus is cross-domain lifecycle and technical contract completeness: transition ownership/guards, existing data/service boundaries, API authorization, idempotency/concurrency, provider integration, failure/recovery, audit/evidence, and test evidence. Distinguish confirmed source facts from proposed contracts and unresolved owner choices.
 - `pudo.zip` remains uninspected and outside source claims pending a scope/authority decision. Do not infer runtime or production behaviour from repository-history comparison.
-- No application-code changes until explicit Review 5 approval of the complete reconciled SDD.
+- Historical PR #83 checkpoint: the earlier blanket freeze pending Review 5 was superseded by DEC-045. Current implementation gate is recorded in the active work pointer at the end of this file.
 
 
 ## Latest continuation checkpoint — after PR #70
@@ -238,7 +238,7 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - `PROGRESS.md` has been refreshed to distinguish current main from the unmerged working branch and to identify the actual next work.
 - Source inspection remains bounded by `e0f69055d33dd9399c23e1d793f359468229c856`. No new source/runtime/production verification or test execution is claimed.
 - Continue by reconciling the proposed package against the authoritative decision register and technical contracts; complete domain-specific transition, evidence/reviewer, entitlement/freshness and provider-reconciliation details; expand the P0 outlines into case-level specifications; then perform the complete cross-document audit.
-- Reviews 1 and 2 remain approved. Review 3 is not yet presented; Reviews 4 and 5 remain future gates. Preserve the final owner review for the complete reconciled SDD and explicit implementation authorization. Keep the application-code/schema/API/Firebase/provider/deployment freeze in force.
+- Reviews 1 and 2 remain approved. Review 3 is not yet presented; Reviews 4 and 5 remain future gates. That PR #83 planning checkpoint is historical. DEC-045 now permits bounded implementation under accepted policy; the current DB-01–DB-12 technical-contract package is the review gate for the next booking-related slice.
 
 
 ## Latest M2 eligibility-policy checkpoint — 2 November 2026
@@ -288,3 +288,15 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - **Deferred:** no actual rates, formulas, coefficients, distance bands, minimums, currency, rounding, taxes, surcharges, discounts or other fee treatment approved.
 - **Technical boundary:** DB-01 shipment creation timing, DB-02/DB-05 technical persistence/cardinality, DB-03 parcel-to-route-leg, DB-06 payment allocation and DB-11 financial-event linkage remain open. No schema/API/permission/provider/code change is approved by DEC-048.
 - **Next:** technical ownership/cardinality/source/API/security/transaction/replay/recovery contracts for DB-01–DB-12 and executable acceptance specifications. Keep quote issuance and all twelve DEC-047 service/endpoint combinations unavailable until all independent commercial, operational and technical prerequisites are verified. M0 and DEC-036 release requirements remain separate.
+
+
+## Current work pointer — DB-01–DB-12 technical contracts and acceptance — 2 November 2026
+
+- **Current main:** PR #111 merge `730581ba6b4a6f5ea25718d8d11face40aaed0dd`; user confirmed local `main` is synchronized.
+- **Active branch:** `docs/db01-db12-technical-contract-acceptance`.
+- **Current proposal:** `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`.
+- **Source review:** Current-main re-fetch of the M1.3 draft UI/API/authentication/validation/Firestore store/tests and existing storefront order/Paystack/Firestore rules. M1.3 remains draft-only; do not reinterpret its persistence as a confirmed booking or parcel model.
+- **Next:** Review/merge the consolidated technical-contract and acceptance package. Then proceed with the smallest Ready implementation slice under DEC-045; do not wait for every future capability, but keep all blocked services/endpoint combinations and quote issuance disabled.
+- **Accepted commercial boundary:** DEC-048: one parcel and one itemized quote per independent booking for minimum launch; multi-parcel/cross-obligation allocation deferred; service model/rates/arithmetic/fees remain deferred.
+- **Still open:** DB-01 shipment creation timing; DB-02/DB-05 physical representation; DB-03 parcel-to-route-leg relationship; DB-06 payment allocation; DB-11 financial-event linkage; DEC-047 operational evidence; service-specific pricing/quote/handover values; business representation verification; evidence/reviewer/retention; notification matrix; and executable fixtures for blocked cases.
+- **No code has been changed in this proposal.** No tests/build/lint were run for this documentation PR. Preserve existing untracked local files and the user's normal review → merge → local pull workflow.

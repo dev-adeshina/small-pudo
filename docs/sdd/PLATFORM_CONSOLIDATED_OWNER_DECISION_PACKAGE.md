@@ -1,11 +1,14 @@
 # VeriLyft Consolidated Owner Decision Package
 
-**Status:** Proposed minimum-launch recommendations; not owner-approved policy and not an approved data model  
+**Status:** Historical owner-decision proposal; its commercial groups A/C/E/F/G were accepted or deferred under DEC-048. Remaining DB-01–DB-12 recommendations are not owner-approved policy and this is not an approved data model  
 **Prepared:** 31 October 2026  
 **Preparation baseline:** PR #83 merge commit `986f4ad79232ce1700f4edaa972a17522ed319c8`  
 **Related:** `PLATFORM_OWNER_DECISION_REGISTER.md`, `PLATFORM_REVIEW_3_OWNER_INPUT_TRIAGE.md`, `PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md`, `PLATFORM_REVIEW_3_COMPLETENESS_AUDIT.md`, `PLATFORM_REVIEW_3_ACTION_CAPABILITY_CROSSWALK.md`, `PLATFORM_REVIEW_3_LIFECYCLE_TRANSITION_AND_RECOVERY_CROSSWALK.md`, `PLATFORM_REVIEW_3_RESOURCE_ENTITLEMENT_AND_PROJECTION_LINEAGE_CROSSWALK.md`
 
 ## 1. Purpose and approval boundary
+
+> **Current status after PR #111:** The commercial decisions in this package are no longer pending. DEC-048 accepts the one-parcel/one-itemized-quote minimum-launch unit, minimum-necessary service-specific input principle, separate quote and handover deadlines, separated pricing governance, and DEC-019 shared pricing authority; it defers service model selection and all actual rates/arithmetic/charge values. The remaining DB-01–DB-12 recommendations below must still be treated as proposals unless separately accepted. DEC-045 permits bounded implementation under accepted policy; any older blanket implementation-freeze wording in this historical package is superseded.
+
 
 This package consolidates the remaining owner-dependent choices into five decision groups. It is intended to avoid twelve separate DB questions and repeated approval rounds.
 
@@ -306,7 +309,7 @@ At the consolidated owner review, the owner may:
 
 No silence, elapsed time, PR merge, technical feasibility or assistant recommendation counts as policy approval.
 
-The final SDD review must also disclose unresolved blockers, source-evidence limitations, P0 specification status, production ownership/evidence gaps and any scope excluded from launch. Implementation may begin only after the owner explicitly approves the complete reconciled SDD and lifts the implementation freeze.
+The final SDD/release review must also disclose unresolved blockers, source-evidence limitations, P0 specification status, production ownership/evidence gaps and any scope excluded from launch. Under DEC-045, bounded implementation may begin for a reviewed and approved Ready slice; launch/release still requires DEC-036 evidence and owner sign-off.
 
 
 ## 10. Implementation direction update — DEC-045 (31 October 2026)
