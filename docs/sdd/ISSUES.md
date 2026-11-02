@@ -422,3 +422,10 @@ The owner-approved DEC-046 service catalogue and DEC-047 eligibility/operational
 **Technical blockers:** No shared shipment quote/rate source capability was found in the bounded source review. Storefront product-price validation exists, but the current delivery fee is hard-coded zero; the existing Paystack flow is storefront-order scoped. DB-01–DB-03 and DB-05 block final booking/shipment/parcel/route and quote-scope persistence design. DB-04, DB-06 and DB-11 require cross-domain reconciliation.
 
 **Required next actions:** Resolve the per-service commercial configuration and DB-05 quote scope through one consolidated owner review; obtain DEC-047 operational evidence; then complete technical ownership/cardinality/API/security contracts and executable acceptance specifications. Do not create placeholder prices, infer NGN, assume fee/tax values, or begin quote-engine implementation before these prerequisites are approved.
+
+
+## M2 commercial pricing owner decisions — 2 November 2026
+
+The consolidated owner proposal is `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md`. It groups the commercial-unit decision, per-service model-selection method, input/source/unit matrix, rates and monetary treatment, quote validity/handover terms, pricing governance and shared pricing authority.
+
+**Status:** awaiting explicit owner response; recommendations are not accepted policy. No service model or rate is selected. Actual formulas, units/conversions, currency, rounding, tax/fee treatment and durations remain pending evidence and approval. The proposed one-parcel/one-quote minimum-launch unit remains pending DB-01/02/05 reconciliation. DEC-047 eligibility evidence and all technical relationship/API/security/acceptance dependencies remain separate blockers. No pricing or quote implementation is authorized by this proposal alone.
