@@ -16,7 +16,7 @@ export async function POST(
   request: Request,
   context: { params: Promise<{ definitionId: string }> }
 ) {
-  const match = request.headers.get("authorization")?.match(/^Bearer\\s+(.+)$/i);
+  const match = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i);
   if (!match) {
     return NextResponse.json({ error: "Authentication required." }, { status: 401 });
   }
