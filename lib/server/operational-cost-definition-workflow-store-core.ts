@@ -159,8 +159,11 @@ export function createOperationalCostDefinitionWorkflowStore({
               if (previous.empty) throw new Error("The previous version required for resubmission was not found");
               const previousWorkflowRef = previous.docs[0].ref.collection("approval").doc("workflow");
               const previousWorkflow = await transaction.get(previousWorkflowRef);
-              if (!previousWorkflow.exists || !["changes_requested", "approved"].includes(previousWorkflow.data()?.state)) {
-                throw new Error("A revised version may only be submitted after changes were requested or a prior version was approved");
+              const previousState = previousWorkflow.exists
+                ? previousWorkflow.data()?.state
+                : "draft";
+              if (!["draft", "changes_requested", "approved"].includes(previousState)) {
+                throw new Error("A revised version may only be submitted when its predecessor was an unsubmitted draft, had changes requested, or was previously approved");
               }
             }
             next.proposerUid = actorUid;
