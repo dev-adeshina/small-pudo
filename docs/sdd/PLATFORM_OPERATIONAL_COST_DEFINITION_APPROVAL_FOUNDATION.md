@@ -1,7 +1,7 @@
 # Operational Cost Definition Approval Foundation
 
 **Scope:** PR #122 implementation record.  
-**Status:** Implementation draft; local Emulator, TypeScript and production-build verification is still required.
+**Status:** Implemented and locally verified; final PR review is in progress.
 
 ## Authority and provisioning boundary
 
@@ -66,7 +66,7 @@ A reason is mandatory for return-for-changes and rejection. Each transition and 
 
 For one version, the proposer, Operations validator, Finance reviewer and final approver must be four different UIDs. The proposer cannot validate or approve their own proposal. Operations and Finance reviewers cannot perform the final approval. These constraints are checked server-side in the transactional workflow store.
 
-A returned proposal must be revised into a new version before it can be resubmitted. The prior version and its decision events remain available for audit.
+A returned proposal must be revised into a new version before it can be resubmitted. An unsubmitted draft may also be superseded by a new immutable version. A version cannot be superseded while Operations, Finance or independent approval is in progress, or after rejection. A new version may be submitted when its predecessor was an unsubmitted draft, had changes requested, or was previously approved. The prior version and its decision events remain available for audit.
 
 ## API and security
 
@@ -78,6 +78,6 @@ Firestore client access to operational cost definitions and workflow records rem
 
 No cost values, formulas, pricing calculations, quote generation, automatic activation, payroll, generic approval engine, Finance portal, staff-management UI, or permission-grant endpoint is introduced.
 
-## Verification still required
+## Verification
 
-Run the full Firestore Emulator-backed `npm test` suite, TypeScript check, ESLint and production build from the implementation branch. Review the resulting output before merging. This document does not claim those commands have been run.
+The implementation branch passed the Firestore Emulator-backed test suite (68 tests), TypeScript (`npx tsc --noEmit`), ESLint (`npm run lint`) and production build (`npm run build`).
