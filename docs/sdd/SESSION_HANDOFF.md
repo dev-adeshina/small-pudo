@@ -3,7 +3,7 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 ## Current owner direction — 31 October 2026 (continuity; current task pointer at end of file)
 
 - DEC-045 records the owner's explicit instruction to stop extending the planning cycle and begin implementation using accepted policy. The previous blanket freeze pending Reviews 3–5 is superseded for starting bounded implementation work.
-- Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. Start with M0 baseline/regression safety, then M1 independent shipment booking preparation.
+- Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. M0 baseline/regression verification remains active; M1.3 draft-workspace foundation is implemented. The current next booking-related gate is the DB-01–DB-12 technical-contract and acceptance proposal referenced in the active work pointer at the end of this file.
 - Do not treat DB-01–DB-12 recommendations as approved policy. Unresolved values and authorities are capability gates; keep affected functionality disabled or excluded rather than inventing defaults.
 - DEC-018/DEC-036 launch scope, P0 acceptance evidence and production release requirements remain in force. Implementation start is not launch approval.
 - Preserve the existing Next.js App Router, TypeScript, Firebase/Firestore/Auth/Admin, Paystack and Cloudinary architecture. Inspect current source before modifying it; the historical source-inspection baseline is not runtime proof.
