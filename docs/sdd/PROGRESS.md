@@ -1475,3 +1475,23 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - [ ] Complete executable acceptance specifications and source/technical reconciliation before any affected feature implementation.
 
 **Evidence boundary:** Documentation-only policy and acceptance refinement. No application source, schema, API, permission, provider, routing/scheduling algorithm, runtime behaviour or production capability changed or was verified. No service/location combination has been asserted to be operationally eligible. M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain independently open.
+
+
+## 68. M2 pricing and quotation readiness specification — 2 November 2026
+
+**Current baseline:** PR #108 merged at `047a234cc641493d8a44a88e41ab722e6818ab5c`.  
+**New artifact:** `PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md`.
+
+- Consolidates DEC-019, DEC-026, DEC-038–DEC-041 and DEC-046–DEC-047 into one service-specific pricing/quotation readiness contract.
+- Defines a Standard / Express / Scheduled readiness matrix without selecting a fixed/calculated/hybrid model for any service.
+- Enumerates candidate inputs and requires each service to approve its own input mapping, authoritative sources, units, precision and explicit conversions.
+- Keeps rates/formulas, distance source/bands, volumetric weight, minimums, special handling, currency, rounding and tax/surcharge/discount/fee treatment explicitly unresolved.
+- Specifies rate governance/version/effective context, immutable quote snapshot, exact quote acceptance, quote revision/expiry and separate handover deadline.
+- Reconciles shared pricing with storefront source: product catalogue pricing is distinct; current storefront delivery fee is zero; current Paystack integration is order-scoped; shipment drafts remain draft-only.
+- Reconciles DB-01–DB-03 and DB-05 with relevant DB-04/DB-06/DB-11 dependencies. DB-05's one-quote-per-booking recommendation remains pending owner approval and is not an approved cardinality.
+- Preserves DEC-047: all twelve service/endpoint combinations remain pending verification and unavailable by default. No service is currently declared quote-ready.
+- Updated owner decision register, shared workflows, cross-domain acceptance matrix, shipper journey, backlog, source traceability, issues and session handoff.
+- **Evidence boundary:** Documentation-only. Current storefront order/payment/product source was re-fetched read-only. No application code, schema, API, Firebase rules/configuration, permission, provider, runtime behaviour or production capability changed. No tests/build/lint were run for this documentation-only change.
+- M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain independent.
+
+**Next:** Complete the consolidated owner review of actual per-service pricing configurations and the DB-05 commercial unit, together with the outstanding DEC-047 operational evidence and service commitment inputs. Then finish technical relationship/API/security contracts and executable acceptance specifications before pricing/quote implementation.
