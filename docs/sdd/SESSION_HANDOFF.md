@@ -406,3 +406,29 @@ PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. T
 
 **Independent gates:** M0 residual verification and DEC-036 P0/Conditional P0 release evidence remain independent of M2. Payment, intake, custody, route/movement, delivery and Finance reconciliation are not enabled by this work.
 
+
+
+## Current authoritative handoff — Standard cost configuration discovery — 2 November 2026
+
+**Repository baseline:** PR #119 merged at 3d324d4a7b9a5eb751106b0da30defe79ea332ce. The user wants to keep the evidence process minimal and move toward implementation.
+
+**Latest owner-confirmed Standard direction:**
+- Shipper selects the origin PUDO centre on the website and must present the parcel at that centre. Physical verification happens there. Sender-doorstep collection is not part of the currently described Standard scope.
+- If the selected centre becomes unavailable before presentation, Operations may authorise a change to another eligible nearby centre, with customer notification and acceptance.
+- Each operational activity needs an independently configurable unit-cost definition; each activity defines its own applicable variables.
+- Staff compensation must remain flexible; no payment method, productivity target or allocation formula is selected.
+- Transportation must support business-owned vehicles, driver-owned vehicles and external transport partners. Agreements may be per trip, distance-based, per parcel, fixed, time-based, hybrid or negotiated. No separate fuel/vehicle operating-expense reimbursement is provided to driver-owned-vehicle drivers or external partners under the described arrangement. Business-owned vehicle cost treatment remains open.
+- Parcel characteristics must be extensible. Customer-declared and staff-verified values remain separate. Discrepancies support recalculation with customer acceptance, rejection or Operations review.
+- Failed attempts and Return-to-Sender are separately recorded operational workflows. No automatic customer charge or false custody transfer is implied.
+
+**Authoritative detail:** Section 12 of the M2 service cost and input evidence workbook and Section 18 of the M2 pricing and quotation readiness specification.
+
+**Immediate next task:** Perform a fresh, read-only review of current-main Firebase Admin, Firestore persistence, validation, authorization and Emulator test patterns. Identify the smallest source-aligned internal activity-cost configuration slice. Do not assume the global Firebase admin claim is sufficient for separate Operations/Finance proposal, validation and approval responsibilities.
+
+**Candidate first code slice, subject to a separate approved technical contract:** server-only configuration persistence/validation, activity-specific variable metadata, immutable version history and Emulator/Rules-denial tests. No public/customer pricing, formula execution, quote issuance/acceptance, storefront delivery fee, customer UI, staff compensation execution, dispatch, intake, custody or DEC-047 activation.
+
+**Commercial boundary:** DEC-048 remains authoritative. No fixed/calculated/hybrid model, rate, formula, currency, unit, conversion, fee, tax, quote-validity duration or handover deadline is approved. All twelve DEC-047 service/endpoint combinations remain pending and unavailable. Express and Scheduled must be evidenced independently; Standard decisions do not automatically apply to them.
+
+**Do not invent:** activity IDs, measurement units, cost amounts, formulas, staff compensation methods, partner terms, business-owned vehicle expenses, permission IDs, schema, endpoints, evidence standards or approval thresholds.
+
+**Preserve:** PR #118 quote-lineage foundation, existing storefront/draft/order/payment/admin behaviour, M0 residual verification and DEC-036 P0/Conditional P0 release requirements.
