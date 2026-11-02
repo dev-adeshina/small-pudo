@@ -316,3 +316,10 @@ The owner has explicitly directed the project to begin implementation now and st
 The recommendations in this package remain proposals and are **not** approved business policy. Implementation may proceed using accepted decisions and verified source conventions. Any capability that depends on an unresolved recommendation or owner-dependent value remains disabled or excluded until that dependency is resolved. The instruction to begin coding does not approve a schema, pricing value, permission assignment, evidence standard, provider capability, retention period or operational target.
 
 Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the execution pointer. DEC-018/DEC-036 launch scope, P0 acceptance evidence and production release requirements remain in force.
+
+
+## M2 commercial pricing decision package cross-reference — 2 November 2026
+
+The detailed M2 pricing owner choices are separated into `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md` so they can be reviewed as one commercial package without confusing them with the wider DB-01–DB-12/authority package.
+
+Its recommendations remain pending, not accepted. In particular, one parcel/one quote per independent booking is proposed for minimum launch; model selection for Standard, Express and Scheduled is deferred until cost and operational evidence exists; actual rates and all monetary/quote/handover values remain open. Acceptance of this M2 package would not settle DB-01's shipment creation point, DB-03, DB-06, DB-11, DEC-047 operational eligibility or technical persistence/API contracts.
