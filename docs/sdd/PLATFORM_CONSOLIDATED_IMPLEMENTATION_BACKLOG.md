@@ -149,9 +149,7 @@ No service is quote-ready on current approved inputs. Do not implement placehold
 
 The consolidated owner-facing choices are recorded in `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md`. This is a proposal package, not approved policy.
 
-Recommended minimum-launch direction: one parcel and one itemized quote per independent booking; select each service's pricing model only after cost/operational evidence; configure the minimum necessary inputs with authoritative sources, units and explicit conversions; approve rates/formulas, currency/arithmetic and charge treatment from traceable sources; keep quote validity separate from handover deadline; name pricing proposal/review/approval accountability through PM-01–PM-12; and preserve DEC-019's shared pricing-rule authority.
-
-Do not treat any proposal as accepted until explicit owner response is reconciled into the authoritative register. No Standard/Express/Scheduled model, rate, formula, currency, unit, fee, duration, service eligibility outcome, technical cardinality or schema is approved. DEC-047's twelve combinations remain pending verification and unavailable by default.
+The owner has now accepted or deferred these commercial choices in DEC-048. The accepted direction and remaining gates are recorded in the following section. No Standard/Express/Scheduled model, rate, formula, currency, unit, fee, duration, technical schema or service eligibility outcome is approved. DEC-047's twelve combinations remain pending verification and unavailable by default.
 
 
 ## M2 owner commercial decisions accepted — DEC-048 — 2 November 2026
