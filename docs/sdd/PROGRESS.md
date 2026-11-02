@@ -1523,7 +1523,7 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 
 **Evidence boundary:** Documentation-only. No application code, schema, API, Firebase rules/configuration, permission, provider, runtime or production behaviour changed or was verified. No application tests/build/lint were run.
 
-**Next:** Complete the consolidated technical relationship, ownership, cardinality and source contracts for DB-01–DB-12, then API/security/transaction/replay/recovery contracts and executable acceptance specifications. Do not infer technical schema from the accepted commercial unit or begin quote/pricing implementation with placeholder values.
+**Next (superseded by Section 71):** Review/merge the consolidated DB-01–DB-12 technical-contract and case-level acceptance proposal. Do not infer technical schema from the accepted commercial unit or begin quote/pricing implementation with placeholder values.
 
 
 ## 71. DB-01–DB-12 technical-contract and acceptance specification prepared — 2 November 2026
