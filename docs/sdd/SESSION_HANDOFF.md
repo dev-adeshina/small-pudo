@@ -300,3 +300,15 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - **Accepted commercial boundary:** DEC-048: one parcel and one itemized quote per independent booking for minimum launch; multi-parcel/cross-obligation allocation deferred; service model/rates/arithmetic/fees remain deferred.
 - **Still open:** DB-01 shipment creation timing; DB-02/DB-05 physical representation; DB-03 parcel-to-route-leg relationship; DB-06 payment allocation; DB-11 financial-event linkage; DEC-047 operational evidence; service-specific pricing/quote/handover values; business representation verification; evidence/reviewer/retention; notification matrix; and executable fixtures for blocked cases.
 - **No code has been changed in this proposal.** No tests/build/lint were run for this documentation PR. Preserve existing untracked local files and the user's normal review → merge → local pull workflow.
+
+
+## Latest work pointer — DB-01/DB-02/DB-05 relationship decision package — 2 November 2026
+
+- PR branch: `docs/db01-db02-db05-relationship-decisions`.
+- New owner package: `PLATFORM_DB01_DB02_DB05_RELATIONSHIP_DECISION_PACKAGE.md`.
+- Recommendation: commercial booking confirms on exact valid quote acceptance; parcel identity is created only when authorized intake accepts physical possession; refusal before possession does not create parcel/custody; receipt retained under hold does.
+- Logical DB-02: zero-or-one parcel before accepted possession, exactly one thereafter for the minimum-launch independent booking; one originating booking per parcel; multi-parcel/split/merge/partial acceptance deferred.
+- Logical DB-05: one quote lineage per booking, immutable issued versions, one current offer version, exact-version acceptance and immutable accepted snapshot.
+- No physical schema/API/permission/code is approved. Quote/booking remain gated by service pricing and DEC-047; intake/parcel creation remains gated by location/action/evidence contracts.
+- Current draft foundation: user-reported Firestore Emulator run after PR #113 completed 49 tests, 0 failures, 0 cancellations. This is draft-workspace evidence only.
+- Next: owner review of the consolidated proposal. If accepted, reconcile the decision register and case-level acceptance specifications; only then review a physical persistence design for a bounded implementation slice.
