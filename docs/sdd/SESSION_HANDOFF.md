@@ -326,3 +326,28 @@ PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. T
 - Quote issuance/acceptance remains disabled pending approved pricing, quote/handover terms, DEC-047 eligibility and technical prerequisites. Parcel/intake remains disabled pending location/action authority and physical evidence contracts. DB-03, DB-04, DB-06–DB-12 and M0/DEC-036 remain independent gates.
 
 **Next:** source-align the minimum physical persistence/API/security design to the accepted logical contracts. Do not begin quote or intake implementation until the separate readiness gates are closed.
+
+
+## Current authoritative handoff — Review 5 approved (2 November 2026)
+
+**Repository baseline:** PR #115 merge `acf27604799f5142be0c6b6f14591ee053344b54`, branch `main`. This supersedes earlier PR #111 / `730581ba6b4a6f5ea25718d8d11face40aaed0dd` as the latest documentation baseline. The application-source review in the DB-01–DB-12 technical contract remains bounded to its stated commit and inspected paths; it is not a full-repository or production audit.
+
+**Owner approval:** The owner approved Review 5 on 2 November 2026. The result is **CONDITIONALLY READY** for bounded implementation under DEC-045. Do not describe the platform as launch-ready or treat this approval as approval of unresolved business rules, physical schema, API routes, permission identifiers, pricing values, provider activation or production deployment.
+
+**Accepted direction from Reviews 1–4:**
+- Preserve separate quote lineage/immutable versions, confirmed booking, parcel, payment and custody facts.
+- Exact valid quote-version acceptance by the authorized booking party confirms one commercial booking.
+- Quote acceptance does not create a parcel or imply payment, intake, custody or movement.
+- Create one parcel only when authorized staff accept actual physical possession; refusal before possession creates no parcel; receipt under an authorized hold still records actual possession/custody.
+- Enforce customer ownership, staff action authority and location/service/action capability server-side at mutation time.
+- Use local transactions and operation-specific replay/concurrency controls for acceptance, intake and custody operations.
+- Keep trusted business records server-controlled; derive indexes from approved queries.
+- Preserve the existing Next.js App Router/Firebase architecture, storefront orders and customer draft workspace.
+
+**Immediate next task:** Prepare and obtain review/merge of a focused, source-aligned physical persistence/API/security contract for accepted DB-01/DB-02/DB-05 logical rules. It must settle the minimum Firestore representation, ownership/reference validation, transaction/idempotency, query/index requirements, rules and Admin SDK enforcement, migration/recovery and synthetic Emulator acceptance fixtures. No application code or schema is authorized by the Review 5 approval itself.
+
+**First implementation target after that contract is approved:** quote-lineage and immutable-version technical foundation only. Do not enable quote issuance or acceptance until pricing, quote/handover terms, DEC-047 service eligibility and the relevant authorization/acceptance contracts are Ready. Do not enable parcel/intake until location/action authority and physical evidence requirements are Ready.
+
+**Still independent and unresolved:** DB-03, DB-04, DB-06–DB-12; service pricing and operational availability; DEC-047 twelve service/endpoint evidence outcomes; staff/location capability configuration; intake/custody evidence and correction authority; financial reconciliation; notification and retention contracts; M0/DEC-036 P0 release evidence and production operational readiness.
+
+**Protocol:** DEC-045 supersedes the earlier blanket freeze pending Reviews 3–5. Proceed only with a bounded slice whose accepted policy, technical contract, authorization, acceptance cases and evidence are Ready. Keep unresolved capabilities unavailable. Do not invent collections, fields, routes, status enums, permission IDs, rates, durations, evidence standards or production targets. Preserve focused PRs and owner review/merge.
