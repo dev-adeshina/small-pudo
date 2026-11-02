@@ -1,8 +1,8 @@
 # VeriLyft M2 Commercial Pricing — Consolidated Owner Decision Package
 
-**Status:** Recommendations prepared for one consolidated owner review; no proposal below is accepted until explicitly confirmed  
+**Status:** Owner response accepted and recorded as DEC-048; see Section 13 for the authoritative accepted/deferred outcomes  
 **Prepared:** 2 November 2026  
-**Baseline:** PR #109 merge commit `dcaeb9e82b027e6bb98fc2e665bf10f22eb3e38d`  
+**Baseline:** PR #110 merge commit `6bced955b967d34e674f9807f71d8092bb63bd48`  
 **Authority preserved:** DEC-019, DEC-026, DEC-038–DEC-041, DEC-045–DEC-047; PM-01–PM-12; BP-01–BP-22  
 **Readiness reference:** `PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md`  
 **Related owner package:** `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`
@@ -271,3 +271,18 @@ Acceptance of this package would settle the stated business direction only. It w
 - quote or booking code implementation before the technical relationship, API/security and acceptance contracts are reconciled.
 
 After owner response, update the authoritative DEC/owner register and affected SDD contracts. Then complete technical source reconciliation and executable acceptance specifications before implementation of the blocked quote/pricing capabilities.
+
+
+## 13. Owner response recorded — DEC-048 — 2 November 2026
+
+The owner accepted groups A, C, E, F and G, and deferred groups B and D. This section is authoritative where it differs from the earlier recommendations in Sections 3–10; those sections preserve the options and rationale presented for review.
+
+- **A — Accepted commercial unit:** one parcel and one itemized quote per independent booking for minimum launch. Multi-parcel bookings and cross-parcel/multi-obligation allocation are deferred. This does not decide DB-01 shipment-record creation timing or the technical persistence/cardinality design for DB-02/DB-05; DB-03, DB-06 and DB-11 remain open.
+- **B — Deferred:** no Standard, Express or Scheduled fixed/calculated/hybrid model is selected. Each model decision awaits service-specific cost and operating evidence.
+- **C — Accepted input principle:** use only the minimum necessary inputs for each service, each with approved source, source classification, unit, precision, explicit conversion, validation and missing-value behaviour. Actual mappings and values remain pending evidence and approval.
+- **D — Deferred:** no rates, formulas, coefficients, distance bands, minimums, currency, precision, rounding, tax, surcharge, discount or other fee treatment is approved.
+- **E — Accepted:** quote validity and physical-handover deadline are separate service-specific requirements, both communicated before acceptance. Numerical durations, triggers and missed-deadline outcomes remain unresolved.
+- **F — Accepted:** separate pricing proposal, Operations validation, Finance review and independent approval, aligned with PM-01–PM-12. Named authority and implementation mechanics remain open.
+- **G — Accepted:** retain one shared pricing-rule authority for storefront delivery and independent shipment pricing wherever inputs overlap, consistent with DEC-019.
+
+DEC-047's twelve service/endpoint combinations remain pending verification and unavailable by default. This owner response approves no pricing model, rate, formula, currency, unit, conversion, numerical duration, schema, collection, field, cardinality implementation, API, permission, provider or application-code change. Continue with technical relationship/source/API/security contracts and executable acceptance specifications; keep quote issuance unavailable until all commercial and operational prerequisites are approved.
