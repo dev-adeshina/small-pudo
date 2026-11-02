@@ -1,9 +1,9 @@
 # VeriLyft M2 Pricing and Quotation Readiness Specification
 
-**Status:** Consolidated readiness specification and owner-input register; not a new policy approval or approved pricing configuration  
+**Status:** Consolidated readiness specification incorporating owner-approved commercial direction DEC-048; actual service pricing configurations remain unapproved  
 **Prepared:** 2 November 2026  
 **Baseline:** PR #108 merge, 047a234cc641493d8a44a88e41ab722e6818ab5c  
-**Authority:** DEC-019, DEC-026–DEC-029, DEC-038–DEC-041, DEC-045–DEC-047; BP-01–BP-22; PM-01–PM-12  
+**Authority:** DEC-019, DEC-026–DEC-029, DEC-038–DEC-041, DEC-045–DEC-048; BP-01–BP-22; PM-01–PM-12  
 **Related:** PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md; PLATFORM_OWNER_DECISION_REGISTER.md; PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md; PLATFORM_SHARED_WORKFLOWS.md; PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md; PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md; PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md; PLATFORM_SHIPPER_JOURNEY_AND_PORTAL_EXPERIENCE.md; IMPLEMENTATION_SOURCE_TRACEABILITY.md
 
 ## 1. Purpose and decision boundary
