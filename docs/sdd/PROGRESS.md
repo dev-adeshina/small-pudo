@@ -40,10 +40,11 @@ VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentic
 
 - **Approved contract:** PR #117 merged; see `PLATFORM_DB01_DB02_DB05_PHYSICAL_PERSISTENCE_API_SECURITY_DESIGN.md`.
 - **Branch:** `feat/shipment-quote-lineage-foundation`.
+- **PR:** #118 is open on `feat/shipment-quote-lineage-foundation`.
 - **Scope:** internal Admin Firestore store for atomic quote-lineage/first-version creation and transactionally serialized immutable revisions; synthetic Emulator integration tests; direct-client Rules-denial tests for quote roots, versions, bookings and parcels.
 - **Not included:** public route/UI, quote calculation or issuance, quote acceptance, booking creation, parcel/intake/custody, indexes or Rules allow access. Existing drafts, storefront orders, stock, Paystack and admin flows are not intentionally changed.
 - **Source reuse:** follows the existing dependency-injected Admin Firestore draft-store pattern. Firestore Rules remain default-deny; the Rules test suite now asserts that unauthenticated visitors, ordinary customers and an administrator-claim client cannot directly read/write the proposed shipment paths.
-- **Evidence status:** source changes have been prepared on the branch, but no local tests, TypeScript, lint, build or Emulator run has been performed by the assistant. Do not mark the slice verified until the user runs the checks and reports results.
+- **Evidence status:** source changes have been prepared on the branch, but no local tests, TypeScript, lint, build or Emulator run has been performed by the assistant. The Vercel preview deployment was rejected by the platform's free-tier daily deployment limit (more than 100 deployments in 24 hours); this is not a build/test result. Do not mark the slice verified until the user runs the checks and reports results.
 - **Open gate:** the quote snapshot remains an opaque server-side map; pricing, service eligibility, quote validity, handover deadline, stable operation/replay identity and customer token-revocation policy remain unresolved. No real quote may be issued from this foundation.
 
 ### Evidence discipline
