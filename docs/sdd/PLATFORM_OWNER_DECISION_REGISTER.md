@@ -1,10 +1,10 @@
 # VeriLyft Platform Owner Decision Register
 
-**Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-044 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
-**Last updated:** 31 October 2026  
-**Current main baseline:** PR #83 merged at `986f4ad79232ce1700f4edaa972a17522ed319c8`. The current unmerged preparation branch contains a proposed owner decision package; no recommendation in that package is accepted by this register.
+**Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-046 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
+**Last updated:** 2 November 2026  
+**Latest confirmed main merge:** PR #106 merged at `4af6fc8d524e51c06ab9e1c00aad8fb766d9271c` on 1 November 2026. The current unmerged preparation branch contains a proposed owner decision package; no recommendation in that package is accepted by this register.
 **Related documents:** `DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, and `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`  
-**Implementation gate:** No application-code changes until the platform-wide SDD is reconciled and explicitly approved.
+**Implementation gate:** DEC-045 permits bounded application implementation under accepted policy and explicit capability gates. Unresolved pricing, service eligibility, authority, evidence and technical dependencies must remain unavailable; this register does not imply launch readiness.
 
 ## 1. Purpose and rules
 
@@ -389,6 +389,27 @@ Exact rates/formulas, units and thresholds, quote/handover durations, payment/re
 
 The next consolidated owner checkpoint is Review 3 — technical design and architecture. Reviews 4 and 5 remain reserved for complete SDD/acceptance specification review and final consistency/implementation-gate approval.
 
+
+
+## Additional owner-accepted detailed policy — DEC-046
+
+### Launch shipment service catalogue, journey eligibility, and delivery commitments
+
+The owner approved the high-level launch service catalogue and customer-facing selection policy on 2 November 2026.
+
+- The three major customer-facing independent-shipment services are **Standard**, **Express**, and **Scheduled**.
+- Standard means regular delivery within the normal service timeframe; show an estimated timeframe for the selected journey.
+- Express means priority handling and a shorter estimated timeframe than Standard for the same comparable eligible journey; show the estimate before quote acceptance.
+- Scheduled means delivery on a date or within a time window selected from system-determined available options. Revalidate the selected option before booking confirmation and preserve the confirmed commitment.
+- Each endpoint independently supports a physical address or eligible registered PUDO centre. The four combinations are address-to-address, address-to-PUDO, PUDO-to-address, and PUDO-to-PUDO. Each service may support these combinations subject to explicit per-service eligibility and operational availability.
+- The Shipper selects endpoints and a customer-facing service, not operational PUDO classifications or route legs. The system determines the route. Direct In-PUDO-to-In-PUDO remains valid.
+- Show only services that can actually be booked for the selected journey/date. Enforce the availability decision server-side and revalidate consequential submissions. If none is available, explain that the journey cannot currently be booked.
+- Standard/Express timeframes are estimates, not guarantees. Estimates must reflect the selected journey and approved operational availability/capacity information. Scheduled availability is separate from quote validity, handover deadline, payment, and physical intake.
+- Preserve DEC-038/039/041–044 boundaries. Pricing uses the shared service-specific authority and actual system-determined route.
+
+**Still unresolved:** Per-service journey/location/action eligibility matrix; exact coverage and operational capacity sources/method; estimate calculation and numerical delivery timeframes; guarantee policy; scheduling windows, cutoffs, reservation/expiry and amendment rules; per-service pricing model, inputs, rates/formulas, units/conversions, charges, currency/rounding; quote validity and separate handover deadlines; unavailable-route alternatives; and technical contracts, permissions, source reconciliation and executable acceptance tests.
+
+DEC-046 is high-level owner-approved policy only. It does not approve a schema, field, collection, endpoint, status, provider, route/scheduling algorithm, permission, numeric service level, rate, formula, or application-code change. Unresolved dependencies remain capability gates under DEC-045.
 
 ## Consolidated owner decision proposals — pending, not accepted
 

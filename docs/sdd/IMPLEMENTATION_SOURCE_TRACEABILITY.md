@@ -459,3 +459,22 @@ The user had also reported earlier production endpoint smoke observations on 1 N
 **Recommended next activity:** prepare an owner-facing, per-service pricing specification/readiness matrix and resolve the listed inputs before implementation planning. Start with the launch service(s) actually approved by the owner; do not create a universal formula, use placeholder rates, assume fees are zero, or begin quote-engine code while the service specifications remain unresolved.
 
 **Evidence boundary:** this review is read-only and identifies current source reuse and gaps. It changes no application source, schema, API, pricing, service eligibility or business policy. M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain independent.
+
+
+## 16. M2 launch service catalogue policy reconciliation — 2 November 2026
+
+**Policy baseline:** Owner-approved DEC-046, following the 1 November M2 pricing/quotation source review in Section 15 and the Shipper endpoint/PUDO clarification merged in PR #106.
+
+**Newly resolved at the policy level:**
+- The launch customer-facing service names and high-level commitments are Standard, Express and Scheduled.
+- Each endpoint independently supports a physical address or eligible registered PUDO centre; the four endpoint combinations are approved as candidate journey patterns for all three services, subject to explicit service-specific eligibility and operational availability.
+- The Shipper chooses endpoints and a customer-facing service, not operational PUDO classifications or route legs. The system determines the actual route; direct In-PUDO-to-In-PUDO remains valid.
+- Only services actually bookable for the selected journey/date are presented. Availability is a server-enforced decision and must be revalidated on consequential submission.
+- Standard and Express show journey-specific estimated timeframes before quote acceptance; Express is shorter than Standard for the same comparable eligible journey. These estimates are not guarantees.
+- Scheduled presents only available dates/time windows, revalidates the selected option before booking confirmation, and preserves the confirmed delivery commitment.
+
+**Source boundary:** The existing source findings in Section 15 remain unchanged. The shipment-draft source still supports draft preparation only; the inspected storefront order/payment paths do not constitute a shared shipment quote or availability engine. This policy update does not claim that any service catalogue, availability engine, estimate calculation, PUDO proximity discovery, scheduling capability, route construction or quote/booking implementation exists in application source.
+
+**Remaining M2 blockers:** Exact per-service journey/location/action matrix; operational coverage and capacity source/method; estimate methodology and numerical timeframes; guarantee policy; scheduled windows, cutoffs, reservation/expiry and change rules; service-specific pricing models, inputs, rates/formulas, units/conversions, charges, currency/rounding; quote validity and separate handover deadlines; unavailable-route alternatives; technical ownership/cardinality/API/security contracts; and executable acceptance tests.
+
+**Implementation boundary:** Documentation-only policy reconciliation. No source inspection beyond the bounded findings already recorded in Section 15 is claimed; no application code, schema, API, permission, provider, runtime behaviour or production capability was changed or verified. Keep unresolved capabilities gated under DEC-045. M0 and DEC-036 P0/Conditional P0 release evidence remain independent.

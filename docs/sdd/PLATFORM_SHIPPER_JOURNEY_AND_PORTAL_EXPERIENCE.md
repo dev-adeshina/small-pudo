@@ -114,7 +114,7 @@ Do not implement without separate approval and dependencies: service catalogue, 
 
 ## 9. Dependencies that remain gated
 
-Keep explicit: approved service catalogue and location capabilities; pricing inputs/formula/units/conversions/charges/currency/rounding/rule version; quote validity and handover deadline; quote acceptance/booking confirmation contract; payment methods, provider capability, settlement evidence, partial/under/overpayment and reconciliation; shipment lifecycle and entitlement projection; intake/custody evidence, holds, handover exceptions, correction and disputes; collection identity/authorization and alternative collectors; delegation and party disclosure; amendment/cancellation eligibility and financial consequences; notification recipient/event/field/channel/retry/deduplication; support/operational resolution authority and response commitments; DEC-036 P0/Conditional P0 acceptance and release evidence. No unresolved item is silently resolved by this design.
+Keep explicit: DEC-046's approved Standard/Express/Scheduled catalogue and four endpoint combinations, while per-service journey/location/action eligibility, location capabilities, operational availability/capacity sources, delivery-estimate calculation and numerical timeframes, scheduled windows/cutoffs, pricing inputs/formula/units/conversions/charges/currency/rounding/rule version; quote validity and handover deadline; quote acceptance/booking confirmation contract; payment methods, provider capability, settlement evidence, partial/under/overpayment and reconciliation; shipment lifecycle and entitlement projection; intake/custody evidence, holds, handover exceptions, correction and disputes; collection identity/authorization and alternative collectors; delegation and party disclosure; amendment/cancellation eligibility and financial consequences; notification recipient/event/field/channel/retry/deduplication; support/operational resolution authority and response commitments; DEC-036 P0/Conditional P0 acceptance and release evidence. No unresolved item is silently resolved by this design.
 
 ## 10. Completion criteria and evidence boundary
 
@@ -161,7 +161,7 @@ The two endpoints are independent: either may be an address or a PUDO centre. Th
 - A centre may have one or more configured operational capabilities; it must not be forced into one mutually exclusive type merely for display.
 - In-PUDO, Out-PUDO and Trans-PUDO describe operational classifications/capabilities, not customer-selectable shipment services or a route that the Shipper must construct. “All” is an administrative/list filter, not a centre capability.
 - A centre may be offered for a selected endpoint only when active and explicitly configured for the relevant approved service and requested action, consistent with DEC-043. A centre name, label, or category alone is not proof of eligibility.
-- The approved service catalogue and exact service/location/action matrix remain prerequisites. Until they are defined, the UI must not imply that every centre is eligible for every origin/destination use.
+- The high-level launch catalogue is now approved under DEC-046: Standard, Express, and Scheduled. The exact per-service journey/location/action matrix remains open. The UI must not imply that every centre or endpoint combination is eligible for every service.
 
 ### System-managed route and pricing
 
@@ -171,3 +171,49 @@ The shared, service-specific pricing authority prices the system-determined rout
 
 **Acceptance direction (design-level):** Both endpoints can independently be entered as an address or selected as an eligible PUDO centre; ineligible/inactive centres are not presented as selectable for the relevant endpoint; the Shipper is not asked to select operational route types; the system-generated route reflects the actual selected endpoints; and pricing consumes that route without inventing an intermediate stop or charge. Detailed executable cases depend on the approved service/location/action and routing contracts.
 
+
+
+## 14. M2 launch service catalogue and customer-facing availability — DEC-046 — 2 November 2026
+
+### Customer-facing services
+
+| Service | Approved customer-facing meaning | Delivery information shown before acceptance |
+|---|---|---|
+| **Standard** | Regular delivery within the normal service timeframe. | Estimated delivery timeframe for the selected journey. |
+| **Express** | Priority handling with a shorter timeframe than Standard for the same comparable eligible journey. | Estimated delivery timeframe for the selected journey. |
+| **Scheduled** | Delivery on a date or within a time window selected from available options. | The selected date/time option, confirmed before booking acceptance. |
+
+Standard and Express estimates are not guarantees. Their numerical durations, estimate calculation method, coverage boundaries, and any future guarantee policy remain unresolved. Scheduled date/time options must be determined from actual availability, revalidated before booking confirmation, and preserved as part of the booking commitment.
+
+### Endpoint combinations and service eligibility
+
+The From and To endpoints independently accept either a physical address or an eligible registered PUDO centre:
+
+| From | To |
+|---|---|
+| Physical address | Physical address |
+| Physical address | PUDO centre |
+| PUDO centre | Physical address |
+| PUDO centre | PUDO centre |
+
+All three services may support these journey combinations, but availability is conditional on the selected service's explicit eligibility configuration and actual operational availability. The catalogue does not promise every service for every combination, location, or date.
+
+The Shipper selects the service and endpoints. In-PUDO, Out-PUDO and Trans-PUDO remain operational centre/capability classifications, not customer-facing services or route selections. The system determines the actual route. Direct In-PUDO-to-In-PUDO remains a valid journey and must not acquire an assumed Out-PUDO leg.
+
+### Service discovery and availability
+
+- Show only services the Shipper can actually book for the selected journey and requested date, where relevant.
+- Evaluate origin/destination, per-service journey eligibility, active PUDO centres, required explicitly configured location actions, operational coverage, and available operational capacity.
+- Enforce eligibility/availability on the server and revalidate when a consequential quote/booking action is submitted. Hiding an option in the browser alone is insufficient.
+- If no service is available, explain that the selected journey cannot currently be booked. Do not silently substitute a different service, endpoint, or route.
+- Standard/Express estimates must reflect the actual journey and approved operational availability/capacity information. Express must be shorter than Standard for the same comparable eligible journey.
+- Scheduled options are limited to available dates/time windows. Revalidate the selected option before confirmation and preserve the confirmed commitment.
+- Pricing consumes the system-determined actual route under the shared service-specific pricing authority. Quote acceptance, payment, handover, intake and custody remain separate facts under DEC-038–DEC-044.
+
+### Remaining specification and capability gates
+
+Exact service/location/action eligibility; operational coverage and capacity source/method; estimate methodology and numerical durations; guarantee policy; scheduled windows, cutoffs, reservation/expiry and changes; service-specific pricing models/inputs/rates/formulas/units/conversions/charges/currency/rounding; quote validity and handover deadline; unavailable-journey alternatives; and technical/source/security contracts remain open. Do not introduce a location scheduling/capacity system, numerical defaults, API, schema, status, or implementation solely from this experience policy.
+
+**Acceptance direction:** A Shipper sees only server-eligible services; unavailable services cannot be submitted; all four endpoint combinations are independently representable; route types are not customer selections; Standard/Express estimates are shown as non-guaranteed journey-specific estimates with Express shorter than Standard; Scheduled offers only validated available date/time options; and the accepted delivery commitment is preserved with the booking.
+
+**Evidence boundary:** DEC-046 and this section record approved product/business policy and acceptance direction only. They do not demonstrate an implemented service catalogue, availability engine, estimate calculation, scheduling capability, or production behaviour.

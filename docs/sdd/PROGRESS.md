@@ -3,10 +3,10 @@
 > **Current direction (31 October 2026):** DEC-045 records the owner's instruction to begin bounded implementation now. The previous blanket freeze pending Reviews 3–5 is superseded for starting implementation. Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. Accepted policy remains authoritative; unresolved prices, thresholds, service rules, permissions, evidence standards and operational authorities remain capability gates and must not be invented. This does not mean the platform is launch-ready or waive DEC-036 P0 acceptance and release requirements.
 
 
-**Last updated:** 1 November 2026  
+**Last updated:** 2 November 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest reported main baseline for this update:** `5017cc9` — user confirmed PR #104 was reviewed and merged, then synchronized local `main` with `origin/main`. M1.3 automated integration and production smoke verification are recorded in sections 63–64.  
+**Latest confirmed main merge known for this update:** PR #106 merged at `4af6fc8d524e51c06ab9e1c00aad8fb766d9271c` on 1 November 2026. PR #104 M1.3 automated integration and production smoke verification remain recorded in sections 63–64. This documentation proposal is based on `main` after PR #106; its merge result must be recorded separately.  
 **Application-source inspection baseline:** `0e4dfd8e198ef2c14ed22ef393ddf801372b7613` for the bounded administrator-authorization source review recorded below. This is a focused review of the named authentication, authorization, admin-page, API and Firestore-rule paths—not a fresh full-repository semantic audit, runtime verification, or production verification.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
@@ -1432,7 +1432,32 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 
 **Documents updated by this documentation-only proposal:** DECISIONS.md, PLATFORM_OWNER_DECISION_REGISTER.md, PLATFORM_SHIPPER_JOURNEY_AND_PORTAL_EXPERIENCE.md, PLATFORM_SHARED_WORKFLOWS.md, and PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md.
 
-**Still unresolved:** Launch service catalogue and endpoint eligibility; exact service/location/action matrix; proximity discovery, location permission, geocoding/map provider and ranking; route construction/constraints; unavailable-centre behaviour; and technical contracts/source reconciliation/acceptance tests. This clarification approves no rates, formulas, service mappings, route algorithm, schema, fields, API, status values or application-code changes.
+**Still unresolved:** Exact per-service journey/location/action matrix; proximity discovery, location permission, geocoding/map provider and ranking; route construction/constraints; unavailable-centre behaviour; and technical contracts/source reconciliation/acceptance tests. This clarification approves no rates, formulas, service mappings, route algorithm, schema, fields, API, status values or application-code changes.
 
 **Evidence boundary:** Documentation-only. No application source, Firebase data/rules, schema, API, permission, runtime behaviour or production capability changed or was verified. M2 pricing and quotation remain blocked by their existing approved-input prerequisites; M0 and DEC-036 release evidence remain independently open.
 
+
+
+## 66. M2 launch service catalogue and customer-facing availability approved — 2 November 2026
+
+**Owner decision:** DEC-046 records the owner's approval of the high-level launch service catalogue and Shipper-facing selection/availability policy. This is a documentation-only policy update; no application capability is implied.
+
+**Approved service catalogue:**
+- **Standard:** regular delivery within the normal service timeframe; show a journey-specific estimated delivery timeframe.
+- **Express:** priority handling with a shorter estimated delivery timeframe than Standard for the same comparable eligible journey; show the estimate before quote acceptance.
+- **Scheduled:** Shipper selects from system-determined available delivery dates/time windows; revalidate before booking confirmation and preserve the confirmed commitment.
+- Standard/Express estimates are not guarantees. Numerical durations, estimate methodology and any guarantee policy remain unresolved.
+
+**Approved endpoint and eligibility structure:**
+- From and To independently accept a physical address or eligible registered PUDO centre: address-to-address, address-to-PUDO, PUDO-to-address, and PUDO-to-PUDO.
+- Each of the three services may support the four journey patterns, subject to explicit per-service eligibility and actual operational availability.
+- Shippers select customer-facing services and endpoints, not In-PUDO/Out-PUDO/Trans-PUDO classifications or route legs. The system determines the actual route; direct In-PUDO-to-In-PUDO remains valid.
+- Show only services that can actually be booked for the selected journey/date. Enforce availability server-side and revalidate consequential submissions. If no service is available, explain that the selected journey cannot currently be booked; do not silently substitute a service, endpoint or route.
+- Availability considers origin/destination, per-service journey eligibility, active PUDO centres and required configured actions, operational coverage and available capacity.
+- Pricing follows the actual system-determined route through the shared service-specific pricing authority. Quote acceptance, payment, handover, intake and custody remain separate facts.
+
+**Documents reconciled in this proposal:** DECISIONS.md (DEC-046), PLATFORM_OWNER_DECISION_REGISTER.md, PLATFORM_SHIPPER_JOURNEY_AND_PORTAL_EXPERIENCE.md, PLATFORM_SHARED_WORKFLOWS.md, PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md, PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md, and IMPLEMENTATION_SOURCE_TRACEABILITY.md.
+
+**Still unresolved:** Exact per-service journey/location/action eligibility; proximity discovery and privacy/permission behaviour; operational coverage/capacity source and method; estimate calculation and numerical timeframes; guarantee policy; scheduled windows, cutoffs, reservation/expiry and change/cancellation rules; per-service pricing models/inputs/rates/formulas/units/conversions/charges/currency/rounding; quote validity and separate handover deadlines; unavailable-route alternatives; technical ownership/cardinality/API/security contracts; and executable acceptance tests.
+
+**Evidence boundary:** SDD documentation and high-level policy only. No application source, database schema, API, permission, provider, route/scheduling algorithm, location capacity system, runtime behaviour, or production capability was changed or verified. M2 pricing/quotation implementation remains gated by its unresolved approved inputs. M0 and DEC-036 P0/Conditional P0 release evidence remain independent.
