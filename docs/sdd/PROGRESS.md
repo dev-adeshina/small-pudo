@@ -1510,3 +1510,17 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - Updated owner decision register, readiness specification, consolidated owner package, backlog, issues and session handoff.
 - **Status:** recommendations awaiting explicit owner response; no new DEC or accepted policy created. Documentation-only; no application code, schema, API, permission, provider, runtime or production change. No application tests/build/lint were run.
 - **Next:** obtain one consolidated owner response to the recommendations/deferrals; reconcile only accepted choices, then complete technical relationship/source/API/security and executable acceptance specifications before quote/pricing implementation.
+
+
+## 70. M2 commercial owner decisions accepted — DEC-048 — 2 November 2026
+
+**Baseline:** PR #110 merged at `6bced955b967d34e674f9807f71d8092bb63bd48`.  
+**Owner decision:** The owner accepted groups A, C, E, F and G in the consolidated M2 commercial pricing package and deferred B and D. The accepted commercial unit is one parcel and one itemized quote per independent booking for minimum launch; multi-parcel/cross-obligation allocation is deferred. Minimum-necessary service-specific inputs, separate quote validity and physical-handover deadlines, separated pricing governance, and DEC-019's shared pricing authority are accepted. No pricing model or actual rate/arithmetic/fee value is approved.
+
+**Reconciled documents:** DECISIONS.md (DEC-048), PLATFORM_OWNER_DECISION_REGISTER.md, PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md, PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md, PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md, PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md, ISSUES.md and SESSION_HANDOFF.md.
+
+**Remaining gates:** DB-01 shipment creation timing; DB-02/DB-05 technical persistence/cardinality; DB-03 parcel-to-route-leg; DB-06 payment allocation; DB-11 financial-event linkage; service-specific cost/operational evidence and input configuration; actual rates/formulas/currency/arithmetic/charge treatment; quote/handover durations; DEC-047 operational eligibility evidence; and technical API/security/transaction/replay/recovery contracts plus executable acceptance specifications. All twelve DEC-047 service/endpoint combinations and quote issuance remain unavailable until their prerequisites are approved and verified. M0 and DEC-036 release requirements remain independent.
+
+**Evidence boundary:** Documentation-only. No application code, schema, API, Firebase rules/configuration, permission, provider, runtime or production behaviour changed or was verified. No application tests/build/lint were run.
+
+**Next:** Complete the consolidated technical relationship, ownership, cardinality and source contracts for DB-01–DB-12, then API/security/transaction/replay/recovery contracts and executable acceptance specifications. Do not infer technical schema from the accepted commercial unit or begin quote/pricing implementation with placeholder values.
