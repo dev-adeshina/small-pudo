@@ -238,3 +238,20 @@ For PUDO endpoints, verify that the centre is active and explicitly supports the
 The server is authoritative and revalidates eligibility and live availability at consequential submission. Missing, stale, revoked or insufficient evidence means the service is not bookable. If no service is available, explain that the selected journey cannot currently be booked; do not silently substitute a service, endpoint or route. Changes to coverage, centre capability/status, route rules, availability or capacity require reassessment of affected combinations.
 
 This policy does not select actual matrix outcomes, name launch locations, define the proximity method, specify evidence fields, or approve a technical model. Standard/Express estimate rules and Scheduled commitment rules remain governed by DEC-046; pricing, quote validity, handover deadlines, payment, intake and custody remain separate.
+
+
+## M2 pricing and quotation readiness — 2 November 2026
+
+The detailed commercial readiness specification is maintained in `PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md`.
+
+Customer-facing implications:
+
+- The Shipper sees only Standard, Express or Scheduled services that pass the DEC-047 server-enforced eligibility and operational-availability gate for the selected endpoints/date. All twelve combinations remain pending verification and unavailable by default.
+- A service must also have a complete approved pricing configuration before a quote can be issued. No placeholder price or browser-calculated total is displayed as an authoritative quote.
+- A quote explains the applicable charge components, total, currency, validity and the separate physical handover deadline before the booking party is asked to accept.
+- Standard/Express delivery estimates and Scheduled date/time options remain distinct from quote validity and handover deadlines. Standard/Express estimates are not guarantees; Scheduled availability is revalidated before confirmation.
+- The authenticated booking party accepts or rejects the exact valid quote. Acceptance confirms the booking, not payment or physical receipt.
+- Repricing produces a new quote/revision and does not silently change an issued or accepted quote. Later actual intake measurements follow the separate DEC-040 adjustment process.
+- The Shipper selects origin/destination and customer-facing service, not operational route types or legs. Pricing uses the system-determined route.
+
+**Current customer capability:** the existing shipment workspace remains draft preparation only. It does not issue a quote or create a confirmed booking. No customer-facing quote, pricing or payment feature is implied by this specification.

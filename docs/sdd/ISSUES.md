@@ -412,3 +412,13 @@ The A-15 acceptance matrix and A15-04 evidence scenario now reflect PM-01–PM-1
 
 The owner has approved the governing per-service eligibility and operational-verification policy. Standard, Express and Scheduled are evaluated independently across the four endpoint patterns. All twelve combinations remain pending verification and unavailable by default. Before activation, Operations must verify service-specific coverage, active PUDO centres and required actions, a valid route, date/time availability and capacity, and approve the applicable scope. The server must revalidate and fail closed on missing, stale or revoked evidence. Actual cell outcomes and operating evidence remain unresolved; no location/service combination is asserted to be eligible by this update. See DEC-047 and the matrix in Workflow B.
 
+
+## M2 pricing and quotation readiness update — 2 November 2026
+
+The owner-approved DEC-046 service catalogue and DEC-047 eligibility/operational-verification gate are recorded. The consolidated readiness specification is `PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md`.
+
+**Current blocker:** No launch service is ready to issue an independent shipment quote. Standard, Express and Scheduled each still require an approved pricing model and complete service-specific inputs, trusted sources, units/conversions, rates/formulas, currency/rounding, explicit fee/tax treatment, rate governance, quote validity and separate handover deadline. The twelve service/endpoint combinations remain pending verification and unavailable under DEC-047.
+
+**Technical blockers:** No shared shipment quote/rate source capability was found in the bounded source review. Storefront product-price validation exists, but the current delivery fee is hard-coded zero; the existing Paystack flow is storefront-order scoped. DB-01–DB-03 and DB-05 block final booking/shipment/parcel/route and quote-scope persistence design. DB-04, DB-06 and DB-11 require cross-domain reconciliation.
+
+**Required next actions:** Resolve the per-service commercial configuration and DB-05 quote scope through one consolidated owner review; obtain DEC-047 operational evidence; then complete technical ownership/cardinality/API/security contracts and executable acceptance specifications. Do not create placeholder prices, infer NGN, assume fee/tax values, or begin quote-engine implementation before these prerequisites are approved.

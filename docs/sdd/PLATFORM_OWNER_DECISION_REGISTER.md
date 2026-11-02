@@ -437,3 +437,14 @@ The owner approved the governing policy on 2 November 2026.
 **Still unresolved:** Actual eligibility outcomes for all twelve combinations; exact service/location/action coverage; proximity method and privacy/permission behaviour; operational coverage/capacity sources; estimates and numerical timeframes; scheduling rules; pricing inputs/rates/formulas/units/charges/currency/rounding; quote validity and handover deadlines; technical/evidence contracts and executable acceptance tests.
 
 DEC-047 is policy only. It approves no specific service/location assignment, numerical value, algorithm, provider, schema, field, collection, endpoint, status, permission or application-code change. Unverified combinations remain unavailable under DEC-045.
+
+
+## M2 pricing and quotation readiness cross-reference — 2 November 2026
+
+The consolidated readiness specification is now recorded in `PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md`. It applies DEC-019, DEC-026, DEC-038–DEC-041 and DEC-046–DEC-047 without creating a new owner decision.
+
+The per-service pricing model for Standard, Express and Scheduled remains unselected. Rates, formulas, input mapping/sources, units/conversions, currency, precision/rounding, fee/tax treatment, rate governance, quote-validity duration and handover deadlines remain unresolved. The DEC-047 3×4 service/endpoint combinations remain pending verification and unavailable by default.
+
+DB-05 quote scope remains an owner choice. The existing consolidated owner-decision package recommends one quote for the independent booking obligation with itemized service components, but that recommendation is not accepted. It must be resolved together with DB-01 and DB-02 before persistence/cardinality design.
+
+No new DEC is created by this readiness work. No rate, formula, model mapping, numerical duration, technical representation or application-code change is approved.

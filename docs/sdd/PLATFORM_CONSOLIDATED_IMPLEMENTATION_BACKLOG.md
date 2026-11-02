@@ -119,3 +119,27 @@ Keep already deferred scope out of launch: advanced route optimization, full fle
 Link every code/test change to existing requirement and case IDs. Record actual commit, command, date, environment, result and limitations. Keep designed, implemented, tested, production-verified and launch-accepted as distinct states. The existing 0/51 P0/Conditional P0 Admin formal-execution readiness finding remains until case-level specifications and required policies/evidence are complete; it does not invalidate previously reported narrower storefront tests.
 
 **Next ordered milestone:** M2 — service pricing and quotation. DEC-046's high-level catalogue and DEC-047's conservative eligibility/operational-verification policy are approved. The 12 service/endpoint combinations remain unavailable pending explicit outcomes and operational evidence. Continue with the consolidated per-service pricing and quotation readiness specification before feature coding. M2 remains gated by approved service-specific rates, inputs and units, conversions, calculation formulas, charge components, currency and rounding, rule version, quote validity and separate handover deadline, plus concrete coverage/capacity evidence, estimates and scheduling inputs. Do not invent defaults or placeholder rates. M1.3 is complete only for the bounded draft-workspace foundation; the full shipper portal remains incomplete. M0 baseline/regression evidence and DEC-036 production/release requirements remain independently open.
+
+
+## M2 pricing/quotation readiness gate — consolidated specification — 2 November 2026
+
+The owner-approved catalogue and conservative eligibility policy are now recorded in DEC-046 and DEC-047 (PR #107 and PR #108). The next M2 specification is `PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md`.
+
+Before feature coding, complete and approve per-service configuration for Standard, Express and Scheduled independently:
+- fixed/calculated/hybrid model selection;
+- required/optional/conditional input mapping and authoritative sources;
+- units, precision and explicit conversions;
+- rates/formulas, distance source/bands, minimums, volumetric-weight treatment and special handling where applicable;
+- currency, monetary precision, rounding and explicit tax/surcharge/discount/fee treatment;
+- rate ownership, approval, versioning, effective dates and publication/withdrawal controls;
+- quote validity and the separate physical handover deadline and missed-handover/refused-intake outcomes;
+- immutable quote input/charge/total/currency/rule-version/effective-context snapshot and exact-version acceptance;
+- DB-01–DB-03 and DB-05 quote/booking/shipment/parcel/route relationships, plus relevant DB-04/DB-06/DB-11 cross-domain effects;
+- Standard/Express estimate methodology and Scheduled availability/cutoff/reservation/change rules;
+- DEC-047 actual service/endpoint eligibility outcomes and attributable Operations coverage/capacity evidence.
+
+**Recommended policy boundary:** one shared pricing-rule authority for storefront delivery and independent shipment bookings wherever inputs overlap; keep product catalogue prices distinct from delivery pricing. The current storefront delivery fee is zero in source and is not evidence of an approved shipment or delivery rate.
+
+No service is quote-ready on current approved inputs. Do not implement placeholder rates, assume NGN, assume fees are zero, or infer one service's model from another. Keep payment (DEC-041), measurement adjustments (DEC-040), physical intake/custody and dispatch separate.
+
+**Next ordered activity:** finish the owner-facing service-specific pricing/quotation readiness review and resolve only the genuinely owner-dependent commercial choices in one consolidated approval package. Then complete technical ownership/cardinality/source contracts and executable acceptance specifications before implementation.
