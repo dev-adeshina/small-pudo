@@ -22,7 +22,7 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 - `PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md` — draft scenario outlines and evidence requirements for A-01–A-20 and ADM-R01–ADM-R54, including conditional-P0 activation gates and unresolved policy dependencies; not executed tests or implementation approval.
 - `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md` — draft cross-domain acceptance matrix for workflows, actors, lifecycle boundaries, security, failure recovery, audit evidence, and outstanding specification/verification work; not implementation approval.
 - `PLATFORM_OWNER_DECISION_REGISTER.md` — dependency-ordered record of D-01–D-15 outcomes, DEC-037–DEC-044 policy refinements, PM-01–PM-12 and BP-01–BP-22 accepted policies, and remaining detailed design questions; the complete SDD is not yet approved.
-- `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md` — five grouped packages of proposed minimum-launch recommendations for DB-01–DB-12 and remaining authority/operational choices; proposals are pending owner confirmation and are not approved policy.
+- `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md` — historical grouped owner-decision proposal; its commercial groups were accepted or deferred in DEC-048, while remaining DB-01–DB-12 recommendations remain proposals unless separately accepted.
 - `PLATFORM_REVIEW_3_OWNER_INPUT_TRIAGE.md` — classifies DB-01–DB-12 and other Review 3 gaps, separates accepted policy from genuine owner choices and technical work, and consolidates owner-input packages to respect the five-exchange limit.
 - `PLATFORM_REVIEW_3_ACTION_CAPABILITY_CROSSWALK.md` — maps staff action authority, scope, location/service capability, independent approval and evidence requirements without inventing a permission catalogue or implementation model.
 - `PLATFORM_REVIEW_3_LIFECYCLE_TRANSITION_AND_RECOVERY_CROSSWALK.md` — maps lifecycle transitions, physical-event distinctions, unknown outcomes and recovery boundaries without defining persisted status enums.
@@ -41,7 +41,7 @@ DEC-045 records the owner's instruction to begin implementation now and supersed
 
 ### SDD-first working protocol
 
-1. Complete and reconcile the platform-wide SDD before application-code changes.
+1. Complete and reconcile the relevant SDD slice before its application-code changes; DEC-045 permits bounded implementation under accepted policy while unresolved capabilities remain gated.
 2. Use approved SDD documents as the source of intended product behaviour; use source inspection to establish current implementation facts and test/deployment evidence to establish verified behaviour.
 3. Record conflicts between intended behaviour, source, and evidence. Do not silently treat implementation as product approval or documentation as proof of implementation.
 4. Use `SDD_COMPLETENESS_AUDIT.md` as the platform-wide documentation-gap checklist, the workflow/domain documents as drafts for owner review, and `IMPLEMENTATION_SOURCE_TRACEABILITY.md` for observed source facts and gaps. Use the DB-01–DB-12 technical-contract and acceptance specification as the current review package for the next booking-related implementation slice.
