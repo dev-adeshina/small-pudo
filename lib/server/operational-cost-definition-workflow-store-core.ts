@@ -129,8 +129,17 @@ export function createOperationalCostDefinitionWorkflowStore({
         const permissionRef = db.collection("staffActionPermissions")
           .doc(actorUid).collection("permissions").doc(permission);
         const permissionSnapshot = await transaction.get(permissionRef);
-        if (!permissionSnapshot.exists || permissionSnapshot.data()?.active !== true) {
-          throw new Error("The actor does not have the required active action permission");
+        const assignment = permissionSnapshot.data();
+        if (
+          !permissionSnapshot.exists ||
+          assignment?.active !== true ||
+          typeof assignment.assignedBy !== "string" ||
+          !assignment.assignedBy.trim() ||
+          typeof assignment.reason !== "string" ||
+          !assignment.reason.trim() ||
+          !assignment.assignedAt
+        ) {
+          throw new Error("The actor does not have the required active, audited action permission");
         }
 
         const next: WorkflowDocument = { ...current };
@@ -148,8 +157,8 @@ export function createOperationalCostDefinitionWorkflowStore({
               if (previous.empty) throw new Error("The previous version required for resubmission was not found");
               const previousWorkflowRef = previous.docs[0].ref.collection("approval").doc("workflow");
               const previousWorkflow = await transaction.get(previousWorkflowRef);
-              if (!previousWorkflow.exists || previousWorkflow.data()?.state !== "changes_requested") {
-                throw new Error("A revised version may only be submitted after changes were requested on its predecessor");
+              if (!previousWorkflow.exists || !["changes_requested", "approved"].includes(previousWorkflow.data()?.state)) {
+                throw new Error("A revised version may only be submitted after changes were requested or a prior version was approved");
               }
             }
             next.proposerUid = actorUid;
