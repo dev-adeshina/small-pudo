@@ -1,10 +1,10 @@
 # VeriLyft Platform Owner Decision Register
 
-**Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-044 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
-**Last updated:** 31 October 2026  
-**Current main baseline:** PR #83 merged at `986f4ad79232ce1700f4edaa972a17522ed319c8`. The current unmerged preparation branch contains a proposed owner decision package; no recommendation in that package is accepted by this register.
+**Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-046 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
+**Last updated:** 2 November 2026  
+**Latest confirmed main merge:** PR #106 merged at `4af6fc8d524e51c06ab9e1c00aad8fb766d9271c` on 1 November 2026. The current unmerged preparation branch contains a proposed owner decision package; no recommendation in that package is accepted by this register.
 **Related documents:** `DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, and `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`  
-**Implementation gate:** No application-code changes until the platform-wide SDD is reconciled and explicitly approved.
+**Implementation gate:** DEC-045 permits bounded application implementation under accepted policy and explicit capability gates. Unresolved pricing, service eligibility, authority, evidence and technical dependencies must remain unavailable; this register does not imply launch readiness.
 
 ## 1. Purpose and rules
 
