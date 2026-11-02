@@ -262,4 +262,41 @@ describe("Firestore security rules", () => {
       getDoc(doc(db, "users/customer-2/shipmentBookingDrafts/draft-2")),
     );
   });
+  it("denies direct client reads and writes to shipment quote, version, booking and parcel records", async () => {
+    await seedAdminAccess("shipment-admin");
+
+    const clientDatabases = [
+      testEnv.unauthenticatedContext().firestore(),
+      testEnv
+        .authenticatedContext("shipment-customer", {
+          email_verified: true,
+        })
+        .firestore(),
+      testEnv
+        .authenticatedContext("shipment-admin", {
+          email_verified: true,
+          admin: true,
+        })
+        .firestore(),
+    ];
+
+    const protectedPaths = [
+      "shipmentQuotes/test-quote",
+      "shipmentQuotes/test-quote/versions/test-version",
+      "shipmentBookings/test-booking",
+      "shipmentParcels/test-parcel",
+    ];
+
+    for (const db of clientDatabases) {
+      for (const path of protectedPaths) {
+        await assertFails(getDoc(doc(db, path)));
+        await assertFails(
+          setDoc(doc(db, path), {
+            synthetic: true,
+          }),
+        );
+      }
+    }
+  });
+
 });
