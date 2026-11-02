@@ -72,6 +72,28 @@ function assertNonEmptyString(
   }
 }
 
+function assertPlainMap(value: unknown, label: string): asserts value is Record<string, unknown> {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    throw new TypeError(`${label} must be a map`);
+  }
+
+  const prototype = Object.getPrototypeOf(value);
+  if (prototype !== Object.prototype && prototype !== null) {
+    throw new TypeError(`${label} must be a plain map`);
+  }
+}
+
+function assertOnlyKeys(
+  value: object,
+  allowedKeys: readonly string[],
+  label: string
+): void {
+  const allowed = new Set(allowedKeys);
+  if (Object.keys(value).some((key) => !allowed.has(key))) {
+    throw new TypeError(`${label} contains an unsupported field`);
+  }
+}
+
 function assertOptionalString(
   value: unknown,
   label: string,
@@ -88,9 +110,12 @@ function assertOptionalString(
 function assertDefinitionInput(
   value: OperationalCostDefinitionInput
 ): void {
-  if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    throw new TypeError("An operational cost definition must be a map");
-  }
+  assertPlainMap(value, "An operational cost definition");
+  assertOnlyKeys(
+    value,
+    ["activityName", "activityDescription", "inputs"],
+    "An operational cost definition"
+  );
 
   assertNonEmptyString(value.activityName, "Activity name", 120);
   assertOptionalString(value.activityDescription, "Activity description");
@@ -102,9 +127,22 @@ function assertDefinitionInput(
   const keys = new Set<string>();
 
   for (const input of value.inputs) {
-    if (input === null || typeof input !== "object" || Array.isArray(input)) {
-      throw new TypeError("Each activity input must be a map");
-    }
+    assertPlainMap(input, "Each activity input");
+    assertOnlyKeys(
+      input,
+      [
+        "key",
+        "label",
+        "description",
+        "valueType",
+        "required",
+        "source",
+        "unit",
+        "precision",
+        "conversion",
+      ],
+      "An activity input"
+    );
 
     if (
       typeof input.key !== "string" ||
@@ -251,8 +289,9 @@ export function createOperationalCostDefinitionStore({
 
         if (
           typeof currentVersionId !== "string" ||
-          !Number.isSafeInteger(currentVersionNumber) ||
+          !/^[A-Za-z0-9_-]{1,128}$/.test(currentVersionId) ||
           typeof currentVersionNumber !== "number" ||
+          !Number.isSafeInteger(currentVersionNumber) ||
           currentVersionNumber < 1
         ) {
           throw new Error("Operational cost definition lineage is invalid");
