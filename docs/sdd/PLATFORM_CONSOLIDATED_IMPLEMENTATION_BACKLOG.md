@@ -193,6 +193,10 @@ The proposal recommends:
 - server-only access, default-deny client Rules, explicit API authorization and no speculative indexes;
 - additive compatibility with existing customer drafts and storefront orders.
 
-**Current status:** proposal prepared for owner review; no physical schema, API, indexes, Rules/configuration, code or capability activation is approved or implemented by this entry.
+**Approval:** PR #117 was reviewed and merged by the owner on 2 November 2026. The physical root paths, quote-version subcollection representation, relationship boundaries, server-only access and bounded first-slice direction are approved as recorded in the design artifact. This does not approve quote issuance, acceptance, booking, parcel/intake or custody capability.
 
-**After owner approval:** begin the narrow quote-lineage/immutable-version persistence foundation with synthetic Firestore Emulator tests and direct-client Rules-denial tests only. Do not expose quote issuance/acceptance or parcel/intake. Pricing, quote terms, DEC-047 eligibility, customer token-revocation policy, staff/location/action authority and DB-10 evidence remain independent gates.
+**First implementation slice:** the branch `feat/shipment-quote-lineage-foundation` adds internal quote-lineage/immutable-version persistence primitives, synthetic Firestore Emulator integration tests and direct-client Rules-denial tests. It adds no customer route/UI, quote calculation/issuance, booking acceptance, parcel/intake, indexes or Rules allow access. The persistence adapter is server-side only. Tests/build/lint/TypeScript/Emulator execution have not yet been performed for this branch; record results only after local execution.
+
+**Independent gates remain:** pricing model/inputs/rates/arithmetic, quote validity and separate handover terms, DEC-047 service/endpoint eligibility, consequential customer token-revocation policy, booking acceptance authorization, staff/location/action authority, DB-10 physical evidence, and DEC-036 release evidence.
+
+The persistence foundation is a bounded technical prerequisite and does not replace or approve the ordered M2 commercial pricing/quotation readiness work. Quote issuance and acceptance remain disabled until M2 and the other independent prerequisites are approved and evidenced.
