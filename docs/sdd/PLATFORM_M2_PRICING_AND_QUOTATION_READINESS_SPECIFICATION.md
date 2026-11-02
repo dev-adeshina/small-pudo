@@ -2,7 +2,7 @@
 
 **Status:** Consolidated readiness specification incorporating owner-approved commercial direction DEC-048; actual service pricing configurations remain unapproved  
 **Prepared:** 2 November 2026  
-**Latest M2 reconciliation:** PR #118 merge `d54f337439947207e1967d1b915a02018e0b856a`  
+**Latest M2 evidence baseline:** PR #119 merge `3d324d4a7b9a5eb751106b0da30defe79ea332ce`; owner-confirmed Standard operating scope is recorded in Section 18 on the current costing-boundary branch  
 **Baseline:** PR #108 merge, 047a234cc641493d8a44a88e41ab722e6818ab5c  
 **Authority:** DEC-019, DEC-026–DEC-029, DEC-038–DEC-041, DEC-045–DEC-048; BP-01–BP-22; PM-01–PM-12  
 **Related:** PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md; PLATFORM_OWNER_DECISION_REGISTER.md; PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md; PLATFORM_SHARED_WORKFLOWS.md; PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md; PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md; PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md; PLATFORM_SHIPPER_JOURNEY_AND_PORTAL_EXPERIENCE.md; IMPLEMENTATION_SOURCE_TRACEABILITY.md
