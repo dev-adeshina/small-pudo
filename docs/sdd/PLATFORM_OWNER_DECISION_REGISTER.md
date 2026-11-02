@@ -454,9 +454,7 @@ No new DEC is created by this readiness work. No rate, formula, model mapping, n
 
 The owner-facing commercial decision package is `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md`. It groups the remaining M2 owner choices into seven decisions: commercial booking/parcel/quote unit (DB-01/02/05); evidence-based model selection for Standard, Express and Scheduled; service-specific input/source/unit configuration; rates/formulas and charge/arithmetic treatment; quote validity and separate handover deadline; pricing governance; and the shared pricing authority under DEC-019.
 
-**Status: recommendations prepared; none accepted by this register.** The minimum-launch recommendation is one parcel and one itemized quote per independent booking, while deferring multi-parcel/cross-obligation complexity. The package recommends selecting each service's fixed/calculated/hybrid model only after cost and operational evidence exists; it does not choose a model for any service or provide a rate.
-
-Actual rates/formulas, units/conversions, currency, rounding, tax/fee treatment, quote/handover durations and accountable individuals remain pending. DEC-047's twelve service/endpoint combinations remain pending verification and unavailable by default. No new DEC is created and no technical cardinality/schema/API or code change is approved by this package.
+**Historical proposal status:** The owner response has since been accepted and recorded as DEC-048 in the section below. The accepted/deferred outcomes there supersede this proposal-status summary. The underlying evidence, operational values and technical contracts remain open; DEC-047's twelve service/endpoint combinations remain pending verification and unavailable by default.
 
 
 ## D-05 M2 commercial pricing owner response — DEC-048 — 2 November 2026
