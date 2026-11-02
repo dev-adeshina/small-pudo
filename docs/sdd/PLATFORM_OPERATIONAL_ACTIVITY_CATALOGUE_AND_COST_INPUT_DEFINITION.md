@@ -1,6 +1,6 @@
 # Operational Activity Catalogue and Cost Input Definition
 
-**Status:** Owner-review proposal; not an approved operating catalogue, cost policy, rate card, pricing model, schema or implementation authorization.  
+**Status:** Owner-reviewed activity catalogue and owner-confirmed workflow requirements; pending independent Operations validation, Finance review and evidence collection. This is not a cost policy, rate card, pricing model, schema or implementation authorization.  
 **Prepared:** 2 November 2026  
 **Applies to:** VeriLyft independent shipment operations and internal operational-cost definition foundation.  
 **Authority:** DEC-018, DEC-019, DEC-022–DEC-025, DEC-038–DEC-049; PM-01–PM-12; PR #121–#122; `PLATFORM_M2_SERVICE_COST_AND_INPUT_EVIDENCE_WORKBOOK.md`; `PLATFORM_OPERATIONAL_COST_DEFINITION_APPROVAL_FOUNDATION.md`.  
@@ -10,7 +10,7 @@
 
 Define a controlled way to identify operational activities and the information that may be needed to describe their costs. The catalogue is intended to guide the next internal activity-cost configuration contract while preserving the boundary between operational facts, cost evidence, customer pricing and business margin.
 
-This document is a proposal for owner review. It does not assert that every candidate activity is currently performed, available at launch, or eligible for every service/endpoint combination. It does not approve cost amounts, units, formulas, allocation methods, staff compensation, provider terms, service eligibility or customer charges.
+The owner has reviewed and accepted the twelve activity families as the working VeriLyft operational catalogue and confirmed the workflow requirements recorded in Section 4A. These are owner-confirmed product/operating requirements from the 2 November 2026 discussion; they are not represented as independently verified Operations procedures, observed operating records or Finance-approved cost evidence. The catalogue does not approve cost amounts, units, formulas, allocation methods, staff compensation, provider terms, service eligibility or customer charges. ACT-12 remains conditional and inactive until Operations confirms that the relevant service is actually provided.
 
 ## 2. Authority and non-negotiable boundaries
 
@@ -29,39 +29,58 @@ This document is a proposal for owner review. It does not assert that every cand
 
 ## 3. Catalogue interpretation
 
-Each entry below is a **candidate activity** or **candidate activity family**, not an assertion of an approved end-to-end workflow.
+The twelve activity families below are accepted by the owner as the working catalogue. Section 4A records the workflow requirements confirmed for each family. This owner confirmation establishes the intended product/operating direction; it does not substitute for Operations validation against actual procedures and records, Finance review, or evidence that a service/endpoint combination is eligible.
 
-- **Known requirement:** supported by an owner-confirmed decision or recorded operating fact.
-- **Candidate — validate:** plausible activity to investigate, but its execution, scope or applicability has not been established sufficiently to approve it.
-- **Exception candidate:** a distinct exception or reverse-flow record is required by the recorded direction, but triggers, steps, owners and cost treatment remain open.
-- **Not established:** no activity should be created merely because a generic logistics business might perform it.
+- **Owner-confirmed requirement:** explicitly accepted by the owner during the 2 November 2026 review.
+- **Operations validation pending:** actual execution, role ownership, capacity, procedure and source evidence still require validation by Operations.
+- **Finance review pending:** cost basis, evidence, duplicate/included treatment and financial interpretation remain unapproved.
+- **Conditional / inactive:** an activity family must not be configured or offered until its existence and scope are confirmed.
 
-An activity should be configured only when its business purpose, trigger, completion evidence, responsible function, scope and necessary inputs are validated from VeriLyft operating records or an approved operating procedure.
+No activity definition, by itself, activates a service, location, endpoint, customer price or operational capability.
 
 ## 4. Candidate operational activity catalogue
 
-| Candidate ID | Activity / family | Current evidence and boundary | Minimum facts to validate before configuration |
+| Candidate ID | Activity / family | Owner-confirmed workflow direction | Operations / Finance validation still required |
 |---|---|---|---|
-| ACT-01 | Origin PUDO presentation and receipt | **Known Standard operating fact:** customer selects the origin PUDO centre online and presents the parcel there. Sender-doorstep collection is not in the currently described Standard scope. | Whether the activity is a single operation or separate presentation, receipt and custody-acceptance steps; responsible location/staff; accepted/refused/held outcomes; actual possession evidence; applicable services. |
-| ACT-02 | Parcel verification and measurement at origin PUDO | **Known Standard operating fact:** physical parcel verification occurs at the selected origin PUDO centre. Declared and actual characteristics must remain distinct. | Which characteristics are checked; who records them; source and measurement method; discrepancy workflow; whether verification and acceptance of possession are separate events. |
-| ACT-03 | Origin PUDO custody acceptance | **Known custody invariant:** parcel identity/custody begins only when authorized staff actually accept physical possession. | Authorized role/location/action; evidence of physical receipt; accepted-with-hold versus refusal before possession; exact event boundary and record owner. |
-| ACT-04 | Transport / movement between operational points | **Known transport arrangements:** business-owned vehicle, driver-owned vehicle and external partner. The actual legs and handover points for each service/endpoint pattern require validation. | Which movement legs exist; origin/destination; provider/asset arrangement; trip identity; measured facts available; actual pickup/drop-off and physical handover evidence. |
-| ACT-05 | Destination PUDO receipt / custody acceptance | **Candidate — validate:** endpoint combinations include PUDO destinations, but all DEC-047 combinations remain unavailable pending evidence. | Whether and when a destination PUDO receives parcels; location capability; actual possession event; staff responsibility; acceptance/refusal/hold outcomes. |
-| ACT-06 | Delivery to an address / recipient handover | **Candidate — validate:** address delivery is within the service/endpoint decision space, but no combination is enabled by this catalogue. | Whether delivery is an activity for the selected combination; assigned actor; authorized recipient; attempt and completion evidence; actual physical handover; failure outcomes. |
-| ACT-07 | Collection / release to an authorized collector | **Known authority boundary:** booking/payment alone does not authorize collection; receiver and alternative-collector rules are defined in BP-06–BP-08. | Actual release activity, verification checkpoint, authorized collector relationship, evidence, hold/dispute outcomes and responsible location. |
-| ACT-08 | Failed collection or delivery attempt | **Exception candidate:** failed attempts must be recorded with evidence and must not create false custody transitions or automatic customer charges. | What constitutes an attempt; reason/outcome taxonomy; whether physical possession changed; actor/location/time/evidence; retry or review authority; financial treatment (unapproved). |
-| ACT-09 | Return-to-Sender (RTS) journey | **Exception candidate:** RTS is a separate reverse journey with its own activity/cost records; no assumed financial accountability or automatic customer charge. | Trigger/authorization; origin and return destination; each reverse movement/hand-over; custody chain; completion evidence; responsible party and financial treatment (unapproved). |
-| ACT-10 | Exception review and resolution | **Candidate — validate:** discrepancies, holds, failed attempts, disputed authority and location substitution require controlled outcomes, but not one generic workflow by assumption. | Which exception types require Operations review; decision authority; evidence; customer notification/acceptance where applicable; resolution and audit record. |
-| ACT-11 | Origin PUDO substitution handling | **Known Standard rule:** if the selected centre becomes unavailable before parcel presentation, substitution requires Operations authorization plus customer notification and acceptance. | Whether this is a distinct activity or a controlled change event; evidence of unavailability; authorized decision; customer response; effects on location/route/quote. |
-| ACT-12 | Other support, administration, packaging, storage or handling work | **Not established as a launch activity catalogue.** Do not configure these merely because they are common in logistics operations. | First establish that the activity is performed or contractually required, its trigger/scope/owner, evidence and whether it creates an attributable cost. |
+| ACT-01 | Origin PUDO presentation and receipt | Sender presents the parcel at the selected origin PUDO. Generate a parcel acceptance receipt and email it to the sender only after physical custody acceptance has been recorded. The receipt is proof of parcel acceptance, not an invoice or payment receipt. | Validate staff/location roles, refusal/hold outcomes, evidence standard, email delivery handling and service applicability. |
+| ACT-02 | Parcel verification and measurement at origin PUDO | Staff verify parcel weight and dimensions (length, width and height). Keep customer-declared values distinct from staff-verified actual values. A discrepancy places acceptance on hold, is recorded and communicated to the customer, and requires the applicable customer decision or Operations review before acceptance proceeds. No silent overwrite or automatic price increase. | Validate measurement equipment/procedure, source/precision/units, discrepancy thresholds and decision authority. No units, thresholds, conversions, divisor or price rule is approved here. |
+| ACT-03 | Origin PUDO custody acceptance | Authorised staff explicitly confirm actual physical acceptance. Record staff, location, date/time and supporting evidence; update custody state and reflect it in the customer app. | Validate authorized roles/actions, evidence requirements, and refusal versus possession-retained-on-hold outcomes. |
+| ACT-04 | Transport / movement between operational points | Record transport assignment, departure, journey events and arrival separately, including responsible driver/partner and relevant evidence. Record physical custody transfer separately and only when possession actually changes. Reflect operational events in the app without falsely implying transfer. | Validate actual legs, provider/asset arrangements, responsible roles, event evidence and service/endpoint applicability. |
+| ACT-05 | Destination PUDO receipt / custody acceptance | Receiving staff physically verify the parcel and explicitly accept custody. Only after acceptance should the customer be notified that it is ready for collection; reflect custody and readiness in the app. | Validate destination location capability, staff authority, verification/evidence and applicable DEC-047 combinations. |
+| ACT-06 | Delivery to an address / recipient handover | Verify recipient identity or authorised collection status, capture proof of actual physical handover, and only then mark delivered and update the app. An attempt or arrival without handover is not delivery. | Validate identity/authorization method, acceptable proof, delivery actor and service/endpoint applicability. |
+| ACT-07 | Collection / release to an authorized collector | Verify the customer or alternative collector's authority, capture proof of release and record actual physical handover before marking collected; reflect completion in the app. | Validate the operational verification procedure and evidence against BP-06–BP-08. |
+| ACT-08 | Failed collection or delivery attempt | If the recipient cannot be reached at the physical address, the agent may attempt contact by phone, email or SMS to make the destination reachable. If contact fails or the destination remains unreachable, record a failed-attempt exception with reason, actor, date/time, location, contact methods/outcomes and evidence. Do not mark delivered/collected or create an automatic charge. | Validate reasonable contact/retry procedure, attempt taxonomy, exception ownership and custody handling. Contact-channel delivery/response evidence remains to be specified. |
+| ACT-09 | Return-to-Sender (RTS) journey | After failed-delivery recovery and Operations decision, notify the sender before the return journey begins. Record the separate reverse journey, movements and every actual custody transfer; make return progress visible to the sender. No automatic RTS charge or assumed liability. | Validate RTS trigger/authority, sender-notification content and delivery evidence, return destination, custody chain and financial responsibility policy. |
+| ACT-10 | Exception review and resolution | Create formal incident records for damaged/missing parcels, unexplained delays, custody discrepancies, disputed handovers and other incidents. Capture description, time/location, reporter/responsible party, evidence, current custody and Operations review/resolution. | Validate exception taxonomy, severity, review authority, escalation, customer communication and resolution evidence. |
+| ACT-11 | Origin PUDO substitution handling | A substitution request must first appear in the sender's dashboard with original/requested locations, request status and timestamp. Operations authorises or rejects it; decision is reflected in the dashboard and customer is notified. Customer acceptance is recorded where required before the alternative PUDO is used. Preserve history. | Validate grounds/evidence for substitution, decision roles, when customer acceptance is required, and route/quote consequences. No substitution is effective merely because it was requested. |
+| ACT-12 | Other support, administration, packaging, storage or handling work | Candidate families may be listed for discovery, but remain inactive and unconfigured until Operations confirms that VeriLyft actually performs or contractually requires them. | Confirm existence, scope, trigger, owner, evidence and attributable cost before any definition or offering. |
 
-### Catalogue decisions still required
+### 4A. Owner-confirmed workflow decisions — 2 November 2026
 
-- Confirm which candidate activities are actually performed and which apply to Standard, Express and Scheduled.
-- Confirm whether a candidate family needs multiple independently costed activities or should remain one activity with distinct measurable inputs.
+The owner reviewed the twelve activity families and accepted the working catalogue. The following workflow requirements were also confirmed:
+
+1. **ACT-01 — acceptance receipt:** an acceptance receipt is proof of physical parcel acceptance, separate from an invoice/payment receipt. Email the receipt to the sender only after actual custody acceptance is recorded.
+2. **ACT-02 — verification and discrepancy hold:** verify weight and length/width/height at the origin PUDO. Preserve declared and actual values separately. Place acceptance on hold for a discrepancy, notify the customer and resolve through customer decision or Operations review; no silent overwrite or automatic price increase.
+3. **ACT-03 — origin custody:** authorised staff explicitly record physical custody acceptance with staff/location/time/evidence; the custody update must appear in the customer app.
+4. **ACT-04 — transport events:** record assignment, departure, journey and arrival separately from physical custody transfer. The app must not imply a completed transfer from assignment, dispatch, departure or arrival alone.
+5. **ACT-05 — destination PUDO:** receiving staff verify the parcel and explicitly accept physical custody before the customer is notified that it is ready for collection.
+6. **ACT-06 — address delivery:** verify recipient identity or collection authority and capture proof of actual handover before marking delivered.
+7. **ACT-07 — PUDO collection:** verify the collector's authority, capture proof of release and record actual physical handover before marking collected.
+8. **ACT-08 — unreachable recipient:** attempt phone, email or SMS contact to help make the destination reachable. If contact fails or the destination remains unreachable, record a failed-attempt exception with evidence; do not mark delivered/collected.
+9. **ACT-09 — RTS:** notify the sender before the return journey begins. Record RTS as a separate reverse journey and preserve actual custody transfers.
+10. **ACT-10 — incidents:** damaged/missing parcels, unexplained delays, custody discrepancies, disputed handovers and other incidents require formal records, evidence and Operations review.
+11. **ACT-11 — substitution:** show the request in the sender's dashboard first, including original/requested locations and status. Record Operations' decision, reflect it in the dashboard, notify the customer and obtain customer acceptance where required before using the alternative PUDO.
+12. **ACT-12 — additional activities:** packaging, storage, repackaging, special handling, support and other candidates remain inactive until Operations confirms they are actually performed or contractually required.
+
+These are owner-confirmed workflow requirements from this discussion. They do not claim independent Operations validation, observed production evidence, Finance approval or authorization to implement the workflows. The specific notification channels above are requirements to support; delivery-provider selection, retry policy, templates and technical implementation remain open.
+
+### Decisions and validation still required
+
+- Operations must validate actual procedures, role ownership, location capability, event triggers/completion, evidence, exceptions, service applicability and the feasibility of the owner-confirmed workflows.
+- Finance must review source-backed cost evidence, cost basis, direct/shared/included/exception treatment and duplicate-cost prevention.
+- Confirm whether any activity family needs to be split into multiple independently costed activities.
 - Identify omitted activities only from actual operating procedures, observed records or approved partner/staff agreements.
-- Assign stable activity identifiers only after the activity definitions are accepted.
-- Do not infer service availability from the presence of an activity definition.
+- Do not infer service availability from the presence of an activity definition. All DEC-047 combinations remain unavailable pending their independent evidence and approval.
 
 ## 5. Activity definition record — proposed minimum information
 
@@ -209,18 +228,18 @@ Any later technical contract must retain immutable versions and the approved ver
 
 ## 11. Proposed validation and acceptance questions
 
-Before treating this catalogue as approved, the owner and relevant operational/financial reviewers should confirm:
+The owner-level catalogue review is complete. Before activity definitions or cost inputs are configured, Operations and Finance must confirm:
 
-1. Which listed activities actually exist in VeriLyft's intended launch operation?
-2. Which candidate activities should be split into independently costed activities, and which should remain one activity?
-3. What event proves each activity started and completed?
-4. Which activities change physical custody, and what evidence proves the actual possession transfer?
-5. Which inputs are genuinely necessary for each activity, and what authoritative source supplies each?
-6. Which staff, asset, driver and partner arrangements are actually used, and what approved records describe them?
-7. Which costs are direct, shared, already included or exception-related, based on source evidence?
-8. What evidence and review authority apply to failed attempts and RTS without presuming customer liability?
-9. Which service and endpoint patterns use each activity, subject to DEC-047?
-10. What minimum internal configuration capability is needed after the catalogue is approved?
+1. Validate actual execution, scope, responsible roles, trigger and completion evidence for each owner-confirmed activity.
+2. Confirm which activity families are performed, conditional or out of scope, including ACT-12 inactive candidates.
+3. Validate the physical-possession and handover evidence for every custody-changing event.
+4. Validate parcel measurement sources, original units/precision, discrepancy handling and hold/release authority.
+5. Validate notification and contact-channel procedures, evidence, delivery outcomes and retry behaviour.
+6. Confirm service/endpoint applicability independently; DEC-047 remains a separate fail-closed gate.
+7. Identify authoritative sources and owners for each activity-specific cost input.
+8. Finance to validate cost evidence, recognition basis, direct/shared/included/exception classification and duplicate-cost prevention.
+9. Confirm actual staff, asset, driver and partner arrangements from approved records.
+10. Define the minimum internal configuration capability only after the above validation and review are complete.
 
 ## 12. Explicit exclusions
 
@@ -240,6 +259,6 @@ This proposal does not define or implement:
 
 ## 13. Recommended next step
 
-Owner-review and correct this catalogue at the activity-definition level first. Then obtain Operations validation of the actual activities, triggers, completion evidence and input sources; obtain Finance review of cost evidence categories and duplicate/included treatment. Only after that should the team prepare the minimal technical contract for internal activity-cost configuration, aligned to the existing PR #121–#122 stores and approval workflow.
+The owner-level review of the twelve activity families and the workflow requirements in Section 4A is complete. Next, obtain Operations validation of actual procedures, roles, triggers, completion evidence, notification/contact handling and service applicability; then obtain Finance review of source-backed cost evidence and duplicate/included treatment. Only after those reviews should the team prepare the minimal technical contract for internal activity-cost configuration, aligned to the existing PR #121–#122 stores and approval workflow.
 
-**Current conclusion:** the platform has a versioned operational cost-definition store and an approval workflow, but the actual operational activity catalogue, activity-to-input mapping and source-backed cost evidence remain to be validated.
+**Current conclusion:** the working activity catalogue and owner-confirmed workflow direction are established. Independent Operations validation, Finance review, activity-to-input source mapping and attributable cost evidence remain outstanding. This document does not authorize application implementation or capability activation.
