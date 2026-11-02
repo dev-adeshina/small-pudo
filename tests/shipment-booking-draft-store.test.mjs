@@ -239,5 +239,62 @@ describe(
       assert.equal(afterSnapshot.data().status, "cancelled");
       assert.equal(afterSnapshot.data().destination, "Abuja");
     });
+
+    it("does not overwrite a draft when its status changes during an update transaction", async () => {
+      const uid = customerUid();
+      const created = await store.createDraft(uid, validDraft);
+      const reference = db
+        .collection("users")
+        .doc(uid)
+        .collection("shipmentBookingDrafts")
+        .doc(created.id);
+
+      let signalFirstRead;
+      let releaseFirstAttempt;
+      const firstRead = new Promise((resolve) => {
+        signalFirstRead = resolve;
+      });
+      const firstAttemptMayContinue = new Promise((resolve) => {
+        releaseFirstAttempt = resolve;
+      });
+      let pauseFirstAttempt = true;
+
+      const racingStore = createShipmentBookingDraftStore({
+        db,
+        serverTimestamp: () => FieldValue.serverTimestamp(),
+        updateDraftOnlyWhileEditable: async (readDraft, updateDraft) => {
+          const snapshot = await readDraft();
+
+          if (pauseFirstAttempt) {
+            pauseFirstAttempt = false;
+            signalFirstRead();
+            await firstAttemptMayContinue;
+          }
+
+          return updateDraftOnlyWhileEditable(
+            async () => snapshot,
+            updateDraft
+          );
+        },
+      });
+
+      const updatePromise = racingStore.updateDraft(uid, created.id, {
+        ...validDraft,
+        destination: "Ibadan",
+      });
+
+      await firstRead;
+      await reference.update({ status: "cancelled" });
+      releaseFirstAttempt();
+
+      const updated = await updatePromise;
+      const afterSnapshot = await reference.get();
+      const afterData = afterSnapshot.data();
+
+      assert.equal(updated, false);
+      assert.equal(afterData.status, "cancelled");
+      assert.equal(afterData.destination, "Abuja");
+      assert.equal(afterData.bookingPartyUid, uid);
+    });
   }
 );
