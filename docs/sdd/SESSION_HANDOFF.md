@@ -75,12 +75,12 @@ Use `ISSUES.md`, `DECISIONS.md`, `PLATFORM_OWNER_DECISION_REGISTER.md`, `PLATFOR
 - Preserve the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, Cloudinary, and existing component/service/type/style patterns.
 - Do not invent parallel architecture, collections, fields, routes, services, status enums, roles, or permissions.
 - Keep intended behaviour, owner-approved policy, source presence, implemented behaviour, runtime verification, and production-readiness evidence distinct.
-- Keep PRs focused and documentation-only while the complete SDD remains unapproved. The owner reviews and merges every PR.
+- Keep PRs focused. Documentation remains the right deliverable while policy/technical inputs are unresolved; bounded application changes may proceed under DEC-045 only when the relevant SDD contract, authorization, acceptance cases and evidence are Ready. The owner reviews and merges every PR.
 - Never claim a test, build, browser check, deployment check, or production verification was performed unless it actually was.
 - Preserve historical roadmap/checkpoint entries as history; use `PROGRESS.md` for the current work pointer.
 - Do not reopen completed D-01–D-15, PM-01–PM-12, BP-01–BP-22, or Milestones 1–3 absent genuine contradictory evidence.
 
-**Implementation gate:** No application-code change until the owner explicitly approves the complete reconciled platform-wide SDD.
+**Implementation gate:** DEC-045 permits bounded implementation under accepted policy; it supersedes the earlier blanket freeze pending completion of Reviews 3–5. Do not implement a capability whose business inputs, technical relationships, authorization, acceptance criteria or evidence remain unresolved. DEC-036 P0/Conditional P0 release requirements remain independent.
 
 
 ## Latest baseline verification — PR #64
@@ -288,3 +288,15 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - **Deferred:** no actual rates, formulas, coefficients, distance bands, minimums, currency, rounding, taxes, surcharges, discounts or other fee treatment approved.
 - **Technical boundary:** DB-01 shipment creation timing, DB-02/DB-05 technical persistence/cardinality, DB-03 parcel-to-route-leg, DB-06 payment allocation and DB-11 financial-event linkage remain open. No schema/API/permission/provider/code change is approved by DEC-048.
 - **Next:** technical ownership/cardinality/source/API/security/transaction/replay/recovery contracts for DB-01–DB-12 and executable acceptance specifications. Keep quote issuance and all twelve DEC-047 service/endpoint combinations unavailable until all independent commercial, operational and technical prerequisites are verified. M0 and DEC-036 release requirements remain separate.
+
+
+## Current work pointer — DB-01–DB-12 technical contracts and acceptance — 2 November 2026
+
+- **Current main:** PR #111 merge `730581ba6b4a6f5ea25718d8d11face40aaed0dd`; user confirmed local `main` is synchronized.
+- **Active branch:** `docs/db01-db12-technical-contract-acceptance`.
+- **Current proposal:** `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`.
+- **Source review:** Current-main re-fetch of the M1.3 draft UI/API/authentication/validation/Firestore store/tests and existing storefront order/Paystack/Firestore rules. M1.3 remains draft-only; do not reinterpret its persistence as a confirmed booking or parcel model.
+- **Next:** Review/merge the consolidated technical-contract and acceptance package. Then proceed with the smallest Ready implementation slice under DEC-045; do not wait for every future capability, but keep all blocked services/endpoint combinations and quote issuance disabled.
+- **Accepted commercial boundary:** DEC-048: one parcel and one itemized quote per independent booking for minimum launch; multi-parcel/cross-obligation allocation deferred; service model/rates/arithmetic/fees remain deferred.
+- **Still open:** DB-01 shipment creation timing; DB-02/DB-05 physical representation; DB-03 parcel-to-route-leg relationship; DB-06 payment allocation; DB-11 financial-event linkage; DEC-047 operational evidence; service-specific pricing/quote/handover values; business representation verification; evidence/reviewer/retention; notification matrix; and executable fixtures for blocked cases.
+- **No code has been changed in this proposal.** No tests/build/lint were run for this documentation PR. Preserve existing untracked local files and the user's normal review → merge → local pull workflow.
