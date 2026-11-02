@@ -284,8 +284,11 @@ describe(
       });
 
       await firstRead;
-      await reference.update({ status: "cancelled" });
-      releaseFirstAttempt();
+      try {
+        await reference.update({ status: "cancelled" });
+      } finally {
+        releaseFirstAttempt();
+      }
 
       const updated = await updatePromise;
       const afterSnapshot = await reference.get();
