@@ -1,6 +1,6 @@
 # VeriLyft Architecture and Product Decision Log
 
-**Last updated:** 30 October 2026
+**Last updated:** 2 November 2026
 
 This file records accepted constraints and provisional defaults so
 future sessions do not invent a different architecture. Items marked
