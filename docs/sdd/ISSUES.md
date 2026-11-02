@@ -428,7 +428,7 @@ The owner-approved DEC-046 service catalogue and DEC-047 eligibility/operational
 
 The consolidated owner proposal is `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md`. It groups the commercial-unit decision, per-service model-selection method, input/source/unit matrix, rates and monetary treatment, quote validity/handover terms, pricing governance and shared pricing authority.
 
-**Status:** awaiting explicit owner response; recommendations are not accepted policy. No service model or rate is selected. Actual formulas, units/conversions, currency, rounding, tax/fee treatment and durations remain pending evidence and approval. The proposed one-parcel/one-quote minimum-launch unit remains pending DB-01/02/05 reconciliation. DEC-047 eligibility evidence and all technical relationship/API/security/acceptance dependencies remain separate blockers. No pricing or quote implementation is authorized by this proposal alone.
+**Status:** owner response accepted and recorded as DEC-048. The accepted commercial unit is one parcel and one itemized quote per independent booking for minimum launch; this does not settle DB-01 shipment creation timing or DB-02/DB-05 technical persistence/cardinality. No service model or rate is selected. Actual formulas, units/conversions, currency, rounding, tax/fee treatment and numerical deadlines remain pending evidence and approval. DEC-047 eligibility evidence and technical relationship/API/security/acceptance dependencies remain blockers; no pricing or quote implementation is authorized yet.
 
 
 ## M2 commercial owner response accepted — DEC-048 — 2 November 2026
