@@ -325,6 +325,19 @@ export function createOperationalCostDefinitionStore({
           );
         }
 
+        const currentWorkflowRef = currentVersionRef
+          .collection("approval")
+          .doc("workflow");
+        const currentWorkflowDocument = await transaction.get(currentWorkflowRef);
+        const currentWorkflowState = currentWorkflowDocument.exists
+          ? currentWorkflowDocument.data()?.state
+          : "draft";
+        if (!["draft", "changes_requested", "approved"].includes(currentWorkflowState)) {
+          throw new Error(
+            "An operational cost definition version cannot be revised while review is in progress or after rejection"
+          );
+        }
+
         const nextVersionNumber = currentVersionNumber + 1;
         if (!Number.isSafeInteger(nextVersionNumber)) {
           throw new Error("Next operational cost definition version is out of range");
