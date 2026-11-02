@@ -156,4 +156,13 @@ The owner has now accepted or deferred these commercial choices in DEC-048. The 
 
 The owner accepted the minimum-launch unit of one parcel and one itemized quote per independent booking; minimum-necessary service-specific input requirements; separate quote-validity and physical-handover deadlines; separated pricing governance; and DEC-019's shared pricing authority. Multi-parcel/cross-obligation allocation is deferred. The owner deferred all three service model selections and all actual rates/formulas/arithmetic/charge values pending evidence.
 
-**Next ordered activity:** complete the technical relationship, ownership, cardinality and source contracts for DB-01–DB-12, with particular care not to infer DB-01 shipment-creation timing, DB-02/DB-05 persistence representation, DB-03 parcel-to-route-leg relationships, DB-06 payment allocation or DB-11 financial-event linkage from the commercial-unit decision. Reconcile API/security/transaction/replay/recovery contracts and executable acceptance criteria against current source. Keep quote issuance and all twelve DEC-047 service/endpoint combinations unavailable until their independent prerequisites are verified. Do not implement placeholder pricing or infer any model/value.
+**Next ordered activity:** review and merge `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`. It consolidates the DB-01–DB-12 relationship/ownership/cardinality boundaries, current M1.3 source facts, API/security/transaction/replay/recovery contracts and case-level acceptance specifications. Keep quote issuance and all twelve DEC-047 service/endpoint combinations unavailable until their independent prerequisites are verified. Do not implement placeholder pricing or infer any model/value.
+
+
+## DB-01–DB-12 technical-contract and acceptance-specification workstream — 2 November 2026
+
+The consolidated proposal is `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`. It records current-main M1.3 draft source facts, separates accepted DEC-048 commercial boundaries from unresolved technical representation and owner/operational inputs, and defines case-level acceptance tests for the draft foundation and the booking/payment/physical/financial/evidence/notification boundaries.
+
+**Owner review gate:** Review/merge the technical-contract and acceptance package before starting the next application-code slice. Approval of logical contracts does not approve Firestore schema, API routes/payloads, enums, permissions, provider activation or unresolved commercial/operational values.
+
+**Implementation direction:** Under DEC-045, begin the smallest implementation slice whose policy, technical relationship, authorization, test fixtures and evidence are Ready. Keep all blocked capabilities disabled. In particular, quote issuance and all twelve DEC-047 service/endpoint combinations remain unavailable until their independent prerequisites are approved and verified.
