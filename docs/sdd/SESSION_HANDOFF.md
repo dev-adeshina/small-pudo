@@ -275,3 +275,16 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - **Accepted policy preserved:** DEC-019, DEC-026, DEC-038–DEC-041 and DEC-046–DEC-047. DEC-047's twelve service/endpoint combinations remain pending verification and unavailable by default.
 - **Status:** recommendations only; no new DEC or owner approval inferred. No application code, schema, API, permission, provider, runtime or production change. No application tests/build/lint run.
 - **Next:** request one consolidated owner response. After response, reconcile accepted decisions into authoritative SDD, then complete technical ownership/cardinality/source/API/security and executable acceptance contracts before pricing/quote implementation. M0 and DEC-036 release requirements remain independent.
+
+
+## Current owner decision — DEC-048 — 2 November 2026
+
+- **Accepted:** minimum-launch independent booking commercial unit is one parcel and one itemized quote per booking; multi-parcel/cross-obligation allocation is deferred.
+- **Accepted:** each service uses only its minimum necessary pricing inputs, with approved authoritative source, source classification, unit, precision, explicit conversion and validation behaviour. Actual mappings remain to be evidenced and approved.
+- **Accepted:** quote validity and physical-handover deadline are separate service-specific requirements, both communicated before quote acceptance; numerical durations/triggers/outcomes remain unresolved.
+- **Accepted:** pricing governance separates proposal, Operations validation, Finance review and independent approval, aligned with PM-01–PM-12.
+- **Accepted:** DEC-019 shared pricing-rule authority remains the single authority wherever storefront delivery and independent shipment inputs overlap.
+- **Deferred:** no fixed/calculated/hybrid model selected for Standard, Express or Scheduled until service-specific cost and operating evidence exists.
+- **Deferred:** no actual rates, formulas, coefficients, distance bands, minimums, currency, rounding, taxes, surcharges, discounts or other fee treatment approved.
+- **Technical boundary:** DB-01 shipment creation timing, DB-02/DB-05 technical persistence/cardinality, DB-03 parcel-to-route-leg, DB-06 payment allocation and DB-11 financial-event linkage remain open. No schema/API/permission/provider/code change is approved by DEC-048.
+- **Next:** technical ownership/cardinality/source/API/security/transaction/replay/recovery contracts for DB-01–DB-12 and executable acceptance specifications. Keep quote issuance and all twelve DEC-047 service/endpoint combinations unavailable until all independent commercial, operational and technical prerequisites are verified. M0 and DEC-036 release requirements remain separate.
