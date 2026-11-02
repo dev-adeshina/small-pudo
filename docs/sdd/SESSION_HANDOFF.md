@@ -3,8 +3,8 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 ## Current owner direction — 31 October 2026 (continuity; current task pointer at end of file)
 
 - DEC-045 records the owner's explicit instruction to stop extending the planning cycle and begin implementation using accepted policy. The previous blanket freeze pending Reviews 3–5 is superseded for starting bounded implementation work.
-- Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. M0 baseline/regression verification remains active; M1.3 draft-workspace foundation is implemented. The current next booking-related gate is the DB-01–DB-12 technical-contract and acceptance proposal referenced in the active work pointer at the end of this file.
-- Do not treat DB-01–DB-12 recommendations as approved policy. Unresolved values and authorities are capability gates; keep affected functionality disabled or excluded rather than inventing defaults.
+- Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. M0 baseline/regression verification remains active; M1.3 draft-workspace foundation is implemented. DEC-049 accepts the DB-01/DB-02/DB-05 logical booking, parcel and quote relationships; the next booking-related activity is a separate source-aligned physical persistence/API/security design review.
+- Do not infer Firestore layout, fields, indexes, APIs, enums or permissions from DEC-049. Quote issuance/acceptance and parcel/intake remain disabled until their independent commercial, DEC-047, location/action and evidence prerequisites are approved.
 - DEC-018/DEC-036 launch scope, P0 acceptance evidence and production release requirements remain in force. Implementation start is not launch approval.
 - Preserve the existing Next.js App Router, TypeScript, Firebase/Firestore/Auth/Admin, Paystack and Cloudinary architecture. Inspect current source before modifying it; the historical source-inspection baseline is not runtime proof.
 
@@ -312,3 +312,17 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - No physical schema/API/permission/code is approved. Quote/booking remain gated by service pricing and DEC-047; intake/parcel creation remains gated by location/action/evidence contracts.
 - Current draft foundation: user-reported Firestore Emulator run after PR #113 completed 49 tests, 0 failures, 0 cancellations. This is draft-workspace evidence only.
 - Next: owner review of the consolidated proposal. If accepted, reconcile the decision register and case-level acceptance specifications; only then review a physical persistence design for a bounded implementation slice.
+
+
+## Current decision — DEC-049 — 2 November 2026
+
+PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. The owner accepted the consolidated DB-01/DB-02/DB-05 logical contracts:
+
+- Quote acceptance by the authenticated booking party of the exact current, valid version confirms the commercial booking; it does not create a parcel or imply payment/intake/custody/route.
+- A parcel is created only when authorized intake accepts actual physical possession. Refusal before possession creates no parcel/custody; receipt retained under an authorized hold records actual custody. One independent booking has zero parcels before accepted possession and exactly one after. Walk-in intake remains separate.
+- One quote lineage per independent booking, immutable issued versions, one current offer, exact-version acceptance and immutable accepted snapshot. Concurrent/replayed acceptance cannot create multiple bookings; concurrent intake cannot create multiple parcels.
+- DEC-049 approves logical rules only. No Firestore layout, schema, fields, indexes, identifiers, API, enums, permission IDs/claims, pricing values, durations, location eligibility, evidence technology, provider or code is approved.
+- The DB-01/02/05 rows and TCC-BOOK-01/04, TCC-QUOTE-01/02 and TCC-INTAKE-01 assertions are reconciled in `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`.
+- Quote issuance/acceptance remains disabled pending approved pricing, quote/handover terms, DEC-047 eligibility and technical prerequisites. Parcel/intake remains disabled pending location/action authority and physical evidence contracts. DB-03, DB-04, DB-06–DB-12 and M0/DEC-036 remain independent gates.
+
+**Next:** source-align the minimum physical persistence/API/security design to the accepted logical contracts. Do not begin quote or intake implementation until the separate readiness gates are closed.
