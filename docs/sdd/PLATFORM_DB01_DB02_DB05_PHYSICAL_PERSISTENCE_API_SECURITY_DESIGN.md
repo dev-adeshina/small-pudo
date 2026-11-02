@@ -3,7 +3,7 @@
 **Status:** Owner-approved physical persistence/API/security contract for the bounded quote-lineage and immutable-version foundation. Approved by PR #117. This approval does not enable quote issuance, quote acceptance, booking creation, parcel intake, or any other gated capability.  
 **Prepared:** 2 November 2026.  
 **Approval baseline:** PR #117 merged; the user's synchronized local `main` reports `feb8019`.  
-**Source inspection baseline:** The same commit, with the bounded source paths listed in Section 2 re-fetched read-only. This is not a full-repository semantic audit, runtime verification, deployed-rules review or production inspection.  
+**Source inspection baseline:** the original bounded physical-design source review used `0ca77ea2cff30d38ea10e279810f4e0cae65cd90`; relevant Firebase Admin, draft-store, Rules/configuration, package and test paths were re-fetched read-only from current `main` after PR #117 (`feb8019`). PR #117 changed SDD documentation only. This is not a full-repository semantic audit, runtime verification, deployed-rules review or production inspection.  
 **Policy authority:** DEC-038, DEC-043, DEC-044, DEC-045, DEC-047, DEC-048, DEC-049; BP-01–BP-22; PM-01–PM-12; the lifecycle, authorization and acceptance contracts.  
 **Logical contract:** `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`.  
 **Execution pointer:** `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md`.
