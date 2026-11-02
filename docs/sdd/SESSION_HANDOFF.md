@@ -123,7 +123,7 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - Reviews 1 and 2 of 5 are approved. Continue autonomous reconciliation; do not request Review 3 until a coherent source-aware technical architecture/contract package is ready.
 - The next focus is cross-domain lifecycle and technical contract completeness: transition ownership/guards, existing data/service boundaries, API authorization, idempotency/concurrency, provider integration, failure/recovery, audit/evidence, and test evidence. Distinguish confirmed source facts from proposed contracts and unresolved owner choices.
 - `pudo.zip` remains uninspected and outside source claims pending a scope/authority decision. Do not infer runtime or production behaviour from repository-history comparison.
-- No application-code changes until explicit Review 5 approval of the complete reconciled SDD.
+- Historical PR #83 checkpoint: the earlier blanket freeze pending Review 5 was superseded by DEC-045. Current implementation gate is recorded in the active work pointer at the end of this file.
 
 
 ## Latest continuation checkpoint — after PR #70
@@ -238,7 +238,7 @@ A-16, A16-01–A16-04, Workflow J, lifecycle boundaries and ADM-R07/R46–R51 ar
 - `PROGRESS.md` has been refreshed to distinguish current main from the unmerged working branch and to identify the actual next work.
 - Source inspection remains bounded by `e0f69055d33dd9399c23e1d793f359468229c856`. No new source/runtime/production verification or test execution is claimed.
 - Continue by reconciling the proposed package against the authoritative decision register and technical contracts; complete domain-specific transition, evidence/reviewer, entitlement/freshness and provider-reconciliation details; expand the P0 outlines into case-level specifications; then perform the complete cross-document audit.
-- Reviews 1 and 2 remain approved. Review 3 is not yet presented; Reviews 4 and 5 remain future gates. Preserve the final owner review for the complete reconciled SDD and explicit implementation authorization. Keep the application-code/schema/API/Firebase/provider/deployment freeze in force.
+- Reviews 1 and 2 remain approved. Review 3 is not yet presented; Reviews 4 and 5 remain future gates. That PR #83 planning checkpoint is historical. DEC-045 now permits bounded implementation under accepted policy; the current DB-01–DB-12 technical-contract package is the review gate for the next booking-related slice.
 
 
 ## Latest M2 eligibility-policy checkpoint — 2 November 2026
