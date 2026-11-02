@@ -325,3 +325,25 @@ The owner accepted the minimum-launch commercial unit, minimum-necessary service
 **Important technical distinction:** Acceptance of one parcel and one quote per booking settles the minimum-launch commercial scope. It does not settle DB-01's shipment-record creation point or the concrete technical relationship/cardinality, schema and API representation for DB-02/DB-05. DB-03, DB-06 and DB-11 remain unresolved. No database schema or application implementation is approved by DEC-048.
 
 All twelve DEC-047 service/endpoint combinations remain pending verification and unavailable by default. No service is quote-ready until its model, inputs, rates/arithmetic, deadlines, eligibility evidence, technical contracts and executable acceptance criteria are approved and verified. Payment, intake, custody, dispatch, M0 and DEC-036 release gates remain independent.
+
+
+## 18. Standard operational-cost direction and implementation boundary — 2 November 2026
+
+The owner has now supplied enough Standard operating-scope direction to define a bounded technical discovery task. The details are recorded in Section 12 of the M2 service cost and input evidence workbook.
+
+**Owner-confirmed requirements:**
+- The shipper selects the origin PUDO centre on the website and must present the parcel at that selected centre. A change before presentation requires Operations authorisation and customer notification/acceptance if the selected centre becomes unavailable.
+- Standard sender-doorstep collection is outside the currently described scope. Physical verification occurs at the selected PUDO centre.
+- Operational activities need independently configurable unit-cost definitions, and each activity defines its own applicable cost variables.
+- Staff compensation remains flexible; no compensation method or allocation formula is selected.
+- Transportation supports business-owned vehicles, driver-owned vehicles and external transport partners, with configurable agreement methods. No separate fuel/vehicle operating-expense reimbursement is provided to driver-owned-vehicle drivers or external transport partners under the described arrangement; business-owned vehicle cost treatment remains to be evidenced.
+- Parcel characteristics are extensible; declared and physically verified values remain separate.
+- Discrepancy, failed-attempt and Return-to-Sender workflows must be represented without automatic customer charges or false custody transitions.
+
+**Not approved:** actual activity catalogue/IDs, measurement units, cost-variable mappings, rates, formulas, staff compensation rules, provider terms, currency, conversions, thresholds, customer charge treatment, admin/staff role assignments, Firestore schema, API routes or permission identifiers.
+
+**Bounded next implementation preparation:** perform a fresh read-only review of current-main Firebase Admin, Firestore persistence, validation, authorization and Emulator test patterns. Then prepare a focused technical contract for the smallest internal, server-only activity-cost configuration foundation. The contract may propose draft configuration definitions, activity-specific variable metadata, immutable version history and controlled publication as design options, but must not assume the current global admin claim is sufficient for Operations/Finance approval.
+
+**Initial code boundary after that contract is approved:** internal persistence/validation primitives and synthetic Firestore Emulator plus direct-client Rules-denial tests only, if the source review confirms the slice is safe. No customer pricing calculation, rate application, quote issuance/acceptance, storefront delivery charge, customer route/UI, staff compensation execution, transport dispatch, parcel intake, custody or service eligibility activation. No real rates or guessed defaults. Reuse the existing App Router/Firebase/Admin patterns and PR #118 quote-lineage foundation where appropriate; do not create a parallel pricing authority.
+
+DEC-048 remains authoritative for commercial quote readiness. All twelve DEC-047 service/endpoint combinations remain pending and unavailable. Express and Scheduled evidence can follow the reusable Standard configuration foundation; their service models and operating eligibility are not inferred from Standard.
