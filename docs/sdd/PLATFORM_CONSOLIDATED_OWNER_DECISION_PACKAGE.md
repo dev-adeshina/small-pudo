@@ -309,7 +309,7 @@ At the consolidated owner review, the owner may:
 
 No silence, elapsed time, PR merge, technical feasibility or assistant recommendation counts as policy approval.
 
-The final SDD review must also disclose unresolved blockers, source-evidence limitations, P0 specification status, production ownership/evidence gaps and any scope excluded from launch. Implementation may begin only after the owner explicitly approves the complete reconciled SDD and lifts the implementation freeze.
+The final SDD/release review must also disclose unresolved blockers, source-evidence limitations, P0 specification status, production ownership/evidence gaps and any scope excluded from launch. Under DEC-045, bounded implementation may begin for a reviewed and approved Ready slice; launch/release still requires DEC-036 evidence and owner sign-off.
 
 
 ## 10. Implementation direction update — DEC-045 (31 October 2026)
