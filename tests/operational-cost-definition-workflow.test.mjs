@@ -54,7 +54,7 @@ describe("operational cost approval workflow", { skip: !enabled }, () => {
     await workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: d.proposer, action: "submit" });
     await assert.rejects(workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: d.proposer, action: "request_changes", reason: "self review" }), /proposer cannot validate/);
     await workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: ops, action: "validate" });
-    await assert.rejects(workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: ops, action: "finance_review" }), /distinct reviewer/);
+    await assert.rejects(workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: ops, action: "finance_review" }), /distinct authorized reviewer/);
     await workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: finance, action: "finance_review" });
     await assert.rejects(workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: finance, action: "approve" }), /independent authorized approver/);
     await workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: approver, action: "approve" });
