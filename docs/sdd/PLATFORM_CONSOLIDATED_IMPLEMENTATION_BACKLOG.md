@@ -168,8 +168,12 @@ The consolidated proposal is `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTAN
 **Implementation direction:** Under DEC-045, begin the smallest implementation slice whose policy, technical relationship, authorization, test fixtures and evidence are Ready. Keep all blocked capabilities disabled. In particular, quote issuance and all twelve DEC-047 service/endpoint combinations remain unavailable until their independent prerequisites are approved and verified.
 
 
-## DB-01/DB-02/DB-05 — next owner review package
+## DEC-049 accepted logical relationships — 2 November 2026
 
-Review `PLATFORM_DB01_DB02_DB05_RELATIONSHIP_DECISION_PACKAGE.md` as one package. It recommends: (1) booking confirmation at exact quote acceptance, with parcel identity deferred until actual authorized physical possession; (2) one originating booking to at most one parcel, created only on accepted possession; and (3) one quote lineage per booking with immutable versions and exact-version acceptance.
+The owner accepted the DB-01/DB-02/DB-05 logical relationship package in PR #114 (merge `26d93cb2748041c8fa0e34bb8a65693949bce0e8`). See DEC-049 and the reconciled case-level requirements in `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md`.
 
-This is an owner decision proposal, not an approved schema/API. Do not begin confirmed-booking, quote or parcel implementation from the recommendation alone. Quote issuance/acceptance remains blocked by service pricing and DEC-047 eligibility evidence; intake remains blocked by location/action/evidence requirements. After owner response, update the decision register and acceptance contracts, then perform a separate physical persistence design review.
+- Booking confirmation occurs on acceptance of the exact current, valid quote version; no parcel, payment, intake, custody or route side effect is implied.
+- A parcel is created only when authorized intake accepts actual physical possession. Refusal before possession creates no parcel/custody; receipt retained under hold records actual custody. One independent booking has zero parcels before possession and exactly one after; walk-in intake remains separate.
+- One quote lineage per booking uses immutable issued versions and exact-version acceptance bound to one immutable accepted snapshot.
+
+**Next ordered activity:** conduct a separate source-aligned physical persistence/API/security design review for these accepted logical relationships. This review must not invent schema or make blocked capabilities available. Quote issuance/acceptance remains blocked by service-specific pricing, quote/handover terms and DEC-047 evidence. Parcel/intake remains blocked by location/action authority and physical evidence contracts. DB-03, DB-04, DB-06–DB-12 and M0/DEC-036 remain independent gates.
