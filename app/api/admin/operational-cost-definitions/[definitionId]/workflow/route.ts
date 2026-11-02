@@ -21,7 +21,7 @@ export async function POST(
     return NextResponse.json({ error: "Authentication required." }, { status: 401 });
   }
 
-  let decoded;
+  let decoded: Awaited<ReturnType<typeof adminAuth.verifyIdToken>>;
   try {
     decoded = await adminAuth.verifyIdToken(match[1], true);
   } catch {
