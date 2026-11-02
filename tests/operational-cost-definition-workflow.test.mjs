@@ -70,7 +70,7 @@ describe("operational cost approval workflow", { skip: !enabled }, () => {
     assert.equal(wf.data().financeReviewerUid, finance);
     assert.equal(wf.data().independentApproverUid, approver);
     assert.equal(events.size, 4);
-    await assert.rejects(workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: approver, action: "approve" }), /current workflow state/);
+    await assert.rejects(workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: approver, action: "approve" }), /pending independent approval state/);
   });
   it("requires a revised version after a changes-requested decision", async () => {
     const d = await draft(), ops = `ops-${randomUUID()}`;
