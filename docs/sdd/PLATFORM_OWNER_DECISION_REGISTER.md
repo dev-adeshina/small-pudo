@@ -390,6 +390,27 @@ Exact rates/formulas, units and thresholds, quote/handover durations, payment/re
 The next consolidated owner checkpoint is Review 3 — technical design and architecture. Reviews 4 and 5 remain reserved for complete SDD/acceptance specification review and final consistency/implementation-gate approval.
 
 
+
+## Additional owner-accepted detailed policy — DEC-046
+
+### Launch shipment service catalogue, journey eligibility, and delivery commitments
+
+The owner approved the high-level launch service catalogue and customer-facing selection policy on 2 November 2026.
+
+- The three major customer-facing independent-shipment services are **Standard**, **Express**, and **Scheduled**.
+- Standard means regular delivery within the normal service timeframe; show an estimated timeframe for the selected journey.
+- Express means priority handling and a shorter estimated timeframe than Standard for the same comparable eligible journey; show the estimate before quote acceptance.
+- Scheduled means delivery on a date or within a time window selected from system-determined available options. Revalidate the selected option before booking confirmation and preserve the confirmed commitment.
+- Each endpoint independently supports a physical address or eligible registered PUDO centre. The four combinations are address-to-address, address-to-PUDO, PUDO-to-address, and PUDO-to-PUDO. Each service may support these combinations subject to explicit per-service eligibility and operational availability.
+- The Shipper selects endpoints and a customer-facing service, not operational PUDO classifications or route legs. The system determines the route. Direct In-PUDO-to-In-PUDO remains valid.
+- Show only services that can actually be booked for the selected journey/date. Enforce the availability decision server-side and revalidate consequential submissions. If none is available, explain that the journey cannot currently be booked.
+- Standard/Express timeframes are estimates, not guarantees. Estimates must reflect the selected journey and approved operational availability/capacity information. Scheduled availability is separate from quote validity, handover deadline, payment, and physical intake.
+- Preserve DEC-038/039/041–044 boundaries. Pricing uses the shared service-specific authority and actual system-determined route.
+
+**Still unresolved:** Per-service journey/location/action eligibility matrix; exact coverage and operational capacity sources/method; estimate calculation and numerical delivery timeframes; guarantee policy; scheduling windows, cutoffs, reservation/expiry and amendment rules; per-service pricing model, inputs, rates/formulas, units/conversions, charges, currency/rounding; quote validity and separate handover deadlines; unavailable-route alternatives; and technical contracts, permissions, source reconciliation and executable acceptance tests.
+
+DEC-046 is high-level owner-approved policy only. It does not approve a schema, field, collection, endpoint, status, provider, route/scheduling algorithm, permission, numeric service level, rate, formula, or application-code change. Unresolved dependencies remain capability gates under DEC-045.
+
 ## Consolidated owner decision proposals — pending, not accepted
 
 The document `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md` groups the remaining owner-dependent choices into five review packages and proposes a conservative minimum-launch baseline for DB-01–DB-12, staff/operational authority, evidence/disclosure and production accountability.
