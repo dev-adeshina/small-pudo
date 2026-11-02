@@ -1555,4 +1555,19 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - Adds logical transaction, replay/concurrency, authorization and acceptance assertions without prescribing physical Firestore layout, fields, APIs, enums or permission IDs.
 - Preserves the fact that quote issuance/acceptance remains blocked by unapproved service pricing and DEC-047 operational evidence; parcel/intake remains blocked by location/action/evidence contracts.
 - **Status:** Proposal only, pending owner response. No business decision, physical schema or implementation is approved by this document. No application source/tests/build/lint changed or run for this documentation proposal.
-- **Next:** Owner review of this single consolidated package. If accepted, record the decision and reconcile DB-01/02/05 acceptance cases, then conduct a separate source-aligned physical persistence design review before implementation.
+- **Outcome:** Owner reviewed and merged PR #114; the logical rules are accepted and reconciled as DEC-049 in Section 73. The separate physical persistence/API/security design review remains next. No implementation is authorized by the decision package alone.
+
+
+## 73. DB-01/DB-02/DB-05 logical relationship decisions accepted — DEC-049 — 2 November 2026
+
+**Baseline:** PR #114 merge commit `26d93cb2748041c8fa0e34bb8a65693949bce0e8`; PR #113 remains the preceding code/test foundation. The owner reported the Firestore Emulator suite passed 49 tests with zero failures and zero cancellations after PR #113; this evidence applies to the draft workspace only.
+
+- [x] Confirmed PR #114 merged; recorded the accepted DB-01/DB-02/DB-05 logical relationship rules as DEC-049.
+- [x] Updated `DECISIONS.md` and `PLATFORM_OWNER_DECISION_REGISTER.md` with the owner-approved logical booking, parcel and quote rules.
+- [x] Reconciled the DB-01/DB-02/DB-05 relationship table and TCC-BOOK-01, TCC-BOOK-04, TCC-QUOTE-01, TCC-QUOTE-02 and TCC-INTAKE-01 behavioural assertions.
+- [x] Preserved the physical-design boundary: no Firestore schema/layout, fields, indexes, identifiers, APIs, enums, permission IDs/claims, pricing values, provider, evidence technology or application code is approved.
+- [ ] Conduct a separate source-aligned physical persistence/API/security design review. Review existing App Router/Firebase Admin/Firestore patterns and the accepted logical invariants; propose only the minimum physical representation and local transaction boundary needed, with explicit alternatives, migration/index/security/rules implications and executable synthetic acceptance fixtures.
+- [ ] Keep quote issuance/acceptance disabled until pricing, quote/handover terms, DEC-047 eligibility and technical prerequisites are approved. Keep parcel/intake disabled until location/action authority and physical evidence contracts are approved.
+- [ ] Continue DB-03, DB-04, DB-06–DB-12, M0 and DEC-036 work independently.
+
+**Evidence boundary:** This is documentation reconciliation only. No application code, physical schema, API, Firestore rules/configuration, permission, provider or deployment behaviour changed. No tests, build or lint were run for this documentation PR. The 49/49 emulator result is user-reported and limited to the existing draft workspace.
