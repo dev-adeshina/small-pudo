@@ -1,4 +1,4 @@
-import type { Firestore } from "firebase-admin/firestore";
+import type { FieldValue, Firestore } from "firebase-admin/firestore";
 
 export const OPERATIONAL_COST_ACTION_PERMISSIONS = {
   submit: "operational_cost_definition.propose",
@@ -76,7 +76,7 @@ export function createOperationalCostDefinitionWorkflowStore({
   serverTimestamp,
 }: {
   db: Firestore;
-  serverTimestamp: () => unknown;
+  serverTimestamp: () => FieldValue;
 }) {
   return {
     async transition(input: {
