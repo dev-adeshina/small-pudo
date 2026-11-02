@@ -219,6 +219,10 @@ describe(
         store.createLineage("customer-1", null),
         /quote snapshot must be a map/
       );
+      await assert.rejects(
+        store.createLineage("customer-1", new Date()),
+        /quote snapshot must be a plain map/
+      );
     });
   }
 );
