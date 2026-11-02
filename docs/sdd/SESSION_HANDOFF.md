@@ -1,7 +1,19 @@
 Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`.
 
 
-## Latest verified continuation — 2 November 2026
+## Current authoritative continuation — PR #119 merged; Standard costing boundary captured — 2 November 2026
+
+- PR #119 merged at 3d324d4a7b9a5eb751106b0da30defe79ea332ce. PR #118's internal quote-lineage/version foundation is also merged and remains internal-only.
+- The owner has confirmed Standard origin-centre selection: the shipper selects the PUDO centre on the website and must present the parcel at that selected centre. Physical verification occurs there; sender-doorstep collection is not part of the currently described Standard scope.
+- If the selected centre becomes unavailable before presentation, Operations may authorise a change to another eligible nearby centre, with customer notification and acceptance.
+- Each operational activity needs an independently configurable unit-cost definition and its own applicable variables. Staff compensation remains flexible and undecided. Transportation supports business-owned vehicles, driver-owned vehicles and external transport partners, with configurable agreement methods.
+- No separate fuel/vehicle operating-expense reimbursement is provided to driver-owned-vehicle drivers or external transport partners under the described arrangement; business-owned vehicle cost treatment remains open.
+- Parcel characteristics are extensible; declared and actual measurements remain separate. Discrepancy, failed-attempt and Return-to-Sender workflows must preserve customer acceptance, authorisation, evidence and physical custody truth.
+- **Current next task:** perform a fresh read-only source review of current-main Firebase Admin, Firestore persistence, validation, authorization and Emulator test patterns. Then propose a minimal technical contract for internal activity-cost configuration. No code before that contract is approved.
+- **Code boundary:** candidate first slice is server-only configuration persistence/validation, activity-specific variable metadata, immutable version history and Emulator/Rules-denial tests. No customer pricing calculation, quote issuance/acceptance, storefront delivery fee, customer UI, staff compensation execution, dispatch, intake, custody or DEC-047 activation.
+- DEC-048 remains authoritative. No model, rates, formulas, currency, units, conversions, fees, taxes, quote validity or handover deadlines are approved. All twelve DEC-047 combinations remain unavailable. M0 and DEC-036 release evidence remain independent.
+
+## Historical continuation — pre-PR118 — 2 November 2026
 
 - **PR #117 is reviewed and merged.** The user's local `main` is synchronized to short commit `feb8019` (from the supplied pull output). PR #117 approves the physical DB-01/DB-02/DB-05 persistence/API/security contract. Its changes were documentation-only.
 - The relevant source paths were re-fetched from current `main` before this implementation slice: Firebase Admin initialization, the existing dependency-injected shipment-draft store and adapter, Firestore Rules/configuration, package scripts, and the Rules/Firestore-store tests. The application-source inspection remains bounded; no full-repository or production audit is claimed.
@@ -406,3 +418,29 @@ PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. T
 
 **Independent gates:** M0 residual verification and DEC-036 P0/Conditional P0 release evidence remain independent of M2. Payment, intake, custody, route/movement, delivery and Finance reconciliation are not enabled by this work.
 
+
+
+## Current authoritative handoff — Standard cost configuration discovery — 2 November 2026
+
+**Repository baseline:** PR #119 merged at 3d324d4a7b9a5eb751106b0da30defe79ea332ce. The user wants to keep the evidence process minimal and move toward implementation.
+
+**Latest owner-confirmed Standard direction:**
+- Shipper selects the origin PUDO centre on the website and must present the parcel at that centre. Physical verification happens there. Sender-doorstep collection is not part of the currently described Standard scope.
+- If the selected centre becomes unavailable before presentation, Operations may authorise a change to another eligible nearby centre, with customer notification and acceptance.
+- Each operational activity needs an independently configurable unit-cost definition; each activity defines its own applicable variables.
+- Staff compensation must remain flexible; no payment method, productivity target or allocation formula is selected.
+- Transportation must support business-owned vehicles, driver-owned vehicles and external transport partners. Agreements may be per trip, distance-based, per parcel, fixed, time-based, hybrid or negotiated. No separate fuel/vehicle operating-expense reimbursement is provided to driver-owned-vehicle drivers or external partners under the described arrangement. Business-owned vehicle cost treatment remains open.
+- Parcel characteristics must be extensible. Customer-declared and staff-verified values remain separate. Discrepancies support recalculation with customer acceptance, rejection or Operations review.
+- Failed attempts and Return-to-Sender are separately recorded operational workflows. No automatic customer charge or false custody transfer is implied.
+
+**Authoritative detail:** Section 12 of the M2 service cost and input evidence workbook and Section 18 of the M2 pricing and quotation readiness specification.
+
+**Immediate next task:** Perform a fresh, read-only review of current-main Firebase Admin, Firestore persistence, validation, authorization and Emulator test patterns. Identify the smallest source-aligned internal activity-cost configuration slice. Do not assume the global Firebase admin claim is sufficient for separate Operations/Finance proposal, validation and approval responsibilities.
+
+**Candidate first code slice, subject to a separate approved technical contract:** server-only configuration persistence/validation, activity-specific variable metadata, immutable version history and Emulator/Rules-denial tests. No public/customer pricing, formula execution, quote issuance/acceptance, storefront delivery fee, customer UI, staff compensation execution, dispatch, intake, custody or DEC-047 activation.
+
+**Commercial boundary:** DEC-048 remains authoritative. No fixed/calculated/hybrid model, rate, formula, currency, unit, conversion, fee, tax, quote-validity duration or handover deadline is approved. All twelve DEC-047 service/endpoint combinations remain pending and unavailable. Express and Scheduled must be evidenced independently; Standard decisions do not automatically apply to them.
+
+**Do not invent:** activity IDs, measurement units, cost amounts, formulas, staff compensation methods, partner terms, business-owned vehicle expenses, permission IDs, schema, endpoints, evidence standards or approval thresholds.
+
+**Preserve:** PR #118 quote-lineage foundation, existing storefront/draft/order/payment/admin behaviour, M0 residual verification and DEC-036 P0/Conditional P0 release requirements.

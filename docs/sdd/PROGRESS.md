@@ -1,16 +1,16 @@
 # VeriLyft Progress Tracker
 
-> **Current direction (2 November 2026):** DEC-045 authorizes bounded implementation under accepted policy. PR #117 has approved the DB-01/DB-02/DB-05 physical persistence/API/security contract. The first quote-lineage/immutable-version persistence foundation is being implemented on `feat/shipment-quote-lineage-foundation`; it does not expose quote issuance or acceptance. Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. Unresolved pricing, service eligibility, customer revocation, staff/location authority and physical evidence remain capability gates. This does not mean the platform is launch-ready or waive DEC-036 P0 acceptance and release requirements.
+> **Current direction (2 November 2026):** PR #119 is merged at `3d324d4a7b9a5eb751106b0da30defe79ea332ce`. PR #118's internal quote-lineage/version foundation is implemented; it does not expose quote issuance or acceptance. M2 now moves from broad evidence gathering to a bounded, source-aligned design for internal activity-cost configuration, based on the owner-confirmed Standard operating scope. No rates, formulas, cost units, staff compensation rules, provider terms, pricing calculation or customer capability are approved. Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. All DEC-047 combinations and DEC-036/M0 release gates remain independent.
 
 
 **Last updated:** 2 November 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest confirmed main merge:** PR #117 reviewed and merged on 2 November 2026. The user's local `main` is synchronized to short commit `feb8019` (as reported in the user's `git pull` output). PR #117 is documentation-only.  
-**Application-source inspection baseline:** the physical-design review re-fetched relevant source paths at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90`; after PR #117, the Firebase Admin initializer, draft-store pattern, Firestore Rules/configuration, package scripts and relevant tests were re-fetched read-only from current `main` (`feb8019`). The merge comparison confirms PR #117 changed SDD documentation only, so application source is unchanged. The earlier `0e4dfd8e198ef2c14ed22ef393ddf801372b7613` administrator-authorization review remains a separate focused source baseline. This is not a full-repository semantic audit, runtime verification or production verification.  
+**Latest confirmed main merge:** PR #119 reviewed and merged on 2 November 2026 at `3d324d4a7b9a5eb751106b0da30defe79ea332ce`. The user reported local `main` synchronized after PR #119.  
+**Application-source inspection baseline:** prior bounded inspections at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90` and the earlier administrator-authorization baseline `0e4dfd8e198ef2c14ed22ef393ddf801372b7613` are historical only. PR #118 subsequently changed application source by adding quote-lineage persistence. No current-main source inspection for the proposed activity-cost configuration foundation has yet been performed. A fresh read-only review is required before designing that slice; no full-repository, runtime or production audit is claimed.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
-**Current phase:** Milestone 4 — SDD reconciliation and bounded implementation. Review 5 is owner-approved as CONDITIONALLY READY under DEC-045. PR #116 records that outcome; PR #117 approves the DB-01/DB-02/DB-05 physical persistence/API/security contract. M0 baseline/regression safety and DEC-036 P0/Conditional P0 release evidence remain active. M1.1 draft hardening, M1.2 journey definition and the bounded M1.3 draft-workspace foundation are complete for their stated scopes; this is not a complete shipper portal. The current code slice is the internal quote-lineage/immutable-version persistence foundation, with synthetic Emulator and Rules-denial tests. Quote issuance/acceptance and parcel/intake remain gated by their independent commercial, DEC-047, authorization, location and evidence prerequisites.
+**Current phase:** Milestone 4 — SDD reconciliation and bounded implementation. PR #118's internal quote-lineage/immutable-version persistence foundation is merged. The current M2 task is read-only source review and technical-contract preparation for a minimal internal activity-cost configuration foundation. No customer pricing or quote capability is authorized. M0 baseline/regression safety and DEC-036 P0/Conditional P0 release evidence remain active. M1.1, M1.2 and the bounded M1.3 draft-workspace foundation are complete only for their stated scopes; this is not a complete shipper portal.
 
 > This tracker records the current documented working state. Verify the live repository, current branch/PR state, and dated test results before treating any item as complete.
 
@@ -1631,3 +1631,25 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 **Next action:** use the evidence workbook to obtain source-backed Standard, Express and Scheduled cost/operating facts. The assistant must not fill in missing commercial values from assumptions, competitor rates or generic practice.
 
 **Evidence boundary:** The 57/57 test result and TypeScript/lint/build passes are user-reported local verification. No production pricing, quote issuance, operational eligibility or release readiness is established.
+
+
+## 75. M2 Standard operating evidence and bounded cost-configuration discovery — 2 November 2026
+
+- [x] Owner confirmed mandatory online selection of the origin PUDO centre; the parcel must be presented at that selected centre.
+- [x] Owner confirmed all physical parcel verification occurs at the selected origin PUDO centre; sender-doorstep collection is not part of the currently described Standard scope.
+- [x] Owner accepted Operations-authorised centre substitution with customer notification and acceptance if the selected centre becomes unavailable before parcel presentation.
+- [x] Captured the configurable activity-cost requirement: each activity has an independent unit-cost definition and independently declares its applicable variables.
+- [x] Captured flexible staff-compensation direction without selecting wage methods, productivity targets or allocation formulas.
+- [x] Captured three transportation arrangements and configurable provider-agreement methods; no separate fuel/vehicle operating-expense reimbursement for driver-owned vehicle drivers or external partners under the described arrangement.
+- [x] Captured extensible parcel characteristics, separate declared/actual measurements, discrepancy outcomes, failed-attempt handling and independent Return-to-Sender workflow.
+- [ ] Validate the activity catalogue, responsible roles, measurement units, activity-level cost variables and direct/shared/included/exception cost treatment from operational records.
+- [ ] Obtain attributable cost evidence, provider agreements, staff compensation evidence and Operations/Finance validation. No values or formulas are approved.
+- [ ] Read-only inspect current-main Firebase Admin, Firestore persistence, validation, authorization and Emulator test patterns for a minimal internal cost-configuration foundation.
+- [ ] Prepare and approve the technical persistence/API/security/acceptance contract before code changes.
+- [ ] Implement only the approved server-only configuration foundation and its Emulator/Rules tests; no customer pricing or quote activation.
+- [ ] Continue Express/Scheduled evidence and DEC-047 verification separately; all twelve combinations remain unavailable.
+- [ ] Continue M0 residual evidence and DEC-036 P0/Conditional P0 release evidence independently.
+
+**Current implementation boundary:** PR #118 quote-lineage/version persistence remains internal and does not enable customer quote issuance. The next candidate is a separate internal activity-cost configuration foundation, not a customer pricing engine. No rates, formulas, currencies, units, conversions, staff payment methods, provider terms, Firestore schema, routes or permissions are approved by this checkpoint.
+
+**Evidence boundary:** The owner-confirmed facts above are discussion-derived operational requirements. No cost observations, rates, financial validation, code, tests or production behaviour are claimed by this update.
