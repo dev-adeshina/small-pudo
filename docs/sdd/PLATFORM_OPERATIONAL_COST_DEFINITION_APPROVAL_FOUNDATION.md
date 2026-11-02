@@ -1,7 +1,7 @@
 # Operational Cost Definition Approval Foundation
 
 **Scope:** PR #122 implementation record.  
-**Status:** Implemented and locally verified; final PR review is in progress.
+**Status:** Implemented; revision lifecycle safeguards added. Re-verification of the latest PR head is pending.
 
 ## Authority and provisioning boundary
 
@@ -80,4 +80,4 @@ No cost values, formulas, pricing calculations, quote generation, automatic acti
 
 ## Verification
 
-The implementation branch passed the Firestore Emulator-backed test suite (68 tests), TypeScript (`npx tsc --noEmit`), ESLint (`npm run lint`) and production build (`npm run build`).
+The previous PR head passed the Firestore Emulator-backed test suite (68 tests), TypeScript (`npx tsc --noEmit`), ESLint (`npm run lint`) and production build (`npm run build`). Revision lifecycle safeguards and two additional workflow tests were subsequently added; all four checks must be rerun against the latest PR head before merging.
