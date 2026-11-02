@@ -1,10 +1,10 @@
 # VeriLyft Shared Platform Workflows
 
 **Document status:** Draft workflow specification — accepted owner policies incorporated; detailed workflows and implementation contracts remain open  
-**Last updated:** 31 October 2026  
+**Last updated:** 2 November 2026  
 **Scope:** Primary independent-shipment logistics workflows and attached storefront-order fulfilment, including their shared operational fulfilment boundary  
 **Related documents:** SPEC.md, DECISIONS.md, ISSUES.md, PLATFORM_ACTORS_AND_RESPONSIBILITIES.md, ADMIN_REQUIREMENTS.md, ADMIN_PORTAL.md  
-**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-044
+**Related decisions:** DEC-018, DEC-019, DEC-020, DEC-021, DEC-022–DEC-046
 
 ## 1. Purpose, status, and boundaries
 
