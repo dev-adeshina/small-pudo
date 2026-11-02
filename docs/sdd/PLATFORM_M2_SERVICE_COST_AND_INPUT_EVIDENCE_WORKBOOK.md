@@ -231,3 +231,51 @@ A service is not quote-ready solely because it is commercially configured. It mu
 | Scheduled | Pending | Pending | Pending | Pending | Pending | Pending | Pending |
 
 **No pricing or operating values are approved by this template.**
+
+
+## 12. Owner-confirmed Standard operating scope and cost-configuration evidence — 2 November 2026
+
+This section records operating facts and configurable-cost requirements supplied or accepted by the owner during the Standard evidence discussion. It is not measured cost evidence, a final activity catalogue, a pricing model, a rate card, a formula, or approval to enable customer quotation.
+
+### 12.1 Standard origin and fulfilment path
+
+- The shipper must select an eligible origin PUDO centre on the website during booking. The selected centre is the centre where the parcel must be presented; a customer cannot independently substitute another centre at intake.
+- The selected centre should be close/convenient to the shipper, but the exact proximity ranking and eligibility algorithm remain unspecified.
+- If the selected centre becomes unavailable before presentation, Operations may authorise a change to another eligible nearby centre, with customer notification and acceptance. The exact staff authority and technical workflow remain to be specified.
+- The shipper physically presents the parcel at the selected centre. All physical verification occurs there. Standard sender-doorstep collection is not part of the currently described operating scope.
+- Booking, centre selection, parcel presentation, verification/acceptance and actual physical custody are separate events. Centre selection or booking alone is not receipt.
+- Intake verifies the parcel against the online booking, including sender/booking authority, actual weight and dimensions, size/handling classification, permitted contents, packaging/label and destination, and physical condition. Customer-declared and staff-verified values must remain distinguishable; discrepancies are recorded.
+- After successful acceptance, staff register and identify the parcel for tracking and place it in the holding/sorting process. Custody is recorded only on actual physical handover and acceptance.
+
+### 12.2 Standard journey scope gathered
+
+The described normal journey includes customer booking and declaration; selected-centre intake and verification; holding and sorting; dispatch preparation; OutPUDO inter-centre transportation; destination OutPUDO intake; either direct recipient collection there or onward transfer to InPUDO; InPUDO intake; and recipient collection or optional InPUDO doorstep delivery.
+
+The owner confirmed destination InPUDO intake checks for count, tracking scan, manifest reconciliation, physical condition/anomaly inspection, discrepancy recording and custody acceptance. Recipient collection at InPUDO includes identity, collection-code/tracking and authority checks, parcel retrieval/inspection, recipient confirmation and actual handover. Doorstep delivery handover is recorded at the recipient's front door with verification; the verification method is not fixed.
+
+OutPUDO direct recipient-collection steps have not yet been fully specified. The OutPUDO/InPUDO network distinction is a working operating model: OutPUDO represents inter-centre federal-road-network movement; InPUDO represents local/urban/state/local/neighbourhood movement. Road class and network type are distinct. Exact route, distance source, units/conversion and routing rules remain unapproved.
+
+### 12.3 Owner-confirmed configurable operational-cost direction
+
+- Each operational activity is to have an independently configurable unit-cost definition.
+- Each activity independently declares which variables apply to its cost. A variable used by one activity is not automatically applied to another.
+- This is an operational activity-cost model, not a decision that every activity is a separate customer charge. Direct costs, shared/allocated costs, included costs and exception costs must remain distinguishable to avoid double-counting.
+- Staff compensation must remain flexible and dynamic. No wage arrangement, compensation method, productivity target, allocation formula or staff authority model has been selected.
+- Transportation must accommodate business-owned vehicles, driver-owned vehicles and external transport partners. Driver/partner agreements may support per-trip, distance-based, per-parcel, fixed, time-based, hybrid or negotiated arrangements. These are supported configuration possibilities, not a statement that every method is currently used.
+- The owner stated that fuel and vehicle operating expenses are not separately provided to drivers or external transport partners. Whether such costs are embedded in an agreed provider rate, and the treatment of business-owned vehicle costs, require evidence; do not add separate reimbursements by assumption.
+- Parcel characteristics must be extensible and include, where operationally necessary, actual weight, dimensions, size, fragility/handling, contents, packaging, quantity and other verified characteristics. No thresholds, bands, volumetric divisor or unit conversion has been approved.
+- Customer declarations and actual staff measurements remain separate. If a discrepancy affects eligibility or price, the system must support recalculation with customer acceptance, rejection, or authorised Operations review. No silent overwrite or unaccepted price increase.
+- Failed collection/delivery attempts must be recorded as exceptions with evidence and custody truth. Reschedule, retry, hold, return or escalation are configurable possible outcomes; additional customer charges are not automatic.
+- Return-to-Sender is a distinct reverse operational journey with its own activity/cost records. Do not assume its cost equals the outbound journey or assign financial responsibility without approved policy.
+
+### 12.4 Candidate activity groups — not a frozen 74-row catalogue
+
+For the initial Standard evidence register, group activities under: booking/declaration; selected-centre intake and verification; physical custody acceptance; holding/storage; sorting; dispatch preparation and handover; OutPUDO movement; destination OutPUDO intake/direct collection/transfer; InPUDO movement and intake; recipient collection; optional doorstep delivery; discrepancy/failed-attempt handling; and Return-to-Sender.
+
+The activity IDs, final activity boundaries, responsible roles, measurement units, cost drivers and whether a cost is direct, shared, included or exceptional must be validated against actual operating records before configuration. A scan, assignment or route event alone is not proof of physical custody transfer.
+
+### 12.5 Evidence still required
+
+The discussion establishes operating scope and desired configurability, not actual costs. Still required: activity-level observation and measurement records; actual staff compensation arrangements and attributable productivity evidence; driver/partner agreements and rate evidence; business-owned vehicle cost treatment; approved measurement units and conversions; activity-specific cost-variable mappings; shared-cost allocation and double-counting controls; exception/return cost accountability; source owners and Operations/Finance validation.
+
+Do not infer numerical rates, currencies, formulas, staff payment methods, provider contract terms, activity thresholds, distance units, volumetric divisors or customer charges from this section.
