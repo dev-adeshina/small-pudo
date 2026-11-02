@@ -1,7 +1,19 @@
 Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`.
 
 
-## Latest verified continuation — 2 November 2026
+## Current authoritative continuation — PR #119 merged; Standard costing boundary captured — 2 November 2026
+
+- PR #119 merged at 3d324d4a7b9a5eb751106b0da30defe79ea332ce. PR #118's internal quote-lineage/version foundation is also merged and remains internal-only.
+- The owner has confirmed Standard origin-centre selection: the shipper selects the PUDO centre on the website and must present the parcel at that selected centre. Physical verification occurs there; sender-doorstep collection is not part of the currently described Standard scope.
+- If the selected centre becomes unavailable before presentation, Operations may authorise a change to another eligible nearby centre, with customer notification and acceptance.
+- Each operational activity needs an independently configurable unit-cost definition and its own applicable variables. Staff compensation remains flexible and undecided. Transportation supports business-owned vehicles, driver-owned vehicles and external transport partners, with configurable agreement methods.
+- No separate fuel/vehicle operating-expense reimbursement is provided to driver-owned-vehicle drivers or external transport partners under the described arrangement; business-owned vehicle cost treatment remains open.
+- Parcel characteristics are extensible; declared and actual measurements remain separate. Discrepancy, failed-attempt and Return-to-Sender workflows must preserve customer acceptance, authorisation, evidence and physical custody truth.
+- **Current next task:** perform a fresh read-only source review of current-main Firebase Admin, Firestore persistence, validation, authorization and Emulator test patterns. Then propose a minimal technical contract for internal activity-cost configuration. No code before that contract is approved.
+- **Code boundary:** candidate first slice is server-only configuration persistence/validation, activity-specific variable metadata, immutable version history and Emulator/Rules-denial tests. No customer pricing calculation, quote issuance/acceptance, storefront delivery fee, customer UI, staff compensation execution, dispatch, intake, custody or DEC-047 activation.
+- DEC-048 remains authoritative. No model, rates, formulas, currency, units, conversions, fees, taxes, quote validity or handover deadlines are approved. All twelve DEC-047 combinations remain unavailable. M0 and DEC-036 release evidence remain independent.
+
+## Historical continuation — pre-PR118 — 2 November 2026
 
 - **PR #117 is reviewed and merged.** The user's local `main` is synchronized to short commit `feb8019` (from the supplied pull output). PR #117 approves the physical DB-01/DB-02/DB-05 persistence/API/security contract. Its changes were documentation-only.
 - The relevant source paths were re-fetched from current `main` before this implementation slice: Firebase Admin initialization, the existing dependency-injected shipment-draft store and adapter, Firestore Rules/configuration, package scripts, and the Rules/Firestore-store tests. The application-source inspection remains bounded; no full-repository or production audit is claimed.
