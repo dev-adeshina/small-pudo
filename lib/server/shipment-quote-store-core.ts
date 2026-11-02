@@ -42,12 +42,13 @@ function assertBookingPartyUid(value: string): void {
 }
 
 function assertSnapshot(value: ShipmentQuoteSnapshot): void {
-  if (
-    value === null ||
-    typeof value !== "object" ||
-    Array.isArray(value)
-  ) {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
     throw new TypeError("A quote snapshot must be a map");
+  }
+
+  const prototype = Object.getPrototypeOf(value);
+  if (prototype !== Object.prototype && prototype !== null) {
+    throw new TypeError("A quote snapshot must be a plain map");
   }
 }
 
@@ -63,6 +64,11 @@ export function createShipmentQuoteStore({
   serverTimestamp,
 }: QuoteStoreDependencies) {
   return {
+    /**
+     * Creates only the persistence pair. No stable external operation/replay
+     * identity is defined yet, so this must not be exposed as a retryable
+     * customer command or used to issue a real quote.
+     */
     async createLineage(
       bookingPartyUid: string,
       snapshot: ShipmentQuoteSnapshot
@@ -163,6 +169,9 @@ export function createShipmentQuoteStore({
         }
 
         const nextSequence = currentSequence + 1;
+        if (!Number.isSafeInteger(nextSequence)) {
+          throw new Error("Next quote version sequence is out of range");
+        }
 
         transaction.create(nextVersionRef, {
           sequence: nextSequence,
