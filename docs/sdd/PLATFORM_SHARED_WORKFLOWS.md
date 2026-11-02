@@ -712,3 +712,21 @@ The server must independently enforce and revalidate eligibility and live availa
 Standard/Express estimate and Scheduled commitment rules remain those in DEC-046. No numerical duration, guarantee, scheduling algorithm, coverage provider, capacity system, proximity provider, pricing value or route algorithm is introduced. Quote validity, handover deadline, payment, intake and custody remain separate.
 
 **Still open:** Actual eligibility outcome/conditions for each matrix cell; concrete service/location/action coverage; proximity discovery and privacy/permission; operational coverage/capacity sources; estimate methodology and numerical timeframes; scheduling windows/cutoffs/reservation/expiry/change rules; pricing specification; quote validity and handover deadlines; technical/evidence contracts and executable tests. The matrix above is the approved conservative launch default, not evidence that the combinations have been operationally assessed.
+
+
+## M2 Workflow B addendum — pricing and quotation readiness — 2 November 2026
+
+The detailed service-specific readiness contract is maintained in `PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md`. This addendum consolidates its workflow consequences without selecting commercial values or technical representation.
+
+- Standard, Express and Scheduled each require an independently approved fixed/calculated/hybrid model and service-specific configured inputs. The model mapping has not been selected.
+- Only explicitly configured inputs are validated and priced. The authoritative source, unit, precision and explicit conversion rule must be approved for every used input.
+- The server is authoritative for pricing. Browser-supplied totals are never accepted as the commercial amount. Staff-assisted quotes use the same approved rule authority.
+- Applicable charge components, total, currency and pricing-rule/rate version/effective context are preserved and disclosed. Tax, surcharge, discount and other fees require explicit treatment; none is assumed zero or silently added.
+- Quote validity and the separate physical handover deadline are communicated before acceptance. Neither is replaced by the Standard/Express delivery estimate or Scheduled delivery window.
+- A quote can be issued only after the applicable DEC-047 service/endpoint combination is eligible, or conditional with all conditions satisfied, and current coverage, location/action, route, date/time availability/capacity and Operations evidence are verified. Pending combinations remain unavailable.
+- Explicit acceptance by the authenticated booking party binds to the exact valid quote and confirms the booking under DEC-038. Payment, physical handover, intake and custody remain separate.
+- Repricing creates a new quote/revision and preserves history. Actual intake measurements and proposed adjustments remain separate under DEC-040.
+- Shared pricing means one approved rule authority for storefront delivery and independent shipment pricing where inputs overlap. It does not conflate product catalogue prices with delivery charges.
+- DB-01–DB-03 and DB-05–DB-06/DB-11 remain technical/business dependencies. No quote/booking/parcel/payment cardinality, schema, field, endpoint or status is inferred.
+
+**Readiness outcome:** No service is quote-ready on the currently approved evidence. Do not implement quote calculation until its service configuration, DEC-047 eligibility evidence, commercial terms and technical relationships are approved.
