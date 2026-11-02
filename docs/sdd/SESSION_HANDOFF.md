@@ -5,11 +5,11 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 
 - **PR #117 is reviewed and merged.** The user's local `main` is synchronized to short commit `feb8019` (from the supplied pull output). PR #117 approves the physical DB-01/DB-02/DB-05 persistence/API/security contract. Its changes were documentation-only.
 - The relevant source paths were re-fetched from current `main` before this implementation slice: Firebase Admin initialization, the existing dependency-injected shipment-draft store and adapter, Firestore Rules/configuration, package scripts, and the Rules/Firestore-store tests. The application-source inspection remains bounded; no full-repository or production audit is claimed.
-- **Current implementation branch:** `feat/shipment-quote-lineage-foundation`.
+- **Current implementation:** PR #118 is open on branch `feat/shipment-quote-lineage-foundation`.
 - **Current bounded scope:** internal quote-lineage and immutable-version persistence primitives, synthetic Firestore Emulator integration tests, and direct-client Rules-denial tests for `shipmentQuotes`, quote versions, `shipmentBookings` and `shipmentParcels`.
 - The implementation must not add customer routes/UI, quote calculation/issuance, quote acceptance, confirmed-booking creation, parcel/intake/custody, speculative indexes, or direct client access. Existing draft, storefront, stock, Paystack and admin flows remain unchanged.
 - The quote snapshot is intentionally opaque. Pricing models/values/inputs, service eligibility (DEC-047), quote validity, separate handover deadline, stable operation/replay identity and consequential customer token-revocation policy remain open. Do not expose this store as a customer command or retryable quote-issuance API.
-- No local tests, TypeScript, lint, build or Emulator execution has yet been performed for this branch. The user must run and report the results before the code slice can be considered verified.
+- No local tests, TypeScript, lint, build or Emulator execution has yet been performed for this branch. Vercel's preview deployment was rejected by its free-tier daily deployment limit (more than 100 deployments in 24 hours); this is an infrastructure rate limit, not a code build result. The user must run and report the local checks before the code slice can be considered verified.
 - **Next:** review the implementation PR, run the focused Firestore Emulator tests plus the full test/type/lint/build checks locally, fix any failures within this same focused slice, and merge only after review. The M2 commercial pricing/quotation readiness work and DEC-036 release evidence remain independent gates.
 
 
