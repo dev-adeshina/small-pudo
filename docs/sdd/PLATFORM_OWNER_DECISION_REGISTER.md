@@ -1,8 +1,8 @@
 # VeriLyft Platform Owner Decision Register
 
-**Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-048 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
+**Document status:** D-01–D-15 high-level outcomes, DEC-037–DEC-049 detailed policy refinements, PM-01–PM-12 staff permission policies, and BP-01–BP-22 booking-party authority policies are accepted at their recorded levels. Detailed operational and technical contracts remain open where identified.  
 **Last updated:** 2 November 2026  
-**Latest confirmed main merge:** PR #110 merged at `6bced955b967d34e674f9807f71d8092bb63bd48` on 2 November 2026. This documentation change records the owner's accepted M2 commercial decisions as DEC-048.
+**Latest confirmed main merge:** PR #114 merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8` on 2 November 2026. DEC-049 records the accepted DB-01/DB-02/DB-05 logical booking, parcel and quote relationship contracts.
 **Related documents:** `DECISIONS.md`, `PLATFORM_STAFF_PERMISSION_DECISIONS.md`, `PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md`, `PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md`, and `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`  
 **Implementation gate:** DEC-045 permits bounded application implementation under accepted policy and explicit capability gates. Unresolved pricing, service eligibility, authority, evidence and technical dependencies must remain unavailable; this register does not imply launch readiness.
 
@@ -445,9 +445,9 @@ The consolidated readiness specification is now recorded in `PLATFORM_M2_PRICING
 
 The per-service pricing model for Standard, Express and Scheduled remains unselected. Rates, formulas, input mapping/sources, units/conversions, currency, precision/rounding, fee/tax treatment, rate governance, quote-validity duration and handover deadlines remain unresolved. The DEC-047 3×4 service/endpoint combinations remain pending verification and unavailable by default.
 
-DB-05 quote scope remains an owner choice. The existing consolidated owner-decision package recommends one quote for the independent booking obligation with itemized service components, but that recommendation is not accepted. It must be resolved together with DB-01 and DB-02 before persistence/cardinality design.
+DB-05 quote scope was accepted with the DB-01/DB-02 logical relationship contracts in DEC-049. The accepted rule is one quote lineage per independent booking, with immutable issued versions and exact-version acceptance. This resolves the logical quote scope/version semantics only; it does not approve physical persistence, fields, APIs, permissions, rates, formulas, arithmetic or service eligibility.
 
-No new DEC is created by this readiness work. No rate, formula, model mapping, numerical duration, technical representation or application-code change is approved.
+No rate, formula, model mapping, numerical duration, technical representation or application-code change is approved by the M2 readiness work.
 
 
 ## M2 commercial pricing owner decision package — 2 November 2026
@@ -487,3 +487,22 @@ The focused owner package is `PLATFORM_DB01_DB02_DB05_RELATIONSHIP_DECISION_PACK
 The package also proposes the local consistency, replay/concurrency, authorization and acceptance-test assertions needed across these boundaries.
 
 **Status:** Recommendations only; owner response pending. No Firestore representation, schema, fields, indexes, API, status enum, permissions or code is approved. Quote issuance/acceptance remains blocked by pricing and DEC-047 operational evidence; intake/parcel creation remains blocked by location/action/evidence contracts. DB-03, DB-06, DB-11 and M0/DEC-036 remain independent gates.
+
+
+## DB-01/DB-02/DB-05 logical relationship decisions accepted — DEC-049 — 2 November 2026
+
+**Status:** Owner response accepted following PR #114 merge at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`.
+
+| Contract | Accepted logical rule | Remaining boundary |
+|---|---|---|
+| DB-01 — Booking confirmation | Acceptance by the authenticated booking party of the exact current, valid quote version confirms the commercial booking. It does not create a parcel or imply payment, intake, possession, custody, route or dispatch. | Quote acceptance remains disabled until pricing, quote terms, DEC-047 eligibility and technical prerequisites are approved. |
+| DB-02 — Booking-to-parcel | Zero parcels before authorized physical possession; exactly one parcel after possession is accepted; each parcel in this path belongs to one originating independent booking. No second parcel, split, merge, partial acceptance or ordinary reassignment. | Parcel/intake remains disabled until location/action authority, identity/inspection and physical evidence contracts are approved. Walk-in intake remains separate. |
+| DB-05 — Quote lineage/version | One quote lineage per independent booking; immutable issued versions; one current offer version; exact-version acceptance binds one accepted snapshot to one confirmed booking. Later configuration changes cannot rewrite accepted terms. | No quote persistence representation, API, fields, indexes, version identifiers, pricing model or values are approved. |
+
+**Physical-truth rule:** Refusal before possession creates no parcel/custody fact. Physical receipt retained under an authorized hold creates a parcel and records actual custody. Quote acceptance alone creates neither.
+
+**Consistency rule:** Acceptance and booking confirmation must not diverge; concurrent/replayed acceptance produces at most one booking. Concurrent intake cannot create a second parcel. Exact local transaction/idempotency representation remains subject to physical design.
+
+**Not approved:** Firestore schema/layout, fields/indexes/identifiers, APIs/payloads, status enums, permission IDs/claims, rates/formulas/currency/arithmetic/fees, quote/handover numerical durations, DEC-047 outcomes, location capabilities, staff assignments, evidence technology/retention, provider activation or code.
+
+**Next:** Reconcile the DB-01/02/05 acceptance cases and perform a separate source-aligned physical persistence/API/security design review. Keep quote issuance, all twelve DEC-047 combinations and parcel/intake capability unavailable until their independent prerequisites are verified.
