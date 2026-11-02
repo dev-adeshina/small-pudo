@@ -105,7 +105,7 @@ Use these evidence labels consistently:
 
 - Exact contact and identity-verification methods/checkpoints, consent evidence, and collection verification remain open.
 - The detailed business identity/relationship representation remains open; no separate business-account system is assumed.
-- Service catalogue, route eligibility, capacity/availability rules, quote validity periods, pricing formulas/inputs, and handover-deadline durations/configuration remain open.
+- The high-level Standard/Express/Scheduled catalogue, four endpoint combinations, and customer-facing availability principles are accepted under DEC-046. Per-service journey/location/action eligibility, operational coverage/capacity source and method, delivery-estimate methodology, scheduled windows, quote validity, pricing formulas/inputs, and handover-deadline durations/configuration remain open.
 - Exact payment-at-intake methods, evidence, partial-payment handling, late-payment outcomes, and reconciliation remain open.
 - The booking-reference/receipt format, operational status vocabulary, intake hold/refusal outcomes, and post-deadline customer resolution remain open.
 - The full change-type/lifecycle/permission matrix, notification details, retention, evidence standards, and API/data contracts remain open.
@@ -661,5 +661,33 @@ This clarification applies to Workflow B (independent shipment booking and quota
 5. The system determines the operational route from the chosen endpoints, approved service, eligible locations/capabilities, and approved routing rules. Direct In-PUDO-to-In-PUDO is a valid possible journey; do not add an Out-PUDO leg by default. No address or centre selection alone proves that an operational leg or custody event occurred.
 6. The shared pricing authority evaluates the actual system-determined route using the approved service-specific pricing configuration. Do not expose route-category selection as a way for the Shipper to select or manipulate price.
 
-**Still open:** Approved launch services and endpoint eligibility; exact location/action capability mapping; nearby-centre discovery method and privacy/permission behaviour; route construction and constraints; how unavailable/ineligible destinations are explained; and the technical representation/API and acceptance tests. This clarification does not approve schema, fields, endpoints, route algorithms, status enums, rates, formulas, or application-code changes.
+**Still open:** Exact per-service journey/location/action eligibility; exact location/action capability mapping; nearby-centre discovery method and privacy/permission behaviour; operational coverage/capacity source and method; route construction and constraints; how unavailable/ineligible destinations are explained; and the technical representation/API and acceptance tests. This clarification does not approve schema, fields, endpoints, route algorithms, status enums, rates, formulas, or application-code changes.
 
+
+
+## M2 Workflow B addendum — launch service catalogue and availability (DEC-046) — 2 November 2026
+
+The customer-facing catalogue contains three major services:
+
+- **Standard:** regular delivery within the normal service timeframe; show a journey-specific estimated timeframe.
+- **Express:** priority handling with a shorter estimated timeframe than Standard for the same comparable eligible journey; show the estimate before quote acceptance.
+- **Scheduled:** allow selection only from system-determined available delivery dates/time windows; revalidate before booking confirmation and preserve the confirmed commitment.
+
+For each service, the From and To endpoints independently support a physical address or an eligible registered PUDO centre. The four combinations are address-to-address, address-to-PUDO, PUDO-to-address, and PUDO-to-PUDO. Each service may support the combinations subject to explicit per-service eligibility and operational availability. This does not make every service available for every combination or location.
+
+The Shipper selects endpoints and a customer-facing service, not operational PUDO classifications or route legs. The system determines the actual route from the endpoints, approved service, eligible locations/capabilities and approved routing rules. Direct In-PUDO-to-In-PUDO remains valid; no Out-PUDO leg is presumed.
+
+**Availability sequence:**
+1. Resolve the selected origin and destination endpoint inputs.
+2. Evaluate each catalogue service against its approved journey eligibility, required active PUDO-centre actions, operational coverage and available operational capacity.
+3. For Standard and Express, determine and display the applicable estimated timeframe; Express must be shorter than Standard for the same comparable eligible journey. Estimates are not guarantees.
+4. For Scheduled, present only available dates/time windows for the selected journey.
+5. Present only services/options that can actually be booked. If none is available, explain that the journey cannot currently be booked; do not silently substitute a service or route.
+6. Revalidate the selected service and any scheduled date/time option on the server when the consequential quote/booking action is submitted.
+7. Preserve the delivery estimate or confirmed scheduled commitment shown to and accepted by the Shipper with the resulting booking/quote history.
+
+This availability flow does not collapse quote validity, service-specific handover deadline, payment, physical intake, custody or route movement into one event. Pricing continues to use the actual system-determined route through the shared service-specific pricing authority.
+
+**Still open:** Exact service/location/action matrix; operational coverage and capacity source/method; estimate calculation and numerical delivery timeframes; guarantee policy; scheduling window definitions, cutoffs, capacity reservation/expiry and change/cancellation behaviour; service-specific pricing inputs/rates/formulas; quote validity and handover durations; unavailable-route alternatives; and technical/API/security contracts and executable tests. DEC-043's lean location model is not expanded here into an invented automated operating-hours/capacity scheduler.
+
+**Acceptance direction:** Server-enforced eligibility and revalidation; no unavailable service shown as bookable or accepted; all endpoint combinations representable independently; no customer route-type selection; Standard/Express estimates shown before acceptance and distinguished from guarantees; Scheduled options limited to validated availability; and delivery commitments preserved with the booking. No schema, endpoint, status or implementation is approved by this addendum.
