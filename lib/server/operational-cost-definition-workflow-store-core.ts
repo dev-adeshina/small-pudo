@@ -116,9 +116,11 @@ export function createOperationalCostDefinitionWorkflowStore({
 
         const lineage = definitionSnapshot.data() as LineageDocument;
         const version = versionSnapshot.data() as VersionDocument;
+        const versionNumber = version.versionNumber;
         if (lineage.currentVersionId !== versionId ||
-            !Number.isSafeInteger(version.versionNumber) ||
-            version.versionNumber !== lineage.currentVersionNumber) {
+            typeof versionNumber !== "number" ||
+            !Number.isSafeInteger(versionNumber) ||
+            versionNumber !== lineage.currentVersionNumber) {
           throw new Error("Only the current operational cost definition version may enter or advance review");
         }
 
@@ -150,9 +152,9 @@ export function createOperationalCostDefinitionWorkflowStore({
             if (current.state !== "draft" || version.createdBy !== actorUid) {
               throw new Error("Only the version creator may submit a draft version");
             }
-            if (version.versionNumber > 1) {
+            if (versionNumber > 1) {
               const previousVersionQuery = definitionRef.collection("versions")
-                .where("versionNumber", "==", version.versionNumber - 1).limit(1);
+                .where("versionNumber", "==", versionNumber - 1).limit(1);
               const previous = await transaction.get(previousVersionQuery);
               if (previous.empty) throw new Error("The previous version required for resubmission was not found");
               const previousWorkflowRef = previous.docs[0].ref.collection("approval").doc("workflow");
@@ -184,8 +186,10 @@ export function createOperationalCostDefinitionWorkflowStore({
             break;
           case "approve":
           case "reject":
-            if (current.state !== "pending_independent_approval" ||
-                current.proposerUid === actorUid ||
+            if (current.state !== "pending_independent_approval") {
+              throw new Error("Final approval or rejection is only permitted in the pending independent approval state");
+            }
+            if (current.proposerUid === actorUid ||
                 current.operationsValidatorUid === actorUid ||
                 current.financeReviewerUid === actorUid) {
               throw new Error("Final approval requires an independent authorized approver");
