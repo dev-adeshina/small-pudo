@@ -36,13 +36,16 @@ The owner's explicit instruction to proceed supersedes the previous blanket impl
 - See `PLATFORM_SHIPPER_PORTAL_PRODUCT_SCOPE.md` for the customer journey, present-versus-target boundary, delivery dependencies and acceptance boundary.
 
 ### M2 — Service pricing and quotation
-**Policy:** DEC-038–DEC-040.
-- Implement only service specifications with approved rates, inputs, units, conversions, calculations and rounding.
-- Shipper endpoint experience: for both From and To independently, support either an entered physical address or selection of an eligible registered PUDO centre. The Shipper does not choose In-PUDO/Out-PUDO/Trans-PUDO route types; the system determines the route from approved service, endpoint and location/action eligibility. A nearby-centre discovery method, service/location/action matrix and routing contract remain open; see the owner-approved clarification in the journey/workflow SDD.
-- Calculate/validate prices on the trusted server.
-- Preserve quote input/charge/rule-version snapshots; repricing creates a new revision.
-- Preserve declared measurements, actual measurements, adjustment proposals, customer decisions and financial settlement as separate facts.
-- No placeholder rates or assumed defaults.
+**Policy:** DEC-019, DEC-026–DEC-029, DEC-038–DEC-040 and DEC-046.
+- The high-level launch catalogue is approved: Standard, Express and Scheduled. Standard is regular delivery with a journey-specific estimate; Express is priority delivery with a shorter estimate than Standard for the same comparable eligible journey; Scheduled offers a confirmed available date/time option. Estimates are not guarantees.
+- For each service, From and To independently support physical-address or eligible registered PUDO-centre endpoints. The four combinations are address-to-address, address-to-PUDO, PUDO-to-address and PUDO-to-PUDO. Each service's support for a combination remains subject to explicit eligibility and operational availability.
+- Show only services the Shipper can actually book for the selected journey/date. Eligibility and availability must be enforced and revalidated server-side. If no service is available, explain that the journey cannot currently be booked; do not silently substitute a service, endpoint or route.
+- The Shipper does not choose In-PUDO/Out-PUDO/Trans-PUDO route types; the system determines the actual route from approved service, endpoint, location/action eligibility and routing rules. Direct In-PUDO-to-In-PUDO remains valid.
+- Scheduled options are limited to available dates/time windows and revalidated before booking confirmation. Preserve the confirmed scheduled commitment; preserve the Standard/Express estimate shown to the Shipper with the quote/booking history.
+- Exact service/location/action eligibility, operational coverage/capacity source, estimate methodology and numerical durations, scheduling windows/cutoffs, and unavailable-route alternatives remain open.
+- Implement pricing only for service specifications with approved fixed/calculated/hybrid model, rates, inputs, units, conversions, calculations, charges, currency and rounding. Calculate/validate prices on the trusted server.
+- Preserve quote input/charge/rule-version snapshots; repricing creates a new revision. Keep quote validity and service-specific handover deadline separate from scheduled delivery time.
+- Preserve declared measurements, actual measurements, adjustment proposals, customer decisions and financial settlement as separate facts. No placeholder rates or assumed defaults.
 
 ### M3 — Payment and financial events
 **Policy:** DEC-028, DEC-029, DEC-041.
