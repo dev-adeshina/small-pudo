@@ -472,3 +472,18 @@ The owner-facing commercial decision package is `PLATFORM_M2_COMMERCIAL_PRICING_
 | G — Shared pricing | **Accepted** | One shared pricing-rule authority under DEC-019 wherever inputs overlap; product price remains distinct from delivery/shipment price. |
 
 **Implementation and readiness boundary:** This is business-policy acceptance only. It does not settle DB-01, DB-03, DB-06 or DB-11; does not approve a concrete Firestore relationship, schema, API, permission, rate, formula, provider or application code. DEC-047's twelve service/endpoint combinations remain unavailable pending evidence. Pricing/quote implementation remains gated by approved per-service values, operational evidence, technical contracts and executable acceptance specifications. M0 and DEC-036 release requirements remain independent.
+
+
+## DB-01/DB-02/DB-05 consolidated relationship proposal — pending owner decision — 2 November 2026
+
+The focused owner package is `PLATFORM_DB01_DB02_DB05_RELATIONSHIP_DECISION_PACKAGE.md`. It applies DEC-038, DEC-044 and DEC-048 and does not reopen the accepted one-parcel/one-itemized-quote commercial unit.
+
+**DB-01 recommendation:** quote acceptance confirms the commercial booking; it does not create a parcel or establish physical receipt/custody. Create the single parcel identity only when an authorized intake actor actually accepts physical possession. A refusal before possession is recorded against the booking/intake attempt without creating parcel/custody; physical possession retained under a hold must be recorded as actual custody.
+
+**DB-02 recommendation:** an independent booking has zero or one parcel before accepted physical possession and exactly one thereafter for the minimum-launch workflow; each such parcel belongs to exactly one originating booking. No second parcel, split, merge, partial acceptance or ordinary reassignment. Walk-in intake remains a separate path.
+
+**DB-05 recommendation:** one logical quote lineage per independent booking, with immutable issued versions and one current offer version. Exact-version acceptance links one accepted quote version to one confirmed booking. Preserve the accepted snapshot; never overwrite it after acceptance.
+
+The package also proposes the local consistency, replay/concurrency, authorization and acceptance-test assertions needed across these boundaries.
+
+**Status:** Recommendations only; owner response pending. No Firestore representation, schema, fields, indexes, API, status enum, permissions or code is approved. Quote issuance/acceptance remains blocked by pricing and DEC-047 operational evidence; intake/parcel creation remains blocked by location/action/evidence contracts. DB-03, DB-06, DB-11 and M0/DEC-036 remain independent gates.
