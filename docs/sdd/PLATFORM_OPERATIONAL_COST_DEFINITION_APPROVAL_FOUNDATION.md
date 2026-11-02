@@ -1,7 +1,7 @@
 # Operational Cost Definition Approval Foundation
 
 **Scope:** PR #122 implementation record.  
-**Status:** Implemented; revision lifecycle safeguards added. Re-verification of the latest PR head is pending.
+**Status:** Implemented and verified on PR head `01d1933f398b549d9d62cf00f4198dc8c3a1ebab`.
 
 ## Authority and provisioning boundary
 
@@ -80,4 +80,4 @@ No cost values, formulas, pricing calculations, quote generation, automatic acti
 
 ## Verification
 
-The previous PR head passed the Firestore Emulator-backed test suite (68 tests), TypeScript (`npx tsc --noEmit`), ESLint (`npm run lint`) and production build (`npm run build`). Revision lifecycle safeguards and two additional workflow tests were subsequently added; all four checks must be rerun against the latest PR head before merging.
+On PR head `01d1933f398b549d9d62cf00f4198dc8c3a1ebab` (`01d1933`), the Firestore Emulator-backed test suite passed **70 tests with 0 failures**. The standalone TypeScript check (`npx tsc --noEmit`), ESLint (`npm run lint`) and production build (`npm run build`) also passed. The production build compiled successfully, completed its TypeScript stage and generated all static pages. The Firestore permission-denied log entries are expected assertions from tests that verify denied client access; they did not represent test failures.
