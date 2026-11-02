@@ -285,6 +285,8 @@ describe("Firestore security rules", () => {
       "shipmentQuotes/test-quote/versions/test-version",
       "shipmentBookings/test-booking",
       "shipmentParcels/test-parcel",
+      "operationalCostDefinitions/test-definition",
+      "operationalCostDefinitions/test-definition/versions/test-version",
     ];
 
     for (const db of clientDatabases) {
