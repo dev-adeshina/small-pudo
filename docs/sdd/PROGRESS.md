@@ -1495,3 +1495,18 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - M0 residual evidence and DEC-036 P0/Conditional P0 release requirements remain independent.
 
 **Next:** Complete the consolidated owner review of actual per-service pricing configurations and the DB-05 commercial unit, together with the outstanding DEC-047 operational evidence and service commitment inputs. Then finish technical relationship/API/security contracts and executable acceptance specifications before pricing/quote implementation.
+
+
+## 69. M2 commercial pricing owner decisions prepared — 2 November 2026
+
+**New artifact:** `PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md`.
+
+- Prepared one owner-facing package with seven grouped decisions: booking/parcel/quote commercial unit; evidence-based per-service model selection; service-specific input/source/unit requirements; rates/formulas and charge/arithmetic policy; quote validity and handover deadline; pricing governance; shared pricing authority.
+- Recommends one parcel and one itemized quote per independent booking for minimum launch, subject to explicit owner acceptance and DB-01/02/05 reconciliation.
+- Recommends deferring Standard/Express/Scheduled fixed/calculated/hybrid model mapping until service-specific cost and operational evidence is supplied. No model is selected.
+- Requires approved cost/rate basis, explicit monetary/tax/fee treatment and separate quote/handover terms. No rates, formulas, units, conversions, currency, rounding or durations are invented.
+- Reaffirms DEC-019 shared pricing authority and preserves the distinction between product price, delivery charge, quote/booking, payment and physical intake.
+- All twelve DEC-047 service/endpoint combinations remain pending verification and unavailable by default. Payment, intake, custody, dispatch and M0/DEC-036 release gates remain separate.
+- Updated owner decision register, readiness specification, consolidated owner package, backlog, issues and session handoff.
+- **Status:** recommendations awaiting explicit owner response; no new DEC or accepted policy created. Documentation-only; no application code, schema, API, permission, provider, runtime or production change. No application tests/build/lint were run.
+- **Next:** obtain one consolidated owner response to the recommendations/deferrals; reconcile only accepted choices, then complete technical relationship/source/API/security and executable acceptance specifications before quote/pricing implementation.
