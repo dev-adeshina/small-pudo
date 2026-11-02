@@ -3,7 +3,7 @@
 **Status:** Owner response accepted and recorded as DEC-048; see Section 13 for the authoritative accepted/deferred outcomes  
 **Prepared:** 2 November 2026  
 **Baseline:** PR #110 merge commit `6bced955b967d34e674f9807f71d8092bb63bd48`  
-**Authority preserved:** DEC-019, DEC-026, DEC-038–DEC-041, DEC-045–DEC-047; PM-01–PM-12; BP-01–BP-22  
+**Authority preserved:** DEC-019, DEC-026, DEC-038–DEC-041, DEC-045–DEC-048; PM-01–PM-12; BP-01–BP-22  
 **Readiness reference:** `PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md`  
 **Related owner package:** `PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md`
 
