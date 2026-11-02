@@ -373,3 +373,25 @@ No new roles, claims, routes, collections, fields, or implementation decisions a
 ## Lifecycle event/state contract cross-reference
 
 When converting the cross-domain acceptance rows into executable cases, apply `PLATFORM_LIFECYCLE_EVENT_AND_STATE_CONTRACT_MATRIX.md` to distinguish commands, decisions, provider/physical observations, authoritative facts, state projections, evidence and corrections. Include applicable late/out-of-order, disputed-event, projection-recovery and correction cases. This does not change current P0 status or approve a new event architecture.
+
+
+## M2 service catalogue and journey availability acceptance refinement — DEC-046 — 2 November 2026
+
+These policy-derived outcomes must be translated into executable cases only after the service/location/action, pricing, scheduling and technical contracts are resolved. This table is not evidence of implementation or test execution.
+
+| Acceptance family | Required observable outcome |
+|---|---|
+| Catalogue scope | The customer-facing launch catalogue contains Standard, Express and Scheduled; operational In-PUDO/Out-PUDO/Trans-PUDO classifications are not presented as Shipper service or route choices. |
+| Endpoint independence | From and To independently accept a physical address or an eligible registered PUDO centre. Address-to-address, address-to-PUDO, PUDO-to-address and PUDO-to-PUDO are all representable. |
+| Service-specific journey eligibility | Each service is offered for a journey only when that service's approved endpoint/location/action eligibility is satisfied; the catalogue does not imply universal availability. |
+| Active PUDO capability | Inactive or insufficiently configured PUDO centres are not offered for the requested service/action; a label/category alone does not establish eligibility. |
+| Server authority | A service hidden or unavailable in the browser cannot be submitted as a valid quote/booking; the server independently evaluates and revalidates eligibility/availability. |
+| No available service | When no service is bookable for the selected journey/date, the Shipper receives a truthful unavailable explanation and no booking/quote is created. No service, endpoint or route is silently substituted. |
+| Actual route | The route is determined from endpoints, selected eligible service, location capabilities and approved routing rules. Direct In-PUDO-to-In-PUDO is not given an invented Out-PUDO leg. |
+| Standard estimate | A journey-specific estimated delivery timeframe is shown before quote acceptance; it is not presented as a guarantee. |
+| Express estimate | A journey-specific estimated delivery timeframe is shown before quote acceptance and is shorter than Standard for the same comparable eligible journey; it is not presented as a guarantee. |
+| Scheduled availability | Only dates/time windows determined to be available for the selected journey are offered; the selected option is revalidated before booking confirmation. |
+| Commitment preservation | The Standard/Express estimate or confirmed Scheduled date/time shown to and accepted by the Shipper is preserved with the resulting quote/booking history. |
+| Event separation | Service selection, quote validity, accepted booking, payment, handover deadline, physical intake, custody and movement remain distinct facts. |
+
+**Still required before executable tests:** Per-service journey/location/action matrix; operational coverage/capacity source and method; estimate calculation and numerical durations; guarantee policy; scheduled windows, cutoffs, reservation/expiry and change rules; pricing configuration and quote/handover terms; unavailable-route alternatives; technical/source/security contracts; and approved test data. DEC-046 does not approve numeric service levels, algorithms, schema, APIs, statuses or application implementation.
