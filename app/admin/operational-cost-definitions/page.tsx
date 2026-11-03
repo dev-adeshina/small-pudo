@@ -201,7 +201,18 @@ export default function OperationalCostDefinitionsPage() {
   function updateComponent(index: number, field: keyof CostComponent, value: string) {
     setForm((current) => ({
       ...current,
-      costComponents: current.costComponents.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item),
+      costComponents: current.costComponents.map((item, itemIndex) => {
+        if (itemIndex !== index) return item;
+
+        const next = { ...item };
+
+        if ((field === "amount" || field === "currencyCode") && value.trim() === "") {
+          delete next[field];
+          return next;
+        }
+
+        return { ...next, [field]: value };
+      }),
     }));
   }
 
