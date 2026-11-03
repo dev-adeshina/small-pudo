@@ -1,6 +1,6 @@
-## Current continuation — PR #127 merged; PUDO verification checklist proposed — 3 November 2026
+## Current continuation — PR #129 merged; current-main readiness reconciliation — 3 November 2026
 
-- PR #127 is merged at `fec1216587f1b5e0ce599ec54740e6c762fe4166`; DEC-050 records the owner-approved responsibility split: Admin/designated staff register, Operations physically verifies and approves operational readiness, and a separately authorised staff member activates only after Operations approval.
+- PR #129 is merged at a2247efd2d0a7103c85d156f89ea210a696b33e2. The latest application-source baseline remains PR #125 at e7966332024fd38eb7cb5b8a1adebc0b584ac894; PRs #126–#129 changed SDD documentation only.
 - A proposed five-area verification checklist and evidence framework is in `PLATFORM_PUDO_LOCATION_VERIFICATION_CHECKLIST_AND_EVIDENCE.md`: physical existence/site identity; name/address; operating arrangement and authority to participate; readiness for the proposed purpose; attributable evidence and reasoned outcome.
 - This checklist is a proposal, not a mandatory procedure yet. It does not require universal contracts, legal documents, photos, GPS coordinates, or a map provider. Evidence must be appropriate to the actual site operating arrangement and validated by Operations.
 - There is **no verified PUDO location inventory**. The user has confirmed that the accountable Operations position has not yet been assigned; do not infer an owner from Admin or general staff roles. The authoritative source of the initial candidate inventory is also unidentified. Formal assignment and source identification are prerequisites before treating the checklist as final or starting a governed inventory exercise.
@@ -462,3 +462,17 @@ PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. T
 **Do not invent:** activity IDs, measurement units, cost amounts, formulas, staff compensation methods, partner terms, business-owned vehicle expenses, permission IDs, schema, endpoints, evidence standards or approval thresholds.
 
 **Preserve:** PR #118 quote-lineage foundation, existing storefront/draft/order/payment/admin behaviour, M0 residual verification and DEC-036 P0/Conditional P0 release requirements.
+
+
+## Current implementation-readiness handoff — 3 November 2026
+
+1. Start from current main at PR #129 (a2247efd2d0a7103c85d156f89ea210a696b33e2); verify the branch and working tree before local changes.
+2. Treat PR #125 (e7966332024fd38eb7cb5b8a1adebc0b584ac894) as the latest application-source baseline until a later application-code PR is confirmed.
+3. Read IMPLEMENTATION_SOURCE_TRACEABILITY.md Section 21, PROGRESS.md current checkpoint, ISSUES.md VLY-027 and VLY-025, PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md, and the relevant DB-01–DB-12 / physical persistence contract sections.
+4. Preserve source boundaries: draft preparation is not booking; internal quote lineage is not quote issuance; operational-cost definitions are not customer pricing; route/dispatch intent is not physical custody transfer.
+5. The Firestore Rules test source explicitly denies direct client access to quote, quote-version, booking, parcel and operational-cost records. It was inspected in this audit but not executed. Do not claim deployed Rules or server API security verification from that test alone.
+6. Keep customer quote issuance gated on approved service-specific pricing inputs and commercial rules. Keep all twelve DEC-047 combinations unavailable until their own operational evidence and approvals exist.
+7. The accountable Operations position remains unassigned. Do not conduct or approve PUDO physical verification or inventory on behalf of an invented owner.
+8. Choose the next independent code slice only after its specific policy, source reuse, physical/API representation, authorization, and acceptance criteria are ready. DEC-045 allows bounded work; unresolved capability gates are not a blanket code freeze.
+9. Before implementation, define tests for success, denial, ownership/isolation, stale/concurrent updates, retries/replay, failure recovery, and audit evidence as applicable. Reuse the existing Next.js/Firebase patterns; avoid parallel architecture.
+10. After this documentation reconciliation is merged, move to the selected code objective rather than reopening already-approved decisions or repeating completed reviews.
