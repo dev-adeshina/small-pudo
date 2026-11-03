@@ -1,5 +1,6 @@
 import type { FieldValue, Firestore } from "firebase-admin/firestore";
 
+
 export const OPERATIONAL_COST_ACTION_PERMISSIONS = {
   submit: "operational_cost_definition.propose",
   validate: "operational_cost_definition.validate",
@@ -35,6 +36,12 @@ type WorkflowDocument = {
 type VersionDocument = {
   versionNumber?: number;
   createdBy?: string;
+  activityCode?: unknown;
+  activityName?: unknown;
+  activityDescription?: unknown;
+  applicability?: unknown;
+  inputs?: unknown;
+  costComponents?: unknown;
 };
 
 type LineageDocument = {
@@ -63,6 +70,41 @@ function permissionFor(
     return OPERATIONAL_COST_ACTION_PERMISSIONS.finance_review;
   }
   throw new Error("This action is not valid for the current workflow state");
+}
+
+
+function assertVersionReadyForSubmission(version: VersionDocument): void {
+  if (
+    typeof version.activityCode !== "string" ||
+    !/^ACT-(0[1-9]|1[01])$/.test(version.activityCode) ||
+    typeof version.activityName !== "string" ||
+    !version.activityName.trim() ||
+    version.applicability !== "general" ||
+    !Array.isArray(version.inputs)
+  ) {
+    throw new TypeError("The activity identity, applicability and input definition must be complete before submission");
+  }
+
+  if (!Array.isArray(version.costComponents) || version.costComponents.length === 0) {
+    throw new TypeError("At least one cost component is required before submission");
+  }
+
+  for (const component of version.costComponents) {
+    if (
+      !component ||
+      typeof component !== "object" ||
+      typeof component.amount !== "string" ||
+      !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(component.amount) ||
+      typeof component.currencyCode !== "string" ||
+      !/^[A-Z]{3}$/.test(component.currencyCode) ||
+      typeof component.basis !== "string" ||
+      !component.basis.trim() ||
+      typeof component.evidenceDescription !== "string" ||
+      !component.evidenceDescription.trim()
+    ) {
+      throw new TypeError("Each cost component needs an amount, explicit currency, basis and evidence description before submission");
+    }
+  }
 }
 
 function assertUid(uid: string): void {
@@ -152,6 +194,7 @@ export function createOperationalCostDefinitionWorkflowStore({
             if (current.state !== "draft" || version.createdBy !== actorUid) {
               throw new Error("Only the version creator may submit a draft version");
             }
+            assertVersionReadyForSubmission(version);
             if (versionNumber > 1) {
               const previousVersionQuery = definitionRef.collection("versions")
                 .where("versionNumber", "==", versionNumber - 1).limit(1);

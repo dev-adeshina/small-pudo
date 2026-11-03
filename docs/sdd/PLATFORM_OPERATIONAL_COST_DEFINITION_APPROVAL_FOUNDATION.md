@@ -19,6 +19,7 @@ The permission IDs are:
 - `operational_cost_definition.validate`
 - `operational_cost_definition.finance_review`
 - `operational_cost_definition.approve`
+- `operational_cost_definition.view` (read-only access to the internal definition list, version history and approval events; separate from Admin access and mutation permissions)
 
 Assignments are provisioned outside the application request surface through a trusted Firebase Admin SDK process. Assignment records must retain the assigning authority, reason and assignment timestamp. This PR does not provide a permission-grant API or staff-management UI. Client access to these records is denied by Firestore's default-deny rules.
 
@@ -70,13 +71,13 @@ A returned proposal must be revised into a new version before it can be resubmit
 
 ## API and security
 
-The workflow transition endpoint verifies the Firebase ID token with revocation checking and derives the actor UID from the verified token. It does not accept an actor UID from the request body. The server store checks the action-specific permission before applying the transition.
+The workflow transition endpoint verifies the Firebase ID token with revocation checking and derives the actor UID from the verified token. It does not accept an actor UID from the request body. The server store checks the action-specific permission before applying the transition. The definition list/read/create/revise API also verifies the token with revocation checking and requires the dedicated view or propose permission; general Admin access does not imply either permission.
 
-Firestore client access to operational cost definitions and workflow records remains denied. Staff permission assignment records are also server-only. The Admin SDK is the only persistence path in this slice.
+Firestore client access to operational cost definitions and workflow records remains denied. Staff permission assignment records are also server-only. The Admin SDK is the only persistence path in this slice. Client Rules continue to deny reads and writes to definitions, versions, workflow records and staff permission assignments.
 
 ## Deliberate exclusions
 
-No cost values, formulas, pricing calculations, quote generation, automatic activation, payroll, generic approval engine, Finance portal, staff-management UI, or permission-grant endpoint is introduced.
+No cost defaults, calculation formulas, pricing calculations, quote generation, automatic activation, payroll, generic approval engine, Finance portal, staff-management UI, or permission-grant endpoint is introduced. The first configuration API supports general applicability only; location-specific configuration waits for an authoritative PUDO location model.
 
 ## Verification
 

@@ -10,7 +10,10 @@ import { createOperationalCostDefinitionStore } from "../lib/server/operational-
 const emulatorAvailable = Boolean(process.env.FIRESTORE_EMULATOR_HOST);
 
 const validDefinition = {
+  activityCode: "ACT-02",
   activityName: "Synthetic parcel handling",
+  applicability: "general",
+  costComponents: [{ key: "handling", label: "Synthetic handling", amount: "1250.50", currencyCode: "NGN", basis: "Synthetic unit", evidenceDescription: "Synthetic invoice reference" }],
   activityDescription: "Test-only activity description",
   inputs: [
     {
@@ -96,6 +99,9 @@ describe(
       assert.equal(lineage.data().createdBy, actorUid);
       assert.equal(lineage.data().updatedBy, actorUid);
       assert.equal(version.data().versionNumber, 1);
+      assert.equal(version.data().activityCode, validDefinition.activityCode);
+      assert.equal(version.data().applicability, "general");
+      assert.deepEqual(version.data().costComponents, validDefinition.costComponents);
       assert.equal(version.data().activityName, validDefinition.activityName);
       assert.deepEqual(version.data().inputs, validDefinition.inputs);
       assert.equal(version.data().createdBy, actorUid);
@@ -270,6 +276,85 @@ describe(
         }),
         /only valid for number/
       );
+    });
+
+    it("allows incomplete draft cost components but rejects unsafe or malformed monetary values", async () => {
+      const draft = {
+        ...validDefinition,
+        costComponents: [{ key: "handling", label: "Handling" }],
+      };
+      const created = await createDefinition(draft);
+      assert.equal(created.versionNumber, 1);
+
+      await assert.rejects(
+        store.createDefinition("actor-one", {
+          ...validDefinition,
+          costComponents: [{ ...validDefinition.costComponents[0], amount: 12.5 }],
+        }),
+        /decimal string/
+      );
+      await assert.rejects(
+        store.createDefinition("actor-one", {
+          ...validDefinition,
+          costComponents: [{ ...validDefinition.costComponents[0], amount: "1e3" }],
+        }),
+        /decimal string/
+      );
+      await assert.rejects(
+        store.createDefinition("actor-one", {
+          ...validDefinition,
+          costComponents: [{ key: "handling", label: "Handling", amount: "100.00", basis: "Synthetic unit" }],
+        }),
+        /currency code/
+      );
+      await assert.rejects(
+        store.createDefinition("actor-one", {
+          ...validDefinition,
+          costComponents: [{ ...validDefinition.costComponents[0], currencyCode: "ngn" }],
+        }),
+        /three-letter uppercase code/
+      );
+      await assert.rejects(
+        store.createDefinition("actor-one", {
+          ...validDefinition,
+          activityCode: "ACT-12",
+        }),
+        /ACT-01 to ACT-11/
+      );
+      await assert.rejects(
+        store.createDefinition("actor-one", {
+          ...validDefinition,
+          applicability: "location",
+        }),
+        /Only general applicability/
+      );
+    });
+
+    it("lists and retrieves version history only through the server store", async () => {
+      const created = await createDefinition();
+      const [list, detail] = await Promise.all([
+        store.listDefinitions(),
+        store.getDefinition(created.definitionId),
+      ]);
+      assert.ok(list.some((item) => item.definitionId === created.definitionId));
+      assert.equal(detail?.definitionId, created.definitionId);
+      assert.equal(detail?.versions?.length, 1);
+    });
+
+    it("requires an active audited view permission", async () => {
+      const uid = `viewer-${randomUUID()}`;
+      assert.equal(await store.hasPermission(uid, "operational_cost_definition.view"), false);
+      await db.collection("staffActionPermissions").doc(uid)
+        .collection("permissions").doc("operational_cost_definition.view").set({
+          active: true,
+          assignedBy: "trusted-provisioning-actor",
+          reason: "Synthetic view assignment",
+          assignedAt: FieldValue.serverTimestamp(),
+        });
+      assert.equal(await store.hasPermission(uid, "operational_cost_definition.view"), true);
+      await db.collection("staffActionPermissions").doc(uid)
+        .collection("permissions").doc("operational_cost_definition.view").update({ active: false });
+      assert.equal(await store.hasPermission(uid, "operational_cost_definition.view"), false);
     });
 
     it("rejects invalid definition IDs and expected version numbers", async () => {
