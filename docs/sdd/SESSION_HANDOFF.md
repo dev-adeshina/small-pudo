@@ -1,3 +1,12 @@
+## Current continuation — PR #127 merged; PUDO verification checklist proposed — 3 November 2026
+
+- PR #127 is merged at `fec1216587f1b5e0ce599ec54740e6c762fe4166`; DEC-050 records the owner-approved responsibility split: Admin/designated staff register, Operations physically verifies and approves operational readiness, and a separately authorised staff member activates only after Operations approval.
+- A proposed five-area verification checklist and evidence framework is in `PLATFORM_PUDO_LOCATION_VERIFICATION_CHECKLIST_AND_EVIDENCE.md`: physical existence/site identity; name/address; operating arrangement and authority to participate; readiness for the proposed purpose; attributable evidence and reasoned outcome.
+- This checklist is a proposal, not a mandatory procedure yet. It does not require universal contracts, legal documents, photos, GPS coordinates, or a map provider. Evidence must be appropriate to the actual site operating arrangement and validated by Operations.
+- There is **no verified PUDO location inventory**. The user has confirmed that the accountable Operations position has not yet been assigned; do not infer an owner from Admin or general staff roles. The authoritative source of the initial candidate inventory is also unidentified. Formal assignment and source identification are prerequisites before treating the checklist as final or starting a governed inventory exercise.
+- Firestore remains authoritative. Google Maps Platform remains a candidate for future evaluation only; no provider/API/geocoding/geolocation integration is approved.
+- **Next:** the business must formally assign the accountable Operations position and identify the authoritative inventory source; obtain real examples of the site arrangements (including staffed stations and registered collection centres); validate evidence sufficiency and inspection procedure; reconcile authority and lifecycle rules with DEC-043/PM-01–PM-12; then prepare the source-aligned technical contract. No registry code or customer PUDO selector yet; all DEC-047 combinations remain unavailable until independently evidenced and approved.
+
 ## Current continuation — PR #126 merged; DEC-050 PUDO location governance approved — 3 November 2026
 
 - PR #126, `docs: define PUDO location capability foundation`, is merged at `b666d7e8e9bc37ad12c2f12d025cd920263295cf`. It is documentation-only. The bounded application-source inspection baseline remains PR #125 merge `e7966332024fd38eb7cb5b8a1adebc0b584ac894`.
