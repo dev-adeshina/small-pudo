@@ -1,5 +1,3 @@
-import { NextResponse } from "next/server";
-
 type AdminToken = {
   uid: string;
   email?: string;
@@ -32,7 +30,8 @@ export type AuthorizationResult =
     }
   | {
       ok: false;
-      response: NextResponse;
+      status: 401 | 403 | 503;
+      error: string;
     };
 
 export function createAdminRequestAuthorizer({
@@ -51,10 +50,8 @@ export function createAdminRequestAuthorizer({
     if (allowedEmails.length === 0) {
       return {
         ok: false,
-        response: NextResponse.json(
-          { error: "Admin access is not configured." },
-          { status: 503 }
-        ),
+        status: 503,
+        error: "Admin access is not configured.",
       };
     }
 
@@ -65,10 +62,8 @@ export function createAdminRequestAuthorizer({
     if (!match) {
       return {
         ok: false,
-        response: NextResponse.json(
-          { error: "Authentication required." },
-          { status: 401 }
-        ),
+        status: 401,
+        error: "Authentication required.",
       };
     }
 
@@ -79,10 +74,8 @@ export function createAdminRequestAuthorizer({
     } catch {
       return {
         ok: false,
-        response: NextResponse.json(
-          { error: "Your session is invalid, expired, or revoked. Sign in again." },
-          { status: 401 }
-        ),
+        status: 401,
+        error: "Your session is invalid, expired, or revoked. Sign in again.",
       };
     }
 
@@ -96,10 +89,8 @@ export function createAdminRequestAuthorizer({
     ) {
       return {
         ok: false,
-        response: NextResponse.json(
-          { error: unauthorizedMessage },
-          { status: 403 }
-        ),
+        status: 403,
+        error: unauthorizedMessage,
       };
     }
 
@@ -112,19 +103,15 @@ export function createAdminRequestAuthorizer({
       if (!accessSnapshot.exists || accessSnapshot.data()?.active !== true) {
         return {
           ok: false,
-          response: NextResponse.json(
-            { error: unauthorizedMessage },
-            { status: 403 }
-          ),
+          status: 403,
+          error: unauthorizedMessage,
         };
       }
     } catch {
       return {
         ok: false,
-        response: NextResponse.json(
-          { error: "Administrator access could not be verified. Try again." },
-          { status: 503 }
-        ),
+        status: 503,
+        error: "Administrator access could not be verified. Try again.",
       };
     }
 
