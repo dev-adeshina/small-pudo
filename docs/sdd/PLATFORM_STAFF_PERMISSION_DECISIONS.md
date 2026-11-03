@@ -1,6 +1,6 @@
 # VeriLyft Staff Permission — Owner Decisions
 
-**Status:** All PM-01–PM-12 accepted by the owner; detailed implementation specification remains open.  
+**Status:** PM-01–PM-12 accepted; initial designated permission administrator appointment accepted on 3 November 2026; technical provisioning and detailed implementation specification remain open.  
 **Date:** 30 October 2026  
 **Decision baseline:** PR #34 merged to `main` at `06fc1485019073f573047783c7773546a23e789b`.  
 **Related:** `PLATFORM_STAFF_PERMISSION_MATRIX.md`, `PLATFORM_ACTORS_AND_RESPONSIBILITIES.md`, `DECISIONS.md`, `PROGRESS.md`, `SESSION_HANDOFF.md`.
@@ -16,6 +16,8 @@ The accepted outcomes must be reconciled with the complete platform SDD and exis
 ### PM-01 — Authority to grant and revoke staff permissions
 
 **Accepted:** Only designated Admin users may grant, change, or revoke staff permissions. Admin status alone does not confer permission-management authority. Every change must identify the administrator, target staff member, exact permission/scope, time, reason, and outcome in the audit history. A controlled recovery process is required if the designated administrator becomes unavailable.
+
+**Initial appointment — accepted 3 November 2026:** The owner approved appointing the owner's existing Admin account as the platform's initial Designated Staff Permission Administrator. The account's Firebase UID must be resolved from the trusted Firebase Authentication environment during controlled provisioning; no email address, UID, credential, or token is stored in this decision record. This appointment is limited to granting, changing, and revoking staff action permissions under the approved policy. It does not grant Operations, Finance, custody, shipment, pricing, audit-review, or other action permissions by implication. The appointment is a policy decision only and is not active in Firebase until a separately reviewed, trusted provisioning mechanism records the designation and its audit evidence. A controlled recovery and successor-appointment procedure remains required.
 
 ### PM-02 — Permission assignment model
 
@@ -66,7 +68,7 @@ The accepted outcomes must be reconciled with the complete platform SDD and exis
 The owner decisions establish policy direction but leave detailed design work open. Before implementation, the SDD must specify and reconcile:
 
 - The exact permission catalogue, permission-set composition, staff identity lifecycle, and assignment scope.
-- How designated permission administrators are initially appointed, changed, suspended, and recovered; whether any grants/revocations need second approval.
+- How designated permission administrators are changed, suspended, and recovered; whether any grants/revocations need second approval. The initial owner-approved appointment is recorded above, but its trusted technical provisioning remains open.
 - Technical enforcement at every server-side boundary, including pages, APIs, background jobs, and direct client attempts.
 - Location record/capability representation, capability activation/deactivation, and conflict handling with staff permissions.
 - Rate versioning, effective-time semantics, and any second-review requirement for pricing changes.
@@ -84,6 +86,7 @@ Do not invent numeric thresholds, universal approval requirements, technical rol
 ## 4. Status and next gate
 
 - PM-01–PM-12: **Accepted by owner**.
+- Initial Designated Staff Permission Administrator: **Appointment accepted 3 November 2026; trusted Firebase provisioning not yet implemented or verified**.
 - Staff permission policy direction: **Agreed at owner-decision level**.
 - Complete action-level technical authorization design: **Not yet finalized**.
 - Platform-wide SDD: **Not yet fully reconciled or approved**.
