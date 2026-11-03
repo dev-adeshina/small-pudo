@@ -6,7 +6,8 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 
 ### Documents
 
-- `PLATFORM_PUDO_LOCATION_REGISTRY_AND_CAPABILITY_FOUNDATION.md` — proposed PUDO location registry, independent service/action capabilities, configuration authority, customer endpoint discovery, and DEC-047 eligibility boundaries; design proposal only, not an approved schema or implementation.
+- `PLATFORM_PUDO_LOCATION_REGISTRY_AND_CAPABILITY_FOUNDATION.md` — proposed PUDO location registry, independent service/action capabilities, configuration authority, customer endpoint discovery, and DEC-047 eligibility boundaries; no physical schema or implementation is approved.
+- `PLATFORM_PUDO_LOCATION_REGISTRATION_AND_VERIFICATION_WORKFLOW.md` — owner-approved DEC-050 responsibility split for proposed-location registration, Operations physical verification/approval, and separately authorised activation; operational evidence checklist and technical implementation details remain open.
 - `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` — single ordered implementation plan derived from accepted policy and existing source findings; identifies buildable work, unresolved capability gates, deferred scope and acceptance evidence without inventing business rules or technical schema.
 
 - `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and historical roadmap (not the current work order).
@@ -38,7 +39,7 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 
 ### Current execution direction — 3 November 2026
 
-PR #125 is merged at `e7966332024fd38eb7cb5b8a1adebc0b584ac894`. The bounded M1.1/M1.2/M1.3 draft-workspace foundation is complete only for its documented scope; it is not a complete Shipper Portal. The current customer-facing dependency is the authoritative PUDO location registry and capability foundation. See `PROGRESS.md`, VLY-025 in `ISSUES.md`, and `PLATFORM_PUDO_LOCATION_REGISTRY_AND_CAPABILITY_FOUNDATION.md`. All DEC-047 service/endpoint combinations remain unavailable pending independent operational verification and approval. No schema, API, permission, provider, or customer PUDO-selection capability is approved by the proposal.
+PR #126 is merged at `b666d7e8e9bc37ad12c2f12d025cd920263295cf`. The bounded M1.1/M1.2/M1.3 draft-workspace foundation is complete only for its documented scope; it is not a complete Shipper Portal. The current customer-facing dependency is the authoritative PUDO location registry and capability foundation. DEC-050 approves the location registration/Operations verification-and-approval/separately-authorised activation responsibility split. No verified PUDO location inventory exists; the initial inventory must be bootstrapped from an accountable source and physically verified. See `PROGRESS.md`, VLY-025 in `ISSUES.md`, `PLATFORM_PUDO_LOCATION_REGISTRY_AND_CAPABILITY_FOUNDATION.md`, and `PLATFORM_PUDO_LOCATION_REGISTRATION_AND_VERIFICATION_WORKFLOW.md`. All DEC-047 service/endpoint combinations remain unavailable pending independent operational verification and approval. Firestore remains the authoritative registry; Google Maps Platform is only a candidate for future evaluation. No schema, API, permission catalogue, mapping provider, or customer PUDO-selection capability is approved.
 
 ### SDD-first working protocol
 
