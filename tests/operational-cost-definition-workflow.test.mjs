@@ -7,7 +7,7 @@ import { createOperationalCostDefinitionStore } from "../lib/server/operational-
 import { createOperationalCostDefinitionWorkflowStore } from "../lib/server/operational-cost-definition-workflow-store-core.ts";
 
 const enabled = Boolean(process.env.FIRESTORE_EMULATOR_HOST);
-const definition = { activityName: "Synthetic workflow activity", inputs: [{ key: "count", label: "Count", valueType: "number", required: true }] };
+const definition = { activityCode: "ACT-02", activityName: "Synthetic workflow activity", applicability: "general", inputs: [{ key: "count", label: "Count", valueType: "number", required: true }], costComponents: [{ key: "handling", label: "Synthetic handling", amount: "100.00", currencyCode: "NGN", basis: "Synthetic unit", evidenceDescription: "Synthetic supporting evidence" }] };
 const permissions = ["operational_cost_definition.propose", "operational_cost_definition.validate", "operational_cost_definition.finance_review", "operational_cost_definition.approve"];
 
 describe("operational cost approval workflow", { skip: !enabled }, () => {
@@ -72,6 +72,24 @@ describe("operational cost approval workflow", { skip: !enabled }, () => {
     assert.equal(events.size, 4);
     await assert.rejects(workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: approver, action: "approve" }), /pending independent approval state/);
   });
+  it("blocks submission until every cost component has amount, currency, basis and evidence", async () => {
+    const incomplete = {
+      ...definition,
+      costComponents: [{ key: "handling", label: "Handling" }],
+    };
+    const proposer = `proposer-${randomUUID()}`;
+    const created = await definitions.createDefinition(proposer, incomplete);
+    ids.add(created.definitionId);
+    await grant(proposer, permissions[0]);
+    await assert.rejects(
+      workflow.transition({ definitionId: created.definitionId, versionId: created.versionId, actorUid: proposer, action: "submit" }),
+      /amount, explicit currency, basis and evidence description/
+    );
+    const state = await db.collection("operationalCostDefinitions").doc(created.definitionId)
+      .collection("versions").doc(created.versionId).collection("approval").doc("workflow").get();
+    assert.equal(state.exists, false);
+  });
+
   it("allows an unsubmitted draft to be superseded and the new version submitted", async () => {
     const d = await draft();
     const revised = await definitions.reviseDefinition({ definitionId: d.definitionId, expectedCurrentVersionNumber: 1, actorUid: d.proposer, definition: { ...definition, activityName: "Revised unsubmitted draft" } });
