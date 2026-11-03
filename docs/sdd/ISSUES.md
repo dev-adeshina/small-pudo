@@ -1,8 +1,8 @@
 # VeriLyft Issues, Risks, and Open Questions
 
-**Last updated:** 2 November 2026  
+**Last updated:** 3 November 2026  
 **Repository:** `dev-adeshina/small-pudo`  
-**Owner decisions:** D-01–D-15 (DEC-022–DEC-036), DEC-037–DEC-048, PM-01–PM-12, and BP-01–BP-22 have accepted owner-policy outcomes at their recorded levels. Detailed operational procedures, technical contracts, acceptance-test specifications, runtime evidence, and production readiness remain open.
+**Owner decisions:** D-01–D-15 (DEC-022–DEC-036), DEC-037–DEC-049, PM-01–PM-12, and BP-01–BP-22 have accepted owner-policy outcomes at their recorded levels. Detailed operational procedures, technical contracts, acceptance-test specifications, runtime evidence, and production readiness remain open.
 
 This is the current issue register. Older archive-based observations have been reconciled where current implementation or later test evidence supersedes them. Source presence is not the same as runtime verification.
 
@@ -344,10 +344,10 @@ The owner has approved the high-level rejection-resolution boundary: customer re
 
 - **Status:** IN PROGRESS — DEC-025/DEC-043 and DEC-047 governing capability/eligibility/verification policies are owner-approved; actual service/location/action outcomes, operating evidence, configuration authority details, technical contracts, and acceptance tests remain open.
 - **Priority:** Blocking for location capability implementation design and platform-wide SDD approval.
-- **Evidence:** DEC-025 establishes a lean capability-based location model and distinct actions. DEC-042 applies active-location and explicit action-capability guards to physical custody. DEC-043 confirms service-and-action eligibility, independent actor authorization, designated Admin configuration authority, auditable capability changes, in-flight custody continuity, and the lean launch boundary.
+- **Evidence:** DEC-025 establishes a lean capability-based location model and distinct actions. DEC-042 applies active-location and explicit action-capability guards to physical custody. DEC-043 confirms service-and-action eligibility, independent actor authorization, designated Admin configuration authority, auditable capability changes, in-flight custody continuity, and the lean launch boundary. A bounded read-only review at PR #125 merge `e7966332024fd38eb7cb5b8a1adebc0b584ac894` found no active location registry/capability service or customer PUDO directory; draft origin/destination remain free text. The new location-foundation document is a proposal, not an approved schema/API/permission design.
 - **Still open:** Actual eligible/conditional/not-eligible outcome and conditions for each of the twelve Standard/Express/Scheduled endpoint combinations; verified service/location/action coverage and supporting evidence; capability catalogue and future extension governance; designated Admin assignment granularity; staff permission scopes; partner operational arrangements; treatment of queued work not yet physically received; temporary closure/restoration procedure; configuration audit retention; technical representation, API/security contracts, correction/replay handling, and executable acceptance tests. Under DEC-047, every combination remains unavailable until its own verification and Operations approval are recorded; pending verification is not a final not-eligible decision.
 - **Risk:** A location may accept unsupported work, a staff member may act without appropriate authority, capability changes may silently strand existing work, or configuration may be mistaken for proof of a physical event.
-- **Next action:** Populate the DEC-047 matrix from actual service and operational evidence; then reconcile capability configuration, actor-authority, in-flight custody and technical contracts against current source and acceptance evidence. Preserve the platform-wide SDD approval gate.
+- **Next action:** Review `PLATFORM_PUDO_LOCATION_REGISTRY_AND_CAPABILITY_FOUNDATION.md` against DEC-025/DEC-043/DEC-047; obtain the attributable location inventory and Operations owner; resolve the minimal location identity, configuration authorities, and service/action mapping before implementation. Populate the twelve DEC-047 outcomes only from service and operational evidence. Keep unverified combinations unavailable and preserve the platform-wide SDD/DEC-036 release gates.
 - **Evidence boundary:** DEC-043 is owner-approved high-level policy only. No application source, schema, Firebase rules/configuration, APIs, permissions, deployment, runtime behaviour, or tests were changed or verified by this documentation update.
 
 
