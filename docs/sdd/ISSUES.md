@@ -458,9 +458,11 @@ VLY-025 remains blocked for physical verification/inventory approval because the
 
 ### VLY-024 — Operational-cost definition management interface
 
-- **Status:** IN PROGRESS — bounded UI implementation proposed over the existing PR #125 APIs; not yet merged or runtime-verified.
+- **Status:** IMPLEMENTED — PR #133 merged. Browser permission-matrix verification remains OPEN.
 - **Priority:** High for internal operational configuration usability; not a customer launch gate by itself.
-- **Evidence:** The repository contains server-side list/create/read/revise APIs, immutable version persistence, workflow events and action-specific permission checks. The current main source has no corresponding management interface.
-- **Scope:** Provide staff UI for draft creation/revision, version history and existing workflow actions. Preserve the existing API, Firestore, Rules, permission IDs and four-person separation. No permission provisioning UI, customer pricing, formula, service activation or operational execution.
+- **Evidence:** The staff interface at `/admin/operational-cost-definitions` uses the existing list/create/read/revise/workflow APIs, immutable version history and action-specific server permissions. User-reported local verification passed: Firestore Emulator suite 86/86, TypeScript, lint, production build and `git diff --check`.
+- **Scope:** PR #133 adds the staff UI only. Existing API, Firestore, Rules, permission IDs and four-person separation remain authoritative. No permission provisioning UI, customer pricing, formula, service activation or operational execution was added.
+- **Authorization evidence:** Admin status alone does not grant `operational_cost_definition.view`, `propose`, `validate`, `finance_review` or `approve`. The user's generic Admin account was correctly denied because it lacks the required action permission. Browser verification using accounts with the relevant assignments remains outstanding.
 - **Dependencies:** Operations validation, Finance review and source-backed cost evidence remain necessary before real definitions can be submitted/approved. The accountable Operations position remains unassigned.
-- **Acceptance:** UI actions use existing endpoints; server-side permissions remain authoritative; immutable history and distinct reviewers are preserved; denied users receive clear feedback; approval is not represented as customer pricing or service activation. Browser and full regression verification are recorded before merge.
+- **Acceptance:** Local regression/build checks are reported passing. Close the remaining browser-verification item only after testing permitted actions and expected denials with appropriately assigned accounts. Approval must never be represented as customer pricing or service activation.
+
