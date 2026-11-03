@@ -38,13 +38,15 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 - `DECISIONS.md` — architecture and product decisions, including constraints that future sessions must preserve.
 - `SESSION_HANDOFF.md` — copy/paste instructions for starting a new ChatGPT session with these documents.
 
-### Current execution direction — PR #132 merged; operational-cost management interface in progress
+### Current execution direction — PR #133 and PR #134 merged
 
-PR #132 is merged at `7ecc24f`; PR #131 remains the latest merged application-code change. The consolidated read-only source review confirms the shipment draft workspace, quote-lineage persistence, operational-cost definition/version/approval foundation and PR #125 management APIs. The current bounded implementation adds a staff-facing interface over those existing APIs and reconciles stale SDD status pointers in the same PR. It does not introduce a new persistence model, workflow, permission catalogue or permission-grant facility.
+PR #133 merged the staff-facing operational-cost definition interface at `/admin/operational-cost-definitions`, reusing the existing APIs, Firestore persistence, workflow and action permissions. User-reported local checks passed: 86/86 Firestore Emulator tests, TypeScript, lint, production build and `git diff --check`. Browser verification with accounts holding the relevant action permissions remains outstanding. A generic Admin without those permissions is correctly denied; Admin status alone grants no operational-cost action permission.
 
-The interface uses existing `operational_cost_definition.view`, `propose`, `validate`, `finance_review` and `approve` assignments. Admin access alone does not grant those permissions. The four-person separation-of-duties workflow remains server-authoritative. Incomplete drafts may be prepared; submission still requires source-backed cost components and the existing server validation. No rates, currencies, units, formulas or operational procedures are invented.
+PR #134 records the initial Designated Staff Permission Administrator appointment under PM-01. It does not grant operational-cost, Finance, custody, shipment, pricing, audit-review or other action permissions. Firebase technical permission provisioning is not activated; its trusted mechanism, audit evidence and successor/suspension/recovery lifecycle remain open.
 
-DEC-050's registration/verification/activation responsibility split remains accepted. The accountable Operations position is still unassigned and the authoritative initial PUDO inventory source is unidentified; PUDO physical verification and inventory approval remain blocked. All twelve DEC-047 service/endpoint combinations remain unavailable pending their independent operational evidence and approvals. DEC-045 permits bounded implementation under accepted policy; DEC-036 P0/Conditional P0 release evidence remains a separate launch gate.
+DEC-050's registration/verification/activation responsibility split remains accepted. The accountable Operations position is still unassigned and the authoritative initial PUDO inventory source is unidentified; no verified PUDO inventory exists. All twelve DEC-047 service/endpoint combinations remain unavailable pending independent operational evidence and approvals. DEC-045 permits bounded implementation under accepted policy; DEC-036 P0/Conditional P0 release evidence remains a separate launch gate.
+
+After this focused reconciliation is merged, review DB-01–DB-12 contracts and capability gates to select the next buildable implementation slice. Do not reopen accepted decisions without new evidence or a concrete conflict.
 
 ### SDD-first working protocol
 
