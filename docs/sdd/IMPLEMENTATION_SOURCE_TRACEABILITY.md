@@ -1,8 +1,8 @@
 # VeriLyft Implementation-to-SDD Source Traceability
 
 **Document status:** Read-only source inventory — historical platform pass plus focused M1 shipper-portal source review; policy reconciliation remains separate  
-**Inspection date:** 30 October 2026 (historical platform source pass); focused M1 account/draft source review performed 1 November 2026  
-**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Current focused M1 source-review baseline:** PR #98 merge `71225e3bdd6d827b288a883debb61a03695daef5`; subsequent dashboard source PR #100 and shipment workspace hardening PR #102 are separately traced in Sections 11–12  
+**Inspection date:** 30 October 2026 (historical platform source pass); focused M1 account/draft source review performed 1 November 2026; current-main source refresh performed 3 November 2026  
+**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Focused M1 source-review baseline:** PR #98 merge `71225e3bdd6d827b288a883debb61a03695daef5`; subsequent dashboard source PR #100 and shipment workspace hardening PR #102 are separately traced in Sections 11–12. **Latest bounded source refresh:** `main` at PR #127 merge `fec1216587f1b5e0ce599ec54740e6c762fe4166`; the source changes through PR #125 are reviewed in Section 20, while PRs #126–#127 are confirmed documentation-only.  
 **Scope:** Active application source mapped to A-01–A-20 and ADM-R01–ADM-R54; the root `pudo.zip` archive and production environment remain uninspected  
 **Authority:** Source facts only. This document does not approve product policy, prove runtime behaviour, or authorize implementation.
 
@@ -555,3 +555,63 @@ Before implementation, inspect the exact current shipment-draft validation/store
 **Result:** M1.3 draft preparation is implemented in source and has recorded automated/production-smoke evidence from PR #104. It does not resolve DB-01–DB-12 or authorize extending draft records into confirmed bookings. See `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md` for the consolidated technical and acceptance contract.
 
 **Evidence boundary:** Read-only source re-fetch. No test, build, lint, runtime, deployed configuration, provider, production data or physical-operation check was executed for this section.
+
+
+## 20. Current-main source refresh after PR #125 and location-policy documentation — 3 November 2026
+
+### 20.1 Repository and source baseline
+
+- **Current repository baseline reviewed:** `main` at PR #127 merge commit `fec1216587f1b5e0ce599ec54740e6c762fe4166`.
+- **Previous bounded application-source baseline:** PR #125 merge commit `e7966332024fd38eb7cb5b8a1adebc0b584ac894`.
+- Comparing the historical application-source snapshot `e0f69055d33dd9399c23e1d793f359468229c856` to current `main` reports 916 commits in repository history and 115 changed paths in the compare response; 62 of those paths are within the inspected application/configuration/test path categories (`app/`, `lib/`, `components/`, `context/`, `types/`, `tests/`, `firestore.rules`, `firebase.json`, and `package.json`). The recursive current tree contains 181 tracked files, including 111 paths in those application/configuration/test categories. These are path inventories, not proof that every file received semantic review.
+- Comparing PR #125 merge `e7966332024fd38eb7cb5b8a1adebc0b584ac894` to current `main` `fec1216587f1b5e0ce599ec54740e6c762fe4166` reports 14 commits and only seven changed SDD documentation paths. No application, test, Firebase rules, package, or configuration path changed after PR #125 in PRs #126–#127. Therefore PR #125 remains the latest application-source change baseline; PR #126 and #127 add policy/design documentation only.
+- This is a bounded read-only refresh of the current repository tree and selected source files. It is not a full semantic review of all 111 application/configuration/test paths, production-data inspection, deployed configuration review, provider-dashboard review, runtime test, or production-readiness assessment.
+
+### 20.2 Shipment-draft workspace — current source re-confirmation
+
+**Inspected paths:** `app/api/account/shipment-booking-drafts/route.ts`, `app/api/account/shipment-booking-drafts/[draftId]/route.ts`, `lib/server/shipment-booking-draft-api.ts`, `lib/server/shipment-booking-draft-store-core.ts`, `lib/server/shipment-booking-draft-store.ts`, `lib/server/shipment-booking-drafts.ts`, `lib/validations/shipment-booking-draft.ts`.
+
+- The collection-level API exposes GET/POST; the item API exposes PATCH. Both are Node.js routes and delegate to a shared handler/store.
+- The route verifies the bearer Firebase ID token using the existing Firebase Admin authentication path and requires a verified customer through `authenticateVerifiedCustomer`. The UID comes from the verified token, not caller-supplied request data.
+- Draft input is limited to free-text origin, destination and parcel description, with trimming and existing length checks. It does not resolve either endpoint to a PUDO identity or geographic record.
+- The Firestore store uses `users/{customerUid}/shipmentBookingDrafts`, records the booking-party UID, draft status and server timestamps, lists at most 50 records ordered by update time, and updates within a Firestore transaction only while the stored record remains in draft status.
+- The source confirms draft preparation and customer scoping only. It does not provide quote issuance, quote acceptance, confirmed booking, payment, parcel creation, PUDO registry/capability, intake, custody or route/movement commands.
+- Existing section 19 remains the detailed M1.3 source contract; this refresh confirms the route/store paths at the current main baseline.
+
+### 20.3 Internal shipment quote-lineage persistence — PR #118
+
+**Inspected paths:** `lib/server/shipment-quote-store-core.ts`, `lib/server/shipment-quote-store.ts`, `tests/shipment-quote-store.test.mjs`.
+
+- The store is a server-side Firestore persistence primitive. It creates a `shipmentQuotes` lineage document and a first `versions` subdocument in one transaction. The lineage records the booking-party UID and current-version reference; the version stores an opaque snapshot and sequence.
+- Revision requires the caller to supply the expected current-version ID. A transaction rejects missing lineages, stale-version attempts, invalid/missing current versions and already-accepted/linked lineages; successful revisions append a new version and move the current-version reference without mutating the prior version.
+- The source comments and absence of a corresponding `app/api` route/UI confirm that this is not a customer quote command or issuance endpoint. It does not calculate rates, select pricing models, determine eligibility, expose or validate a commercial quote payload, accept a quote, confirm a booking, or create a parcel.
+- The seven quote-store tests are present and are conditional on `FIRESTORE_EMULATOR_HOST`. The test source covers atomic first-version creation, immutable prior versions, stale revision, and revision prevention after acceptance, among other cases. This source review did not execute the tests. The separate PR #118 continuity record attributes 57 passing tests and TypeScript/lint/build passes to the user's local verification.
+
+### 20.4 Internal operational-cost definition and approval foundation — PRs #121–#125
+
+**Inspected paths:** `app/api/admin/operational-cost-definitions/route.ts`, `app/api/admin/operational-cost-definitions/[definitionId]/route.ts`, `app/api/admin/operational-cost-definitions/[definitionId]/workflow/route.ts`, `lib/server/operational-cost-definition-request-auth.ts`, `lib/server/operational-cost-definition-store-core.ts`, `lib/server/operational-cost-definition-store.ts`, `lib/server/operational-cost-definition-workflow-store-core.ts`, `lib/server/operational-cost-definition-workflow-store.ts`, `tests/operational-cost-definition-store.test.mjs`, `tests/operational-cost-definition-workflow.test.mjs`, `tests/staff-action-permissions.rules.test.mjs`, `firestore.rules`.
+
+- The current API includes list/create on the collection route, read/revise on the definition route, and workflow transitions on the nested workflow route. These are internal Admin-side APIs; no customer pricing or quote route is present.
+- Definition list/read/propose/revise requests verify a bearer Firebase ID token with revoked-token checking and then require an explicit active, audited staff action permission. The inspected permission records require `active === true`, a non-empty assigning actor, a non-empty reason and an assignment timestamp. Admin custom claim or Admin email allowlist alone is not the permission check for these endpoints.
+- Workflow transitions map submit, Operations validation, Finance review and final approval/rejection to separate action permissions. The workflow checks current version/state transactionally, records attributable workflow events, and rejects self-review: the proposer cannot validate; the Operations validator cannot perform the Finance review; and neither proposer, Operations validator nor Finance reviewer can perform final approval. The workflow's permission checks are read from the server-only `staffActionPermissions` records.
+- The definition store creates a lineage and first version transactionally; revisions append a new version using an expected current version number and preserve earlier versions. Reads return version history and associated workflow/event records.
+- The implemented first-slice applicability is explicitly `general` only. Location-specific applicability is rejected until an authoritative PUDO location identity exists. The activity catalogue accepted for this slice is ACT-01 through ACT-11; ACT-12 is not supported by this store. Input metadata supports string, number, boolean and date types. Monetary components are represented as decimal strings with explicit three-letter currency codes when an amount is supplied, plus basis/treatment/evidence-description metadata. These are persisted configuration facts, not a cost calculator.
+- The workflow requires cost components to have amount, explicit currency, basis and evidence description before submission. It does not calculate costs, apply them to a customer quote, execute compensation, settle partner payments, or determine customer charges/liability.
+- Firestore Rules explicitly deny client access to operational cost definitions and their versions. The staff-action permission collection has no client grant; the Rules test confirms client read/write denial even for a principal with an Admin claim. The cost-definition Rules test also checks denial for unauthenticated, customer and Admin client contexts.
+- The cost-definition store and workflow test files are Emulator-conditional. The current source contains 11 definition-store test cases and 5 workflow test cases; the separate PR #125 progress record attributes the 75 passed / 0 failed Emulator suite and TypeScript/ESLint/Next.js build passes to the user's local verification. This refresh did not execute those checks.
+
+### 20.5 Current security and platform boundaries
+
+- The shared Admin authorization helper currently checks a verified Firebase bearer token (including revoked-token checking), verified email, membership in `ADMIN_EMAILS`, the `admin === true` custom claim and an active `adminAccess/{uid}` record. This is a source observation for the inspected helper, not proof that every route or deployed environment is correctly configured.
+- Customer draft authentication remains separate from Admin authorization. A verified customer session does not grant staff action permission.
+- The current Firestore Rules retain public reads and Admin-gated writes for categories/products, deny direct client access to orders, and deny direct client access to operational-cost definitions/versions. No explicit `shipmentQuotes` rule was found in the inspected rules file; no direct-client quote Rules test was found in the selected test files. Do not infer a client-access grant. Add an explicit test if quote persistence is later exposed or its Rules boundary is changed.
+- The recursive active source tree still contains no dedicated PUDO location registry, location capability management service, location-management API/UI, or customer PUDO directory. The existing draft origin/destination remain free text. No Google Maps API/provider integration, geocoding, device geolocation or proximity-discovery implementation was found in the reviewed tree.
+- The active source tree still does not establish customer quote issuance/calculation, quote acceptance/confirmed-booking creation, parcel/intake/custody execution, route/leg/movement management, service eligibility or general financial reconciliation. Existing cost-definition and quote-lineage persistence foundations must not be described as those broader capabilities.
+
+### 20.6 Source review outcome and remaining work
+
+The source review confirms two bounded server-side foundations beyond the earlier M1.3 draft workspace: (1) internal immutable shipment quote-lineage/version persistence; and (2) internal operational-cost definition persistence, versioning, and four-person approval workflow with action-level permission checks. It does not establish the customer-facing or physical logistics capabilities those foundations may eventually support.
+
+The PR #125 merge `e7966332024fd38eb7cb5b8a1adebc0b584ac894` remains the current application-source baseline at PR #127 main `fec1216587f1b5e0ce599ec54740e6c762fe4166`, because the intervening PR #126–#127 changes are documentation-only.
+
+**Evidence boundary:** This refresh inspected GitHub repository tree/commit comparisons and the selected source/configuration/test files listed above. No application code, schema, Firestore Rules, configuration, API, permission, deployment or runtime behaviour was changed. No tests, TypeScript, lint, build, emulator, browser, provider, production-data or operational checks were run during this review. User-reported local verification remains explicitly attributed to the PR #118 and PR #125 continuity entries.
