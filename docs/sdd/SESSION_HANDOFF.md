@@ -18,7 +18,7 @@
 - Firestore remains authoritative. Google Maps Platform remains a candidate for future evaluation only; no provider/API/geocoding/geolocation integration is approved.
 - **Next:** the business must formally assign the accountable Operations position and identify the authoritative inventory source; obtain real examples of the site arrangements (including staffed stations and registered collection centres); validate evidence sufficiency and inspection procedure; reconcile authority and lifecycle rules with DEC-043/PM-01–PM-12; then prepare the source-aligned technical contract. No registry code or customer PUDO selector yet; all DEC-047 combinations remain unavailable until independently evidenced and approved.
 
-## Current continuation — PR #126 merged; DEC-050 PUDO location governance approved — 3 November 2026
+## Historical continuation — PR #126 merged; DEC-050 PUDO location governance approved — 3 November 2026
 
 - PR #126, `docs: define PUDO location capability foundation`, is merged at `b666d7e8e9bc37ad12c2f12d025cd920263295cf`. It is documentation-only. The bounded application-source inspection baseline remains PR #125 merge `e7966332024fd38eb7cb5b8a1adebc0b584ac894`.
 - The owner approved DEC-050's responsibility split: Admin or explicitly designated staff register proposed PUDO locations; Operations physically verifies the location, address, operating arrangement and relevant evidence, then approves operational readiness; a separately authorised staff member activates only after Operations approval. Registration, verification, approval and activation are distinct and attributable. Exact permission grants remain subject to DEC-043/PM-01–PM-12 reconciliation.
@@ -30,7 +30,7 @@
 Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`.
 
 
-## Current authoritative continuation — PR #119 merged; Standard costing boundary captured — 2 November 2026
+## Historical continuation — PR #119 merged; Standard costing boundary captured — 2 November 2026
 
 - PR #119 merged at 3d324d4a7b9a5eb751106b0da30defe79ea332ce. PR #118's internal quote-lineage/version foundation is also merged and remains internal-only.
 - The owner has confirmed Standard origin-centre selection: the shipper selects the PUDO centre on the website and must present the parcel at that selected centre. Physical verification occurs there; sender-doorstep collection is not part of the currently described Standard scope.
