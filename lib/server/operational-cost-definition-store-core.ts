@@ -267,31 +267,6 @@ function assertDefinitionInput(
   }
 }
 
-/**
- * A draft may be incomplete. Submission is the point at which the proposed
- * cost must carry an explicit amount, currency, basis and evidence description.
- */
-export function assertOperationalCostDefinitionReadyForSubmission(
-  value: unknown
-): asserts value is OperationalCostDefinitionInput {
-  assertDefinitionInput(value as OperationalCostDefinitionInput);
-  const definition = value as OperationalCostDefinitionInput;
-  if (definition.costComponents.length === 0) {
-    throw new TypeError("At least one cost component is required before submission");
-  }
-  for (const component of definition.costComponents) {
-    if (
-      component.amount === undefined ||
-      component.currencyCode === undefined ||
-      component.basis === undefined ||
-      component.evidenceDescription === undefined ||
-      !component.evidenceDescription.trim()
-    ) {
-      throw new TypeError("Each cost component needs an amount, explicit currency, basis and evidence description before submission");
-    }
-  }
-}
-
 function assertActorUid(value: string): void {
   assertNonEmptyString(value, "An actor UID", 128);
 }
