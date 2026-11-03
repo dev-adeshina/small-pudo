@@ -1,6 +1,6 @@
 # PUDO Location Verification Checklist and Evidence Requirements
 
-**Status:** Proposed operational checklist for owner and Operations review; not yet approved as a mandatory evidence policy.  
+**Status:** Proposed operational checklist for owner and Operations review; not yet approved as a mandatory evidence policy. The accountable Operations position has not yet been assigned (confirmed by the owner on 3 November 2026).  
 **Prepared:** 3 November 2026  
 **Related decisions:** DEC-018, DEC-025, DEC-043, DEC-047, DEC-050.  
 **Related workflow:** `PLATFORM_PUDO_LOCATION_REGISTRATION_AND_VERIFICATION_WORKFLOW.md`.  
@@ -166,7 +166,7 @@ The initial inventory should be treated as a candidate register until each site 
 
 | Input | Why it is needed | Current state |
 |---|---|---|
-| Named accountable Operations owner | Accountability for the inventory, verification standard, reviewer assignment, and unresolved cases. | Not identified; owner input required. |
+| Accountable Operations position and role-holder | Accountability for the inventory, verification standard, reviewer assignment, and unresolved cases. | Position not yet assigned, as confirmed by the owner on 3 November 2026; formal business assignment required. |
 | Authoritative source of candidate inventory | Establishes where the initial candidate list comes from and who maintains it. | Not identified; business/Operations input required. |
 | Operating-arrangement categories and real examples | Prevents a one-size-fits-all evidence checklist from being applied to unlike arrangements. | Actual arrangements and examples not yet supplied. |
 | Evidence sufficiency by arrangement | Establishes what proof is acceptable and who may accept alternatives. | Proposed categories only; Operations validation required. |
@@ -177,7 +177,7 @@ The initial inventory should be treated as a candidate register until each site 
 
 ## 9. Implementation gate
 
-This checklist must be reviewed and completed with the accountable Operations owner before it is treated as a mandatory operational procedure. The following must remain unresolved until supported by actual business evidence and owner/Operations approval:
+This checklist must be reviewed and completed with the formally assigned accountable Operations owner before it is treated as a mandatory operational procedure. The owner has confirmed that the position has not yet been assigned; therefore, operational adoption and a governed initial inventory exercise remain blocked pending that organisational assignment. The following must remain unresolved until supported by actual business evidence and owner/Operations approval:
 
 - no assumed location inventory or source;
 - no assumed named Operations owner;
