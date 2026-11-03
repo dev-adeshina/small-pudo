@@ -7,8 +7,6 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 ### Documents
 
 - `PLATFORM_PUDO_LOCATION_REGISTRY_AND_CAPABILITY_FOUNDATION.md` — proposed PUDO location registry, independent service/action capabilities, configuration authority, customer endpoint discovery, and DEC-047 eligibility boundaries; design proposal only, not an approved schema or implementation.
-
-
 - `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` — single ordered implementation plan derived from accepted policy and existing source findings; identifies buildable work, unresolved capability gates, deferred scope and acceptance evidence without inventing business rules or technical schema.
 
 - `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and historical roadmap (not the current work order).
