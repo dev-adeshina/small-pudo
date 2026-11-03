@@ -1,16 +1,16 @@
 # VeriLyft Progress Tracker
 
-> **Current direction (2 November 2026):** PR #119 is merged at `3d324d4a7b9a5eb751106b0da30defe79ea332ce`. PR #118's internal quote-lineage/version foundation is implemented; it does not expose quote issuance or acceptance. M2 now moves from broad evidence gathering to a bounded, source-aligned design for internal activity-cost configuration, based on the owner-confirmed Standard operating scope. No rates, formulas, cost units, staff compensation rules, provider terms, pricing calculation or customer capability are approved. Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single execution pointer. All DEC-047 combinations and DEC-036/M0 release gates remain independent.
+> **Current direction (3 November 2026):** PR #123 is reviewed and merged at `e687750bb86fd998a99bcdcd5502238dcca24de1`. PRs #121–#122 provide the internal operational cost-definition persistence and four-person approval foundation; PR #123 records the owner-reviewed activity catalogue and workflow requirements. The current task is a bounded technical contract for configurable internal activity costs. No actual cost amounts, currencies, units, formulas, allocation methods, compensation rules, partner terms, customer pricing or capability activation are approved. Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the execution pointer. DEC-047 and DEC-036/M0 release gates remain independent.
 
 
-**Last updated:** 2 November 2026  
+**Last updated:** 3 November 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest confirmed main merge:** PR #119 reviewed and merged on 2 November 2026 at `3d324d4a7b9a5eb751106b0da30defe79ea332ce`. The user reported local `main` synchronized after PR #119.  
-**Application-source inspection baseline:** prior bounded inspections at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90` and the earlier administrator-authorization baseline `0e4dfd8e198ef2c14ed22ef393ddf801372b7613` are historical only. PR #118 subsequently changed application source by adding quote-lineage persistence. No current-main source inspection for the proposed activity-cost configuration foundation has yet been performed. A fresh read-only review is required before designing that slice; no full-repository, runtime or production audit is claimed.  
+**Latest confirmed main merge:** PR #123 reviewed and merged on 2 November 2026 at `e687750bb86fd998a99bcdcd5502238dcca24de1`. The user subsequently reported local `main` synchronized after this merge.  
+**Application-source inspection baseline:** a bounded read-only review was performed against `main` at `e687750bb86fd998a99bcdcd5502238dcca24de1`, covering the operational cost-definition store, approval workflow, workflow route, Firestore Rules, relevant Emulator tests and related SDD artifacts. This is not a full-repository, runtime or production audit. Earlier source baselines remain historical.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
-**Current phase:** Milestone 4 — SDD reconciliation and bounded implementation. PR #118's internal quote-lineage/immutable-version persistence foundation is merged. The current M2 task is read-only source review and technical-contract preparation for a minimal internal activity-cost configuration foundation. No customer pricing or quote capability is authorized. M0 baseline/regression safety and DEC-036 P0/Conditional P0 release evidence remain active. M1.1, M1.2 and the bounded M1.3 draft-workspace foundation are complete only for their stated scopes; this is not a complete shipper portal.
+**Current phase:** Milestone 4 — SDD reconciliation and bounded implementation. PR #118's internal quote-lineage/immutable-version persistence foundation and PRs #121–#123's operational cost foundations are merged. The current task is owner review of the proposed internal activity-cost configuration technical contract. No customer pricing or quote capability is authorized. M0 baseline/regression safety and DEC-036 P0/Conditional P0 release evidence remain active. M1.1, M1.2 and the bounded M1.3 draft-workspace foundation are complete only for their stated scopes; this is not a complete shipper portal.
 
 > This tracker records the current documented working state. Verify the live repository, current branch/PR state, and dated test results before treating any item as complete.
 
@@ -1693,4 +1693,25 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - [ ] Prepare the minimal internal activity-cost configuration technical contract only after Operations and Finance validation; retain the existing PR #121–#122 versioning and approval controls.
 - [ ] Keep customer pricing/quote issuance, DEC-047 activation, compensation execution and route/dispatch/intake/custody execution outside this documentation update.
 
-**Evidence boundary:** This update records owner-confirmed product/operating requirements from the 2 November 2026 discussion. It does not claim independent Operations validation, Finance approval, observed production evidence, code changes, test/build/lint execution or production readiness. PR #123 remains open for review; this documentation update does not merge it.
+**Merge and evidence boundary:** PR #123 was reviewed and merged by the owner at `e687750bb86fd998a99bcdcd5502238dcca24de1`. The catalogue records owner-confirmed product/operating requirements; it does not claim independent Operations validation, Finance approval, observed production evidence, code changes, test/build/lint execution or production readiness.
+
+
+## 78. Operational activity cost-configuration technical contract proposed — 3 November 2026
+
+**Repository baseline:** PR #123 merge `e687750bb86fd998a99bcdcd5502238dcca24de1`.  
+**Technical contract:** `PLATFORM_OPERATIONAL_ACTIVITY_COST_CONFIGURATION_TECHNICAL_CONTRACT.md`.  
+**Working branch:** `docs/operational-activity-cost-configuration-contract`.
+
+- [x] Reconciled PR #121's versioned operational cost-definition persistence, PR #122's four-person approval workflow and PR #123's owner-reviewed activity catalogue.
+- [x] Completed a bounded, read-only source review of the current definition store, workflow store, workflow route, Firestore Rules, relevant Emulator tests and SDD records at the PR #123 baseline.
+- [x] Confirmed the current store persists activity names/descriptions and input metadata, but not configurable monetary cost components, currency/basis information or an applicability scope.
+- [x] Confirmed that the workflow transition route exists, while definition create/revise/list/read application routes and a management UI were not found in the reviewed repository tree.
+- [x] Recorded the owner's direction that VeriLyft-employed personnel and registered/authorised personnel may perform the same operational activities; InPUDO-supplied personnel must be registered and approved by VeriLyft staff/agents.
+- [x] Recorded owner direction that damage-related costs may be borne by the sender and/or VeriLyft depending on circumstances, while RTS costs may be borne by the sender or recipient depending on circumstances. Neither outcome is an automatic charge or liability rule.
+- [x] Proposed a versioned cost-component representation, explicit currency and configurable basis, reusable location scope, least-privilege read authorization, and a bounded server-only implementation slice.
+- [ ] Owner review/approval of the technical contract, especially cost-component representation, location applicability and read authorization.
+- [ ] Before implementation, trace the existing authoritative PUDO location identity and settle the explicit read/view permission decision; do not invent either.
+- [ ] Implement only the approved internal configuration persistence/API and Emulator/Rules coverage. Keep pricing calculation, quote issuance, payroll, incident liability automation, operational execution and DEC-047 activation excluded.
+- [ ] Record actual code commit and dated test/build/lint/Emulator results after implementation; no new code or tests are claimed by this documentation proposal.
+
+**Evidence boundary:** The owner-confirmed directions are discussion-derived requirements. The source review is bounded and read-only. No application code, Firestore schema, API, permissions, Rules or production behaviour changed in this checkpoint. No tests, lint, TypeScript check or build were run for this documentation proposal. Independent Operations validation and source-backed Finance evidence remain distinct from owner confirmation.
