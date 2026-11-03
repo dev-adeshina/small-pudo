@@ -89,19 +89,20 @@ export default function OperationalCostDefinitionsPage() {
   const [saving, setSaving] = useState(false);
   const [acting, setActing] = useState(false);
   const [error, setError] = useState("");
+  const [listError, setListError] = useState("");
   const [notice, setNotice] = useState("");
   const [reason, setReason] = useState("");
 
   const loadDefinitions = useCallback(async (idToken: string) => {
     setLoading(true);
-    setError("");
+    setListError("");
     try {
       const response = await fetch("/api/admin/operational-cost-definitions?limit=100", { headers: headers(idToken), cache: "no-store" });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Unable to load definitions.");
       setDefinitions(Array.isArray(data.definitions) ? data.definitions : []);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to load definitions.");
+      setListError(cause instanceof Error ? cause.message : "Unable to load definitions.");
     } finally {
       setLoading(false);
     }
@@ -286,7 +287,7 @@ export default function OperationalCostDefinitionsPage() {
             <h1>Operational cost <em>definitions.</em></h1>
             <p>Maintain activity cost definitions through the existing Operations, Finance and independent approval workflow.</p>
           </div>
-          <button type="button" className="cost-primary-button" onClick={startCreate}><Plus size={17} /> New draft</button>
+          <button type="button" className="cost-primary-button" onClick={startCreate} disabled={loading || Boolean(listError)}><Plus size={17} /> New draft</button>
         </section>
 
         <div className="cost-boundary-note">
@@ -303,6 +304,7 @@ export default function OperationalCostDefinitionsPage() {
               <button type="button" className="cost-icon-button" onClick={() => void loadDefinitions(token)} aria-label="Refresh definitions" disabled={loading}>{loading ? <Loader2 size={17} className="cost-spin" /> : <RefreshCw size={17} />}</button>
             </div>
             {loading ? <div className="cost-empty"><Loader2 size={22} className="cost-spin" /><span>Loading definitions...</span></div> :
+              listError ? <div className="cost-empty"><AlertCircle size={25} /><strong>Unable to load definitions</strong><p>{listError}</p></div> :
               definitions.length === 0 ? <div className="cost-empty"><ClipboardList size={28} /><strong>No definitions yet</strong><p>Start with an evidence-backed draft. No activities or costs are preconfigured.</p></div> :
               <div className="cost-definition-list">
                 {definitions.map((item) => {
