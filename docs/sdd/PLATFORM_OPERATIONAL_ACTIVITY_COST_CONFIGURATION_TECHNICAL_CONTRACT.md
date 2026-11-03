@@ -1,7 +1,7 @@
 # Operational Activity Cost Configuration — Technical Contract
 
-**Status:** Proposed technical contract; owner approval required before application-code changes.  
-**Repository baseline:** `main` at PR #123 merge commit `e687750bb86fd998a99bcdcd5502238dcca24de1`.  
+**Status:** Owner-approved in PR #124; first server-side implementation slice recorded below.  
+**Repository baseline:** `main` at PR #124 merge commit `3671f3cd66fcb3c314c5c2b31596f0cbe7e4ce10`.  
 **Related foundations:** PR #121 operational cost-definition persistence; PR #122 approval workflow; PR #123 owner-reviewed activity catalogue.  
 **Scope:** Internal, server-authoritative configuration of operational activity costs. This contract does not authorize customer pricing or operational capability activation.
 
@@ -77,7 +77,7 @@ A version should describe:
 
 1. **Activity identity:** a stable catalogue reference for ACT-01–ACT-11, with ACT-12 unavailable until Operations confirms it.
 2. **Activity description:** the human-readable activity name and description already supported.
-3. **Applicability:** the scope in which the definition applies. The contract recommends supporting a general definition and, when backed by an existing authoritative location identity, a location-specific definition. The implementation must reuse the existing location identity and must not create a new location registry. The exact location source/path must be confirmed during the focused implementation source trace before a location reference is persisted.
+3. **Applicability:** the current implementation supports general applicability only. The source trace found no authoritative PUDO location registry or active location-management service in the current application source. The existing shipment-draft origin/destination strings are not stable location identities. Location-specific definitions are deferred until an authoritative location model exists; no location registry or surrogate location ID is introduced here.
 4. **Operational inputs:** the existing activity-specific input metadata, extended only when a validated activity requires it.
 5. **Cost components:** one or more independently configurable cost entries associated with the activity version.
 
@@ -142,7 +142,7 @@ Proposed operations:
 
 Mutating definition operations must use the authenticated Firebase UID and the existing `operational_cost_definition.propose` permission. Workflow transitions continue to use their existing action-specific permissions.
 
-**Read authorization is an explicit contract item:** the existing permission set has no read/view action. Before exposing list/read APIs or a management UI, approve a dedicated `operational_cost_definition.view` permission or another explicit least-privilege read rule. Do not silently treat general Admin access or possession of a mutation permission as unrestricted read authority.
+**Read authorization decision:** list/read access uses the dedicated `operational_cost_definition.view` action permission. A valid, non-revoked Firebase ID token and an active audited assignment are both required. General Admin access and mutation permissions do not imply read access. Permission assignment remains outside the application through the trusted Admin SDK process.
 
 No staff-management UI or permission-grant endpoint is included. Permission provisioning remains outside the application through the trusted Admin SDK process.
 
@@ -159,7 +159,7 @@ After this contract is approved, implement one bounded internal configuration sl
 7. Add Rules-denial tests for unauthenticated, ordinary-customer and generic-admin clients.
 8. Update the SDD progress record with actual code commit and test evidence after implementation.
 
-The exact location reference and read permission must be resolved before their corresponding API capabilities are implemented. No location model or permission is to be invented in code.
+The location source trace and read permission decision are recorded in Section 13. General applicability only is implemented until an authoritative PUDO location identity exists.
 
 ## 10. Explicit exclusions
 
