@@ -1,4 +1,15 @@
-## Current continuation — PR #129 merged; current-main readiness reconciliation — 3 November 2026
+## Current continuation — PR #131 merged; Admin API authorization regression coverage — 3 November 2026
+
+- **Repository:** `dev-adeshina/small-pudo`; current `main` merge commit is `58018e3` (PR #131). The user confirmed local `main`, `origin/main` and `HEAD` are synchronized.
+- **Working tree:** no tracked changes. Preserve the user's untracked `.firebaserc` and the two `docs/sdd/PROGRESS.md.backup-*` files; do not stage or delete them as part of unrelated work.
+- **PR #131:** `test: cover Admin API authorization boundary`. It extracts a framework-independent authorization decision core, keeps the production Next.js adapter and its `authorization.response` failure contract, and adds 11 focused tests. It does not change the authorization policy or replace action-specific staff permissions.
+- **Policy enforced by the shared core:** fail closed on empty allowlist or Firestore access lookup failure; require a valid, non-revoked Firebase bearer token, verified allowlisted email, `admin === true`, and an active `adminAccess/{uid}` record.
+- **User-reported PR-head verification:** `node --test tests/admin-authorization.test.mjs` passed 11/11; Firestore Emulator-backed `npm test` passed 86/86. TypeScript, lint and production build were recorded as passing during PR verification. Non-fatal Node module-type and Firebase metadata/network warnings were observed; no package-wide module-mode change was made.
+- **Evidence boundary:** these automated checks do not establish deployed/browser behaviour for every Admin API route. Live administrator revocation, authenticated non-admin rejection across representative routes, upload-route denial and deployed configuration parity remain open. Existing 1 November browser checks and Firestore Rules Playground evidence remain as recorded in `PROGRESS.md`.
+- **Next:** once this SDD reconciliation PR is reviewed and merged, select the next bounded implementation slice from `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md`. Preserve DEC-045 and all independent capability gates. The Operations position remains unassigned; do not begin PUDO physical verification or inventory approval without the accountable owner and authoritative inventory source.
+- **Guardrails:** keep draft preparation distinct from booking; internal quote lineage distinct from quote issuance; operational-cost definitions distinct from customer pricing; route/dispatch intent distinct from actual physical custody. Keep all twelve DEC-047 combinations unavailable until independently evidenced and approved. Do not infer additional authority from the global Admin claim.
+
+## Historical continuation — PR #129 merged; current-main readiness reconciliation — 3 November 2026
 
 - PR #129 is merged at a2247efd2d0a7103c85d156f89ea210a696b33e2. The latest application-source baseline remains PR #125 at e7966332024fd38eb7cb5b8a1adebc0b584ac894; PRs #126–#129 changed SDD documentation only.
 - A proposed five-area verification checklist and evidence framework is in `PLATFORM_PUDO_LOCATION_VERIFICATION_CHECKLIST_AND_EVIDENCE.md`: physical existence/site identity; name/address; operating arrangement and authority to participate; readiness for the proposed purpose; attributable evidence and reasoned outcome.
@@ -7,7 +18,7 @@
 - Firestore remains authoritative. Google Maps Platform remains a candidate for future evaluation only; no provider/API/geocoding/geolocation integration is approved.
 - **Next:** the business must formally assign the accountable Operations position and identify the authoritative inventory source; obtain real examples of the site arrangements (including staffed stations and registered collection centres); validate evidence sufficiency and inspection procedure; reconcile authority and lifecycle rules with DEC-043/PM-01–PM-12; then prepare the source-aligned technical contract. No registry code or customer PUDO selector yet; all DEC-047 combinations remain unavailable until independently evidenced and approved.
 
-## Current continuation — PR #126 merged; DEC-050 PUDO location governance approved — 3 November 2026
+## Historical continuation — PR #126 merged; DEC-050 PUDO location governance approved — 3 November 2026
 
 - PR #126, `docs: define PUDO location capability foundation`, is merged at `b666d7e8e9bc37ad12c2f12d025cd920263295cf`. It is documentation-only. The bounded application-source inspection baseline remains PR #125 merge `e7966332024fd38eb7cb5b8a1adebc0b584ac894`.
 - The owner approved DEC-050's responsibility split: Admin or explicitly designated staff register proposed PUDO locations; Operations physically verifies the location, address, operating arrangement and relevant evidence, then approves operational readiness; a separately authorised staff member activates only after Operations approval. Registration, verification, approval and activation are distinct and attributable. Exact permission grants remain subject to DEC-043/PM-01–PM-12 reconciliation.
@@ -19,7 +30,7 @@
 Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`.
 
 
-## Current authoritative continuation — PR #119 merged; Standard costing boundary captured — 2 November 2026
+## Historical continuation — PR #119 merged; Standard costing boundary captured — 2 November 2026
 
 - PR #119 merged at 3d324d4a7b9a5eb751106b0da30defe79ea332ce. PR #118's internal quote-lineage/version foundation is also merged and remains internal-only.
 - The owner has confirmed Standard origin-centre selection: the shipper selects the PUDO centre on the website and must present the parcel at that selected centre. Physical verification occurs there; sender-doorstep collection is not part of the currently described Standard scope.
@@ -51,6 +62,16 @@ Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`
 - DEC-018/DEC-036 launch scope, P0 acceptance evidence and production release requirements remain in force. Implementation start is not launch approval.
 - Preserve the existing Next.js App Router, TypeScript, Firebase/Firestore/Auth/Admin, Paystack and Cloudinary architecture. Inspect current source before modifying it; the historical source-inspection baseline is not runtime proof.
 
+
+## Current implementation-readiness handoff — PR #131 baseline — 3 November 2026
+
+1. Start from `main` at PR #131 merge `58018e3`; verify `git status -sb` and preserve the three known untracked local files.
+2. Treat PR #131 as the latest application-code change. Its scope is shared Admin API authorization decision extraction plus focused automated regression tests; do not interpret it as a full Admin runtime or production audit.
+3. Keep the existing policy: valid/non-revoked Firebase token, verified allowlisted email, `admin === true`, and active `adminAccess/{uid}`; empty allowlist and Firestore lookup failure fail closed. Staff action permissions remain a separate authorization layer.
+4. The user reported 11/11 focused authorization tests and 86/86 full Emulator-backed tests passing on the PR head. TypeScript, lint and build were recorded as passing during PR verification. Do not claim deployed/browser verification of all Admin API routes.
+5. Keep outstanding M0 evidence visible: live revocation, authenticated non-admin rejection on representative routes, upload-route denial and deployed configuration parity.
+6. Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the execution pointer. The Operations position remains unassigned; PUDO verification and initial inventory approval are blocked until accountable ownership and the authoritative inventory source are identified.
+7. Preserve all DEC-047, pricing, quote, booking, payment, intake, custody and route-execution gates. Do not reopen accepted decisions or infer new permissions from Admin status.
 
 ## Current verified repository state
 
@@ -464,7 +485,7 @@ PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. T
 **Preserve:** PR #118 quote-lineage foundation, existing storefront/draft/order/payment/admin behaviour, M0 residual verification and DEC-036 P0/Conditional P0 release requirements.
 
 
-## Current implementation-readiness handoff — 3 November 2026
+## Historical implementation-readiness handoff — PR #129 baseline — 3 November 2026
 
 1. Start from current main at PR #129 (a2247efd2d0a7103c85d156f89ea210a696b33e2); verify the branch and working tree before local changes.
 2. Treat PR #125 (e7966332024fd38eb7cb5b8a1adebc0b584ac894) as the latest application-source baseline until a later application-code PR is confirmed.
