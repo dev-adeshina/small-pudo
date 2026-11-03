@@ -6,6 +6,9 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 
 ### Documents
 
+- `PLATFORM_PUDO_LOCATION_REGISTRY_AND_CAPABILITY_FOUNDATION.md` — proposed PUDO location registry, independent service/action capabilities, configuration authority, customer endpoint discovery, and DEC-047 eligibility boundaries; design proposal only, not an approved schema or implementation.
+
+
 - `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` — single ordered implementation plan derived from accepted policy and existing source findings; identifies buildable work, unresolved capability gates, deferred scope and acceptance evidence without inventing business rules or technical schema.
 
 - `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and historical roadmap (not the current work order).
@@ -35,9 +38,9 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 - `DECISIONS.md` — architecture and product decisions, including constraints that future sessions must preserve.
 - `SESSION_HANDOFF.md` — copy/paste instructions for starting a new ChatGPT session with these documents.
 
-### Current execution direction — 31 October 2026
+### Current execution direction — 3 November 2026
 
-DEC-045 records the owner's instruction to begin implementation now and supersedes the previous blanket freeze requiring Reviews 3–5 before any application-code change. Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the single implementation pointer. This authorizes bounded implementation under accepted policy; it does not approve pending recommendations in the consolidated owner package, remove capability gates, or waive DEC-036 P0 acceptance and production-release evidence.
+PR #125 is merged at `e7966332024fd38eb7cb5b8a1adebc0b584ac894`. The bounded M1.1/M1.2/M1.3 draft-workspace foundation is complete only for its documented scope; it is not a complete Shipper Portal. The current customer-facing dependency is the authoritative PUDO location registry and capability foundation. See `PROGRESS.md`, VLY-025 in `ISSUES.md`, and `PLATFORM_PUDO_LOCATION_REGISTRY_AND_CAPABILITY_FOUNDATION.md`. All DEC-047 service/endpoint combinations remain unavailable pending independent operational verification and approval. No schema, API, permission, provider, or customer PUDO-selection capability is approved by the proposal.
 
 ### SDD-first working protocol
 
