@@ -492,6 +492,9 @@ export function createOperationalCostDefinitionStore({
         if (currentVersion.versionNumber !== currentVersionNumber) {
           throw new Error("Operational cost definition version number does not match its lineage");
         }
+        if (currentVersion.createdBy !== actorUid) {
+          throw new Error("Only the current version proposer may revise this operational cost definition");
+        }
 
         const currentWorkflowRef = currentVersionRef.collection("approval").doc("workflow");
         const currentWorkflowDocument = await transaction.get(currentWorkflowRef);
