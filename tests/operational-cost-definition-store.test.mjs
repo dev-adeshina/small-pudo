@@ -338,7 +338,7 @@ describe(
       ]);
       assert.ok(list.some((item) => item.definitionId === created.definitionId));
       assert.equal(detail?.definitionId, created.definitionId);
-      assert.equal((detail?.versions as Array<Record<string, unknown>>).length, 1);
+      assert.equal(detail?.versions?.length, 1);
     });
 
     it("requires an active audited view permission", async () => {
