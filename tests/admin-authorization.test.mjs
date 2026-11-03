@@ -63,8 +63,8 @@ describe("Admin API authorization", () => {
 
     assert.equal(result.ok, false);
     if (result.ok) return;
-    assert.equal(result.response.status, 503);
-    assert.deepEqual(await result.response.json(), {
+    assert.equal(result.status, 503);
+    assert.deepEqual({ error: result.error }, {
       error: "Admin access is not configured.",
     });
     assert.equal(verificationCalls.length, 0);
@@ -76,7 +76,7 @@ describe("Admin API authorization", () => {
 
     assert.equal(result.ok, false);
     if (result.ok) return;
-    assert.equal(result.response.status, 401);
+    assert.equal(result.status, 401);
     assert.equal(verificationCalls.length, 0);
   });
 
@@ -99,7 +99,7 @@ describe("Admin API authorization", () => {
 
       assert.equal(result.ok, false, reason);
       if (result.ok) continue;
-      assert.equal(result.response.status, 401, reason);
+      assert.equal(result.status, 401, reason);
       assert.equal(accessCalls.length, 0, reason);
     }
   });
@@ -112,7 +112,7 @@ describe("Admin API authorization", () => {
 
     assert.equal(result.ok, false);
     if (result.ok) return;
-    assert.equal(result.response.status, 403);
+    assert.equal(result.status, 403);
     assert.equal(accessCalls.length, 0);
   });
 
@@ -124,7 +124,7 @@ describe("Admin API authorization", () => {
 
     assert.equal(result.ok, false);
     if (result.ok) return;
-    assert.equal(result.response.status, 403);
+    assert.equal(result.status, 403);
     assert.equal(accessCalls.length, 0);
   });
 
@@ -136,7 +136,7 @@ describe("Admin API authorization", () => {
 
     assert.equal(result.ok, false);
     if (result.ok) return;
-    assert.equal(result.response.status, 403);
+    assert.equal(result.status, 403);
     assert.equal(accessCalls.length, 0);
   });
 
@@ -153,7 +153,7 @@ describe("Admin API authorization", () => {
 
       assert.equal(result.ok, false);
       if (result.ok) continue;
-      assert.equal(result.response.status, 403);
+      assert.equal(result.status, 403);
       assert.deepEqual(accessCalls, ["admin-1"]);
     }
   });
@@ -166,7 +166,7 @@ describe("Admin API authorization", () => {
 
     assert.equal(result.ok, false);
     if (result.ok) return;
-    assert.equal(result.response.status, 503);
+    assert.equal(result.status, 503);
   });
 
   it("allows an eligible administrator with an active access record", async () => {
@@ -189,7 +189,7 @@ describe("Admin API authorization", () => {
 
     assert.equal(result.ok, false);
     if (result.ok) return;
-    assert.deepEqual(await result.response.json(), {
+    assert.deepEqual({ error: result.error }, {
       error: "This action is not permitted.",
     });
   });
