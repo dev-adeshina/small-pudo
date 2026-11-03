@@ -94,7 +94,7 @@ function assertVersionReadyForSubmission(version: VersionDocument): void {
       !component ||
       typeof component !== "object" ||
       typeof component.amount !== "string" ||
-      !/^(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$/.test(component.amount) ||
+      !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(component.amount) ||
       typeof component.currencyCode !== "string" ||
       !/^[A-Z]{3}$/.test(component.currencyCode) ||
       typeof component.basis !== "string" ||
