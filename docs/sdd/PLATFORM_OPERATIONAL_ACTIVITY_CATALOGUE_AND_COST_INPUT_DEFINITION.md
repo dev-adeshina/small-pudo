@@ -1,6 +1,6 @@
 # Operational Activity Catalogue and Cost Input Definition
 
-**Status:** Owner-reviewed activity catalogue and owner-confirmed workflow requirements; pending independent Operations validation, Finance review and evidence collection. This is not a cost policy, rate card, pricing model, schema or implementation authorization.  
+**Status:** Owner-reviewed activity catalogue and owner-confirmed workflow requirements; pending independent Operations validation, Finance review and evidence collection. This is not a cost policy, rate card, pricing model, schema or service-activation authorization.  
 **Prepared:** 2 November 2026  
 **Applies to:** VeriLyft independent shipment operations and internal operational-cost definition foundation.  
 **Authority:** DEC-018, DEC-019, DEC-022–DEC-025, DEC-038–DEC-049; PM-01–PM-12; PR #121–#122; `PLATFORM_M2_SERVICE_COST_AND_INPUT_EVIDENCE_WORKBOOK.md`; `PLATFORM_OPERATIONAL_COST_DEFINITION_APPROVAL_FOUNDATION.md`.  
@@ -251,14 +251,14 @@ This proposal does not define or implement:
 - driver/partner contract terms, reimbursement or financial liability beyond the recorded arrangement boundary;
 - cost allocation or margin formulas;
 - customer price, quote calculation, quote issuance or acceptance;
-- customer-facing or staff-facing configuration UI;
+- customer-facing cost configuration;
 - route optimization, dispatch, collection, delivery, intake or custody execution;
 - automatic charges for failed attempts, RTS or discrepancies;
 - DEC-047 eligibility or service activation;
-- new Firestore collections, fields, APIs, permission IDs or application code.
+- permission-grant UI/API, new Firestore collections, fields, APIs or permission IDs beyond the separately approved PR #121–#125 foundation.
 
 ## 13. Recommended next step
 
 The owner-level review of the twelve activity families and the workflow requirements in Section 4A is complete. Next, obtain Operations validation of actual procedures, roles, triggers, completion evidence, notification/contact handling and service applicability; then obtain Finance review of source-backed cost evidence and duplicate/included treatment. Only after those reviews should the team prepare the minimal technical contract for internal activity-cost configuration, aligned to the existing PR #121–#122 stores and approval workflow.
 
-**Current conclusion:** the working activity catalogue and owner-confirmed workflow direction are established. Independent Operations validation, Finance review, activity-to-input source mapping and attributable cost evidence remain outstanding. This document does not authorize application implementation or capability activation.
+**Current conclusion:** the working activity catalogue and owner-confirmed workflow direction are established. A staff-facing interface may manage draft definitions and the existing review workflow over the PR #125 APIs; it does not validate activity procedures or cost evidence. Independent Operations validation, Finance review, activity-to-input source mapping and attributable cost evidence remain outstanding. No customer pricing or operational capability is activated.

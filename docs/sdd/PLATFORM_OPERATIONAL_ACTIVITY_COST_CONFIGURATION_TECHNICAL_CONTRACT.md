@@ -1,7 +1,7 @@
 # Operational Activity Cost Configuration — Technical Contract
 
-**Status:** Owner-approved in PR #124; first server-side implementation slice recorded below.  
-**Repository baseline:** `main` at PR #124 merge commit `3671f3cd66fcb3c314c5c2b31596f0cbe7e4ce10`.  
+**Status:** Owner-approved technical foundation (PR #124); server API implementation merged in PR #125; staff-facing interface authorized for this bounded extension in the current work package.  
+**Repository baseline:** PR #132 merge `7ecc24f`; PR #125 API implementation and later authorization/documentation changes are included.  
 **Related foundations:** PR #121 operational cost-definition persistence; PR #122 approval workflow; PR #123 owner-reviewed activity catalogue.  
 **Scope:** Internal, server-authoritative configuration of operational activity costs. This contract does not authorize customer pricing or operational capability activation.
 
@@ -65,7 +65,7 @@ Approval does not publish or activate a customer pricing rule.
 
 ### 3.3 Existing API and Rules boundary
 
-The current application has a workflow transition route. The bounded repository tree review did not find create, revise, list or read API routes for operational cost definitions, nor a management UI.
+PR #125 added the list/create/read/revise API routes over the existing store, plus the existing workflow transition route. The API requires a valid, non-revoked Firebase ID token and the dedicated action permission. The current application source still has no management UI; this work package adds that interface without changing the server API.
 
 Firestore Rules explicitly deny client reads and writes to operational cost definitions and versions. Staff action permission records are also server-only/default-denied to clients. The Admin SDK is the existing persistence boundary.
 
@@ -129,38 +129,37 @@ For damage and RTS:
 
 Incident case management and financial responsibility execution remain separate future contracts unless an already-approved source contract explicitly covers them.
 
-## 8. API and UI recommendation
+## 8. API and staff interface boundary
 
-The current workflow endpoint remains the only discovered application route for this feature. The recommended next application slice is a server-only management API backed by the existing stores, with no customer-facing surface.
+PR #125 implements the list, create, read and revise API operations over the existing stores. The existing workflow route/store remains authoritative for submission, Operations validation, Finance review, changes requested, independent approval and rejection.
 
-Proposed operations:
+The bounded staff-facing interface is authorized at `/admin/operational-cost-definitions`. It may:
+- list and read definitions, immutable versions and workflow events;
+- create an incomplete draft using the existing activity catalogue ACT-01–ACT-11;
+- revise an eligible current version into a new immutable version;
+- invoke only the existing workflow transitions and display their server-confirmed outcomes.
 
-- create a draft definition/version;
-- retrieve a definition and its version/workflow history;
-- revise the current eligible version into a new immutable version;
-- invoke the existing workflow transition endpoint for submit, validation, Finance review, changes requested, approval or rejection.
+The page uses the existing Admin page access guard. That page guard is not a substitute for the action-level permission checks on every API request. The API requires a valid, non-revoked Firebase bearer token and:
+- `operational_cost_definition.view` for list/read;
+- `operational_cost_definition.propose` for create/revise;
+- `operational_cost_definition.propose`, `validate`, `finance_review` or `approve` as appropriate for workflow transitions.
 
-Mutating definition operations must use the authenticated Firebase UID and the existing `operational_cost_definition.propose` permission. Workflow transitions continue to use their existing action-specific permissions.
+The server store enforces the active audited permission assignment and the four-person separation of duties. Admin status alone grants none of these permissions. Permission assignment remains outside the application through the trusted Admin SDK process. No staff permission-grant UI or endpoint is included.
 
-**Read authorization decision:** list/read access uses the dedicated `operational_cost_definition.view` action permission. A valid, non-revoked Firebase ID token and an active audited assignment are both required. General Admin access and mutation permissions do not imply read access. Permission assignment remains outside the application through the trusted Admin SDK process.
+The interface is an internal configuration tool only. It must make the non-activation boundary explicit and must not present a definition approval as a customer price, quote, service approval or operational authorization.## 9. Bounded staff-interface implementation slice
 
-No staff-management UI or permission-grant endpoint is included. Permission provisioning remains outside the application through the trusted Admin SDK process.
+The implementation reuses PR #125 APIs and existing stores; it does not extend the persistence model or workflow engine.
 
-## 9. First implementation slice — proposed boundary
+1. Add the staff-facing management page and existing-Admin dashboard entry.
+2. Support incomplete draft creation and revision through the existing API. Revisions must include the current expected version number and create a new immutable version.
+3. Display current definition details, operational inputs, cost components, workflow state, version history and immutable decision events.
+4. Expose existing workflow actions only for the corresponding states. The server remains authoritative for action permission, actor separation, current-version checks, evidence requirements and transition outcomes.
+5. Show API authorization/validation failures without treating Admin access as action permission.
+6. Keep Firestore client Rules default-deny for definitions, versions, workflow records and staff permissions.
+7. Keep ACT-12, location-specific scope, customer pricing, cost calculation, service activation and operational execution outside this interface.
+8. Update the SDD progress, backlog, issue register and handoff in the same PR; record only checks actually run and reported.
 
-After this contract is approved, implement one bounded internal configuration slice:
-
-1. Extend the existing version input model and validation to support activity identity, approved applicability representation and configurable cost components.
-2. Preserve transaction-backed create/revise semantics and immutable snapshots.
-3. Add only the server API operations required to create, retrieve and revise internal definitions, with explicit action-level authorization. Read routes remain blocked until the read permission decision in Section 8 is approved.
-4. Reuse the existing workflow route/store and four-person separation; do not duplicate workflow state or events.
-5. Keep Firestore client Rules default-deny for definitions, versions, workflow records and staff permissions.
-6. Add synthetic Firestore Emulator integration tests for create, read authorization, revision, stale-version conflict, immutable history, validation failures and approved-version lineage.
-7. Add Rules-denial tests for unauthenticated, ordinary-customer and generic-admin clients.
-8. Update the SDD progress record with actual code commit and test evidence after implementation.
-
-The location source trace and read permission decision are recorded in Section 13. General applicability only is implemented until an authoritative PUDO location identity exists.
-
+General applicability only is supported until an authoritative PUDO location identity exists. Incomplete drafts may be prepared; the existing server workflow still rejects submission unless the current version meets its minimum cost-component and evidence requirements. Operations and Finance validation remain required.
 ## 10. Explicit exclusions
 
 This slice does not implement:
@@ -173,14 +172,14 @@ This slice does not implement:
 - payment, refunds, settlement or partner invoicing;
 - route planning, dispatch, parcel intake, custody transfer or delivery execution;
 - ACT-12 activity activation;
-- staff-management UI, permission-grant API or a generic workflow engine;
+- staff permission-grant UI/API or a generic workflow engine;
 - new location registry, partner registry or personnel identity system.
 
 DEC-047 service/endpoint combinations remain unavailable pending their independent verification. M0 regression requirements and DEC-036 P0/Conditional P0 release evidence remain separate.
 
 ## 11. Acceptance criteria for the contract
 
-The implementation contract is ready only when:
+The implementation and interface are acceptable only when:
 
 - every field is traceable to an owner-confirmed requirement or a clearly labelled technical recommendation;
 - the existing location identity source is confirmed before location-scoped records are implemented;
@@ -191,15 +190,10 @@ The implementation contract is ready only when:
 - the existing four-person approval workflow remains authoritative;
 - approval does not activate customer pricing or operational execution;
 - direct client access remains denied and all server mutations enforce action-specific authorization;
-- emulator acceptance tests cover persistence, concurrency, version history, permissions and denial cases.
+- existing Emulator tests continue to cover persistence, concurrency, version history, permissions and denial cases;
+- browser checks confirm permitted view/propose/review actions and server-side denial for users without the corresponding permission;
+- no UI action bypasses the existing four-person separation or presents approval as customer pricing/service activation.
 
-## 12. Decision requested
+## 12. Current conclusion
 
-Approve or amend this technical direction before code implementation, particularly:
-
-1. The proposed versioned cost-component representation (configurable amount, explicit currency, configurable basis and evidence description; no formula).
-2. General definitions with optional location-specific overrides, using only the existing authoritative location identity.
-3. A dedicated least-privilege view permission before any list/read API is exposed.
-4. The bounded first implementation slice and its exclusions.
-
-**Current conclusion:** PRs #121–#123 provide the persistence, approval and owner-reviewed activity foundations. The next code slice should extend those foundations into configurable internal activity-cost definitions while keeping pricing, payroll, incident liability and operational execution outside the scope.
+PRs #121–#125 provide the versioned persistence, four-person approval workflow, owner-reviewed activity catalogue, technical contract and server APIs. The current bounded interface extends those existing foundations for staff usability only. It does not change the policy, persistence, action permissions or workflow authority. Independent Operations validation, Finance review and source-backed evidence remain necessary before actual cost definitions can progress through approval. Customer pricing, quote issuance, service eligibility, PUDO activation, payroll, incident liability and operational execution remain outside this scope.

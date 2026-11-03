@@ -1,8 +1,8 @@
 # VeriLyft Implementation-to-SDD Source Traceability
 
 **Document status:** Read-only source inventory — historical platform pass plus focused M1 shipper-portal source review; policy reconciliation remains separate  
-**Inspection date:** 30 October 2026 (historical platform source pass); focused M1 account/draft source review performed 1 November 2026; current-main source refresh performed 3 November 2026  
-**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Focused M1 source-review baseline:** PR #98 merge `71225e3bdd6d827b288a883debb61a03695daef5`; subsequent dashboard source PR #100 and shipment workspace hardening PR #102 are separately traced in Sections 11–12. **Latest bounded source refresh:** main at PR #129 merge a2247efd2d0a7103c85d156f89ea210a696b33e2; the application-source baseline remains PR #125 merge e7966332024fd38eb7cb5b8a1adebc0b584ac894, as PRs #126–#129 changed SDD documentation only. Section 20 records the PR #127 snapshot as historical; Section 21 records the PR #129 current-main reconciliation.  
+**Inspection date:** 30 October 2026 (historical platform source pass); focused M1 account/draft source review performed 1 November 2026; current-main source and operational-cost interface review performed 3 November 2026  
+**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Focused M1 source-review baseline:** PR #98 merge `71225e3bdd6d827b288a883debb61a03695daef5`; subsequent dashboard source PR #100 and shipment workspace hardening PR #102 are separately traced in Sections 11–12. **Latest main baseline:** PR #132 merge `7ecc24f2b14fe34f09a37bfd4f22b45fe7e37eaf`. PR #131 is the latest merged application-code change; PR #132 is documentation-only. Section 21 records the PR #129 source snapshot as historical; Section 22 records the PR #132 and current implementation-branch review.  
 **Scope:** Active application source mapped to A-01–A-20 and ADM-R01–ADM-R54; the root `pudo.zip` archive and production environment remain uninspected  
 **Authority:** Source facts only. This document does not approve product policy, prove runtime behaviour, or authorize implementation.
 
@@ -646,3 +646,29 @@ The PR #125 merge `e7966332024fd38eb7cb5b8a1adebc0b584ac894` remains the current
 This was a read-only repository/document/source inspection. No application code, Firestore Rules, API, schema, permission assignment, configuration, deployment, or production data was changed. No tests, TypeScript, lint, build, Emulator, browser, provider, or physical-operation checks were run. User-reported checks recorded in prior PR continuity remain attributed to the user.
 
 Outcome: PR #125 remains the latest application-source baseline; PR #129 is the current SDD/documentation baseline. The next implementation decision must be based on a bounded capability whose accepted policy, current source reuse, authorization, technical representation, and acceptance criteria are all ready. PUDO verification/inventory approval, customer quote issuance, and DEC-047 service/endpoint activation remain gated.
+
+## 22. PR #132 current-main and operational-cost interface branch review — 3 November 2026
+
+### 22.1 Baseline and method
+
+- Main is at PR #132 merge `7ecc24f2b14fe34f09a37bfd4f22b45fe7e37eaf`; PR #131 remains the latest merged application-code change.
+- A recursive source-tree review and targeted reads covered the shipment draft UI/API/store, quote-lineage store, operational-cost definition API/store/workflow, Admin authorization, representative Admin pages, payment/order routes, Firestore Rules, relevant tests and the current SDD execution documents.
+- The implementation branch `feat/operational-cost-management-ui` adds a proposed page at `app/admin/operational-cost-definitions/page.tsx`, an Admin dashboard link and supporting styles. These branch changes are not yet merged and have not been locally built or browser-tested.
+
+### 22.2 Operational-cost management interface source facts
+
+- Existing server APIs are `GET/POST /api/admin/operational-cost-definitions`, `GET/PATCH /api/admin/operational-cost-definitions/[definitionId]`, and `POST /api/admin/operational-cost-definitions/[definitionId]/workflow`.
+- The proposed UI calls those routes with Firebase bearer tokens. It does not write directly to Firestore.
+- The page uses the existing Admin page guard; API authorization remains separately enforced by `operational_cost_definition.view`, `propose`, `validate`, `finance_review` and `approve` action permissions. The workflow store enforces distinct actors and current-version transitions.
+- The UI supports ACT-01–ACT-11 only, general applicability, incomplete draft preparation, immutable version revisions, version/event history and existing workflow transitions. ACT-12, location-specific scope and permission provisioning are excluded.
+- The API/workflow source requires source-backed cost components before submission. The UI does not supply default amounts, currencies, bases or formulas. Approval remains internal and does not activate customer pricing, service eligibility or physical operations.
+- The branch adds no Firestore collection, field, API route, permission ID, Rules change or second workflow engine.
+
+### 22.3 Review limits and verification still required
+
+This branch review establishes intended source changes only. No tests, TypeScript, lint, build, Emulator, browser or production checks were run in this review environment. Before merge, verify the focused operational-cost tests, full Firestore Emulator-backed suite, `npx tsc --noEmit`, `npm run lint`, `npm run build`, and `git diff --check`. Browser checks must cover a user with view/propose/review assignments and denial when the corresponding action permission is absent. Confirm that Operations, Finance and independent approver identities remain distinct for one version.
+
+The broader source review does not establish customer quote issuance, confirmed independent shipment booking, parcel intake/custody, PUDO inventory, DEC-047 eligibility, route/movement execution, or production readiness. Those capabilities remain separately gated.
+
+**Evidence boundary:** the source-tree and file inspection was read-only. The proposed branch changes are recorded for review, not described as tested or merged. User-reported historical test evidence remains attributed to its original PR checkpoints.
+

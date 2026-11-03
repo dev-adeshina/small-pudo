@@ -8,6 +8,20 @@ Use this as the single implementation pointer. Preserve accepted decisions. Do n
 
 The owner's explicit instruction to proceed supersedes the previous blanket implementation freeze. It does not approve unresolved business-policy proposals or remove P0 release evidence requirements.
 
+## Current bounded work package — operational-cost definition interface and SDD reconciliation
+
+**Baseline:** PR #132 merge `7ecc24f`; PR #131 is the latest merged application-code change. The PR #125 operational-cost APIs, immutable definition versions and four-person approval workflow already exist.
+
+**Implementation scope:** add a staff-facing interface at `/admin/operational-cost-definitions` using only the existing list/create/read/revise/workflow APIs. Support incomplete draft preparation, new immutable revisions, version/event history and existing submit, Operations validation, Finance review, changes-requested, independent approval and rejection transitions. Keep the current Firestore collections, API routes, action permission IDs, default-deny Rules and transaction semantics unchanged.
+
+**Authorization:** the page uses the existing Admin page guard; API calls use Firebase bearer tokens. The server remains authoritative for `operational_cost_definition.view`, `propose`, `validate`, `finance_review` and `approve`. Admin access does not imply these permissions. No staff permission provisioning UI or API is added.
+
+**Hard exclusions:** no ACT-12, location-specific scope, cost defaults, assumed currency/unit, formula, aggregation, accounting, payroll, liability decision, customer pricing, quotation, payment, service activation, PUDO eligibility, shipment booking, parcel intake/custody, route or dispatch execution. An approved internal cost definition does not activate any downstream capability.
+
+**Acceptance:** a permitted staff member can list/read definitions, create an incomplete draft, revise an eligible version without overwriting history, and use only the existing workflow transitions; a user without the corresponding action permission is denied by the API; distinct actors remain enforced by the server; the UI never presents approval as customer pricing or service activation. Verify with focused and full Emulator tests, TypeScript, lint, production build and browser checks before merge.
+
+**Documentation in the same PR:** reconcile the cost technical contract and activity catalogue's former UI exclusion, current progress/README/handoff pointers, backlog and issue register. This avoids another documentation-only PR.
+
 ## Implementation order
 
 ### M0 — Baseline and regression safety
