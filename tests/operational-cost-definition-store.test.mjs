@@ -343,7 +343,7 @@ describe(
       assert.equal(await store.hasPermission(uid, "operational_cost_definition.view"), false);
     });
 
-    it("rejects invalid definition IDs and expected version numbers", async () =>
+    it("rejects invalid definition IDs and expected version numbers", async () => {
       await assert.rejects(
         store.reviseDefinition({
           definitionId: "../invalid",
