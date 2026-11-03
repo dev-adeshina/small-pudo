@@ -44,17 +44,15 @@ Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
 - **Next action:** Review all privileged API routes and Firestore rules together, verify deployed configuration, and test admin/custom-claim behaviour.
 - **Acceptance:** Every privileged action is server-authorized; direct client access is appropriately restricted; no production security certification is claimed without evidence.
 
-### VLY-010 — Admin authorization runtime regression tests outstanding
+### VLY-010 — Admin authorization regression coverage added; residual live checks open
 
-- **Status:** INVESTIGATING
-- **Priority:** High
-- **Evidence:** `lib/admin-auth.ts` calls `/api/admin/auth/verify` and `/api/admin/auth/claim`. The verify endpoint checks a verified email against `ADMIN_EMAILS`. The dashboard, products, categories, and orders pages call the shared client guard in current source. A previous report said a normal customer could reach `/admin` after restarting the browser; source inspection alone neither reproduces nor disproves that runtime report.
-- **Latest check:** On 28 October 2026 the user reported that `npx tsc --noEmit` passed and `npm run dev` started successfully on Next.js 16.4.2. No browser authorization test has been reported yet.
-- **Next action:** With a regular customer account, test direct navigation to `/admin`, `/admin/orders`, `/admin/products`, and `/admin/categories`; verify redirect and session preservation. Then test authorized-admin access and privileged API denial.
-- **Acceptance:** Ordinary customers cannot access protected pages or privileged APIs; denial does not unnecessarily sign a customer out; legitimate admin email/password and Google flows remain functional.
+- **Status:** PARTIALLY RESOLVED — automated regression coverage merged in PR #131; selected live/deployed checks remain OPEN.
+- **Priority:** High before production certification.
+- **Evidence:** PR #131 extracts the framework-independent Admin API authorization decision core and adds 11 focused tests. User-reported PR-head verification: 11/11 focused tests and 86/86 Firestore Emulator-backed tests passed; TypeScript, lint and production build were recorded as passing during PR verification. On 1 November, the user also confirmed production browser checks for Google and email/password administrator sign-in, refresh/browser-restart persistence, ordinary-customer Admin denial with customer session preserved, and admin-orders API rejection without a bearer token (HTTP 401).
+- **Remaining checks:** live administrator revocation and revoked-token behaviour; authenticated non-admin bearer-token rejection on representative privileged APIs; upload-route denial; deployed configuration parity.
+- **Acceptance:** ordinary customers cannot access protected pages or privileged APIs; denial does not unnecessarily sign a customer out; legitimate admin email/password and Google flows remain functional; revocation and deployed configuration behaviour are evidenced before production certification.
 
-- **Policy clarification (PR #66):** PM-01–PM-12 are accepted owner policy, including action-level permission assignment (PM-02), designated permission administration, location-capability guards, second-approval categories, protected audit access, bounded Management/Support access, and controlled emergency access. The outstanding issue is technical enforcement and runtime evidence, not whether action-level permissioning is accepted.
-
+- **Policy clarification (PR #66):** PM-01–PM-12 are accepted owner policy. The outstanding issue is residual technical/runtime evidence, not whether action-level permissioning is accepted.
 ### VLY-011 — Cloudinary authorized/unauthorized upload behaviour needs runtime verification
 
 - **Status:** INVESTIGATING
@@ -457,3 +455,12 @@ The current repository baseline is PR #129 merge a2247efd2d0a7103c85d156f89ea210
 The source trace records the existing quote-lineage/version store and operational-cost definition/approval workflow as implemented internal foundations, not customer quote issuance or pricing. It also corrects the Firestore Rules test inventory: tests/firestore.rules.test.mjs contains explicit direct-client denial coverage for quote, quote-version, booking, parcel and operational-cost records. The audit inspected but did not execute this test.
 
 VLY-025 remains blocked for physical verification/inventory approval because the accountable Operations position is unassigned and the authoritative initial inventory source is unidentified. VLY-027 is capability-specific rather than a blanket blocker. These status updates do not claim runtime, deployed Rules, production-data or operational verification.
+
+### VLY-024 — Operational-cost definition management interface
+
+- **Status:** IN PROGRESS — bounded UI implementation proposed over the existing PR #125 APIs; not yet merged or runtime-verified.
+- **Priority:** High for internal operational configuration usability; not a customer launch gate by itself.
+- **Evidence:** The repository contains server-side list/create/read/revise APIs, immutable version persistence, workflow events and action-specific permission checks. The current main source has no corresponding management interface.
+- **Scope:** Provide staff UI for draft creation/revision, version history and existing workflow actions. Preserve the existing API, Firestore, Rules, permission IDs and four-person separation. No permission provisioning UI, customer pricing, formula, service activation or operational execution.
+- **Dependencies:** Operations validation, Finance review and source-backed cost evidence remain necessary before real definitions can be submitted/approved. The accountable Operations position remains unassigned.
+- **Acceptance:** UI actions use existing endpoints; server-side permissions remain authoritative; immutable history and distinct reviewers are preserved; denied users receive clear feedback; approval is not represented as customer pricing or service activation. Browser and full regression verification are recorded before merge.

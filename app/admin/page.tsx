@@ -15,6 +15,7 @@ import {
   Truck,
   ShoppingBag,
   Tags,
+  ClipboardList,
 } from "lucide-react";
 
 import { auth } from "@/lib/firebase";
@@ -340,6 +341,14 @@ export default function AdminDashboard() {
                   Manage categories
                 </span>
 
+                <ArrowUpRight size={17} />
+              </Link>
+
+              <Link href="/admin/operational-cost-definitions" className="admin-action">
+                <span>
+                  <ClipboardList size={18} />
+                  Operational cost definitions
+                </span>
                 <ArrowUpRight size={17} />
               </Link>
             </div>
