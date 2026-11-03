@@ -1,6 +1,6 @@
 import type { FieldValue, Firestore } from "firebase-admin/firestore";
 
-import { assertOperationalCostDefinitionReadyForSubmission } from "@/lib/server/operational-cost-definition-store-core";
+import { assertOperationalCostDefinitionReadyForSubmission } from "./operational-cost-definition-store-core";
 
 export const OPERATIONAL_COST_ACTION_PERMISSIONS = {
   submit: "operational_cost_definition.propose",
