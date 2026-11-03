@@ -1,5 +1,7 @@
 import type { FieldValue, Firestore } from "firebase-admin/firestore";
 
+import { assertOperationalCostDefinitionReadyForSubmission } from "@/lib/server/operational-cost-definition-store-core";
+
 export const OPERATIONAL_COST_ACTION_PERMISSIONS = {
   submit: "operational_cost_definition.propose",
   validate: "operational_cost_definition.validate",
@@ -35,6 +37,12 @@ type WorkflowDocument = {
 type VersionDocument = {
   versionNumber?: number;
   createdBy?: string;
+  activityCode?: unknown;
+  activityName?: unknown;
+  activityDescription?: unknown;
+  applicability?: unknown;
+  inputs?: unknown;
+  costComponents?: unknown;
 };
 
 type LineageDocument = {
@@ -152,6 +160,14 @@ export function createOperationalCostDefinitionWorkflowStore({
             if (current.state !== "draft" || version.createdBy !== actorUid) {
               throw new Error("Only the version creator may submit a draft version");
             }
+            assertOperationalCostDefinitionReadyForSubmission({
+              activityCode: version.activityCode,
+              activityName: version.activityName,
+              activityDescription: version.activityDescription,
+              applicability: version.applicability,
+              inputs: version.inputs,
+              costComponents: version.costComponents,
+            });
             if (versionNumber > 1) {
               const previousVersionQuery = definitionRef.collection("versions")
                 .where("versionNumber", "==", versionNumber - 1).limit(1);
