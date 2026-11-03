@@ -1772,6 +1772,14 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - PR #127 is merged at `fec1216587f1b5e0ce599ec54740e6c762fe4166`; DEC-050 is the owner-approved responsibility split.
 - Added a proposed five-area Operations verification checklist and evidence-category framework in `PLATFORM_PUDO_LOCATION_VERIFICATION_CHECKLIST_AND_EVIDENCE.md`. It requires physical verification by Operations and evidence appropriate to the actual operating arrangement, but does not invent universal legal documents, contracts, photos, coordinates, retention periods, or technical fields.
 - The checklist is a proposal, not yet an approved mandatory operating procedure. Operations must validate it against actual location arrangements.
-- No verified PUDO inventory exists. The accountable Operations owner and authoritative source for the initial candidate inventory remain unidentified and require owner input.
+- No verified PUDO inventory exists. The user has confirmed that the accountable Operations position has not yet been assigned. No named or designated Operations owner should be assumed; the role must be formally assigned before the checklist can become an operational procedure or the initial inventory exercise can be governed.
 - Firestore remains authoritative. Google Maps Platform remains an unevaluated candidate only. No schema/API/permission, map integration, customer selector, service/action capability, or DEC-047 eligibility is approved by this documentation work.
-- Next: identify the accountable Operations owner and authoritative candidate-inventory source; obtain representative examples of the actual site operating arrangements; then validate evidence sufficiency and complete authority/technical-contract design before implementation.
+- Next: the business must formally assign the accountable Operations position and identify the authoritative candidate-inventory source; obtain representative examples of the actual site operating arrangements; then have the assigned owner validate evidence sufficiency and complete authority/technical-contract design before implementation.
+
+
+### Operations accountability clarification — 3 November 2026
+
+- The owner confirmed that the accountable PUDO Operations position has **not yet been assigned**. No named person or role-holder is currently authorised by this record to act as the accountable Operations owner.
+- This is an organisational dependency, not a technical gap that should be filled by assuming an existing Admin or staff role owns Operations approval.
+- The proposed verification checklist remains a draft. It must not be treated as a mandatory operational procedure, and the initial location inventory exercise must not be represented as governed/approved, until the business formally assigns the accountable Operations position and confirms the inventory source.
+- Registration may be documented as a proposal-submission responsibility under DEC-050, but physical verification and operational approval must be performed by the formally designated Operations authority. Activation remains a separate, explicitly authorised action after approval.
