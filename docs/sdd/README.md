@@ -38,9 +38,13 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 - `DECISIONS.md` — architecture and product decisions, including constraints that future sessions must preserve.
 - `SESSION_HANDOFF.md` — copy/paste instructions for starting a new ChatGPT session with these documents.
 
-### Current execution direction — 3 November 2026
+### Current execution direction — PR #129, 3 November 2026
 
-PR #127 is merged at `fec1216587f1b5e0ce599ec54740e6c762fe4166`. The bounded M1.1/M1.2/M1.3 draft-workspace foundation is complete only for its documented scope; it is not a complete Shipper Portal. The current customer-facing dependency is the authoritative PUDO location registry and capability foundation. DEC-050 approves the location registration/Operations verification-and-approval/separately-authorised activation responsibility split. No verified PUDO location inventory exists; the initial inventory must be bootstrapped from an accountable source and physically verified. A proposed five-area verification checklist is documented but awaits Operations validation; the accountable Operations position has not yet been assigned, and the authoritative inventory source is not yet identified. Formal assignment is required before operational adoption of the checklist or a governed inventory exercise. See `PROGRESS.md`, VLY-025 in `ISSUES.md`, `PLATFORM_PUDO_LOCATION_REGISTRY_AND_CAPABILITY_FOUNDATION.md`, and `PLATFORM_PUDO_LOCATION_REGISTRATION_AND_VERIFICATION_WORKFLOW.md`, and `PLATFORM_PUDO_LOCATION_VERIFICATION_CHECKLIST_AND_EVIDENCE.md`. All DEC-047 service/endpoint combinations remain unavailable pending independent operational verification and approval. Firestore remains the authoritative registry; Google Maps Platform is only a candidate for future evaluation. No schema, API, permission catalogue, mapping provider, or customer PUDO-selection capability is approved.
+PR #129 is merged at a2247efd2d0a7103c85d156f89ea210a696b33e2. The latest application-source baseline remains PR #125 at e7966332024fd38eb7cb5b8a1adebc0b584ac894; the PR #125-to-#129 comparison reports only SDD documentation changes. Current source confirms the bounded shipment-draft workspace, internal immutable quote-lineage/version persistence, and internal operational-cost definition/version/approval foundation. None of these is customer quote issuance, customer pricing calculation, booking confirmation, parcel intake/custody, or route execution.
+
+DEC-050's registration/verification/activation responsibility split remains accepted. The accountable Operations position is still unassigned and the authoritative initial inventory source is unidentified; therefore PUDO physical verification and inventory approval remain blocked. All twelve DEC-047 service/endpoint combinations remain unavailable pending their independent operational evidence and approvals. Do not invent owners, rates, location records, eligibility or custody events.
+
+See Section 21 of IMPLEMENTATION_SOURCE_TRACEABILITY.md, the current checkpoint in PROGRESS.md, VLY-025/VLY-027 in ISSUES.md, and the current handoff in SESSION_HANDOFF.md. DEC-045 permits bounded implementation under accepted policy; these capability-specific gates are not a blanket code freeze.
 
 ### SDD-first working protocol
 
@@ -74,7 +78,7 @@ When sources conflict, do not silently favour code or documentation. Record the 
 
 ### Current Milestone 4 status
 
-The current `main` baseline is PR #111 merge commit `730581ba6b4a6f5ea25718d8d11face40aaed0dd`. PRs #105–#111 after the M1.3 source baseline are SDD documentation changes; the application-source baseline for the bounded M1.3 and storefront/payment paths is unchanged from `5017cc9`. The current draft APIs, store, validation and tests were re-fetched read-only at PR #111's baseline and are summarized in `IMPLEMENTATION_SOURCE_TRACEABILITY.md` Section 19. This does not constitute runtime, deployed-configuration or production verification.
+The current main baseline is PR #129 merge commit a2247efd2d0a7103c85d156f89ea210a696b33e2. The latest application-source baseline remains PR #125 at e7966332024fd38eb7cb5b8a1adebc0b584ac894; the PR #125-to-#129 compare confirms only SDD documentation paths changed. Current source findings and their limits are recorded in IMPLEMENTATION_SOURCE_TRACEABILITY.md Sections 20–21. This does not constitute runtime, deployed-configuration or production verification.
 
 Milestones 1–3 are complete at the owner-approved policy/documentation level: DEC-038 through DEC-044 are recorded in the SDD, with the relevant documentation PRs merged through PR #51. PR #52 reconciled the Milestone 3 completion record. The 15 high-level owner decisions D-01–D-15, staff permission policies PM-01–PM-12, and booking-party authority policies BP-01–BP-22 remain accepted at their recorded policy levels.
 

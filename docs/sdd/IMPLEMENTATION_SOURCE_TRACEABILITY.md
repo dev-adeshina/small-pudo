@@ -2,7 +2,7 @@
 
 **Document status:** Read-only source inventory — historical platform pass plus focused M1 shipper-portal source review; policy reconciliation remains separate  
 **Inspection date:** 30 October 2026 (historical platform source pass); focused M1 account/draft source review performed 1 November 2026; current-main source refresh performed 3 November 2026  
-**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Focused M1 source-review baseline:** PR #98 merge `71225e3bdd6d827b288a883debb61a03695daef5`; subsequent dashboard source PR #100 and shipment workspace hardening PR #102 are separately traced in Sections 11–12. **Latest bounded source refresh:** `main` at PR #127 merge `fec1216587f1b5e0ce599ec54740e6c762fe4166`; the source changes through PR #125 are reviewed in Section 20, while PRs #126–#127 are confirmed documentation-only.  
+**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Focused M1 source-review baseline:** PR #98 merge `71225e3bdd6d827b288a883debb61a03695daef5`; subsequent dashboard source PR #100 and shipment workspace hardening PR #102 are separately traced in Sections 11–12. **Latest bounded source refresh:** main at PR #129 merge a2247efd2d0a7103c85d156f89ea210a696b33e2; the application-source baseline remains PR #125 merge e7966332024fd38eb7cb5b8a1adebc0b584ac894, as PRs #126–#129 changed SDD documentation only. Section 20 records the PR #127 snapshot as historical; Section 21 records the PR #129 current-main reconciliation.  
 **Scope:** Active application source mapped to A-01–A-20 and ADM-R01–ADM-R54; the root `pudo.zip` archive and production environment remain uninspected  
 **Authority:** Source facts only. This document does not approve product policy, prove runtime behaviour, or authorize implementation.
 
@@ -604,7 +604,7 @@ Before implementation, inspect the exact current shipment-draft validation/store
 
 - The shared Admin authorization helper currently checks a verified Firebase bearer token (including revoked-token checking), verified email, membership in `ADMIN_EMAILS`, the `admin === true` custom claim and an active `adminAccess/{uid}` record. This is a source observation for the inspected helper, not proof that every route or deployed environment is correctly configured.
 - Customer draft authentication remains separate from Admin authorization. A verified customer session does not grant staff action permission.
-- The current Firestore Rules retain public reads and Admin-gated writes for categories/products, deny direct client access to orders, and deny direct client access to operational-cost definitions/versions. No explicit `shipmentQuotes` rule was found in the inspected rules file; no direct-client quote Rules test was found in the selected test files. Do not infer a client-access grant. Add an explicit test if quote persistence is later exposed or its Rules boundary is changed.
+- The current Firestore Rules retain public reads and Admin-gated writes for categories/products, deny direct client access to orders, and deny direct client access to operational-cost definitions/versions. No explicit shipmentQuotes match was found in firestore.rules; unmatched paths remain subject to Firestore Rules default denial. However, tests/firestore.rules.test.mjs contains an explicit test denying direct client reads and writes across quote, quote-version, booking, parcel and operational-cost paths. This is test-source evidence, not deployed-Rules verification or server API authorization coverage.
 - The recursive active source tree still contains no dedicated PUDO location registry, location capability management service, location-management API/UI, or customer PUDO directory. The existing draft origin/destination remain free text. No Google Maps API/provider integration, geocoding, device geolocation or proximity-discovery implementation was found in the reviewed tree.
 - The active source tree still does not establish customer quote issuance/calculation, quote acceptance/confirmed-booking creation, parcel/intake/custody execution, route/leg/movement management, service eligibility or general financial reconciliation. Existing cost-definition and quote-lineage persistence foundations must not be described as those broader capabilities.
 
@@ -615,3 +615,34 @@ The source review confirms two bounded server-side foundations beyond the earlie
 The PR #125 merge `e7966332024fd38eb7cb5b8a1adebc0b584ac894` remains the current application-source baseline at PR #127 main `fec1216587f1b5e0ce599ec54740e6c762fe4166`, because the intervening PR #126–#127 changes are documentation-only.
 
 **Evidence boundary:** This refresh inspected GitHub repository tree/commit comparisons and the selected source/configuration/test files listed above. No application code, schema, Firestore Rules, configuration, API, permission, deployment or runtime behaviour was changed. No tests, TypeScript, lint, build, emulator, browser, provider, production-data or operational checks were run during this review. User-reported local verification remains explicitly attributed to the PR #118 and PR #125 continuity entries.
+
+
+## 21. PR #129 current-main reconciliation — 3 November 2026
+
+### 21.1 Repository and application-source baseline
+
+- Current main: PR #129 merge commit a2247efd2d0a7103c85d156f89ea210a696b33e2.
+- Previous application-source baseline: PR #125 merge commit e7966332024fd38eb7cb5b8a1adebc0b584ac894.
+- The compare from PR #125 to PR #129 reports 27 commits ahead, 0 behind, and changes confined to nine SDD documentation paths. No application, test, Firebase Rules, package, or configuration path changed in that interval. PR #129 is therefore the latest documentation baseline, not a new application-source baseline.
+- This conclusion is bounded to the reported Git compare. It does not establish that every source path has been semantically reviewed or that deployed/runtime behaviour matches the repository.
+
+### 21.2 Corrected Firestore Rules test trace
+
+- firestore.rules has no explicit shipmentQuotes, shipmentBookings, or shipmentParcels match. The unmatched paths are subject to Firestore Rules default denial.
+- tests/firestore.rules.test.mjs includes a test covering direct client reads and writes to shipmentQuotes/{quoteId}, quote versions, shipmentBookings/{bookingId}, shipmentParcels/{parcelId}, and operational-cost definition/version paths.
+- That test runs against the Firestore Emulator when invoked; this source refresh inspected the test but did not execute it. Do not describe it as deployed-Rules verification or server API authorization coverage.
+
+### 21.3 Confirmed current foundations and boundaries
+
+- Shipment drafts: customer-authenticated, customer-scoped draft preparation remains the only inspected independent shipment customer workspace; origin/destination remain free text.
+- Quote lineage: shipment-quote-store-core.ts persists quote lineage and immutable versions transactionally. No customer quote issuance, pricing calculation, quote acceptance, or booking confirmation route is established.
+- Operational costs: internal versioned cost definitions and a four-person proposal/Operations validation/Finance review/independent approval workflow exist. General applicability is supported; location-specific configuration is rejected. This is cost configuration, not a customer pricing engine or quote calculator.
+- Authorization: operational-cost APIs use verified Firebase bearer tokens and explicit active staff action permissions. The workflow uses distinct action permissions and separation-of-duties checks. This is not a complete platform-wide staff authorization/capability service.
+- Physical operations: no authoritative PUDO registry, customer PUDO directory, intake/custody execution, route/movement execution, or independent shipment booking confirmation API was established by the inspected paths.
+- PUDO governance: DEC-050's responsibility split is accepted, but the accountable Operations position and authoritative initial inventory source remain unassigned/unidentified. Do not proceed with verification or inventory approval by inventing an owner.
+
+### 21.4 Evidence and implementation boundary
+
+This was a read-only repository/document/source inspection. No application code, Firestore Rules, API, schema, permission assignment, configuration, deployment, or production data was changed. No tests, TypeScript, lint, build, Emulator, browser, provider, or physical-operation checks were run. User-reported checks recorded in prior PR continuity remain attributed to the user.
+
+Outcome: PR #125 remains the latest application-source baseline; PR #129 is the current SDD/documentation baseline. The next implementation decision must be based on a bounded capability whose accepted policy, current source reuse, authorization, technical representation, and acceptance criteria are all ready. PUDO verification/inventory approval, customer quote issuance, and DEC-047 service/endpoint activation remain gated.
