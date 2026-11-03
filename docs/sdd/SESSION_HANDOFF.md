@@ -1,3 +1,12 @@
+## Current continuation — PR #126 merged; DEC-050 PUDO location governance approved — 3 November 2026
+
+- PR #126, `docs: define PUDO location capability foundation`, is merged at `b666d7e8e9bc37ad12c2f12d025cd920263295cf`. It is documentation-only. The bounded application-source inspection baseline remains PR #125 merge `e7966332024fd38eb7cb5b8a1adebc0b584ac894`.
+- The owner approved DEC-050's responsibility split: Admin or explicitly designated staff register proposed PUDO locations; Operations physically verifies the location, address, operating arrangement and relevant evidence, then approves operational readiness; a separately authorised staff member activates only after Operations approval. Registration, verification, approval and activation are distinct and attributable. Exact permission grants remain subject to DEC-043/PM-01–PM-12 reconciliation.
+- There is **no verified PUDO location inventory** today. The initial inventory must be bootstrapped from an accountable business/Operations source and physically verified. Do not infer locations from free-text shipment drafts, map listings or directories.
+- Firestore remains the authoritative registry. Google Maps Platform is only a candidate for future evaluation; no provider/API/geocoding/geolocation integration has been selected or approved. Mapping may assist discovery later but cannot establish location verification, authorisation, activation, capability or eligibility.
+- The workflow is recorded in `PLATFORM_PUDO_LOCATION_REGISTRATION_AND_VERIFICATION_WORKFLOW.md`; DEC-050 is in `DECISIONS.md`; VLY-025, `PROGRESS.md` and `README.md` are reconciled.
+- **Next task:** define the practical Operations verification checklist and evidence sufficiency; identify the accountable Operations owner and source for the initial inventory; reconcile edit/suspension/reactivation and activation authority with DEC-043/PM-01–PM-12; then complete the source-aligned technical contract. Do not code the registry, map integration, or customer PUDO selector yet. All DEC-047 combinations remain unavailable until their independent evidence and Operations approval are recorded.
+
 Continue **VeriLyft — Beyond Borders** in repository `dev-adeshina/small-pudo`.
 
 
