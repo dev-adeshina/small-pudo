@@ -1,16 +1,16 @@
 # VeriLyft Progress Tracker
 
-> **Current direction (3 November 2026):** PR #123 is reviewed and merged at `e687750bb86fd998a99bcdcd5502238dcca24de1`. PRs #121–#122 provide the internal operational cost-definition persistence and four-person approval foundation; PR #123 records the owner-reviewed activity catalogue and workflow requirements. The current task is a bounded technical contract for configurable internal activity costs. No actual cost amounts, currencies, units, formulas, allocation methods, compensation rules, partner terms, customer pricing or capability activation are approved. Use `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` as the execution pointer. DEC-047 and DEC-036/M0 release gates remain independent.
+> **Current direction (3 November 2026):** PR #124 is reviewed and merged at `3671f3cd66fcb3c314c5c2b31596f0cbe7e4ce10`. PRs #121–#123 provide the operational cost-definition persistence, four-person approval and owner-reviewed activity catalogue; PR #124 approves the technical contract. The current code slice adds configurable internal cost components and permission-gated server APIs. General applicability is supported first because no authoritative PUDO location identity exists in active application source. Customer pricing, quote issuance and operational capability activation remain separate. DEC-047 and DEC-036/M0 release gates remain independent.
 
 
 **Last updated:** 3 November 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest confirmed main merge:** PR #123 reviewed and merged on 2 November 2026 at `e687750bb86fd998a99bcdcd5502238dcca24de1`. The user subsequently reported local `main` synchronized after this merge.  
-**Application-source inspection baseline:** a bounded read-only review was performed against `main` at `e687750bb86fd998a99bcdcd5502238dcca24de1`, covering the operational cost-definition store, approval workflow, workflow route, Firestore Rules, relevant Emulator tests and related SDD artifacts. This is not a full-repository, runtime or production audit. Earlier source baselines remain historical.  
+**Latest confirmed main merge:** PR #124 reviewed and merged on 3 November 2026 at `3671f3cd66fcb3c314c5c2b31596f0cbe7e4ce10`. The user subsequently reported local `main` synchronized after this merge.  
+**Application-source inspection baseline:** a bounded read-only review was performed against `main` at `3671f3cd66fcb3c314c5c2b31596f0cbe7e4ce10`, covering the operational cost-definition store, approval workflow, workflow route, Firestore Rules, relevant Emulator tests, location identity source trace and related SDD artifacts. This is not a full-repository, runtime or production audit. Earlier source baselines remain historical.  
 **Historical audit comparison baseline:** `cccad3c4eebe398c8369d5ce90ea05ee551589cf` — retained for the original audit only; it is not the current repository head.  
 **Admin Portal requirements/audit:** PR #2 merged; PR #3 merged; PR #4 closed without merge.  
-**Current phase:** Milestone 4 — SDD reconciliation and bounded implementation. PR #118's internal quote-lineage/immutable-version persistence foundation and PRs #121–#123's operational cost foundations are merged. The current task is owner review of the proposed internal activity-cost configuration technical contract. No customer pricing or quote capability is authorized. M0 baseline/regression safety and DEC-036 P0/Conditional P0 release evidence remain active. M1.1, M1.2 and the bounded M1.3 draft-workspace foundation are complete only for their stated scopes; this is not a complete shipper portal.
+**Current phase:** Milestone 4 — bounded implementation. PR #118's quote-lineage foundation and PRs #121–#124's operational cost-definition foundations and approved technical contract are merged. The first internal cost-configuration API slice is under implementation. The next major product track after this bounded slice is the customer-facing shipment journey; commercial pricing remains independently gated. M0 baseline/regression safety and DEC-036 P0/Conditional P0 release evidence remain active. M1.1, M1.2 and the bounded M1.3 draft-workspace foundation are complete only for their stated scopes; this is not a complete shipper portal.
 
 > This tracker records the current documented working state. Verify the live repository, current branch/PR state, and dated test results before treating any item as complete.
 
@@ -1715,3 +1715,24 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - [ ] Record actual code commit and dated test/build/lint/Emulator results after implementation; no new code or tests are claimed by this documentation proposal.
 
 **Evidence boundary:** The owner-confirmed directions are discussion-derived requirements. The source review is bounded and read-only. No application code, Firestore schema, API, permissions, Rules or production behaviour changed in this checkpoint. No tests, lint, TypeScript check or build were run for this documentation proposal. Independent Operations validation and source-backed Finance evidence remain distinct from owner confirmation.
+
+
+## 79. Internal operational cost-configuration API and versioned cost components — 3 November 2026
+
+**Baseline:** PR #124 merge `3671f3cd66fcb3c314c5c2b31596f0cbe7e4ce10`.  
+**Working branch:** `feat/operational-cost-definition-configuration-api`.
+
+- [x] Traced the active source and SDD location references. No authoritative PUDO location registry or location-management service exists in the inspected active application tree; free-text shipment-draft origin/destination fields are not location identities.
+- [x] Selected general applicability only for the first cost-definition slice. Location-specific overrides are deferred until an authoritative PUDO location identity exists.
+- [x] Selected dedicated read permission `operational_cost_definition.view`; Admin claims and mutation permissions do not imply read access.
+- [x] Extended the versioned definition model with ACT-01–ACT-11 activity identity, general applicability and configurable cost components.
+- [x] Represented amounts as decimal strings with explicit currency codes and configurable basis; no amount, currency, unit, formula or default is supplied.
+- [x] Added submission readiness validation requiring at least one cost component with amount, explicit currency, basis and evidence description. Drafts may remain incomplete.
+- [x] Added server-side list, create, detail/history and immutable-revision API routes with verified Firebase identity and action-specific permissions.
+- [x] Preserved existing four-person workflow transitions and Firestore client denial.
+- [x] Added Emulator-backed store/workflow coverage and expanded Firestore Rules denial coverage.
+- [ ] Run Firestore Emulator test suite, TypeScript check, lint, production build and `git diff --check` against the branch; record actual results before merge.
+- [ ] Review API authorization, version history, decimal-string validation and submission gate in PR review.
+- [ ] After merge, move to the next customer-facing shipment journey slice without waiting for the entire internal operations suite.
+
+**Evidence boundary:** This is a code proposal in progress. No Emulator, TypeScript, lint or build result is claimed here. No customer-facing UI, location registry, cost calculation, pricing/quote issuance, payroll, incident-liability automation or operational execution is included.
