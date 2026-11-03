@@ -40,7 +40,6 @@ export interface OperationalCostComponentInput {
   basis?: string;
   treatment?: string;
   evidenceDescription?: string;
-  evidenceReference?: string;
 }
 
 export interface OperationalCostDefinitionInput {
@@ -226,7 +225,7 @@ function assertDefinitionInput(
     assertPlainMap(component, "Each operational cost component");
     assertOnlyKeys(
       component,
-      ["key", "label", "description", "amount", "currencyCode", "basis", "treatment", "evidenceDescription", "evidenceReference"],
+      ["key", "label", "description", "amount", "currencyCode", "basis", "treatment", "evidenceDescription"],
       "An operational cost component"
     );
 
@@ -246,7 +245,6 @@ function assertDefinitionInput(
     assertOptionalString(component.basis, "Cost component basis", 120);
     assertOptionalString(component.treatment, "Cost component treatment", 80);
     assertOptionalString(component.evidenceDescription, "Cost evidence description", 1000);
-    assertOptionalString(component.evidenceReference, "Cost evidence reference", 300);
 
     if (component.amount !== undefined) {
       if (
