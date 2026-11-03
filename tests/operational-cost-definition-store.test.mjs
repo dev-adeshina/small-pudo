@@ -303,6 +303,20 @@ describe(
       await assert.rejects(
         store.createDefinition("actor-one", {
           ...validDefinition,
+          costComponents: [{ key: "handling", label: "Handling", amount: "100.00", basis: "Synthetic unit" }],
+        }),
+        /currency code/
+      );
+      await assert.rejects(
+        store.createDefinition("actor-one", {
+          ...validDefinition,
+          costComponents: [{ ...validDefinition.costComponents[0], currencyCode: "ngn" }],
+        }),
+        /three-letter uppercase code/
+      );
+      await assert.rejects(
+        store.createDefinition("actor-one", {
+          ...validDefinition,
           activityCode: "ACT-12",
         }),
         /ACT-01 to ACT-11/
