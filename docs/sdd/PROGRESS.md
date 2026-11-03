@@ -33,7 +33,7 @@
 - **Implementation and release boundary:** Keep unresolved prices, thresholds, service rules, permissions, evidence standards and operational authorities explicit. Designed, implemented, tested, production-verified and launch-accepted remain distinct states. DEC-036 P0 and Conditional P0 acceptance/release requirements remain in force.
 VeriLyft remains the existing Next.js App Router, TypeScript, Firebase Authentication/Firestore/Firebase Admin, Paystack, and Cloudinary application. Preserve its architecture and existing patterns; do not invent parallel services, collections, fields, routes, or permission models.
 
-### Latest implementation slice — quote-lineage persistence foundation — 2 November 2026
+### Historical implementation checkpoint — quote-lineage persistence foundation — 2 November 2026
 
 - **Approved contract:** PR #117 merged; see `PLATFORM_DB01_DB02_DB05_PHYSICAL_PERSISTENCE_API_SECURITY_DESIGN.md`.
 - **Branch:** `feat/shipment-quote-lineage-foundation`.
