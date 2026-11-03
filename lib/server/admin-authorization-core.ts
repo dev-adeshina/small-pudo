@@ -60,7 +60,7 @@ export function createAdminRequestAuthorizer({
 
     const match = request.headers
       .get("authorization")
-      ?.match(/^Bearer\\s+(.+)$/i);
+      ?.match(/^Bearer\s+(.+)$/i);
 
     if (!match) {
       return {
