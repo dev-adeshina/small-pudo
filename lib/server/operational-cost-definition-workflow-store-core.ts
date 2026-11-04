@@ -174,9 +174,15 @@ export function createOperationalCostDefinitionWorkflowStore({
           .doc(actorUid).collection("permissions").doc(permission);
         const permissionSnapshot = await transaction.get(permissionRef);
         const assignment = permissionSnapshot.data();
+        const expiry = assignment?.expiresAt;
+        const notExpired = expiry == null ||
+          (typeof expiry === "object" && "toDate" in expiry &&
+            typeof (expiry as { toDate?: unknown }).toDate === "function" &&
+            (expiry as { toDate(): Date }).toDate().getTime() > Date.now());
         if (
           !permissionSnapshot.exists ||
           assignment?.active !== true ||
+          !notExpired ||
           typeof assignment.assignedBy !== "string" ||
           !assignment.assignedBy.trim() ||
           typeof assignment.reason !== "string" ||
