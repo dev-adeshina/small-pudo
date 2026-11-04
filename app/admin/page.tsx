@@ -351,6 +351,14 @@ export default function AdminDashboard() {
                 </span>
                 <ArrowUpRight size={17} />
               </Link>
+
+              <Link href="/admin/staff" className="admin-action">
+                <span>
+                  <Users size={18} />
+                  Staff and permissions
+                </span>
+                <ArrowUpRight size={17} />
+              </Link>
             </div>
 
             <div className="admin-panel admin-notice">

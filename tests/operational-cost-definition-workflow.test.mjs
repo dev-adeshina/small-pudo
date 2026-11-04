@@ -72,6 +72,30 @@ describe("operational cost approval workflow", { skip: !enabled }, () => {
     assert.equal(events.size, 4);
     await assert.rejects(workflow.transition({ definitionId: d.definitionId, versionId: d.versionId, actorUid: approver, action: "approve" }), /pending independent approval state/);
   });
+  it("rejects workflow actions when the assigned permission has expired", async () => {
+    const d = await draft();
+    await db.collection("staffActionPermissions").doc(d.proposer)
+      .collection("permissions").doc(permissions[0]).set({
+        active: true,
+        assignedBy: "trusted-provisioning-actor",
+        reason: "Expired synthetic test assignment",
+        assignedAt: FieldValue.serverTimestamp(),
+        expiresAt: new Date(Date.now() - 1000),
+      });
+    await assert.rejects(
+      workflow.transition({
+        definitionId: d.definitionId,
+        versionId: d.versionId,
+        actorUid: d.proposer,
+        action: "submit",
+      }),
+      /active, audited action permission/
+    );
+    const state = await db.collection("operationalCostDefinitions").doc(d.definitionId)
+      .collection("versions").doc(d.versionId).collection("approval").doc("workflow").get();
+    assert.equal(state.exists, false);
+  });
+
   it("blocks submission until every cost component has amount, currency, basis and evidence", async () => {
     const incomplete = {
       ...definition,
