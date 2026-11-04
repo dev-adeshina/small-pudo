@@ -1,4 +1,4 @@
-import { createAdminRequestAuthorizer } from "./admin-authorization-core";
+import { createAdminRequestAuthorizer } from "./admin-authorization-core.ts";
 
 const adminEmails=(process.env.ADMIN_EMAILS??"").split(",").map(value=>value.trim().toLowerCase()).filter(Boolean);
 export type StaffManagementAuthorization=
