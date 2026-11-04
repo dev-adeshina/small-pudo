@@ -5,7 +5,7 @@ export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
 async function verifiedUser(request:Request) {
- const match=request.headers.get("authorization")?.match(/^Bearer\\s+(.+)$/i);
+ const match=request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i);
  if(!match) return {error:NextResponse.json({error:"Sign in with the invited account first."},{status:401})};
  try {
   const decoded=await adminAuth.verifyIdToken(match[1],true);
