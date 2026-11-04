@@ -26,7 +26,7 @@ export async function POST(request:Request){
  const url=new URL("/staff/accept-invitation",base);url.searchParams.set("token",invite.token);
  try{
   const result=await new Resend(apiKey).emails.send({from,to:invite.email,subject:"Your VeriLyft staff invitation",html:`<p>You have been invited to join the VeriLyft staff workspace.</p><p><a href="${url.toString()}">Review invitation and activate your staff account</a></p><p>This invitation expires at ${new Date(invite.expiresAt).toLocaleString("en-NG",{timeZone:"Africa/Lagos"})} (Lagos time).</p><p>If you were not expecting this invitation, you can ignore this email.</p>`});
-  if(result.error)throw new Error(result.error.message);
+  if(result.error||!result.data?.id)throw new Error(result.error?.message??"Resend did not confirm the invitation request.");
  }catch{
   try{await staffManagementStore.markInvitationDeliveryFailed(invite.invitationId,auth.uid,"Resend did not confirm delivery.");}catch{}
   return NextResponse.json({error:"The invitation was recorded but email delivery was not confirmed. It has been marked delivery_failed; create a new invitation after checking email configuration."},{status:502});
