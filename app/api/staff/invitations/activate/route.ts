@@ -16,7 +16,7 @@ export async function POST(request:Request){
   if(result.outcome==="invalid")return NextResponse.json({error:"This invitation link is invalid."},{status:404});
   if(result.outcome==="email_mismatch")return NextResponse.json({error:"The signed-in verified email does not match the invitation."},{status:403});
   if(result.outcome==="expired")return NextResponse.json({error:"This invitation has expired. Ask a designated administrator for a new invitation."},{status:410});
-  if(result.outcome!=="activated")return NextResponse.json({error:"This invitation is no longer available for activation."},{status:409});
+  if(result.outcome!=="activated"&&result.outcome!=="already_active")return NextResponse.json({error:"This invitation is no longer available for activation."},{status:409});
   return NextResponse.json({success:true,message:"Your staff account is active. No operational permissions have been assigned."},{headers:{"Cache-Control":"no-store"}});
  }catch{return NextResponse.json({error:"Staff activation could not be completed. Try again."},{status:503});}
 }
