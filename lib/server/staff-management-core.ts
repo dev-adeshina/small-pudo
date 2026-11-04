@@ -79,6 +79,39 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
       const rawToken=randomBytes(32).toString("base64url");
       const invitationRef=db.collection("staffInvitations").doc(), auditRef=db.collection("staffManagementAudit").doc();
       await db.runTransaction(async transaction=>{
+        const existingStaff = await transaction.get(
+          db.collection("staffDirectory").where("email", "==", email)
+        );
+        if (existingStaff.docs.some(document => document.data().status === "active")) {
+          throw new TypeError("This email already belongs to an active staff account.");
+        }
+
+        const existingInvitations = await transaction.get(
+          db.collection("staffInvitations").where("email", "==", email)
+        );
+        for (const document of existingInvitations.docs) {
+          const data = document.data();
+          if (data.status !== "pending") continue;
+          const storedExpiry = data.expiresAt;
+          const expiryTime = storedExpiry && typeof storedExpiry.toDate === "function"
+            ? storedExpiry.toDate().getTime()
+            : storedExpiry instanceof Date ? storedExpiry.getTime() : 0;
+          if (expiryTime > Date.now()) {
+            throw new TypeError("A pending invitation already exists for this email address.");
+          }
+          const expiryAuditRef = db.collection("staffManagementAudit").doc();
+          transaction.update(document.ref, { status: "expired", updatedAt: serverTimestamp() });
+          transaction.create(expiryAuditRef, {
+            action: "invitation.expired",
+            actorUid: "system:invitation-expiry",
+            targetEmail: email,
+            invitationId: document.id,
+            reason: "Invitation expiry was reached before a replacement invitation was created.",
+            outcome: "expired",
+            occurredAt: serverTimestamp(),
+          });
+        }
+
         transaction.create(invitationRef,{email,tokenHash:tokenHash(rawToken),status:"pending",createdBy:input.actorUid,reason,createdAt:serverTimestamp(),expiresAt:expiry});
         transaction.create(auditRef,{action:"invitation.created",actorUid:input.actorUid,targetEmail:email,invitationId:invitationRef.id,reason,outcome:"success",occurredAt:serverTimestamp()});
       });
