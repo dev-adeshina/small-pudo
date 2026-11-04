@@ -10,6 +10,7 @@
 - Explicit administrator-selected invitation expiry; no default expiry period or numeric limit has been invented.
 - Resend email delivery with explicit configuration checks. An invitation is not reported as sent unless Resend confirms the request; delivery failures are marked and audited.
 - Invitation revocation, expiry, verified-email matching and single-use activation.
+- Duplicate active-staff invitations are rejected; a still-pending invitation blocks another invitation to the same email. Expired pending invitations are marked expired and audited transactionally before a replacement is created.
 - Email/password and Google account registration/sign-in at `/staff/accept-invitation`. Activation requires a verified Firebase ID token whose email matches the invitation.
 - Staff directory at `/admin/staff`, with account status, invitation history, permission assignment, modification, suspension, optional expiry and revocation.
 - The only assignable permissions are:
