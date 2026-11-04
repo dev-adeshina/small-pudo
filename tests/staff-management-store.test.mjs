@@ -7,12 +7,12 @@ import { createStaffManagementStore } from "../lib/server/staff-management-core.
 import { createOperationalCostDefinitionStore } from "../lib/server/operational-cost-definition-store-core.ts";
 const enabled=Boolean(process.env.FIRESTORE_EMULATOR_HOST);
 describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
- let app,db,store,costStore;const prefix=randomUUID(),actor=`perm-admin-${prefix}`,uid=`staff-${prefix}`,invites=[];
+ let app,db,store,costStore;const prefix=randomUUID(),actor=`perm-admin-${prefix}`,uid=`staff-${prefix}`,activeUid=`active-staff-${prefix}`,invites=[];
  before(()=>{app=initializeApp({projectId:"demo-verilyft-staff-management"},`staff-management-${prefix}`);db=getFirestore(app);store=createStaffManagementStore({db,serverTimestamp:()=>FieldValue.serverTimestamp()});costStore=createOperationalCostDefinitionStore({db,serverTimestamp:()=>FieldValue.serverTimestamp()});});
  after(async()=>{
   for(const id of invites)await db.collection("staffInvitations").doc(id).delete();
   const perms=await db.collection("staffActionPermissions").doc(uid).collection("permissions").listDocuments();await Promise.all(perms.map(d=>d.delete()));
-  await db.collection("staffActionPermissions").doc(uid).delete();await db.collection("staffDirectory").doc(uid).delete();
+  await db.collection("staffActionPermissions").doc(uid).delete();await db.collection("staffDirectory").doc(uid).delete();await db.collection("staffDirectory").doc(activeUid).delete();
   const audit=await db.collection("staffManagementAudit").where("actorUid","==",actor).get();
   const targetAudit=await db.collection("staffManagementAudit").where("targetUid","==",uid).get();
   await Promise.all([...audit.docs,...targetAudit.docs].map(d=>d.ref.delete()));
@@ -34,7 +34,7 @@ describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
   await store.revokeInvitation(invite.invitationId,actor,"Close duplicate test");
   const replacement=await store.createInvitation({email:"staff.duplicate@example.com",expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Replacement invitation test",actorUid});invites.push(replacement.invitationId);
   await store.revokeInvitation(replacement.invitationId,actor,"Close replacement test");
-  await db.collection("staffDirectory").doc(uid).set({email:"staff.already-active@example.com",status:"active"});
+  await db.collection("staffDirectory").doc(activeUid).set({email:"staff.already-active@example.com",status:"active"});
   await assert.rejects(
    store.createInvitation({email:"staff.already-active@example.com",expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Active account test",actorUid}),
    /already belongs to an active staff account/
