@@ -122,3 +122,39 @@ export function createAdminRequestAuthorizer({
     };
   };
 }
+
+
+export function createStaffPermissionAdministratorAuthorizer(
+  dependencies: Parameters<typeof createAdminRequestAuthorizer>[0]
+) {
+  const authorizeAdminCore = createAdminRequestAuthorizer(dependencies);
+  return async function authorizeStaffPermissionAdministrator(
+    request: Request
+  ): Promise<AuthorizationResult> {
+    const admin = await authorizeAdminCore(
+      request,
+      "An active Admin account is required for staff permission administration."
+    );
+    if (!admin.ok) return admin;
+    try {
+      const designation = await dependencies.adminDb
+        .collection("staffPermissionAdministrators")
+        .doc(admin.uid)
+        .get();
+      if (!designation.exists || designation.data()?.active !== true) {
+        return {
+          ok: false,
+          status: 403,
+          error: "Only an actively designated Staff Permission Administrator may manage staff access.",
+        };
+      }
+      return { ok: true, uid: admin.uid, email: admin.email };
+    } catch {
+      return {
+        ok: false,
+        status: 503,
+        error: "Staff permission-administrator authority could not be verified.",
+      };
+    }
+  };
+}
