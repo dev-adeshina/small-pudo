@@ -23,6 +23,7 @@ describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
   const created=await store.createInvitation({email:"Invited.Staff@example.com",expiresAt:expiry,reason:"Launch operations staff",actorUid:actor});invites.push(created.invitationId);
   const snap=await db.collection("staffInvitations").doc(created.invitationId).get();
   assert.equal(snap.data().email,"invited.staff@example.com");assert.equal(snap.data().status,"pending");assert.notEqual(snap.data().tokenHash,created.token);assert.equal("token" in snap.data(),false);assert.equal(snap.data().expiresAt.toDate().toISOString(),expiry);
+  const listing=await store.listStaff();const listedInvite=listing.invitations.find(item=>item.invitationId===created.invitationId);assert.ok(listedInvite);assert.equal("tokenHash" in listedInvite,false);assert.equal("token" in listedInvite,false);
   await assert.rejects(store.createInvitation({email:"staff@example.com",expiresAt:new Date(Date.now()-1000).toISOString(),reason:"expired",actorUid}),TypeError);
  });
  it("prevents duplicate pending invitations and invitations for active staff",async()=>{
