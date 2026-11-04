@@ -32,7 +32,8 @@ export async function GET(request:Request) {
 export async function POST(request:Request) {
  const identity=await verifiedUser(request);
  if("error" in identity) return identity.error;
- const body=await request.json().catch(()=>({})) as Record<string,unknown>;
+ const parsed:unknown=await request.json().catch(()=>({}));
+ const body:Record<string,unknown>=parsed&&typeof parsed==="object"&&!Array.isArray(parsed)?parsed as Record<string,unknown>:{};
  try {
   // Keep accepting the original invitation token during the transition.
   const result=typeof body.token==="string"
