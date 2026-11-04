@@ -31,7 +31,7 @@ describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
   assert.deepEqual(await store.activateInvitation({token:invite.token,uid,email:"staff.activate@example.com"}),{outcome:"activated"});
   assert.equal((await db.collection("staffDirectory").doc(uid).get()).data().status,"active");
   assert.equal((await db.collection("staffActionPermissions").doc(uid).collection("permissions").get()).empty,true);
-  assert.deepEqual(await store.activateInvitation({token:invite.token,uid,email:"staff.activate@example.com"}),{outcome:"unavailable"});
+  assert.deepEqual(await store.activateInvitation({token:invite.token,uid,email:"staff.activate@example.com"}),{outcome:"already_active"});
  });
  it("assigns, expires, suspends and revokes only approved permissions with audit events",async()=>{
   await db.collection("staffDirectory").doc(uid).set({email:"staff.activate@example.com",status:"active",updatedAt:FieldValue.serverTimestamp()});
