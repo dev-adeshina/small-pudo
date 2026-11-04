@@ -332,7 +332,7 @@ export default function OperationalCostDefinitionsPage() {
             <h1>Operational cost <em>definitions.</em></h1>
             <p>Maintain activity cost definitions through the existing Operations, Finance and independent approval workflow.</p>
           </div>
-          <button type="button" className="cost-primary-button" onClick={startCreate} disabled={loading || Boolean(listError)}><Plus size={17} /> New draft</button>
+          {activationStatus !== "pending" && activationStatus !== "expired" && <button type="button" className="cost-primary-button" onClick={startCreate} disabled={loading || Boolean(listError)}><Plus size={17} /> New draft</button>}
         </section>
 
         <div className="cost-boundary-note">
