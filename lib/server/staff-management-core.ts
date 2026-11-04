@@ -175,6 +175,11 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
         const invitation=await transaction.get(invitationRef);
         if(!invitation.exists) return {outcome:"invalid" as const};
         const data=invitation.data()!;
+        // A successful activation retry is idempotent only for the same
+        // verified email and Firebase UID that originally accepted it.
+        if(data.status==="accepted"&&data.acceptedBy===input.uid&&data.email===email) {
+          return {outcome:"already_active" as const};
+        }
         if(data.status!=="pending") return {outcome:"unavailable" as const};
         if(data.email!==email) return {outcome:"email_mismatch" as const};
         if(!data.expiresAt||typeof data.expiresAt.toDate!=="function"||data.expiresAt.toDate().getTime()<=Date.now()){
