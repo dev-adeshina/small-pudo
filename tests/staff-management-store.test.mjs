@@ -13,7 +13,9 @@ describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
   for(const id of invites)await db.collection("staffInvitations").doc(id).delete();
   const perms=await db.collection("staffActionPermissions").doc(uid).collection("permissions").listDocuments();await Promise.all(perms.map(d=>d.delete()));
   await db.collection("staffActionPermissions").doc(uid).delete();await db.collection("staffDirectory").doc(uid).delete();
-  const audit=await db.collection("staffManagementAudit").where("actorUid","==",actor).get();await Promise.all(audit.docs.map(d=>d.ref.delete()));
+  const audit=await db.collection("staffManagementAudit").where("actorUid","==",actor).get();
+  const targetAudit=await db.collection("staffManagementAudit").where("targetUid","==",uid).get();
+  await Promise.all([...audit.docs,...targetAudit.docs].map(d=>d.ref.delete()));
   if(app)await deleteApp(app);
  });
  it("stores only a token hash and requires an explicit future expiry",async()=>{
