@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowLeft, CheckCircle2, ClipboardList, FilePlus2, Loader2, LogOut, Plus, RefreshCw, Save, Send, ShieldCheck, X } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { logoutAdmin } from "@/lib/auth";
-import { verifyAdminAccess } from "@/lib/admin-auth";
 
 type InputType = "string" | "number" | "boolean" | "date";
 type InputDefinition = { key: string; label: string; description?: string; valueType: InputType; required: boolean; source?: string; unit?: string; precision?: number; conversion?: string };
@@ -125,26 +124,21 @@ export default function OperationalCostDefinitionsPage() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!active) return;
       if (!user) {
-        router.replace("/admin/sign-in");
+        router.replace("/staff/sign-in");
         return;
       }
       if (!user.emailVerified) {
         router.replace("/admin/verify-email?email=" + encodeURIComponent(user.email ?? ""));
         return;
       }
-      try {
-        const email = await verifyAdminAccess(user);
-        const idToken = await user.getIdToken();
-        if (!active) return;
-        setAdminEmail(email);
-        setToken(idToken);
-        setCheckingAuth(false);
-        void loadDefinitions(idToken);
-      } catch (cause) {
-        if (!active) return;
-        if (cause instanceof Error && cause.name === "NotAdmin") router.replace("/account");
-        else router.replace("/admin/sign-in");
-      }
+      const idToken = await user.getIdToken();
+      if (!active) return;
+      setAdminEmail(user.email ?? "");
+      setToken(idToken);
+      setCheckingAuth(false);
+      // The page accepts a verified Firebase identity; each data/action request
+      // is independently authorized by its server-side action permission.
+      void loadDefinitions(idToken);
     });
     return () => { active = false; unsubscribe(); };
   }, [loadDefinitions, router]);
@@ -272,10 +266,10 @@ export default function OperationalCostDefinitionsPage() {
 
   async function handleLogout() {
     await logoutAdmin();
-    router.replace("/admin/sign-in");
+    router.replace("/staff/sign-in");
   }
 
-  if (checkingAuth) return <main className="admin-loading"><span>Checking administrator access...</span></main>;
+  if (checkingAuth) return <main className="admin-loading"><span>Checking staff access...</span></main>;
 
   return (
     <main className="admin-page">
@@ -289,7 +283,7 @@ export default function OperationalCostDefinitionsPage() {
 
       <div className="admin-shell cost-admin-shell">
         <div className="cost-page-topline">
-          <Link href="/admin" className="category-back-link"><ArrowLeft size={15} /> Admin dashboard</Link>
+          <Link href="/" className="category-back-link"><ArrowLeft size={15} /> Home</Link>
           <span className="section-label">OPERATIONS / COST CONFIGURATION</span>
         </div>
         <section className="cost-page-heading">

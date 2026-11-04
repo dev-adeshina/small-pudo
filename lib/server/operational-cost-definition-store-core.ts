@@ -281,7 +281,12 @@ function assertDefinitionId(value: string): void {
 }
 
 function hasAuditedActiveAssignment(value: Record<string, unknown> | undefined): boolean {
-  return value?.active === true &&
+  const expiry = value?.expiresAt;
+  const notExpired = expiry == null ||
+    (typeof expiry === "object" && "toDate" in expiry &&
+      typeof (expiry as { toDate?: unknown }).toDate === "function" &&
+      (expiry as { toDate(): Date }).toDate().getTime() > Date.now());
+  return value?.active === true && notExpired &&
     typeof value.assignedBy === "string" && Boolean(value.assignedBy.trim()) &&
     typeof value.reason === "string" && Boolean(value.reason.trim()) &&
     Boolean(value.assignedAt);

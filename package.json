@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "admin:reconcile": "node scripts/reconcile-admin-access.mjs",
+    "staff:provision-permission-admin": "node scripts/provision-staff-permission-administrator.mjs",
     "test": "node --test"
   },
   "dependencies": {

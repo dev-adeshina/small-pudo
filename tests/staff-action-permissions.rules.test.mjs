@@ -28,6 +28,26 @@ describe("staff action permission Firestore access", () => {
     }));
   });
 
+  it("denies client access to staff identities, invitations, designation and audit records", async () => {
+    const contexts = [
+      environment.unauthenticatedContext().firestore(),
+      environment.authenticatedContext("customer-user").firestore(),
+      environment.authenticatedContext("admin-user", { email_verified: true, admin: true }).firestore(),
+    ];
+    for (const db of contexts) {
+      for (const path of [
+        "staffPermissionAdministrators/admin-user",
+        "staffDirectory/staff-user",
+        "staffInvitations/invitation-one",
+        "staffManagementAudit/event-one",
+        "staffActionPermissions/staff-user/permissions/operational_cost_definition.view",
+      ]) {
+        await assertFails(getDoc(doc(db, path)));
+        await assertFails(setDoc(doc(db, path), { active: true, status: "active" }));
+      }
+    }
+  });
+
   it("keeps operational cost definitions and their versions server-only for every client", async () => {
     await environment.withSecurityRulesDisabled(async (context) => {
       const db = context.firestore();

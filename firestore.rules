@@ -23,6 +23,27 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Staff identity, invitation, designation, permission and audit records are
+    // server-managed. Privileged APIs enforce the trusted administrator record.
+    match /staffPermissionAdministrators/{userId} {
+      allow read, write: if false;
+    }
+    match /staffDirectory/{userId} {
+      allow read, write: if false;
+    }
+    match /staffInvitations/{invitationId} {
+      allow read, write: if false;
+    }
+    match /staffManagementAudit/{auditId} {
+      allow read, write: if false;
+    }
+    match /staffActionPermissions/{userId} {
+      allow read, write: if false;
+      match /permissions/{permissionId} {
+        allow read, write: if false;
+      }
+    }
+
     match /categories/{categoryId} {
       allow read: if true;
       allow write: if isAdmin();
