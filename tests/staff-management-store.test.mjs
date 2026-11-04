@@ -25,6 +25,22 @@ describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
   assert.equal(snap.data().email,"invited.staff@example.com");assert.equal(snap.data().status,"pending");assert.notEqual(snap.data().tokenHash,created.token);assert.equal("token" in snap.data(),false);assert.equal(snap.data().expiresAt.toDate().toISOString(),expiry);
   await assert.rejects(store.createInvitation({email:"staff@example.com",expiresAt:new Date(Date.now()-1000).toISOString(),reason:"expired",actorUid}),TypeError);
  });
+ it("prevents duplicate pending invitations and invitations for active staff",async()=>{
+  const invite=await store.createInvitation({email:"staff.duplicate@example.com",expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Duplicate invitation test",actorUid});invites.push(invite.invitationId);
+  await assert.rejects(
+   store.createInvitation({email:"staff.duplicate@example.com",expiresAt:new Date(Date.now()+7200000).toISOString(),reason:"Second invitation",actorUid}),
+   /pending invitation already exists/
+  );
+  await store.revokeInvitation(invite.invitationId,actor,"Close duplicate test");
+  const replacement=await store.createInvitation({email:"staff.duplicate@example.com",expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Replacement invitation test",actorUid});invites.push(replacement.invitationId);
+  await store.revokeInvitation(replacement.invitationId,actor,"Close replacement test");
+  await db.collection("staffDirectory").doc(uid).set({email:"staff.already-active@example.com",status:"active"});
+  await assert.rejects(
+   store.createInvitation({email:"staff.already-active@example.com",expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Active account test",actorUid}),
+   /already belongs to an active staff account/
+  );
+ });
+
  it("activates only the matching invited identity and grants no permissions",async()=>{
   const invite=await store.createInvitation({email:"staff.activate@example.com",expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Activation test",actorUid});invites.push(invite.invitationId);
   assert.deepEqual(await store.activateInvitation({token:invite.token,uid,email:"other@example.com"}),{outcome:"email_mismatch"});
