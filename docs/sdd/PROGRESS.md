@@ -1811,3 +1811,28 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 **Preserved gates:** DEC-045 bounded implementation authority; DEC-047's twelve unavailable service/endpoint combinations; unassigned accountable Operations position and unidentified initial PUDO inventory source; DEC-036 P0/Conditional P0 release evidence; and unresolved DB-01–DB-12 technical contracts.
 
 **Evidence boundary:** PR #133 checks are attributed to the user's local run. Browser permission-matrix verification remains outstanding. PR #134 is a policy/appointment record only; no Firebase technical provisioning or permission grant was executed by this reconciliation.
+
+
+## 82. Staff invitations and permission management implemented on PR #136 — 4 November 2026
+
+**Working branch:** `feat/staff-invitation-permission-management`.  
+**Pull request:** #136.  
+**Policy basis:** PM-01–PM-02 and the five previously approved operational-cost action permissions.
+
+- [x] Added invite-bound staff identity activation using verified Firebase email/password or Google sign-in; the verified account email must match the invitation.
+- [x] Invitation tokens are generated randomly, stored only as SHA-256 hashes, and excluded from staff-directory API responses.
+- [x] Added explicit expiry, revocation, expiry auditing and Resend delivery confirmation. Missing email configuration fails closed; an unconfirmed delivery is marked `delivery_failed`.
+- [x] Prevented duplicate pending invitations and invitations to an email already belonging to an active staff account. Expired pending invitations are marked expired and audited transactionally before a replacement is created.
+- [x] Added the staff directory and designated-administrator-only UI at `/admin/staff`.
+- [x] Added assignment, modification, suspension, optional expiry and revocation for only the five approved platform-wide operational-cost permissions. Existing workflow separation-of-duties checks remain unchanged.
+- [x] Added server-side designated Staff Permission Administrator authorization, transactionally audited permission/invitation actions, and explicit Firestore client denial for staff-management records.
+- [x] Added a guarded initial-designation provisioning CLI that checks the expected Firebase project and both verified active Admin identities. The CLI has not been executed.
+- [x] Added Emulator-backed store, expiry and Firestore Rules coverage plus unit authorization tests, including duplicate-invitation and invitation-secret redaction assertions.
+- [ ] Owner to run the focused and full Firestore Emulator suites using `firebase emulators:exec`, then TypeScript, lint, production build and `git diff --check` on the synced branch.
+- [ ] Complete browser verification for invitation delivery and both activation methods, negative invitation cases, the permission lifecycle, and generic-Admin denial versus designated-Admin access.
+- [ ] Keep the initial permission-administrator designation inactive until its target UID, provisioning actor, project and reason are reviewed and the controlled command is explicitly approved and run.
+- [ ] Define the separate designated-administrator suspension, recovery and successor lifecycle before relying on this role as a long-term governance control.
+
+**Preserved boundaries:** staff activation grants no operational permissions; Admin status alone grants neither operational permissions nor permission-administration authority; only the five approved permissions are assignable; no second-approval rule, location scope, production Firebase change, customer pricing, booking, payment, custody or dispatch capability is introduced.
+
+**Evidence boundary:** implementation and tests are present on the PR branch. The Vercel preview is a deployment check only. No local Emulator, TypeScript, lint, production-build or browser-verification result is claimed here. No production Firebase provisioning was performed.
