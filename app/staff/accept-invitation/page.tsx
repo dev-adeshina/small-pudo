@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
-import { useEffect,useState } from "react";
+import { Suspense,useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { GoogleAuthProvider,createUserWithEmailAndPassword,reload,sendEmailVerification,signInWithEmailAndPassword,signInWithPopup,signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-export default function AcceptStaffInvitationPage(){
- const [token,setToken]=useState(""),[email,setEmail]=useState(""),[password,setPassword]=useState(""),[mode,setMode]=useState<"register"|"sign-in">("register"),[message,setMessage]=useState(""),[error,setError]=useState(""),[busy,setBusy]=useState(false);
- useEffect(()=>{setToken(new URLSearchParams(window.location.search).get("token")??"");},[]);
+function AcceptStaffInvitationContent(){
+ const token=useSearchParams().get("token")??"";
+ const [email,setEmail]=useState(""),[password,setPassword]=useState(""),[mode,setMode]=useState<"register"|"sign-in">("register"),[message,setMessage]=useState(""),[error,setError]=useState(""),[busy,setBusy]=useState(false);
  async function run(action:()=>Promise<void>){setBusy(true);setError("");setMessage("");try{await action();}catch(cause){setError(cause instanceof Error?cause.message:"The request could not be completed.");}finally{setBusy(false);}}
  async function authenticate(){
   if(!token)throw new Error("This invitation link is missing its token.");
@@ -30,4 +31,8 @@ export default function AcceptStaffInvitationPage(){
  </form>
  <div className="cost-form-actions"><button className="cost-secondary-button" type="button" disabled={busy||!token} onClick={()=>void run(googleSignIn)}>Continue with Google</button><button className="cost-secondary-button" type="button" disabled={busy||!auth.currentUser} onClick={()=>void run(refreshVerification)}>Refresh email verification</button><button className="cost-primary-button" type="button" disabled={busy||!auth.currentUser||!token} onClick={()=>void run(activate)}>Activate staff access</button></div>
  </section></div></main>;
+}
+
+export default function AcceptStaffInvitationPage(){
+ return <Suspense fallback={<main className="admin-page"><div className="admin-shell cost-admin-shell">Loading invitation…</div></main>}><AcceptStaffInvitationContent/></Suspense>;
 }
