@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe,it } from "node:test";
-import { createStaffPermissionAdministratorAuthorizer } from "../lib/server/staff-management-auth.ts";
+import { createStaffPermissionAdministratorAuthorizer } from "../lib/server/admin-authorization-core.ts";
 const token={uid:"designated-admin",email:"ADMIN@example.com",email_verified:true,admin:true};
 function harness({designation={exists:true,data:()=>({active:true})},adminAccess={exists:true,data:()=>({active:true})},verifyError,lookupError}={}){
  const calls=[];
