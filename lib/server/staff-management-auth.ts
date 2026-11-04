@@ -1,5 +1,5 @@
-import { adminAuth, adminDb } from "@/lib/firebase-admin";
-import { createAdminRequestAuthorizer } from "@/lib/server/admin-authorization-core";
+import { adminAuth, adminDb } from "../firebase-admin";
+import { createAdminRequestAuthorizer } from "./admin-authorization-core";
 
 const adminEmails=(process.env.ADMIN_EMAILS??"").split(",").map(value=>value.trim().toLowerCase()).filter(Boolean);
 export type StaffManagementAuthorization=
