@@ -2,8 +2,6 @@ import { adminAuth, adminDb } from "@/lib/firebase-admin";
 import { createAdminRequestAuthorizer } from "@/lib/server/admin-authorization-core";
 
 const adminEmails=(process.env.ADMIN_EMAILS??"").split(",").map(value=>value.trim().toLowerCase()).filter(Boolean);
-const authorizeAdmin=createAdminRequestAuthorizer({adminAuth,adminDb,adminEmails});
-
 export type StaffManagementAuthorization=
  | {ok:true;uid:string;email:string}
  | {ok:false;status:401|403|503;error:string};
