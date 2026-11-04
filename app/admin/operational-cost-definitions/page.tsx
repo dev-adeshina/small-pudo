@@ -137,21 +137,26 @@ export default function OperationalCostDefinitionsPage() {
       if (!active) return;
       setAdminEmail(user.email ?? "");
       setToken(idToken);
+      let nextStatus: "pending" | "active" | "none" | "expired" | "unknown" = "unknown";
       try {
         const response = await fetch("/api/staff/invitations/activate", {
           headers: { Authorization: "Bearer " + idToken },
           cache: "no-store",
         });
         const result = await response.json();
-        if (active && response.ok && ["pending", "active", "expired", "none"].includes(result.status)) {
-          setActivationStatus(result.status);
-          if (result.status !== "pending" && result.status !== "expired") void loadDefinitions(idToken);
+        if (response.ok && ["pending", "active", "expired", "none"].includes(result.status)) {
+          nextStatus = result.status;
         }
       } catch {
-        if (active) setActivationStatus("unknown");
+        // Existing staff access should remain usable if the onboarding-status check is temporarily unavailable.
       }
       if (!active) return;
+      setActivationStatus(nextStatus);
       setCheckingAuth(false);
+      if (nextStatus !== "pending" && nextStatus !== "expired") {
+        // The server independently checks each operational action permission.
+        void loadDefinitions(idToken);
+      }
     });
     return () => { active = false; unsubscribe(); };
   }, [loadDefinitions, router]);
