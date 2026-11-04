@@ -54,7 +54,19 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
       }));
       return {
         staff,
-        invitations: invitationSnapshot.docs.map(document => { const data=document.data(); return { invitationId:document.id,...data,status:data.status==="pending"&&data.expiresAt?.toDate&&data.expiresAt.toDate().getTime()<=Date.now()?"expired":data.status,createdAt:iso(data.createdAt),expiresAt:iso(data.expiresAt),revokedAt:iso(data.revokedAt),acceptedAt:iso(data.acceptedAt) }; }),
+        invitations: invitationSnapshot.docs.map(document => {
+          const data = document.data();
+          const safeData = Object.fromEntries(Object.entries(data).filter(([key]) => key !== "tokenHash"));
+          return {
+            invitationId: document.id,
+            ...safeData,
+            status: data.status === "pending" && data.expiresAt?.toDate && data.expiresAt.toDate().getTime() <= Date.now() ? "expired" : data.status,
+            createdAt: iso(data.createdAt),
+            expiresAt: iso(data.expiresAt),
+            revokedAt: iso(data.revokedAt),
+            acceptedAt: iso(data.acceptedAt),
+          };
+        }),
         audit: auditSnapshot.docs.map(document => { const data=document.data(); return { auditId:document.id,...data,occurredAt:iso(data.occurredAt) }; }),
       };
     },
