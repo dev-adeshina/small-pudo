@@ -1859,3 +1859,21 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - [ ] Begin application-code changes only after the owner explicitly approves that implementation plan. Quote calculation/issuance/acceptance and DEC-047 combinations remain separately gated.
 
 **Evidence boundary:** this PR changes SDD documentation only. The source refresh is read-only. Owner-reported test/browser evidence remains attributed to the owner; no application tests, build, production verification or operational evidence collection is claimed by this documentation update.
+
+## 84. PR #140 merged; consolidated M2 implementation-readiness plan prepared — 5 November 2026
+
+- [x] PR #140 merged at 8b62d218847beea5e49dc7afcee203f44bc68da9. The specialist SDD documents now reconcile to the PR #137 application-source baseline.
+- [x] Confirmed the documentation baseline is PR #140; the application-source baseline remains PR #137.
+- [x] Completed the final readiness assessment: no customer-facing M2 pricing, quote or booking capability is ready for application-code implementation today.
+- [x] Identified the first bounded candidate as structured evidence capture on the existing operational-cost component model, reusing the current store, immutable versions, APIs, staff interface, permissions and separated approval workflow.
+- [x] Recorded the specific current evidence-model gaps and prohibited duplicate registries/workflows or premature pricing calculation.
+- [x] Prepared `PLATFORM_M2_IMPLEMENTATION_READINESS_AND_STAGED_PLAN.md` with source baselines, stage dependencies, acceptance criteria, technical/commercial/eligibility/release gates and the separate code-authorization checkpoint.
+- [x] Updated CURRENT_IMPLEMENTATION_STATUS.md, ISSUES.md, README.md and SESSION_HANDOFF.md to use PR #140 and the staged plan as the active direction.
+- [ ] Owner review and approval of the staged plan.
+- [ ] If approved, complete Stage 0 technical contract and executable acceptance fixtures for the internal cost-evidence enhancement.
+- [ ] Obtain separate explicit owner approval of the Stage 0 contract and exact Stage 1 implementation scope before application-code changes.
+
+**Readiness conclusion:** plan approval permits Stage 0 technical-contract work only. It does not authorize Stage 1 code, customer pricing, quote calculation/issuance/acceptance, booking, payment, parcel intake/custody, DEC-047 activation or production release.
+
+**Evidence boundary:** this checkpoint changes SDD documentation only. Source facts remain tied to PR #137; the source review and historical owner-reported tests were not rerun by this planning update.
+
