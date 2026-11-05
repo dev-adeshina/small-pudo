@@ -1907,3 +1907,18 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 **Current gate:** Stage 1 implementation is prepared on `feat/m2-structured-cost-evidence` for review and local verification. No new collection, permission, workflow state, Firestore Rules grant, migration, upload store, cost calculation, pricing, quote, booking or physical-operation capability was added.
 
 **Validation boundary:** the assistant cannot execute the repository's local Node/Firestore Emulator environment in this session. No tests, TypeScript, lint, build or browser checks are claimed as passing. The PR review must include the owner's local command results before merge.
+
+
+## 87. M2 configurable activity-cost foundation decision — 6 November 2026
+
+- [x] Owner confirmed that VeriLyft has not started operating and no actual operating-cost records are available.
+- [x] Changed the M2 sequence: actual evidence collection is not a prerequisite for building the internal activity-cost configuration capability.
+- [x] Prepared `PLATFORM_M2_CONFIGURABLE_ACTIVITY_COST_FOUNDATION_DECISION.md` as the final focused readiness checkpoint. It defines `not_configured`, `configured` and `no_separate_cost`, explicit null semantics, rationale/evidence gates, legacy compatibility, acceptance criteria and the exact code boundary.
+- [x] Re-inspected the existing operational-cost store, workflow, staff UI and focused tests. Existing fields support incomplete drafts, but there is no explicit configuration state and explicit `amount: null` is not currently accepted. Submission requires amount/currency/basis/evidence/treatment for every component.
+- [ ] Owner review and merge of the final focused decision PR.
+- [ ] After merge, implement the bounded three-state configuration in the existing store/API/workflow/UI and tests. Do not create a new collection, migration, permission or parallel workflow.
+- [ ] Run focused and full Emulator tests, TypeScript, lint, production build, diff checks and browser verification before merging the application-code PR.
+
+**Implementation authorization:** merging the focused decision authorizes only the internal configurable activity-cost foundation. It does not authorize cost calculation/allocation, customer prices, Standard/Express/Scheduled model selection, quote issuance/acceptance, booking, payment, DEC-047 eligibility, PUDO operations, custody, fulfilment or production release. Actual evidence and separated approval remain required before configured costs are relied upon commercially.
+
+**Evidence boundary:** this is a documentation/source-review checkpoint. No application code or runtime behaviour changed in this PR; no tests/build/browser/production results are claimed.
