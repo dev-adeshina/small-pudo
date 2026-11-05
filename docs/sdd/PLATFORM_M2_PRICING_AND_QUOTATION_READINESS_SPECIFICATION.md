@@ -347,3 +347,25 @@ The owner has now supplied enough Standard operating-scope direction to define a
 **Initial code boundary after that contract is approved:** internal persistence/validation primitives and synthetic Firestore Emulator plus direct-client Rules-denial tests only, if the source review confirms the slice is safe. No customer pricing calculation, rate application, quote issuance/acceptance, storefront delivery charge, customer route/UI, staff compensation execution, transport dispatch, parcel intake, custody or service eligibility activation. No real rates or guessed defaults. Reuse the existing App Router/Firebase/Admin patterns and PR #118 quote-lineage foundation where appropriate; do not create a parallel pricing authority.
 
 DEC-048 remains authoritative for commercial quote readiness. All twelve DEC-047 service/endpoint combinations remain pending and unavailable. Express and Scheduled evidence can follow the reusable Standard configuration foundation; their service models and operating eligibility are not inferred from Standard.
+
+## 19. Consolidated M2 review package reconciliation — 5 November 2026
+
+The owner-approved pre-implementation review package is now merged in PR #139 at 364909e15dcdb719ac64ff96b10592f8b4e183f5. This section aligns the readiness status with that package; it does not add a new commercial decision or authorize application-code implementation.
+
+### Accepted commercial and relationship boundaries
+
+- DEC-048 remains authoritative: one parcel and one itemized quote per independent booking for minimum launch; multi-parcel/cross-obligation allocation is deferred; no Standard, Express or Scheduled pricing model is selected; minimum-necessary service-specific inputs require approved source, source classification, unit, precision, conversion and missing-value behaviour; quote validity and physical-handover deadline remain separate; pricing governance remains separated; and overlapping storefront/shipment inputs use one shared pricing-rule authority.
+- DEC-049 remains authoritative for quote lineage, exact-version acceptance, one booking per accepted offer and parcel creation only upon authorized acceptance of actual physical possession. Booking acceptance does not create payment, parcel, intake, custody or route side effects.
+- The DB-01/DB-02/DB-05 physical persistence/API/security design was separately approved in PR #117. That approval covers the bounded quote-lineage/version and relationship foundation only; it does not authorize quote issuance, quote acceptance, booking creation, parcel intake or custody.
+- The internal quote-lineage store is an opaque persistence foundation. It is not a pricing calculator, quote issuer, customer API or customer acceptance workflow.
+- The existing operational-cost configuration is also an implemented internal foundation: versioned activity definitions, activity-specific input metadata, costComponents, staff interface and separated Operations/Finance/independent approval workflow already exist. The remaining evidence-register gaps are structured source attribution and controlled Finance treatment; do not recreate cost-component persistence, APIs or workflow as a parallel system.
+
+### Current quote-readiness blockers
+
+No launch service is ready to issue an independent shipment quote. Standard, Express and Scheduled each still require evidence-backed service-specific model selection, input/source/unit/conversion mapping, rates/formulas or approved fixed components, currency/precision/rounding, explicit tax/fee treatment, effective context, quote validity and separate handover deadline. No monetary value or duration may be inferred from storefront product pricing or the owner-provided route/schedule proposal.
+
+All twelve DEC-047 service/endpoint combinations remain pending verification and unavailable by default. Operations accountability and authoritative PUDO inventory evidence remain unresolved. DB-03, DB-04, DB-06–DB-12 remain capability-specific open contracts where identified in the DB-01–DB-12 specification; DEC-036 release evidence remains separate.
+
+### Implementation boundary
+
+The next work is the final implementation-readiness review and consolidated staged plan. No shared pricing calculation, service pricing configuration, customer quote calculation/issuance/acceptance, confirmed booking, payment, intake, custody, route or dispatch capability is enabled by this reconciliation. A later implementation plan must distinguish independently Ready internal foundations from capabilities blocked by missing owner decisions, operational evidence, technical contracts or acceptance fixtures.

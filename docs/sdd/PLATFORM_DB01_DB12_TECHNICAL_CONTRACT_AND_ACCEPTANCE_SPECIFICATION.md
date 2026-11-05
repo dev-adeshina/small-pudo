@@ -283,7 +283,7 @@ The next implementation step must not start with quote calculation or confirmed 
 - DEC-047 actual eligibility outcomes and Operations evidence for the twelve service/endpoint combinations;
 - per-service pricing model, approved input/source/unit/conversion mapping, rates/formulas, currency/arithmetic and explicit fee/tax treatment;
 - quote validity and separate physical handover deadlines, including triggers and missed-deadline outcomes;
-- Physical representation, transaction mechanism and API/security enforcement of the accepted DEC-049 DB-01/DB-02/DB-05 logical rules;
+- Customer-facing API/security/concurrency/replay/recovery contracts for quote issuance and acceptance, and the separately gated parcel/intake commands. The bounded DB-01/02/05 physical design is approved by PR #117 and its internal persistence foundation was implemented by PR #118; those approvals do not enable the customer or physical commands;
 - DB-03 parcel-to-route-leg relationship and capacity/movement evidence rules;
 - DB-06 payment allocation and DB-11 financial-event linkage/reconciliation rules;
 - DB-07/DB-08 relationship verification, delegation and business authority evidence;
@@ -292,22 +292,22 @@ The next implementation step must not start with quote calculation or confirmed 
 - DB-12 recipient/field/channel/consent/retry/failure ownership;
 - exact API/security/concurrency/replay/recovery contracts and the case-level acceptance fixtures for the capability being enabled.
 
-Following the owner review/merge of this technical-contract baseline and the DEC-049 relationship reconciliation, proceed with a separate source-aligned physical persistence/API/security design review. Only after that design and the relevant commercial/operational prerequisites are approved may an implementation slice be selected. Keep every blocked capability unavailable; do not create a placeholder booking/quote schema.
+PR #117 has already approved the source-aligned physical persistence/API/security design for DB-01/DB-02/DB-05, and PR #118 implemented the bounded internal quote-lineage/version persistence foundation. Do not repeat that design review or create a placeholder booking/quote schema absent new source evidence or a concrete conflict. Select an independently Ready slice only after the consolidated SDD reconciliation and implementation-readiness review. Keep every blocked customer, payment, parcel, intake, custody and fulfilment capability unavailable until its own prerequisites are satisfied.
 
 ### 9.1 Recommended execution order
 
-1. Treat DEC-049 as the accepted logical authority for DB-01/DB-02/DB-05; keep DB-03, DB-04, DB-06–DB-12 open where marked.
-2. Conduct a separate read-only source-aligned physical persistence/API/security design review for the accepted booking/parcel/quote rules, including local consistency, access enforcement, indexes, migration/recovery and source reuse.
+1. Treat DEC-049 as the accepted logical authority for DB-01/DB-02/DB-05 and PR #117 as the approved bounded physical-design authority; PR #118 is the implemented internal persistence foundation. Keep DB-03, DB-04 and DB-06–DB-12 open where marked.
+2. Do not repeat the DB-01/02/05 physical design review absent new source evidence or a concrete conflict. Reuse the approved physical contract and existing PR #118 store.
 3. Resolve only owner/operational inputs that block the next intended capability; preserve deferred capabilities under DEC-045/DEC-047.
-4. Finalize executable acceptance cases and synthetic fixtures for the exact implementation slice.
-5. Obtain owner review/merge of the physical design before any physical schema/API implementation.
+4. Finalize executable acceptance cases and synthetic fixtures for the exact implementation slice, including the positive, denial, concurrency, replay and recovery paths relevant to that slice.
+5. Obtain owner review/merge of any still-open capability-specific contract before implementing that capability; this is not a requirement to reopen the already-approved DB-01/02/05 physical design.
 6. Begin implementation only for the approved Ready slice, preserving the existing application architecture; add automated tests and non-production verification alongside each implementation PR. Do not claim launch readiness until DEC-036 P0/Conditional P0 evidence and operational release requirements are satisfied.
 
 ## 10. Explicit non-approvals
 
 This document does not approve:
 
-- Firestore collection/subcollection/document names, field names, indexes, identifiers, status enums, schemas or migration/backfill plans;
+- Additional Firestore collection/subcollection/document names, field names, indexes, identifiers, status enums, schemas or migration/backfill plans beyond the bounded DB-01/02/05 paths and relationship fields explicitly approved in the companion physical-design contract;
 - API route paths, HTTP methods, request/response payloads, token formats or new services;
 - fixed/calculated/hybrid pricing model for any service, actual rates/formulas/coefficients, units/conversions, currency, precision, rounding, taxes, surcharges, discounts or fee values;
 - quote validity, handover deadlines, Scheduled windows/cutoffs, estimate durations or guarantee policy;
@@ -317,7 +317,7 @@ This document does not approve:
 - physical proof methods, evidence retention periods, legal-hold authority, disclosure recipients or notification retry counts/timeouts;
 - production deployment, provider activation, runtime behaviour, launch readiness or release sign-off.
 
-**Approval boundary:** The owner-reviewed technical baseline and DEC-049 accept only the explicitly stated logical invariants and case-level acceptance direction. Any physical schema, endpoint, permission implementation, provider configuration, operational numeric value or capability activation still requires its own approved specification and evidence.
+**Approval boundary:** DEC-049 accepts the stated logical invariants and case-level acceptance direction. PR #117 separately approves the bounded DB-01/02/05 physical representation; PR #118 implements only the internal quote-lineage/version persistence foundation. Neither approval authorizes quote calculation/issuance, customer acceptance, confirmed booking, parcel creation, intake or custody. Other physical schemas, customer/staff endpoints, permission implementations, provider configurations, operational numeric values and capability activation still require their own approved specifications and evidence.
 
 
 ## 17. DEC-049 relationship decision reconciliation — 2 November 2026
@@ -330,15 +330,23 @@ The relationship table and case-level specifications above are reconciled to the
 - one quote lineage per independent booking has immutable issued versions, one current offer and exact-version acceptance bound to one immutable accepted snapshot;
 - concurrent/replayed acceptance and intake cannot create duplicate bookings or parcels.
 
-**Readiness remains blocked:** pricing models/values/arithmetic/quote and handover durations, DEC-047 service/endpoint evidence, location/action authority, physical proof/evidence, and concrete API/persistence/security design remain unresolved. DB-03, DB-04, DB-06–DB-12 and M0/DEC-036 remain independent gates. The case specifications express required behaviour; they are not executable tests and do not make the capabilities available.
+**Readiness remains blocked for the affected capabilities:** pricing models/values/arithmetic/quote and handover durations, DEC-047 service/endpoint evidence, location/action authority, physical proof/evidence, and the still-open DB-03/04/06–12 API/persistence/security contracts remain unresolved. The bounded DB-01/02/05 physical persistence/API/security design was subsequently approved in PR #117 (see Section 10); that approval does not make quote issuance, acceptance, booking or parcel intake available. M0/DEC-036 remains an independent release gate. The case specifications express required behaviour; they are not executable tests and do not make the capabilities available.
 
-**Next:** perform a separate source-aligned physical persistence/API/security design review for only the accepted DB-01/02/05 rules, without implementing quote issuance, booking acceptance or parcel intake while their independent prerequisites remain blocked.
+**Next:** use the approved PR #117 physical contract as the DB-01/02/05 design authority. Do not repeat that design review absent new source evidence or a concrete conflict. Select the next independently Ready implementation slice only after the consolidated SDD reconciliation and implementation-readiness review; complete the slice-specific contracts and executable acceptance fixtures for any still-open DB-03/04/06–12 dependency before implementing an affected capability.
 
 
-## 10. Physical design follow-on — PR #116 baseline (2 November 2026)
+## 10. Physical design approval — PR #117 — 2 November 2026
 
-The Review 5 sequence is now owner-approved and PR #116 is merged at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90`. The focused source re-fetch at that baseline is recorded in `PLATFORM_DB01_DB02_DB05_PHYSICAL_PERSISTENCE_API_SECURITY_DESIGN.md`.
+The source-aligned physical persistence/API/security design for DB-01/DB-02/DB-05 was approved in PR #117, merged at `feb80197d7278dd32667c6d154f99d7ac9001697`. The approved companion contract is `PLATFORM_DB01_DB02_DB05_PHYSICAL_PERSISTENCE_API_SECURITY_DESIGN.md`.
 
-That companion proposal formalizes the physical representation, transaction/replay boundaries, API and authorization responsibilities, Rules/default-deny implications, query/index policy, additive migration and synthetic acceptance fixtures for DB-01/DB-02/DB-05. It remains a proposal for owner review; this logical contract is not retroactively converted into an approved schema or endpoint specification.
+The approved bounded design covers root-level quote-lineage, confirmed-booking and parcel record families; immutable quote versions nested beneath quote lineage; exact accepted-version linkage; one-time booking-to-parcel linkage; transaction serialization/replay boundaries; server-only trusted writes; default-deny client Rules; and additive compatibility with existing shipment drafts, storefront orders, stock and Paystack flows. The document's named paths/fields and implementation boundaries are approved only to the extent stated in that companion contract.
 
-The next implementation slice, after owner approval of the companion physical contract, is limited to quote-lineage and immutable-version persistence primitives and synthetic Emulator/Rules tests. Quote issuance/acceptance and parcel/intake remain disabled until their separate commercial, DEC-047, authorization, location and evidence prerequisites are approved.
+**Capability boundary remains strict:** PR #117 approval does not enable quote calculation/issuance, customer acceptance, confirmed booking, parcel creation, physical intake/custody, route/dispatch, payment or any DEC-047 service/endpoint combination. DEC-048/DEC-049 commercial and logical invariants, DEC-047 eligibility, DB-03/04/06–12, authorization, evidence and DEC-036 release gates remain independently applicable. Do not describe the approved physical contract as runtime implementation.
+
+## 18. PR #117 physical-contract approval and M2 package reconciliation — 5 November 2026
+
+PR #117's owner-approved DB-01/DB-02/DB-05 physical design is the governing physical contract for the bounded relationship foundation. This corrects older wording in this document that continued to call the companion design a proposal awaiting approval. Preserve the companion document's explicit exclusions and do not broaden its approval.
+
+DEC-049 remains the logical relationship authority. DEC-048 remains the commercial-unit authority. The accepted minimum launch is one parcel and one itemized quote per independent booking, but that commercial choice does not itself determine additional persistence cardinalities or settle DB-03, DB-06 or DB-11. The physical contract does not make quote issuance or acceptance ready.
+
+**Open capability contracts remain:** DB-03 route/leg relationships; DB-04 and other operational lifecycle dependencies; DB-06 payment allocation/settlement; DB-07/DB-08 identity, relationship, delegation and business authority; DB-09 location/service/action eligibility and operational accountability; DB-10 event evidence, reviewer authority, retention and legal hold; DB-11 financial-event linkage/reconciliation; and DB-12 notification recipient, field, channel, consent, retry and failure ownership. Each blocks only the affected capability under DEC-045; none may be treated as resolved by the DB-01/02/05 physical approval.

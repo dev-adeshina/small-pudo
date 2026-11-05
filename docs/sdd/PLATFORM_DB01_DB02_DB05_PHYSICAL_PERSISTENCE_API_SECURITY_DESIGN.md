@@ -12,9 +12,9 @@
 
 ## 1. Purpose and decision boundary
 
-This document translates the accepted logical rules for DB-01 (quote acceptance and booking confirmation), DB-02 (booking-to-parcel relationship), and DB-05 (quote lineage and immutable versions) into a minimum Firestore persistence and server-operation proposal aligned with the existing application.
+This document translates the accepted logical rules for DB-01 (quote acceptance and booking confirmation), DB-02 (booking-to-parcel relationship), and DB-05 (quote lineage and immutable versions) into the bounded Firestore persistence and server-operation design aligned with the existing application.
 
-It is a **technical proposal**, not a new business-policy decision. The proposed collection and field names below are candidates for owner approval. They are not already approved by DEC-049 or Review 5.
+It is an **owner-approved physical technical contract**, not a new business-policy decision. PR #117 approved the root collection paths, bounded relationship fields, immutable-version representation, transaction/replay boundaries and stated exclusions. This approval is a design contract; it is not proof of runtime implementation and does not authorize quote issuance, customer acceptance, booking confirmation, parcel intake or custody.
 
 This design does not approve or enable:
 
@@ -29,7 +29,7 @@ This design does not approve or enable:
 - routing, movement, delivery, payment or financial reconciliation;
 - production deployment or launch readiness.
 
-The immediate design scope is to settle the smallest persistence representation and its future transaction/security boundaries. The first implementation slice remains the quote-lineage and immutable-version technical foundation, after owner approval of this contract. That foundation must not expose quote issuance or acceptance while their independent prerequisites remain blocked.
+PR #117 approved the bounded persistence representation and its transaction/security boundaries. PR #118 subsequently implemented the internal quote-lineage and immutable-version persistence foundation with synthetic Emulator and Firestore Rules-denial test coverage. The implemented store remains internal and persistence-only; it does not expose quote calculation/issuance, customer acceptance, confirmed booking, parcel creation, payment, intake or custody. Those capabilities remain blocked by their independent commercial, eligibility, authorization, evidence and release prerequisites.
 
 ## 2. Source inspection and verified repository facts
 
@@ -52,6 +52,8 @@ The following paths were re-fetched at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90
 - Node's built-in test runner is used. Firestore Admin-store tests run against the Firestore Emulator when `FIRESTORE_EMULATOR_HOST` is configured; the existing store suite otherwise skips.
 - Rules tests use `@firebase/rules-unit-testing` and load the repository's actual `firestore.rules`.
 
+PR #118 implemented the bounded lineage/version foundation tests for transactional creation, immutable history, stale and concurrent revisions, accepted-lineage protection and validation, and added direct-client Rules-denial coverage for quote roots, versions, bookings and parcels. The owner later reported the complete PR #137 Firestore Emulator-backed suite passing 100/100 across 14 suites. Quote acceptance, confirmed booking and parcel/intake cases remain blocked specifications, not implemented commands.
+
 ### 2.2 Boundaries and gaps found
 
 - The existing draft path is `users/{uid}/shipmentBookingDrafts/{draftId}`. It is preparation-only. Do not place confirmed bookings, quote lineages, parcels or custody records beneath that path or treat its shape/status as a template.
@@ -65,15 +67,15 @@ The following paths were re-fetched at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90
 
 ### 2.3 Evidence limitation
 
-This was a bounded re-fetch of the relevant current source paths, not a full-repository audit. No tests, build, lint, Emulator run, deployed Firestore Rules check, production query or production-data inspection was performed for this design.
+This was a bounded re-fetch of the relevant source paths at the PR #116 baseline, not a full-repository audit. No tests, build, lint, Emulator run, deployed Firestore Rules check, production query or production-data inspection was performed for the original design. PR #118 later implemented the bounded internal quote-lineage/version store and added synthetic Emulator and Rules-denial test sources; the owner subsequently reported the full PR #137 Emulator suite passing. This later evidence does not convert the original source review into a production audit.
 
-## 3. Recommended physical representation
+## 3. Approved physical representation
 
-### 3.1 Recommendation: centrally queryable root records, with quote versions nested under their lineage
+### 3.1 Approved representation: centrally queryable root records, with quote versions nested under their lineage
 
 Use three separate top-level record families:
 
-| Logical record | Proposed Firestore path | Purpose |
+| Logical record | Approved design path | Purpose |
 |---|---|---|
 | Quote lineage | `shipmentQuotes/{quoteId}` | One logical offer lineage, its current-version pointer, and its one-time accepted-version/booking links. |
 | Immutable quote version | `shipmentQuotes/{quoteId}/versions/{versionId}` | One immutable issued offer snapshot. A revision creates a new child document; it never edits an issued version. |
@@ -96,11 +98,11 @@ These root collection names and paths are approved for the physical foundation. 
 | Reuse `users/{uid}/shipmentBookingDrafts` | Rejected. Drafts are editable preparation records, not issued offers, confirmed bookings or physical parcels. |
 | Reuse storefront `orders` | Rejected. Storefront purchase, payment and stock reservation are separate from independent shipment booking and custody. |
 
-### 3.3 Minimum relationship and field candidates
+### 3.3 Minimum approved relationship and field design
 
-The following is the smallest proposed relationship set. Field names are design candidates; the quote snapshot's internal pricing/service fields are deliberately not specified here.
+The following is the smallest relationship set approved for this bounded physical foundation. The paths and relationship fields shown are part of the PR #117 design approval; the quote snapshot's internal pricing/service fields are deliberately not specified here.
 
-| Record | Proposed minimum data | Mutability rule |
+| Record | Approved minimum data | Mutability rule |
 |---|---|---|
 | Quote lineage | Server-generated document ID; `bookingPartyUid`; `currentVersionId`; optional `acceptedVersionId`; optional `bookingId`; server `createdAt` / `updatedAt`. | Owner and creation identity immutable. Current-version pointer may advance only through a revision transaction before acceptance. Accepted-version and booking links are set once and never replaced. |
 | Quote version | Server-generated version document ID; immutable sequence within the lineage; immutable quote snapshot payload; server issue/creation timestamp; approved validity timestamp when quote issuance is enabled. | Create-only after issue. No update or delete operation for an issued version. The exact snapshot structure and validity inputs belong to the approved pricing/quote contract, not this document. |
@@ -109,7 +111,7 @@ The following is the smallest proposed relationship set. Field names are design 
 
 **Snapshot rule:** the immutable quote-version document is the canonical accepted commercial snapshot. The booking stores the exact `quoteId` and `acceptedQuoteVersionId` pair; it does not duplicate a second independently mutable copy of the price/terms payload. The version must remain retained and reconstructable for the life of the booking and any longer approved retention period. If a later audit/retention contract requires a self-contained booking snapshot, that is a separate explicit design decision; do not duplicate data pre-emptively.
 
-**No speculative status enum:** the relationship can be represented by the existence of the current-version pointer, accepted-version pointer, booking link and parcel link. This proposal does not introduce a booking/quote status vocabulary. Any required lifecycle status enum needs its own approved lifecycle contract and must not become a second source of truth for these relationships.
+**No speculative status enum:** the relationship can be represented by the existence of the current-version pointer, accepted-version pointer, booking link and parcel link. This approved design does not introduce a booking/quote status vocabulary. Any required lifecycle status enum needs its own approved lifecycle contract and must not become a second source of truth for these relationships.
 
 **One-to-one enforcement:** Firestore does not provide a relational unique constraint across arbitrary documents. Enforce the accepted one-to-one relationships through a single transaction that reads and updates the authoritative quote or booking parent. Do not rely on client-side checks or a query-before-write.
 
@@ -270,13 +272,13 @@ The following are required future tests. They are specifications, not a claim th
 
 | Slice | Readiness | Required action |
 |---|---|---|
-| Quote lineage and immutable-version persistence foundation | **Approved for the bounded foundation by PR #117.** | Implement only the repository/types/validation/transaction primitives and Emulator tests needed to create and revise synthetic lineage/version records. No customer route, UI, pricing calculation, issued quote or acceptance command. |
+| Quote lineage and immutable-version persistence foundation | **IMPLEMENTED — PR #118.** | Internal Admin Firestore store creates a lineage and first immutable version transactionally, revises only the expected current version, preserves history and serializes concurrent revisions. Synthetic Emulator and direct-client Rules-denial test coverage was added. No customer route/UI, pricing calculation, quote issuance, acceptance or booking command. |
 | Quote issuance | **Blocked.** | Requires approved pricing configuration, authoritative inputs, quote validity, DEC-047 eligibility and executable operational evidence. |
 | Quote acceptance and booking creation | **Blocked.** | Requires all quote prerequisites plus explicit customer revocation policy, booking-party authorization, API contract and executable acceptance evidence. |
 | Parcel/intake and initial custody | **Blocked.** | Requires staff authentication/action permissions, location/service/action capability, physical-possession proof, DB-10 evidence, correction/investigation and recovery authority. |
 | Staff queues, customer history indexes, routing and reporting | **Not specified here.** | Define exact query and entitlement contracts before adding indexes or projections. |
 
-**Approved implementation direction:** PR #117 authorizes a focused technical foundation that adds the quote-lineage/version persistence core and synthetic Emulator tests, plus direct-client Firestore Rules denial tests. It must not add public routes or expose the records to customers. The existing draft workspace, storefront and Paystack paths must remain unchanged.
+**Implementation outcome:** the bounded foundation authorized by PR #117 was implemented in PR #118. The current source contains the internal quote-lineage/version persistence core and the associated synthetic Emulator/Rules test sources. The owner later reported the full PR #137 Firestore Emulator-backed suite passing 100/100 across 14 suites; this design document does not independently reproduce that run. No public route or customer access was added. Existing draft, storefront and Paystack paths remain separate.
 
 ## 10. Open decisions that remain explicit
 
@@ -295,7 +297,7 @@ A missing or stale prerequisite keeps the affected capability unavailable. No re
 
 ## 11. Approval record
 
-The owner reviewed and merged PR #117 on 2 November 2026. That merge approves the physical representation and its stated boundaries for the specified technical foundation:
+The owner reviewed and merged PR #117 on 2 November 2026. That merge approves the physical representation and its stated boundaries for the specified technical foundation. PR #118 subsequently implemented the bounded internal persistence slice:
 
 - root-level quote, booking and parcel records, with immutable quote versions nested under the quote lineage;
 - the one-time quote-to-booking and booking-to-parcel links to be enforced through their separately gated transactions;

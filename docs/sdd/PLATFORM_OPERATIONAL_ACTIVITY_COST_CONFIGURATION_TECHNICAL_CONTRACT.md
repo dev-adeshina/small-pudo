@@ -1,7 +1,7 @@
 # Operational Activity Cost Configuration — Technical Contract
 
-**Status:** Owner-approved technical foundation (PR #124); server API implementation merged in PR #125; staff-facing interface authorized for this bounded extension in the current work package.  
-**Repository baseline:** PR #132 merge `7ecc24f`; PR #125 API implementation and later authorization/documentation changes are included.  
+**Status:** Internal operational-cost configuration foundation implemented: persistence/API (PR #125), staff interface (PR #133), and staff invitation/permission lifecycle integration (PRs #136–#137).
+**Application-source baseline:** PR #137 merge `55dff8c2a4f4cf6f0e983676e692f0f126f7ec27`. PRs #138–#139 update documentation only.
 **Related foundations:** PR #121 operational cost-definition persistence; PR #122 approval workflow; PR #123 owner-reviewed activity catalogue.  
 **Scope:** Internal, server-authoritative configuration of operational activity costs. This contract does not authorize customer pricing or operational capability activation.
 
@@ -43,9 +43,13 @@ The application already has:
 - Preservation of prior version snapshots.
 - A guard preventing revision while review is active or after rejection.
 
-The current version payload contains `activityName`, `activityDescription` and `inputs`. Input metadata supports string, number, boolean and date types, with optional source, unit, precision and conversion descriptions.
+The current immutable version payload persists activityCode (ACT-01–ACT-11), activityName, optional activityDescription, applicability (currently restricted to general), activity-specific inputs and costComponents.
 
-**Current gap:** the persisted version describes activity/input metadata. It does not yet represent configurable monetary cost components, their currency and basis, or an applicability scope.
+Input metadata supports a stable key, label, optional description, value type (string, number, boolean or date), required flag, and optional source, unit, numeric precision and conversion description. Each cost component supports a stable key and label, optional description, optional decimal-string amount, optional three-letter uppercase currency code, optional basis, optional treatment string and optional evidence description.
+
+The store validates unique input/component keys, supported activity codes, general-only applicability, decimal-string monetary representation, explicit currency and basis when an amount is supplied, and input precision constraints. The workflow submission guard requires at least one cost component and requires each submitted component to contain an amount, explicit currency, basis and evidence description. The version snapshot is persisted immutably and revised through the existing expected-version transaction.
+
+**Remaining model limitations:** cost-component treatment is a free-form optional string rather than a controlled Finance-approved classification; evidence is a free-text description rather than a structured, independently addressable evidence record; no source-owner, source-type, observation-period, sample/method, limitations, Operations-validation or Finance-review evidence object is persisted on the component; and applicability is general-only. These are gaps to assess against the accepted requirements, not permission to create a parallel evidence registry or location model.
 
 ### 3.2 Existing approval and authorization
 
@@ -65,7 +69,7 @@ Approval does not publish or activate a customer pricing rule.
 
 ### 3.3 Existing API and Rules boundary
 
-PR #125 added the list/create/read/revise API routes over the existing store, plus the existing workflow transition route. The API requires a valid, non-revoked Firebase ID token and the dedicated action permission. The current application source still has no management UI; this work package adds that interface without changing the server API.
+PR #125 added the list/create/read/revise API routes over the existing store, plus the existing workflow transition route. The API requires a valid, non-revoked Firebase ID token and the dedicated action permission. PR #133 added the staff interface at /admin/operational-cost-definitions, reusing those APIs, stores and workflow; it did not add a new persistence model or workflow engine. PRs #136–#137 added staff invitation/activation and permission-administration foundations and expiry enforcement in the operational-cost workflow store. The current UI exposes activity identity, applicable inputs and cost-component fields, and explicitly states that saving or approving a definition does not calculate customer prices, issue quotations, activate services or authorize parcel operations.
 
 Firestore Rules explicitly deny client reads and writes to operational cost definitions and versions. Staff action permission records are also server-only/default-denied to clients. The Admin SDK is the existing persistence boundary.
 
@@ -197,3 +201,32 @@ The implementation and interface are acceptable only when:
 ## 12. Current conclusion
 
 PRs #121–#125 provide the versioned persistence, four-person approval workflow, owner-reviewed activity catalogue, technical contract and server APIs. The current bounded interface extends those existing foundations for staff usability only. It does not change the policy, persistence, action permissions or workflow authority. Independent Operations validation, Finance review and source-backed evidence remain necessary before actual cost definitions can progress through approval. Customer pricing, quote issuance, service eligibility, PUDO activation, payroll, incident liability and operational execution remain outside this scope.
+
+## 13. PR #137 current-source reconciliation — 5 November 2026
+
+The later source-aligned review supersedes the stale statements in earlier sections that described cost components or the staff interface as absent. The current application-source baseline is PR #137 (55dff8c2a4f4cf6f0e983676e692f0f126f7ec27); PRs #138 and #139 are documentation-only.
+
+### Confirmed source paths
+
+- lib/server/operational-cost-definition-store-core.ts: persists activityCode, activityName, activityDescription, applicability, inputs and costComponents inside immutable version snapshots.
+- lib/server/operational-cost-definition-workflow-store-core.ts: enforces the existing Operations → Finance → independent approval transitions, action-specific permission checks, actor separation and submission completeness.
+- app/api/admin/operational-cost-definitions/route.ts and sibling definition/workflow routes: server-authoritative list/create/read/revise and workflow operations.
+- app/admin/operational-cost-definitions/page.tsx: staff-facing management interface; it reuses the existing API and clearly labels the tool as internal configuration only.
+- tests/operational-cost-definition-store.test.mjs and tests/operational-cost-definition-workflow.test.mjs: store, version, validation and workflow test sources.
+- firestore.rules: direct client access to operational-cost definitions and versions remains denied.
+
+### Exact persisted cost-component boundary
+
+A cost component currently supports key, label, optional description, amount, currencyCode, basis, treatment and evidenceDescription. Amounts are non-negative decimal strings, not JavaScript floating-point values. If an amount is supplied, the store requires a three-letter uppercase currency code and a non-empty basis. Submission requires a non-empty component array and requires amount, currency, basis and evidence description for every component.
+
+This is a useful configurable foundation, but it is not yet the complete evidence register described in the M2 package. In particular, treatment is not constrained to an approved classification vocabulary; evidence remains descriptive text rather than a structured source reference with owner/type/period/scope/measurement/limitations and reviewer outcomes; and there is no automatic calculation, aggregation, allocation or shipment-cost consumption.
+
+### Applicability, governance and boundaries
+
+- Only general applicability is supported. No location-specific applicability or authoritative PUDO registry is established by this source.
+- ACT-01–ACT-11 are accepted by the store; ACT-12 is rejected.
+- Existing permissions are operational_cost_definition.view, operational_cost_definition.propose, operational_cost_definition.validate, operational_cost_definition.finance_review and operational_cost_definition.approve. The staff-management source enforces designated permission-administrator authority for assignments; the operational-cost workflow continues to enforce the four distinct proposal/review/approval actors.
+- Approval remains an internal cost-definition outcome. It does not publish customer prices, calculate shipment costs, issue quotes, activate a service, or authorize physical operations.
+- No cost-definition collection, duplicate workflow, parallel permission catalogue or new evidence registry is approved by this reconciliation.
+
+**Verification boundary:** the source paths above were read at the PR #137 application-source baseline. The owner reported 100/100 Firestore Emulator-backed tests, TypeScript, lint, production build and git diff --check passing after PR #137. This documentation review did not rerun those commands or inspect production data/runtime state.

@@ -469,7 +469,7 @@ VLY-025 remains blocked for physical verification/inventory approval because the
 
 ### VLY-024 — Operational-cost definition management interface
 
-- **Status:** IMPLEMENTED — PR #133 merged. Browser permission-matrix verification remains OPEN.
+- **Status:** IMPLEMENTED — PR #133 merged. The owner later reported successful live browser testing after PR #138; the precise scenario matrix is not recorded here, so retain only specifically identified permission-matrix cases not covered by that test.
 - **Priority:** High for internal operational configuration usability; not a customer launch gate by itself.
 - **Evidence:** The staff interface at `/admin/operational-cost-definitions` uses the existing list/create/read/revise/workflow APIs, immutable version history and action-specific server permissions. User-reported local verification passed: Firestore Emulator suite 86/86, TypeScript, lint, production build and `git diff --check`.
 - **Scope:** PR #133 adds the staff UI only. Existing API, Firestore, Rules, permission IDs and four-person separation remain authoritative. No permission provisioning UI, customer pricing, formula, service activation or operational execution was added.
@@ -477,3 +477,21 @@ VLY-025 remains blocked for physical verification/inventory approval because the
 - **Dependencies:** Operations validation, Finance review and source-backed cost evidence remain necessary before real definitions can be submitted/approved. The accountable Operations position remains unassigned.
 - **Acceptance:** Local regression/build checks are reported passing. Close the remaining browser-verification item only after testing permitted actions and expected denials with appropriately assigned accounts. Approval must never be represented as customer pricing or service activation.
 
+## M2 commercial pricing and quotation readiness — post-PR #139 reconciliation — 5 November 2026
+
+**Status:** Requirements baseline accepted; specialist SDD reconciliation in progress; no launch service is quote-ready.
+
+- DEC-048 remains authoritative: one parcel and one itemized quote per independent booking for minimum launch; Standard/Express/Scheduled model selection and all monetary arithmetic remain deferred; required inputs must be service-specific and evidence-backed; quote validity and physical-handover deadline remain separate; pricing governance is separated; and overlapping storefront/shipment inputs share one pricing-rule authority.
+- DEC-049 remains authoritative for quote lineage, exact-version acceptance and physical-possession-based parcel creation. The PR #117 physical DB-01/02/05 design is approved, but it does not authorize the gated customer or physical capabilities.
+- The current operational-cost store already persists cost components and applicable input metadata, and the staff interface is implemented. The remaining register gap is structured evidence/source attribution and controlled Finance treatment, not the absence of a cost-component feature. Reuse the existing versioned store/workflow; do not create duplicate architecture.
+- The internal quote-lineage store is persistence-only. Shared pricing calculation, shipment cost consumption, customer quote calculation/issuance/acceptance and confirmed booking are not established by the inspected source.
+- All twelve DEC-047 service/endpoint combinations remain pending verification and unavailable by default. No rates, formulas, units/conversions, currency, precision/rounding, tax/fee treatment, validity duration or handover deadline is approved.
+- DB-03, DB-04 and DB-06–DB-12 remain capability-specific dependencies as recorded in the DB contract. DEC-036 release evidence remains independent.
+
+**Next action:** complete the consolidated SDD reconciliation; then prepare one final implementation-readiness plan that separates independently Ready internal work from blocked commercial, eligibility, booking, payment, location, custody and fulfilment capabilities. Do not begin application-code implementation until the owner approves that plan.
+
+### Browser verification evidence clarification
+
+The owner reported successful live browser testing after PR #138. The current SDD does not contain a scenario-by-scenario test record. Generic browser testing should not remain an open task; retain only specifically identified scenarios that were not covered. Initial Staff Permission Administrator technical provisioning remains a separate unresolved administrative action and must not be inferred from the policy appointment.
+
+**Evidence boundary:** owner-reported evidence only; no independent browser reproduction, production verification, source/runtime change or new operational evidence is claimed here.

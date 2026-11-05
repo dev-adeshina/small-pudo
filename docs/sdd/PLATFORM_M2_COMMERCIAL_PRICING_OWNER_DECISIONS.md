@@ -286,3 +286,11 @@ The owner accepted groups A, C, E, F and G, and deferred groups B and D. This se
 - **G — Accepted:** retain one shared pricing-rule authority for storefront delivery and independent shipment pricing wherever inputs overlap, consistent with DEC-019.
 
 DEC-047's twelve service/endpoint combinations remain pending verification and unavailable by default. This owner response approves no pricing model, rate, formula, currency, unit, conversion, numerical duration, schema, collection, field, cardinality implementation, API, permission, provider or application-code change. Continue with technical relationship/source/API/security contracts and executable acceptance specifications; keep quote issuance unavailable until all commercial and operational prerequisites are approved.
+
+## 14. Reconciliation after owner approval of the M2 pre-implementation package — 5 November 2026
+
+PR #139 merged the consolidated requirements/review package at 364909e15dcdb719ac64ff96b10592f8b4e183f5. The owner's approval of that package confirms the requirements baseline and permits the specialist SDD reconciliation and preparation of a separately bounded implementation plan. It does not reopen DEC-048, select a service pricing model, approve a rate/formula/currency/fee/duration, or create a new commercial decision.
+
+**DEC-048 remains unchanged and authoritative.** Groups A, C, E, F and G remain accepted; B and D remain deferred. No additional owner decision is inferred from the operating-model narrative. The workbook must capture evidence and unknowns without populating invented amounts or units. Technical and operational gates remain separate from commercial approval, including DEC-047's twelve unavailable service/endpoint combinations and the DB-01–DB-12 capability contracts.
+
+**Next decision checkpoint:** after source-aligned SDD reconciliation, present one consolidated implementation-readiness plan. Any new commercial choice must be separately stated, evidenced where necessary, assigned a decision owner and recorded through the existing decision register before it is implemented.

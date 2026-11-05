@@ -1844,3 +1844,18 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 **Preserved boundaries:** staff activation grants no operational permissions; Admin status alone grants neither operational permissions nor permission-administration authority; only the five approved permissions are assignable; no second-approval rule, location scope, production Firebase change, customer pricing, booking, payment, custody or dispatch capability is introduced.
 
 **Historical PR #136 evidence boundary:** at the time PR #136 was prepared, no local Emulator, TypeScript, lint or production-build result was claimed. After PR #137, the owner subsequently reported the 100/100 full Emulator suite and passing TypeScript, lint, production build and diff check recorded in the 5 November authoritative checkpoint. Browser verification remains outstanding. No production Firebase provisioning was performed.
+
+## 83. PR #139 merged — consolidated M2 SDD reconciliation and implementation-readiness path — 5 November 2026
+
+- [x] PR #139 merged at 364909e15dcdb719ac64ff96b10592f8b4e183f5; the consolidated M2 pre-implementation review package is now the accepted requirements baseline.
+- [x] Confirmed current main points to the PR #139 merge commit. The application-source baseline remains PR #137 (55dff8c2a4f4cf6f0e983676e692f0f126f7ec27) because PRs #138 and #139 are documentation-only.
+- [x] Reconciled current source facts for operational-cost component/input persistence, the existing staff interface and separated approval workflow, internal quote-lineage/version persistence, and their non-activation boundaries.
+- [x] Corrected the stale operational-cost technical-contract statements that described cost components and the staff interface as absent.
+- [x] Corrected the DB-01/DB-02/DB-05 status: their bounded physical persistence/API/security design was owner-approved in PR #117 (feb80197d7278dd32667c6d154f99d7ac9001697). This approval does not enable quote issuance/acceptance, booking, parcel intake or custody.
+- [x] Preserved DEC-048 and DEC-049 without creating a new commercial or logical decision. No service model, rate, formula, currency, unit, conversion, fee, tax, duration or eligibility outcome is selected.
+- [x] Recorded the user's report that live browser testing after PR #138 succeeded. The exact scenario inventory is not reproduced here; do not claim unlisted invitation, permission, actor-separation or operational-cost cases were covered.
+- [ ] Complete owner review of this consolidated documentation-only reconciliation PR.
+- [ ] After approval, perform one final implementation-readiness review and publish a consolidated staged implementation plan with source traceability, dependencies, acceptance criteria, explicit capability gates and independently Ready slices.
+- [ ] Begin application-code changes only after the owner explicitly approves that implementation plan. Quote calculation/issuance/acceptance and DEC-047 combinations remain separately gated.
+
+**Evidence boundary:** this PR changes SDD documentation only. The source refresh is read-only. Owner-reported test/browser evidence remains attributed to the owner; no application tests, build, production verification or operational evidence collection is claimed by this documentation update.

@@ -92,7 +92,7 @@ When sources conflict, do not silently favour code or documentation. Record the 
 
 ### Historical Milestone 4 status — baseline through PR #129 (superseded by the 5 November 2026 direction above)
 
-The current main baseline is PR #129 merge commit a2247efd2d0a7103c85d156f89ea210a696b33e2. The latest application-source baseline remains PR #125 at e7966332024fd38eb7cb5b8a1adebc0b584ac894; the PR #125-to-#129 compare confirms only SDD documentation paths changed. Current source findings and their limits are recorded in IMPLEMENTATION_SOURCE_TRACEABILITY.md Sections 20–21. This does not constitute runtime, deployed-configuration or production verification.
+The current documentation baseline is PR #139 merge commit 364909e15dcdb719ac64ff96b10592f8b4e183f5. The latest application-source baseline remains PR #137 at 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27; PRs #138 and #139 changed SDD documentation only. Current source findings and their limits are recorded in IMPLEMENTATION_SOURCE_TRACEABILITY.md Sections 23–24. This does not constitute runtime, deployed-configuration or production verification.
 
 Milestones 1–3 are complete at the owner-approved policy/documentation level: DEC-038 through DEC-044 are recorded in the SDD, with the relevant documentation PRs merged through PR #51. PR #52 reconciled the Milestone 3 completion record. The 15 high-level owner decisions D-01–D-15, staff permission policies PM-01–PM-12, and booking-party authority policies BP-01–BP-22 remain accepted at their recorded policy levels.
 
@@ -122,7 +122,7 @@ The domain and identity decision crosswalk is tracked in `PLATFORM_DOMAIN_BOUNDA
 
 
 - `PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md` — conceptual API/query/provider/evidence responsibilities, authoritative fact ownership, persistence invariants, candidate transaction boundaries, integration contracts and source-reuse guardrails; no schema or API is pre-approved.
-- `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md` — consolidated DB-01–DB-12 relationship, ownership, cardinality, API/security/transaction/recovery contracts and case-level acceptance specifications after DEC-048; logical contract proposal only, not a physical schema or implementation authorization.
+- `PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md` — consolidated DB-01–DB-12 relationship, ownership, cardinality, API/security/transaction/recovery contracts and case-level acceptance specifications after DEC-048/DEC-049; the bounded DB-01/02/05 physical persistence/API/security design is separately owner-approved in PR #117, without enabling quote issuance, booking acceptance, parcel intake or custody.
 
 
 - `PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md` — Review 3 synthesis index mapping A-01–A-20 across authoritative facts, lifecycle, API/persistence/authorization, external effects, acceptance evidence and unresolved dependencies; no implementation architecture is approved.
@@ -135,4 +135,4 @@ The Review 3 technical-design synthesis remains a supporting cross-domain refere
 **Review 3 preparation:** PR #77's technical-design coherence matrix is merged, and `PLATFORM_REVIEW_3_COMPLETENESS_AUDIT.md` records the earlier 15-criterion assessment. DB-01–DB-12 now have a consolidated technical-contract and case-level acceptance proposal for owner review. Remaining service-specific commercial, operational, authority and evidence inputs remain explicit gates. DEC-045 supersedes the earlier blanket implementation freeze; only bounded work within reviewed/approved policy may proceed.
 
 
-The commercial owner-decision proposal was accepted/deferred in DEC-048 and recorded through PR #111. The current active review is the DB-01–DB-12 technical-contract and acceptance package. Review/merge that package before the next booking-related code slice. Do not infer schema, APIs, permissions, providers, rates, durations or operational eligibility from the logical contracts; keep unresolved capabilities disabled under DEC-045/DEC-047.
+The commercial owner-decision proposal was accepted/deferred in DEC-048 and recorded through PR #111. The consolidated M2 pre-implementation review package is now accepted and merged in PR #139. The active work is one consolidated specialist SDD reconciliation, followed by a single implementation-readiness review and staged implementation plan. Application-code changes begin only after the owner explicitly approves that plan. Do not infer schema, APIs, permissions, providers, rates, durations or operational eligibility from the requirements; keep unresolved capabilities disabled under DEC-045/DEC-047.
