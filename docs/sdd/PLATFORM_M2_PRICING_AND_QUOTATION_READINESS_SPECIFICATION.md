@@ -358,6 +358,7 @@ The owner-approved pre-implementation review package is now merged in PR #139 at
 - DEC-049 remains authoritative for quote lineage, exact-version acceptance, one booking per accepted offer and parcel creation only upon authorized acceptance of actual physical possession. Booking acceptance does not create payment, parcel, intake, custody or route side effects.
 - The DB-01/DB-02/DB-05 physical persistence/API/security design was separately approved in PR #117. That approval covers the bounded quote-lineage/version and relationship foundation only; it does not authorize quote issuance, quote acceptance, booking creation, parcel intake or custody.
 - The internal quote-lineage store is an opaque persistence foundation. It is not a pricing calculator, quote issuer, customer API or customer acceptance workflow.
+- The existing operational-cost configuration is also an implemented internal foundation: versioned activity definitions, activity-specific input metadata, costComponents, staff interface and separated Operations/Finance/independent approval workflow already exist. The remaining evidence-register gaps are structured source attribution and controlled Finance treatment; do not recreate cost-component persistence, APIs or workflow as a parallel system.
 
 ### Current quote-readiness blockers
 
