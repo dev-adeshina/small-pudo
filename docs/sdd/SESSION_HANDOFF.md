@@ -562,3 +562,21 @@ PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. T
 7. Browser-check the existing operational-cost page for adding/editing/removing multiple evidence items, date-range or period-description entry, optional original value metadata, treatment classification, legacy narrative display and server rejection of incomplete submission.
 8. Do not merge until these checks pass and any findings are fixed. No local test/build/browser result has been verified by this assistant session.
 9. Preserve all commercial and release gates: no customer price, cost calculation/allocation, quote, booking, payment, service eligibility, PUDO activation, route, dispatch, intake, custody or fulfilment behaviour.
+
+
+## Current handoff — M2 configurable activity-cost foundation — 6 November 2026
+
+**Documentation baseline:** PR #144 merge `3bff2c0604440fa87a1e3286bcc4a5b621c5760f`.  
+**Application-source baseline:** PR #143 merge `1f731f14f98212f186b0855addd26f1c98f01c08`.  
+**Decision package:** `PLATFORM_M2_CONFIGURABLE_ACTIVITY_COST_FOUNDATION_DECISION.md` (final focused preparation checkpoint; merge before code).
+
+1. The owner confirmed VeriLyft has not started operating and no actual operating-cost records exist. Do not block internal configuration implementation waiting for records that cannot yet exist.
+2. Read the decision package as the controlling implementation contract. It supersedes the actual-evidence-first sequence in the earlier shared-pricing readiness review only for the internal configurable activity-cost foundation.
+3. Implement three explicit states on existing cost components: `not_configured`, `configured`, `no_separate_cost`. The first and third use `amount: null`, but they must never be conflated. `no_separate_cost` requires a reason and supporting basis before submission.
+4. Preserve the existing activity catalogue, immutable versions, expected-version concurrency, APIs, permissions, workflow events, Operations/Finance/independent actor separation and Firestore client-denial rules. No new collection, registry, migration or parallel workflow.
+5. The current workflow requires amount/currency/basis/evidence/treatment for every component. Update it so unconfigured components block submission, configured components retain the existing evidence gate, and no-separate-cost components require a reason and structured supporting evidence/policy basis.
+6. Preserve legacy snapshots without migration. A missing legacy amount is not evidence that an activity has no cost.
+7. Keep `basis` flexible; do not invent rates, units, currency, conversions, formulas, allocation, taxes or fees.
+8. This code slice does not implement cost calculation, customer pricing, service-model selection, shared pricing, quotes, booking, payment, PUDO eligibility, route, dispatch, intake, custody or fulfilment. DEC-047, DEC-049, DB-01–DB-12 capability gates and DEC-036 remain in force.
+9. After the decision PR merges, create one focused application-code PR. Run focused and full Emulator tests, `npx tsc --noEmit`, `npm run lint`, `npm run build`, `git diff --check`, then browser-check all three states and rejection paths before merge.
+10. Do not treat synthetic fixtures as real business evidence. Populate and approve actual costs only when real records and accountable reviewers become available.
