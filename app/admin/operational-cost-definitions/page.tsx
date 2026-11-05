@@ -225,7 +225,7 @@ export default function OperationalCostDefinitionsPage() {
           return next;
         }
 
-        return { ...next, [field]: value };
+        return { ...next, [field]: value } as CostComponent;
       }),
     }));
   }
