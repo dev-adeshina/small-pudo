@@ -9,11 +9,26 @@ import { createOperationalCostDefinitionStore } from "../lib/server/operational-
 
 const emulatorAvailable = Boolean(process.env.FIRESTORE_EMULATOR_HOST);
 
+const validEvidence = {
+  sourceReference: "synthetic://invoice/001",
+  sourceOwner: "Synthetic supplier",
+  sourceType: "invoice",
+  representedScope: "Synthetic handling service",
+  observationPeriod: { startDate: "2026-10-01", endDate: "2026-10-31" },
+  coverage: "One synthetic invoice covering one test service",
+  collectionMethod: "Supplier invoice review",
+  originalValue: "1250.50",
+  originalUnit: "NGN",
+  originalCurrencyCode: "NGN",
+  originalPrecision: 2,
+  limitations: "Synthetic test data only",
+};
+
 const validDefinition = {
   activityCode: "ACT-02",
   activityName: "Synthetic parcel handling",
   applicability: "general",
-  costComponents: [{ key: "handling", label: "Synthetic handling", amount: "1250.50", currencyCode: "NGN", basis: "Synthetic unit", evidenceDescription: "Synthetic invoice reference" }],
+  costComponents: [{ key: "handling", label: "Synthetic handling", amount: "1250.50", currencyCode: "NGN", basis: "Synthetic unit", evidenceDescription: "Synthetic invoice reference", treatmentClass: "direct", evidenceItems: [validEvidence] }],
   activityDescription: "Test-only activity description",
   inputs: [
     {
@@ -328,6 +343,49 @@ describe(
         }),
         /Only general applicability/
       );
+    });
+
+    it("persists structured evidence and treatment classification in immutable component snapshots", async () => {
+      const created = await createDefinition();
+      const version = await db.collection("operationalCostDefinitions").doc(created.definitionId)
+        .collection("versions").doc(created.versionId).get();
+      assert.deepEqual(version.data().costComponents[0].evidenceItems, [validEvidence]);
+      assert.equal(version.data().costComponents[0].treatmentClass, "direct");
+    });
+
+    it("allows legacy components without structured evidence to remain readable and revisable", async () => {
+      const legacy = {
+        ...validDefinition,
+        costComponents: [{ key: "handling", label: "Legacy handling", amount: "10.00", currencyCode: "NGN", basis: "legacy unit", treatment: "historical note", evidenceDescription: "legacy narrative" }],
+      };
+      const created = await createDefinition(legacy);
+      const detail = await store.getDefinition(created.definitionId);
+      assert.equal(detail.versions[0].costComponents[0].evidenceDescription, "legacy narrative");
+      assert.equal(detail.versions[0].costComponents[0].treatment, "historical note");
+      assert.equal(detail.versions[0].costComponents[0].evidenceItems, undefined);
+    });
+
+    it("rejects malformed structured evidence and unsupported treatment classifications", async () => {
+      await assert.rejects(store.createDefinition("actor-one", {
+        ...validDefinition,
+        costComponents: [{ ...validDefinition.costComponents[0], evidenceItems: [{ ...validEvidence, sourceReference: " " }] }],
+      }), /Evidence source reference/);
+      await assert.rejects(store.createDefinition("actor-one", {
+        ...validDefinition,
+        costComponents: [{ ...validDefinition.costComponents[0], evidenceItems: [{ ...validEvidence, observationPeriod: { startDate: "2026-11-01", endDate: "2026-10-01" } }] }],
+      }), /valid ordered/);
+      await assert.rejects(store.createDefinition("actor-one", {
+        ...validDefinition,
+        costComponents: [{ ...validDefinition.costComponents[0], evidenceItems: [{ ...validEvidence, originalPrecision: undefined }] }],
+      }), /original unit and precision/);
+      await assert.rejects(store.createDefinition("actor-one", {
+        ...validDefinition,
+        costComponents: [{ ...validDefinition.costComponents[0], evidenceItems: [{ ...validEvidence, unexpected: true }] }],
+      }), /unsupported field/);
+      await assert.rejects(store.createDefinition("actor-one", {
+        ...validDefinition,
+        costComponents: [{ ...validDefinition.costComponents[0], treatmentClass: "allocate_shared" }],
+      }), /classification is unsupported/);
     });
 
     it("lists and retrieves version history only through the server store", async () => {
