@@ -469,7 +469,7 @@ VLY-025 remains blocked for physical verification/inventory approval because the
 
 ### VLY-024 — Operational-cost definition management interface
 
-- **Status:** IMPLEMENTED — PR #133 merged. Browser permission-matrix verification remains OPEN.
+- **Status:** IMPLEMENTED — PR #133 merged. The owner later reported successful live browser testing after PR #138; the precise scenario matrix is not recorded here, so retain only specifically identified permission-matrix cases not covered by that test.
 - **Priority:** High for internal operational configuration usability; not a customer launch gate by itself.
 - **Evidence:** The staff interface at `/admin/operational-cost-definitions` uses the existing list/create/read/revise/workflow APIs, immutable version history and action-specific server permissions. User-reported local verification passed: Firestore Emulator suite 86/86, TypeScript, lint, production build and `git diff --check`.
 - **Scope:** PR #133 adds the staff UI only. Existing API, Firestore, Rules, permission IDs and four-person separation remain authoritative. No permission provisioning UI, customer pricing, formula, service activation or operational execution was added.
