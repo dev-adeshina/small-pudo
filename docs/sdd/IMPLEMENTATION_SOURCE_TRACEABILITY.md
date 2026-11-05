@@ -1,8 +1,8 @@
 # VeriLyft Implementation-to-SDD Source Traceability
 
 **Document status:** Read-only source inventory — historical platform pass plus focused M1 shipper-portal source review; policy reconciliation remains separate  
-**Inspection date:** 30 October 2026 (historical platform source pass); focused M1 account/draft source review performed 1 November 2026; current-main source and operational-cost interface review performed 3 November 2026  
-**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Focused M1 source-review baseline:** PR #98 merge `71225e3bdd6d827b288a883debb61a03695daef5`; subsequent dashboard source PR #100 and shipment workspace hardening PR #102 are separately traced in Sections 11–12. **Latest main baseline:** PR #137 merge `55dff8c2a4f4cf6f0e983676e692f0f126f7ec27`. PR #136 is the preceding staff-management application merge; PR #137 updates staff activation in the workspace. Sections 21–22 remain historical source reviews; Section 23 records the bounded PR #136/#137 source refresh.
+**Inspection date:** 30 October 2026 (historical platform source pass); focused M1 account/draft source review performed 1 November 2026; current-main source and operational-cost interface review performed 6 November 2026  
+**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Focused M1 source-review baseline:** PR #98 merge `71225e3bdd6d827b288a883debb61a03695daef5`; subsequent dashboard source PR #100 and shipment workspace hardening PR #102 are separately traced in Sections 11–12. **Latest application-source baseline:** PR #143 merge `1f731f14f98212f186b0855addd26f1c98f01c08`. **Latest documentation baseline:** PR #144 merge `3bff2c0604440fa87a1e3286bcc4a5b621c5760f`. PR #143 updates the operational-cost evidence source; PR #144 is documentation-only. Section 25 records the M2 operational-cost source refresh and the limits relevant to the next bounded implementation.
 **Scope:** Active application source mapped to A-01–A-20 and ADM-R01–ADM-R54; the root `pudo.zip` archive and production environment remain uninspected  
 **Authority:** Source facts only. This document does not approve product policy, prove runtime behaviour, or authorize implementation.
 
@@ -754,3 +754,38 @@ No shared pricing calculation authority, service-specific pricing configuration,
 No new collection, upload/file store, permission, workflow state, workflow event schema, Firestore Rules grant, migration, cost calculation, aggregation, allocation, customer pricing, quote, booking or physical-operation side effect is intended.
 
 **Verification status:** implementation and tests are prepared on the feature branch. The local Firestore Emulator suite, full `npm test`, TypeScript, lint, build, diff check and browser checks have not yet been executed/verified in this session. Treat this branch as pending local verification, not as a tested or production-ready implementation.
+
+
+## 25. M2 operational-cost source refresh and configurable-cost implementation boundary — PR #143 application baseline / PR #144 documentation baseline — 6 November 2026
+
+### 25.1 Baselines and inspection scope
+
+- Application-source baseline: PR #143 merge `1f731f14f98212f186b0855addd26f1c98f01c08`.
+- Documentation baseline: PR #144 merge `3bff2c0604440fa87a1e3286bcc4a5b621c5760f`.
+- Inspected: `lib/server/operational-cost-definition-store-core.ts`, `lib/server/operational-cost-definition-workflow-store-core.ts`, `app/admin/operational-cost-definitions/page.tsx`, `tests/operational-cost-definition-store.test.mjs` and `tests/operational-cost-definition-workflow.test.mjs`.
+- This is a read-only source inspection. No tests, emulator, typecheck, lint, build, browser or production checks were run as part of this traceability update.
+
+### 25.2 Current operational-cost source facts
+
+- The existing definition input contains an activity code/name/description, activity inputs and a list of cost components. It supports ACT-01–ACT-11.
+- Each existing cost component has an optional decimal-string `amount`, optional `currencyCode`, optional free-text `basis`, optional treatment/narrative evidence, structured `evidenceItems` and `treatmentClass`.
+- Server validation accepts incomplete draft components, but when `amount` is present it requires a valid decimal string, explicit three-letter uppercase currency code and non-empty basis. The current contract does not accept an explicit `amount: null` or a separate configuration-state field.
+- The staff page's editor removes `amount` and `currencyCode` properties when their input is blank. It does not distinguish an unknown amount from an explicit no-separate-cost declaration.
+- The existing workflow submission validator requires every component to have amount, currency, basis, structured evidence and a supported treatment class. This is appropriate for evidence-backed configured costs but cannot represent a reviewed no-separate-cost state.
+- The existing immutable versions, expected-version concurrency, server-side action permissions, separated proposer/Operations/Finance/independent approver workflow and workflow audit events are reusable. No new collection or workflow is needed.
+- Existing store tests cover incomplete drafts, monetary validation, structured evidence, legacy reads and malformed evidence. Workflow tests cover actor separation and rejection of incomplete submissions. They do not yet cover explicit null amounts or configuration states.
+
+### 25.3 Owner-approved next implementation slice
+
+The owner confirmed the business has not started operating and no real cost records exist. Therefore, actual evidence collection is not a prerequisite for implementing internal configuration capability. The next bounded application-code slice is governed by `PLATFORM_M2_CONFIGURABLE_ACTIVITY_COST_FOUNDATION_DECISION.md`.
+
+Implement three explicit states in the existing component/version model: `not_configured`, `configured` and `no_separate_cost`. Persist `amount: null` for the first and third states; keep them distinct. Require a reason for `no_separate_cost`. Continue requiring structured evidence, explicit currency, basis and treatment classification before a configured amount can be submitted. A no-separate-cost declaration also requires a supportable rationale/evidence basis before submission. Any unconfigured component blocks submission.
+
+### 25.4 Boundaries and evidence limits
+
+- `basis` remains the flexible unit/basis description; no unit catalogue, rate or formula is selected.
+- `treatmentClass` remains distinct from configuration state; `included` is not synonymous with `no_separate_cost`.
+- Legacy snapshots remain readable and are not migrated. Missing legacy amounts are never inferred to mean no separate cost.
+- The implementation does not calculate or allocate costs, create customer prices, choose Standard/Express/Scheduled models, activate storefront delivery fees, calculate/issue/accept quotes, confirm bookings, or enable payment/physical operations.
+- Real operating evidence and the existing separated approval workflow remain required before configured costs are relied upon commercially. Synthetic test fixtures are not business evidence.
+- DEC-047, DB-01–DB-12 capability-specific gates, DEC-049 and DEC-036 remain unchanged.
