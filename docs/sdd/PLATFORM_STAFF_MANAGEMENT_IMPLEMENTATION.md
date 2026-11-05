@@ -110,4 +110,4 @@ The initial designated-administrator policy appointment is recorded, but the Fir
 - No second-approval rule is added for permission changes; PM-01 does not resolve that detail.
 - The initial designation is not active until controlled provisioning is separately approved and run.
 - Designated-admin recovery/successor and suspension lifecycle remains open.
-- Invitation delivery requires live Resend configuration; browser verification and local regression checks remain pending.
+- Invitation delivery requires live Resend configuration; browser verification remains pending. Owner-reported local regression checks after PR #137 passed (100/100 Firestore Emulator tests, TypeScript, lint, production build and `git diff --check`).
