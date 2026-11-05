@@ -739,3 +739,18 @@ Direct client Firestore access to operational-cost definition/version records re
 No shared pricing calculation authority, service-specific pricing configuration, cost consumption, customer quote calculation/issuance/acceptance, confirmed independent booking, payment, parcel intake/custody or route/dispatch implementation is established by these inspected paths. DEC-047's twelve service/endpoint combinations remain unavailable. The approved PR #117 DB-01/02/05 physical contract is design approval, not proof that those gated capabilities are implemented.
 
 **Evidence boundary:** source inspection only. No application source, schema, Firestore Rules, permission, configuration, deployment or runtime behaviour was changed or tested by this documentation update.
+
+
+### 24.5 M2 Stage 1 structured cost-evidence implementation — feature branch
+
+**Proposed implementation source:** `feat/m2-structured-cost-evidence`, based on PR #142 merge `9a95bd8f71e1599a5714e572eafe05b4c48d92fb`.
+
+- `lib/server/operational-cost-definition-store-core.ts`: adds `OperationalCostEvidenceItem`, `OperationalCostTreatmentClass`, optional `evidenceItems` and `treatmentClass` fields, strict nested-map/allowed-key/value validation, date-period validation, optional original-value metadata consistency and a maximum of 20 evidence items per component.
+- `lib/server/operational-cost-definition-workflow-store-core.ts`: new submissions require every component to retain the existing amount/currency/basis requirements and also include at least one structured evidence item and a supported treatment classification. Legacy `evidenceDescription` alone no longer satisfies the new submission gate.
+- `app/admin/operational-cost-definitions/page.tsx`: extends the existing editor with multiple evidence-item capture, period/date fields, source attribution, coverage/method, optional original value metadata, limitations and treatment classification; detail view displays structured evidence and preserves legacy narrative.
+- `tests/operational-cost-definition-store.test.mjs`: adds persistence, legacy-read and malformed-evidence/treatment validation cases.
+- `tests/operational-cost-definition-workflow.test.mjs`: updates the synthetic valid fixture and adds a rejection case for legacy narrative without structured evidence/treatment.
+
+No new collection, upload/file store, permission, workflow state, workflow event schema, Firestore Rules grant, migration, cost calculation, aggregation, allocation, customer pricing, quote, booking or physical-operation side effect is intended.
+
+**Verification status:** implementation and tests are prepared on the feature branch. The local Firestore Emulator suite, full `npm test`, TypeScript, lint, build, diff check and browser checks have not yet been executed/verified in this session. Treat this branch as pending local verification, not as a tested or production-ready implementation.
