@@ -505,3 +505,16 @@ The owner reported successful live browser testing after PR #138. The current SD
 - Decide D0-01–D0-10, including embedded evidence items versus a separate registry (recommended: embedded), multi-source evidence, submission completeness, controlled treatment values and legacy compatibility.
 - Approve or amend the exact Stage 1 source-file boundary and 20-case acceptance matrix.
 - Do not begin application-code changes, create collections, alter permissions/workflow, migrate historical records or enable pricing/quote/booking/physical operations before explicit approval.
+
+### M2 Stage 1 — structured cost-evidence implementation awaiting local verification (5 November 2026)
+
+**Status:** Bounded implementation prepared; validation and owner review pending.
+
+- Branch: `feat/m2-structured-cost-evidence`.
+- The change extends existing component snapshots with `evidenceItems` and `treatmentClass`; it reuses current definition/version storage, APIs, staff UI, permissions and approval workflow.
+- New submissions require structured evidence and controlled treatment classification for every component. Legacy `evidenceDescription` and free-form `treatment` remain preserved and readable; no historical migration is included.
+- Focused store/workflow tests were added, but have not been executed in this environment.
+- Required before merge: local Emulator tests, full test suite, `npx tsc --noEmit`, `npm run lint`, `npm run build`, `git diff --check`, and focused browser review of the editor and legacy detail rendering.
+- Any test/build/UI failure must be corrected on the feature branch before approval/merge.
+
+No new collection, permission, workflow state, Firestore Rules grant, attachment store, cost calculation, allocation, customer price, quote, booking, payment or physical-operation side effect is included.
