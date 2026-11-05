@@ -100,7 +100,7 @@ These root collection names and paths are approved for the physical foundation. 
 
 The following is the smallest relationship set approved for this bounded physical foundation. The paths and relationship fields shown are part of the PR #117 design approval; the quote snapshot's internal pricing/service fields are deliberately not specified here.
 
-| Record | Proposed minimum data | Mutability rule |
+| Record | Approved minimum data | Mutability rule |
 |---|---|---|
 | Quote lineage | Server-generated document ID; `bookingPartyUid`; `currentVersionId`; optional `acceptedVersionId`; optional `bookingId`; server `createdAt` / `updatedAt`. | Owner and creation identity immutable. Current-version pointer may advance only through a revision transaction before acceptance. Accepted-version and booking links are set once and never replaced. |
 | Quote version | Server-generated version document ID; immutable sequence within the lineage; immutable quote snapshot payload; server issue/creation timestamp; approved validity timestamp when quote issuance is enabled. | Create-only after issue. No update or delete operation for an issued version. The exact snapshot structure and validity inputs belong to the approved pricing/quote contract, not this document. |
