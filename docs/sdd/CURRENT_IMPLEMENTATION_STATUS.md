@@ -2,9 +2,11 @@
 
 **As of:** 6 November 2026
 **Repository:** dev-adeshina/small-pudo
-**Documentation baseline:** main at 1f731f14f98212f186b0855addd26f1c98f01c08 (PR #143)
+**Documentation baseline:** main at 3bff2c0604440fa87a1e3286bcc4a5b621c5760f (PR #144)
 **Application-source baseline:** 1f731f14f98212f186b0855addd26f1c98f01c08 (PR #143)
 **Purpose:** Current, source-aligned execution summary. This document supersedes older “current” checkpoint wording in historical SDD sections where dates/baselines differ; accepted decisions and historical records remain intact.
+
+**Owner decision update:** `PLATFORM_M2_CONFIGURABLE_ACTIVITY_COST_FOUNDATION_DECISION.md` supersedes the actual-evidence-first implementation sequence recorded in the earlier M2 readiness review. Internal configurable activity-cost code is authorized after that focused decision is merged; customer pricing and quote gates remain closed.
 
 ## Repository position
 
@@ -59,13 +61,13 @@ These are owner-reported local results, not independently reproduced by this doc
 
 ## Next execution sequence
 
-1. PR #143 completes M2 Stage 1: structured cost evidence in the existing operational-cost component/version workflow.
-2. The consolidated readiness review is `PLATFORM_M2_SHARED_PRICING_AUTHORITY_READINESS_REVIEW.md`.
-3. Execute Stage 2A–2D: collect real evidence for applicable ACT-01–ACT-11 activities; obtain Operations validation, Finance review and independent approval using the existing workflow.
-4. Complete separate evidence packs and input-feasibility matrices for Standard, Express and Scheduled. Do not infer that a cost applies to every service or journey.
-5. Only after service evidence and explicit commercial decisions are approved, reconcile affected DB-01–DB-12 contracts and produce the shared pricing authority technical contract and executable acceptance fixtures.
-6. Seek explicit owner approval of that bounded technical contract before any shared pricing or quote implementation.
-7. Keep DEC-047 eligibility, quote issuance/acceptance, booking, payment, intake, custody, routing/dispatch and DEC-036 release evidence separately gated.
+1. PR #143 remains the application-source baseline for the structured cost-evidence foundation; PR #144 is the documentation baseline.
+2. Merge the focused configurable activity-cost foundation decision.
+3. Implement the three-state activity-cost configuration in the existing versioned store, workflow, API and staff interface; preserve legacy reads and approval separation.
+4. Run focused and full Emulator tests, TypeScript, lint, production build, diff checks and browser verification before merging the implementation PR.
+5. Populate real cost evidence and complete Operations, Finance and independent approval when business records become available; do not use synthetic values as business facts.
+6. Only after service evidence and explicit commercial decisions are approved, reconcile affected DB-01–DB-12 contracts and produce the shared pricing authority technical contract and executable acceptance fixtures.
+7. Keep customer pricing, quote issuance/acceptance, booking, payment, DEC-047 eligibility, PUDO operations, intake, custody, routing/dispatch and DEC-036 release evidence separately gated.
 8. Do not invent rates, formulas, currency, fees, durations, PUDO inventory, operational owners or service eligibility.
 
 ## Authority and guardrails
@@ -93,14 +95,23 @@ The structured submission gate requires the existing cost amount/currency/basis 
 
 **Verification boundary:** the owner reported targeted browser testing of the editor/detail flow. Operations submission and Finance validation were not tested in the reported scenario. PR #143's description explicitly did not claim local automated test/typecheck/lint/build results. Treat automated verification as unconfirmed unless a separate dated run is recorded.
 
-## M2 Stage 2 — actual operating-cost evidence
+## M2 Stage 2 — actual operating-cost evidence (historical sequence; superseded for internal configuration)
 
-**Current status:** ready for business evidence collection; not yet evidenced as complete. Use the existing operational-cost definitions and PR #143 structured evidence workflow. Operations must validate activity scope, real procedure, actors, location, capacity and input feasibility. Finance must review source quality, cost basis, currency/unit interpretation, duplicate/included treatment and any proposed shared-cost allocation. Independent approval remains separate.
+**Historical status at PR #144:** the review proposed actual evidence collection before further M2 pricing work. The owner subsequently confirmed that the business has not started and actual records do not exist. This evidence-first sequence is superseded only for building the internal configurable activity-cost foundation; actual evidence and separated approvals remain mandatory before a configured cost is financially or commercially relied upon.
 
 The existing evidence workbook and ACT-01–ACT-11 catalogue are the collection templates/baseline. ACT-12 remains conditional/inactive until Operations confirms it is actually performed or contractually required. Synthetic/test values are not actual operating-cost evidence and must not be submitted as approved business facts.
 
-## M2 shared pricing authority — readiness outcome
+## M2 shared pricing authority — readiness outcome (customer pricing remains gated)
 
-The consolidated review is `PLATFORM_M2_SHARED_PRICING_AUTHORITY_READINESS_REVIEW.md`. The shared pricing authority is accepted as business policy, but customer pricing implementation remains blocked pending actual cost evidence, per-service model/input/rate decisions, currency and charge treatment, separate quote/handover terms, affected technical contracts and executable acceptance fixtures.
+The consolidated review is `PLATFORM_M2_SHARED_PRICING_AUTHORITY_READINESS_REVIEW.md`, as amended by `PLATFORM_M2_CONFIGURABLE_ACTIVITY_COST_FOUNDATION_DECISION.md`. Internal configurable activity-cost implementation is authorized after the focused decision is merged. Customer pricing implementation remains blocked pending real evidence, per-service model/input/rate decisions, currency and charge treatment, separate quote/handover terms, affected technical contracts and executable acceptance fixtures.
 
-Standard, Express and Scheduled are independently not ready for quote issuance. All twelve DEC-047 service/endpoint combinations remain unavailable by default. No application-code implementation of customer pricing, quote issuance/acceptance or booking is authorized by the readiness review.
+Standard, Express and Scheduled are independently not ready for quote issuance. All twelve DEC-047 service/endpoint combinations remain unavailable by default. This bounded authorization does not permit customer pricing, quote issuance/acceptance or booking.
+
+
+## M2 owner decision — configurable activity-cost foundation — 6 November 2026
+
+**Business context:** The business has not started operating; actual operating-cost records are unavailable. Actual evidence collection is therefore not a prerequisite for building internal configuration capability.
+
+**Decision:** After the focused decision document is merged, implement `configurationState` values `not_configured`, `configured` and `no_separate_cost` in the existing activity-cost component/version model. `not_configured` and `no_separate_cost` use an explicit null amount but remain distinct; `no_separate_cost` requires a reason and supporting basis before submission. A null amount is never zero. Reuse the existing activity catalogue, versioning, APIs, permissions, approval workflow and Firestore boundary; do not add a registry, migration or parallel workflow.
+
+**Implementation boundary:** This authorizes only the internal configurable activity-cost foundation. It does not authorize cost calculation/allocation, customer prices, Standard/Express/Scheduled model selection, quote issuance/acceptance, booking, payment, DEC-047 activation or physical operations. Real evidence and separated approval remain required before configured costs are approved for financial/commercial reliance.
