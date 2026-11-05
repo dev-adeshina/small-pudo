@@ -1,9 +1,9 @@
 # VeriLyft — Current implementation status
 
-**As of:** 5 November 2026
+**As of:** 6 November 2026
 **Repository:** dev-adeshina/small-pudo
-**Documentation baseline:** main at 8b62d218847beea5e49dc7afcee203f44bc68da9 (PR #140)
-**Application-source baseline:** 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137; PRs #138 and #139 are documentation-only)
+**Documentation baseline:** main at 1f731f14f98212f186b0855addd26f1c98f01c08 (PR #143)
+**Application-source baseline:** 1f731f14f98212f186b0855addd26f1c98f01c08 (PR #143)
 **Purpose:** Current, source-aligned execution summary. This document supersedes older “current” checkpoint wording in historical SDD sections where dates/baselines differ; accepted decisions and historical records remain intact.
 
 ## Repository position
@@ -45,7 +45,7 @@ These are owner-reported local results, not independently reproduced by this doc
 
 **Owner-reported live browser verification:** the user subsequently reported successful live browser testing after PR #138. The available status record does not enumerate the exact scenarios exercised, so it does not support claiming that every invitation, permission lifecycle, actor-separation or operational-cost workflow case was covered. Do not keep generic browser testing open; retain only specific cases shown to be untested by the user's scenario record.
 
-The guarded initial permission-administrator provisioning CLI has not successfully run. The user's prior invocation was refused because explicit --confirm-initial-designation confirmation was absent. Do not describe the designation as technically provisioned or run it against production without a separately reviewed and explicitly approved operation.
+**PR #143 owner-reported verification boundary:** the owner reported targeted browser testing of the operational-cost editor/detail flow. Operations submission and Finance validation were not included in the reported test. The PR description did not claim that the local automated verification commands had been run; do not claim new automated test results from the merge alone.\n\nThe guarded initial permission-administrator provisioning CLI has not successfully run. The user's prior invocation was refused because explicit --confirm-initial-designation confirmation was absent. Do not describe the designation as technically provisioned or run it against production without a separately reviewed and explicitly approved operation.
 
 ## What remains
 
@@ -59,12 +59,14 @@ The guarded initial permission-administrator provisioning CLI has not successful
 
 ## Next execution sequence
 
-1. PR #140 completed the consolidated M2 SDD reconciliation; the documentation baseline is now 8b62d218847beea5e49dc7afcee203f44bc68da9.
-2. Review `PLATFORM_M2_IMPLEMENTATION_READINESS_AND_STAGED_PLAN.md` as the single consolidated implementation-readiness decision.
-3. If approved, complete Stage 0: a source-aligned technical contract and executable acceptance fixtures for the internal structured cost-evidence enhancement.
-4. Obtain separate explicit owner approval of that technical contract and bounded Stage 1 implementation scope before application-code changes.
-5. Implement only independently Ready slices through small, reviewable PRs. The first candidate must reuse the existing operational-cost store/workflow; customer pricing, quote issuance/acceptance and DEC-047 activation remain separately gated.
-6. Do not invent rates, formulas, currency, fees, durations, PUDO inventory, operational owners or service eligibility to make a feature appear complete.
+1. PR #143 completes M2 Stage 1: structured cost evidence in the existing operational-cost component/version workflow.
+2. The consolidated readiness review is `PLATFORM_M2_SHARED_PRICING_AUTHORITY_READINESS_REVIEW.md`.
+3. Execute Stage 2A–2D: collect real evidence for applicable ACT-01–ACT-11 activities; obtain Operations validation, Finance review and independent approval using the existing workflow.
+4. Complete separate evidence packs and input-feasibility matrices for Standard, Express and Scheduled. Do not infer that a cost applies to every service or journey.
+5. Only after service evidence and explicit commercial decisions are approved, reconcile affected DB-01–DB-12 contracts and produce the shared pricing authority technical contract and executable acceptance fixtures.
+6. Seek explicit owner approval of that bounded technical contract before any shared pricing or quote implementation.
+7. Keep DEC-047 eligibility, quote issuance/acceptance, booking, payment, intake, custody, routing/dispatch and DEC-036 release evidence separately gated.
+8. Do not invent rates, formulas, currency, fees, durations, PUDO inventory, operational owners or service eligibility.
 
 ## Authority and guardrails
 
@@ -81,18 +83,24 @@ Accepted policy remains in DECISIONS.md and the relevant approved policy documen
 
 ## M2 Stage 0 — current status
 
-PR #141 is merged at `0ed56ee0e62b6792d7b3b4e0d5af4fc982e1d199`. The current-main source refresh is complete for the existing operational-cost store, workflow, API, staff page, Firestore Rules and relevant tests. The proposed Stage 0 technical contract and acceptance matrix are in `PLATFORM_M2_COST_EVIDENCE_STAGE0_TECHNICAL_CONTRACT.md`.
-
-**Current status:** owner review required. No Stage 1 code is authorized. The proposed implementation is limited to structured evidence metadata and a controlled treatment classification nested in the existing cost component/version model. Legacy snapshots, the existing workflow and permissions, and the Firestore client-denial boundary must be preserved. All customer pricing, quote, booking, payment, service eligibility and physical-operation gates remain unchanged.
+PR #142 merged at `9a95bd8f71e1599a5714e572eafe05b4c48d92fb`. Stage 0 technical contract is closed.
 
 ## M2 Stage 1 — structured cost-evidence implementation
 
-PR #142 is merged at `9a95bd8f71e1599a5714e572eafe05b4c48d92fb`. Stage 0 is closed. The bounded Stage 1 implementation is prepared on `feat/m2-structured-cost-evidence`:
+PR #143 merged at `1f731f14f98212f186b0855addd26f1c98f01c08`. Stage 1 is complete. Structured evidence items and controlled `direct`, `shared`, `included` and `exception_related` treatment classifications are persisted within the existing immutable cost-component/version snapshot. Existing versioning, workflow, APIs, permissions, reviewer separation and Firestore client-denial boundary are reused. No new collection, evidence registry, migration, permission or workflow state was introduced.
 
-- Additive structured `evidenceItems` and controlled `treatmentClass` fields on the existing cost-component/version snapshot.
-- Server-side shape and value validation; new submissions require each component to include structured evidence and a supported treatment classification.
-- Existing staff editor/detail view extended; legacy narrative fields retained.
-- Existing versioning, APIs, permissions, workflow, workflow events and Firestore client-denial rules are reused unchanged.
-- Focused store/workflow tests added.
+The structured submission gate requires the existing cost amount/currency/basis together with at least one structured evidence item and a supported treatment classification. Legacy narrative evidence remains readable but does not satisfy the new submission gate for new submissions.
 
-**Status:** implementation review and local verification pending. No tests, Emulator, TypeScript, lint, build or browser checks are claimed as passing. No new collection, migration, permission, workflow state, Rules grant, cost calculation, allocation, pricing, quote, booking, payment or physical operation is introduced.
+**Verification boundary:** the owner reported targeted browser testing of the editor/detail flow. Operations submission and Finance validation were not tested in the reported scenario. PR #143's description explicitly did not claim local automated test/typecheck/lint/build results. Treat automated verification as unconfirmed unless a separate dated run is recorded.
+
+## M2 Stage 2 — actual operating-cost evidence
+
+**Current status:** ready for business evidence collection; not yet evidenced as complete. Use the existing operational-cost definitions and PR #143 structured evidence workflow. Operations must validate activity scope, real procedure, actors, location, capacity and input feasibility. Finance must review source quality, cost basis, currency/unit interpretation, duplicate/included treatment and any proposed shared-cost allocation. Independent approval remains separate.
+
+The existing evidence workbook and ACT-01–ACT-11 catalogue are the collection templates/baseline. ACT-12 remains conditional/inactive until Operations confirms it is actually performed or contractually required. Synthetic/test values are not actual operating-cost evidence and must not be submitted as approved business facts.
+
+## M2 shared pricing authority — readiness outcome
+
+The consolidated review is `PLATFORM_M2_SHARED_PRICING_AUTHORITY_READINESS_REVIEW.md`. The shared pricing authority is accepted as business policy, but customer pricing implementation remains blocked pending actual cost evidence, per-service model/input/rate decisions, currency and charge treatment, separate quote/handover terms, affected technical contracts and executable acceptance fixtures.
+
+Standard, Express and Scheduled are independently not ready for quote issuance. All twelve DEC-047 service/endpoint combinations remain unavailable by default. No application-code implementation of customer pricing, quote issuance/acceptance or booking is authorized by the readiness review.
