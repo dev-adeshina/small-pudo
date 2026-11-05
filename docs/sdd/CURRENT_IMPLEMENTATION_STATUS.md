@@ -1,8 +1,8 @@
 # VeriLyft — Current implementation status
 
-**As of:** 5 November 2026  
-**Repository:** dev-adeshina/small-pudo  
-**Current baseline:** main at 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137)  
+**As of:** 5 November 2026
+**Repository:** dev-adeshina/small-pudo
+**Current baseline:** main at 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137)
 **Purpose:** Current, source-aligned execution summary. This document supersedes older “current” checkpoint wording in historical SDD sections where dates/baselines differ; accepted decisions and historical records remain intact.
 
 ## Repository position
