@@ -335,13 +335,13 @@ The relationship table and case-level specifications above are reconciled to the
 **Next:** perform a separate source-aligned physical persistence/API/security design review for only the accepted DB-01/02/05 rules, without implementing quote issuance, booking acceptance or parcel intake while their independent prerequisites remain blocked.
 
 
-## 10. Physical design follow-on — PR #116 baseline (2 November 2026)
+## 10. Physical design approval — PR #117 — 2 November 2026
 
-The Review 5 sequence is now owner-approved and PR #116 is merged at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90`. The focused source re-fetch at that baseline is recorded in `PLATFORM_DB01_DB02_DB05_PHYSICAL_PERSISTENCE_API_SECURITY_DESIGN.md`.
+The source-aligned physical persistence/API/security design for DB-01/DB-02/DB-05 was approved in PR #117, merged at `feb80197d7278dd32667c6d154f99d7ac9001697`. The approved companion contract is `PLATFORM_DB01_DB02_DB05_PHYSICAL_PERSISTENCE_API_SECURITY_DESIGN.md`.
 
-That companion proposal formalizes the physical representation, transaction/replay boundaries, API and authorization responsibilities, Rules/default-deny implications, query/index policy, additive migration and synthetic acceptance fixtures for DB-01/DB-02/DB-05. It remains a proposal for owner review; this logical contract is not retroactively converted into an approved schema or endpoint specification.
+The approved bounded design covers root-level quote-lineage, confirmed-booking and parcel record families; immutable quote versions nested beneath quote lineage; exact accepted-version linkage; one-time booking-to-parcel linkage; transaction serialization/replay boundaries; server-only trusted writes; default-deny client Rules; and additive compatibility with existing shipment drafts, storefront orders, stock and Paystack flows. The document's named paths/fields and implementation boundaries are approved only to the extent stated in that companion contract.
 
-The next implementation slice, after owner approval of the companion physical contract, is limited to quote-lineage and immutable-version persistence primitives and synthetic Emulator/Rules tests. Quote issuance/acceptance and parcel/intake remain disabled until their separate commercial, DEC-047, authorization, location and evidence prerequisites are approved.
+**Capability boundary remains strict:** PR #117 approval does not enable quote calculation/issuance, customer acceptance, confirmed booking, parcel creation, physical intake/custody, route/dispatch, payment or any DEC-047 service/endpoint combination. DEC-048/DEC-049 commercial and logical invariants, DEC-047 eligibility, DB-03/04/06–12, authorization, evidence and DEC-036 release gates remain independently applicable. Do not describe the approved physical contract as runtime implementation.
 
 ## 18. PR #117 physical-contract approval and M2 package reconciliation — 5 November 2026
 
