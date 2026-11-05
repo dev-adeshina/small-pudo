@@ -92,7 +92,7 @@ When sources conflict, do not silently favour code or documentation. Record the 
 
 ### Historical Milestone 4 status — baseline through PR #129 (superseded by the 5 November 2026 direction above)
 
-The current main baseline is PR #129 merge commit a2247efd2d0a7103c85d156f89ea210a696b33e2. The latest application-source baseline remains PR #125 at e7966332024fd38eb7cb5b8a1adebc0b584ac894; the PR #125-to-#129 compare confirms only SDD documentation paths changed. Current source findings and their limits are recorded in IMPLEMENTATION_SOURCE_TRACEABILITY.md Sections 20–21. This does not constitute runtime, deployed-configuration or production verification.
+The current documentation baseline is PR #139 merge commit 364909e15dcdb719ac64ff96b10592f8b4e183f5. The latest application-source baseline remains PR #137 at 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27; PRs #138 and #139 changed SDD documentation only. Current source findings and their limits are recorded in IMPLEMENTATION_SOURCE_TRACEABILITY.md Sections 23–24. This does not constitute runtime, deployed-configuration or production verification.
 
 Milestones 1–3 are complete at the owner-approved policy/documentation level: DEC-038 through DEC-044 are recorded in the SDD, with the relevant documentation PRs merged through PR #51. PR #52 reconciled the Milestone 3 completion record. The 15 high-level owner decisions D-01–D-15, staff permission policies PM-01–PM-12, and booking-party authority policies BP-01–BP-22 remain accepted at their recorded policy levels.
 
