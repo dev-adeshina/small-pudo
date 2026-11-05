@@ -1,7 +1,7 @@
 # Operational Activity Cost Configuration — Technical Contract
 
-**Status:** Internal operational-cost configuration foundation implemented: persistence/API (PR #125), staff interface (PR #133), and staff invitation/permission lifecycle integration (PRs #136–#137).  
-**Application-source baseline:** PR #137 merge `55dff8c2a4f4cf6f0e983676e692f0f126f7ec27`. PRs #138–#139 update documentation only.  
+**Status:** Internal operational-cost configuration foundation implemented: persistence/API (PR #125), staff interface (PR #133), and staff invitation/permission lifecycle integration (PRs #136–#137).
+**Application-source baseline:** PR #137 merge `55dff8c2a4f4cf6f0e983676e692f0f126f7ec27`. PRs #138–#139 update documentation only.
 **Related foundations:** PR #121 operational cost-definition persistence; PR #122 approval workflow; PR #123 owner-reviewed activity catalogue.  
 **Scope:** Internal, server-authoritative configuration of operational activity costs. This contract does not authorize customer pricing or operational capability activation.
 
