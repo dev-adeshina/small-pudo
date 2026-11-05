@@ -342,3 +342,11 @@ The Review 5 sequence is now owner-approved and PR #116 is merged at `0ca77ea2cf
 That companion proposal formalizes the physical representation, transaction/replay boundaries, API and authorization responsibilities, Rules/default-deny implications, query/index policy, additive migration and synthetic acceptance fixtures for DB-01/DB-02/DB-05. It remains a proposal for owner review; this logical contract is not retroactively converted into an approved schema or endpoint specification.
 
 The next implementation slice, after owner approval of the companion physical contract, is limited to quote-lineage and immutable-version persistence primitives and synthetic Emulator/Rules tests. Quote issuance/acceptance and parcel/intake remain disabled until their separate commercial, DEC-047, authorization, location and evidence prerequisites are approved.
+
+## 18. PR #117 physical-contract approval and M2 package reconciliation — 5 November 2026
+
+PR #117's owner-approved DB-01/DB-02/DB-05 physical design is the governing physical contract for the bounded relationship foundation. This corrects older wording in this document that continued to call the companion design a proposal awaiting approval. Preserve the companion document's explicit exclusions and do not broaden its approval.
+
+DEC-049 remains the logical relationship authority. DEC-048 remains the commercial-unit authority. The accepted minimum launch is one parcel and one itemized quote per independent booking, but that commercial choice does not itself determine additional persistence cardinalities or settle DB-03, DB-06 or DB-11. The physical contract does not make quote issuance or acceptance ready.
+
+**Open capability contracts remain:** DB-03 route/leg relationships; DB-04 and other operational lifecycle dependencies; DB-06 payment allocation/settlement; DB-07/DB-08 identity, relationship, delegation and business authority; DB-09 location/service/action eligibility and operational accountability; DB-10 event evidence, reviewer authority, retention and legal hold; DB-11 financial-event linkage/reconciliation; and DB-12 notification recipient, field, channel, consent, retry and failure ownership. Each blocks only the affected capability under DEC-045; none may be treated as resolved by the DB-01/02/05 physical approval.
