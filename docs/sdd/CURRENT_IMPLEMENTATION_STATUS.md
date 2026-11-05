@@ -16,8 +16,8 @@
 - PR #138 reconciled the SDD with the PR #137 application-source baseline; merge f1d4f29ed0645145a277af5558b8fbcd8f537b4c.
 - PR #139 added the owner-approved M2 pre-implementation review package; merge 364909e15dcdb719ac64ff96b10592f8b4e183f5.
 - PR #140 reconciled the specialist M2 SDD documents against the PR #137 source baseline; merge 8b62d218847beea5e49dc7afcee203f44bc68da9.
-- PRs #138–#140 are documentation-only. The application-source baseline remains PR #137.
-- No application-code change is part of this SDD reconciliation.
+- PRs #138–#140 are documentation-only. PR #143 later updates the application-source baseline; PR #144 updates the documentation baseline.
+- The PR #138–#140 reconciliation itself changed SDD documentation only.
 
 ## Accomplished
 
