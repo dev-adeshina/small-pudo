@@ -279,3 +279,40 @@ The activity IDs, final activity boundaries, responsible roles, measurement unit
 The discussion establishes operating scope and desired configurability, not actual costs. Still required: activity-level observation and measurement records; actual staff compensation arrangements and attributable productivity evidence; driver/partner agreements and rate evidence; business-owned vehicle cost treatment; approved measurement units and conversions; activity-specific cost-variable mappings; shared-cost allocation and double-counting controls; exception/return cost accountability; source owners and Operations/Finance validation.
 
 Do not infer numerical rates, currencies, formulas, staff payment methods, provider contract terms, activity thresholds, distance units, volumetric divisors or customer charges from this section.
+
+## 13. Consolidated activity-cost register and evidence requirements — 5 November 2026
+
+This section translates the accepted M2 review package into evidence-collection requirements. It does not approve monetary values, units, formulas, service pricing models or a Firestore schema.
+
+### 13.1 Activity and component register
+
+Reuse ACT-01–ACT-11 from the existing catalogue; do not create a parallel activity taxonomy. ACT-12 remains conditional/inactive until Operations confirms actual or contractually required work. Each activity may have zero, one or multiple cost components depending on evidence. A component is an internal cost description, not automatically a customer charge.
+
+For each activity/component, record or reference:
+- stable activity and component identities;
+- business purpose, scope, exclusions, trigger and completion;
+- responsible function/actor and actual operating arrangement;
+- component description and the basis on which the cost is incurred;
+- amount and explicit currency only when supplied by attributable evidence;
+- applicable activity-specific inputs, with source, source classification, original unit, precision, explicit conversion and missing-value behaviour;
+- evidence reference, source owner/type, scope represented and observation period;
+- original value/unit/precision, sample/population and measurement method where relevant;
+- limitations, exclusions, uncertainty and validation status;
+- Operations validation, Finance review, decision actor, date, outcome and reason;
+- approved version/effective context where a later authorized process consumes the definition.
+
+A blank or unknown field is an evidence gap, not zero and not permission to infer a default.
+
+### 13.2 Flexible operating arrangements
+
+The register must accommodate evidenced arrangements involving VeriLyft staff, authorized InPUDO personnel, business-owned vehicles, driver-owned vehicles, external transport providers, riders, PUDO partners, shared premises and technology services. Fixed, per-trip, per-parcel, distance-based, time-based, hybrid or negotiated bases are configuration possibilities only; they are not selected defaults. Capture the actual agreement/source before representing a basis as applicable.
+
+### 13.3 Cost treatment and allocation
+
+Distinguish direct, shared, included and exception-related costs. Finance must approve any shared-cost allocation basis before it contributes to a shipment calculation. Do not allocate automatically by parcel count, distance, shipment value or another convenient proxy. Record included costs to prevent duplicate counting, and do not count driver/provider compensation again as separate fuel, vehicle or reimbursement cost unless the agreement/evidence establishes that it is separate.
+
+### 13.4 Journey-specific evidence
+
+Do not assume every parcel incurs both Lagos and Mokola hub costs or a Lagos corridor cost. A local Ibadan journey must not inherit a Lagos corridor cost. PUDO presentation, seller collection, destination PUDO receipt, address delivery, recipient release, failed attempt and RTS are distinct activities/journeys. Failed-attempt or RTS cost does not automatically become a customer surcharge or liability.
+
+**Evidence status:** no actual monetary cost evidence or approved cost-allocation method is supplied by the owner working model. Operations and Finance must populate and validate the evidence register from real records before a service pricing model or rate is selected.
