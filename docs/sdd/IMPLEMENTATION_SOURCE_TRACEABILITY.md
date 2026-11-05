@@ -698,3 +698,44 @@ The broader source review does not establish customer quote issuance, confirmed 
 - This source refresh does not establish customer quote issuance, confirmed independent shipment booking, independent shipment payment, PUDO inventory/capability, parcel intake/custody, route/movement execution, delivery proof or production readiness. Those remain separately gated.
 
 **Evidence boundary:** current source was inspected selectively for the merged staff-management and activation paths. No application code, Rules, configuration, production data or provider state was changed or executed in this documentation review.
+
+## 24. M2 operational-cost and quote-lineage source reconciliation — PR #137 application baseline / PR #139 documentation baseline — 5 November 2026
+
+### 24.1 Baselines and method
+
+- Application source remains PR #137 merge 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27. PR #138 and PR #139 are documentation-only; PR #139 merged at 364909e15dcdb719ac64ff96b10592f8b4e183f5.
+- This bounded read-only source refresh re-fetched the operational-cost definition store, workflow store, staff interface, API route, tests, Firestore Rules and internal quote-lineage store at the PR #137 source baseline.
+- This is not a recursive semantic audit, runtime reproduction, production data inspection or deployed Firebase Rules verification.
+
+### 24.2 Operational-cost definition source facts
+
+Confirmed paths:
+- lib/server/operational-cost-definition-store-core.ts
+- lib/server/operational-cost-definition-workflow-store-core.ts
+- lib/server/operational-cost-definition-store.ts
+- app/api/admin/operational-cost-definitions/route.ts and the definition/workflow route siblings
+- app/admin/operational-cost-definitions/page.tsx
+- tests/operational-cost-definition-store.test.mjs
+- tests/operational-cost-definition-workflow.test.mjs
+- firestore.rules
+
+The immutable version stores ACT-01–ACT-11 activity identity, activity name/description, general-only applicability, activity-specific input metadata and a costComponents array. Input metadata supports string, number, boolean and date values with required flag and optional source, unit, precision and conversion descriptions. Each cost component supports a stable key/label, optional description, decimal-string amount, explicit three-letter uppercase currency code, basis, optional free-form treatment and evidence description. An amount requires currency and basis. Submission requires at least one component and requires amount/currency/basis/evidence description on every component.
+
+The current model does not yet provide a structured evidence object or source registry. Source owner/type, observation period, scope, original unit/precision, sample/method, limitations, Operations validation and Finance review are not independently persisted on each component. Treatment is free-form rather than an approved classification enum. Applicability is restricted to general; ACT-12 and location-specific scope are not accepted. Do not infer these missing fields exist from the staff UI labels.
+
+The UI at /admin/operational-cost-definitions reuses the existing APIs and displays the non-activation boundary. The workflow preserves proposal, Operations validation, Finance review and independent approval with distinct actors and action-specific permissions. Staff permission assignment is handled by the separate staff-management service; the five assignable permissions remain the approved operational-cost permission set. Admin status alone does not grant these actions.
+
+### 24.3 Quote-lineage source facts
+
+- lib/server/shipment-quote-store-core.ts and lib/server/shipment-quote-store.ts provide internal Firestore quote-lineage and immutable-version persistence primitives.
+- tests/shipment-quote-store.test.mjs provides Emulator-backed store test coverage.
+- The quote snapshot is opaque to this store. The store does not calculate or issue customer quotes, expose a customer API, confirm bookings, or authorize customer access.
+- This internal persistence foundation must not be described as a pricing engine, quote issuer or customer acceptance flow.
+
+### 24.4 Security, evidence and implementation boundaries
+
+Direct client Firestore access to operational-cost definition/version records remains denied by firestore.rules. The source review did not verify deployed Rules or production parity. The owner reported the PR #137 Emulator suite (100/100 across 14 suites), TypeScript, lint, production build and git diff --check passing; those are owner-reported local results and were not rerun by this documentation review.
+
+No shared pricing calculation authority, service-specific pricing configuration, cost consumption, customer quote calculation/issuance/acceptance, confirmed independent booking, payment, parcel intake/custody or route/dispatch implementation is established by these inspected paths. DEC-047's twelve service/endpoint combinations remain unavailable. The approved PR #117 DB-01/02/05 physical contract is design approval, not proof that those gated capabilities are implemented.
+
+**Evidence boundary:** source inspection only. No application source, schema, Firestore Rules, permission, configuration, deployment or runtime behaviour was changed or tested by this documentation update.
