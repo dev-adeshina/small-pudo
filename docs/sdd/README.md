@@ -137,3 +137,6 @@ The Review 3 technical-design synthesis remains a supporting cross-domain refere
 
 
 The commercial owner-decision proposal was accepted/deferred in DEC-048 and recorded through PR #111. The consolidated M2 pre-implementation review package is now accepted and merged in PR #139. The active work is one consolidated specialist SDD reconciliation, followed by a single implementation-readiness review and staged implementation plan. Application-code changes begin only after the owner explicitly approves that plan. Do not infer schema, APIs, permissions, providers, rates, durations or operational eligibility from the requirements; keep unresolved capabilities disabled under DEC-045/DEC-047.
+
+
+- `PLATFORM_M2_COST_EVIDENCE_STAGE0_TECHNICAL_CONTRACT.md` — current-main source-aligned Stage 0 contract for structured evidence on existing operational-cost components, legacy compatibility, submission validation, security/workflow reuse and the Stage 1 acceptance matrix. Owner approval is required before any Stage 1 application-code change.

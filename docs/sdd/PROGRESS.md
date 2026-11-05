@@ -1877,3 +1877,17 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 
 **Evidence boundary:** this checkpoint changes SDD documentation only. Source facts remain tied to PR #137; the source review and historical owner-reported tests were not rerun by this planning update.
 
+
+
+## 85. PR #141 merged; M2 cost-evidence Stage 0 contract prepared — 5 November 2026
+
+- [x] PR #141 merged at `0ed56ee0e62b6792d7b3b4e0d5af4fc982e1d199`; the user's local `main` pull confirms the same merge commit.
+- [x] Re-read the current-main operational-cost store, immutable versioning, workflow store, request authorization, API routes, staff interface, Firestore Rules and relevant Emulator test files at the PR #141 baseline.
+- [x] Confirmed the existing source supports an additive extension to `costComponents`; no authoritative structured evidence registry or evidence record was found in the inspected repository tree.
+- [x] Prepared `PLATFORM_M2_COST_EVIDENCE_STAGE0_TECHNICAL_CONTRACT.md` with a proposed embedded evidence representation, controlled treatment classification, legacy compatibility, draft/submission rules, source-aligned file boundary and 20 acceptance cases.
+- [ ] Owner review/approval of D0-01–D0-10 and the Stage 1 acceptance matrix.
+- [ ] Only after explicit approval, implement the bounded internal evidence enhancement in a separate application-code PR.
+
+**Current gate:** Stage 0 technical contract is prepared for review. No application code, Firestore schema, API, permission, workflow, production data or configuration was changed. Stage 1 remains unauthorized until the owner explicitly approves the contract, exact scope and acceptance matrix.
+
+**Evidence boundary:** source review was read-only. No tests, emulator, TypeScript, lint, build, browser or production checks were run for this Stage 0 document.
