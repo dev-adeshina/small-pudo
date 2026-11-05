@@ -31,6 +31,31 @@ export interface OperationalCostInputDefinition {
   conversion?: string;
 }
 
+export interface OperationalCostEvidenceItem {
+  sourceReference: string;
+  sourceOwner: string;
+  sourceType: string;
+  representedScope: string;
+  observationPeriod: {
+    startDate?: string;
+    endDate?: string;
+    description?: string;
+  };
+  coverage: string;
+  collectionMethod: string;
+  originalValue?: string;
+  originalUnit?: string;
+  originalCurrencyCode?: string;
+  originalPrecision?: number;
+  limitations?: string;
+}
+
+export type OperationalCostTreatmentClass =
+  | "direct"
+  | "shared"
+  | "included"
+  | "exception_related";
+
 export interface OperationalCostComponentInput {
   key: string;
   label: string;
@@ -40,6 +65,8 @@ export interface OperationalCostComponentInput {
   basis?: string;
   treatment?: string;
   evidenceDescription?: string;
+  treatmentClass?: OperationalCostTreatmentClass;
+  evidenceItems?: OperationalCostEvidenceItem[];
 }
 
 export interface OperationalCostDefinitionInput {
@@ -225,7 +252,7 @@ function assertDefinitionInput(
     assertPlainMap(component, "Each operational cost component");
     assertOnlyKeys(
       component,
-      ["key", "label", "description", "amount", "currencyCode", "basis", "treatment", "evidenceDescription"],
+      ["key", "label", "description", "amount", "currencyCode", "basis", "treatment", "evidenceDescription", "treatmentClass", "evidenceItems"],
       "An operational cost component"
     );
 
@@ -245,6 +272,15 @@ function assertDefinitionInput(
     assertOptionalString(component.basis, "Cost component basis", 120);
     assertOptionalString(component.treatment, "Cost component treatment", 80);
     assertOptionalString(component.evidenceDescription, "Cost evidence description", 1000);
+    if (component.treatmentClass !== undefined && !TREATMENT_CLASSES.has(component.treatmentClass)) {
+      throw new TypeError("Cost component treatment classification is unsupported");
+    }
+    if (component.evidenceItems !== undefined) {
+      if (!Array.isArray(component.evidenceItems) || component.evidenceItems.length > 20) {
+        throw new TypeError("Cost component evidence items must be an array of at most 20 items");
+      }
+      for (const item of component.evidenceItems) assertEvidenceItem(item);
+    }
 
     if (component.amount !== undefined) {
       if (
@@ -264,6 +300,63 @@ function assertDefinitionInput(
         throw new TypeError("Cost component currency code must be a three-letter uppercase code");
       }
     }
+  }
+}
+
+const TREATMENT_CLASSES = new Set<OperationalCostTreatmentClass>([
+  "direct", "shared", "included", "exception_related",
+]);
+
+function assertEvidenceItem(value: unknown): asserts value is OperationalCostEvidenceItem {
+  assertPlainMap(value, "A cost evidence item");
+  assertOnlyKeys(value, [
+    "sourceReference", "sourceOwner", "sourceType", "representedScope",
+    "observationPeriod", "coverage", "collectionMethod", "originalValue",
+    "originalUnit", "originalCurrencyCode", "originalPrecision", "limitations",
+  ], "A cost evidence item");
+  assertNonEmptyString(value.sourceReference, "Evidence source reference", 500);
+  assertNonEmptyString(value.sourceOwner, "Evidence source owner", 200);
+  assertNonEmptyString(value.sourceType, "Evidence source type", 120);
+  assertNonEmptyString(value.representedScope, "Evidence represented scope", 500);
+  assertNonEmptyString(value.coverage, "Evidence coverage", 500);
+  assertNonEmptyString(value.collectionMethod, "Evidence collection method", 500);
+  assertOptionalString(value.limitations, "Evidence limitations", 1000);
+
+  assertPlainMap(value.observationPeriod, "Evidence observation period");
+  assertOnlyKeys(value.observationPeriod, ["startDate", "endDate", "description"], "Evidence observation period");
+  const { startDate, endDate, description } = value.observationPeriod;
+  assertOptionalString(startDate, "Evidence observation start date", 10);
+  assertOptionalString(endDate, "Evidence observation end date", 10);
+  assertOptionalString(description, "Evidence observation period description", 300);
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+  const validDate = (date: string) => {
+    if (!datePattern.test(date)) return false;
+    const parsed = new Date(`${date}T00:00:00.000Z`);
+    return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === date;
+  };
+  if (startDate !== undefined || endDate !== undefined) {
+    if (typeof startDate !== "string" || typeof endDate !== "string" ||
+        !validDate(startDate) || !validDate(endDate) || startDate > endDate) {
+      throw new TypeError("Evidence observation dates must be valid ordered YYYY-MM-DD dates");
+    }
+  } else if (typeof description !== "string" || !description.trim()) {
+    throw new TypeError("Evidence observation period needs an ordered date range or a description");
+  }
+
+  assertOptionalString(value.originalValue, "Evidence original value", 80);
+  assertOptionalString(value.originalUnit, "Evidence original unit", 80);
+  assertOptionalString(value.originalCurrencyCode, "Evidence original currency code", 3);
+  if (value.originalCurrencyCode !== undefined && !/^[A-Z]{3}$/.test(value.originalCurrencyCode)) {
+    throw new TypeError("Evidence original currency code must be a three-letter uppercase code");
+  }
+  if (value.originalPrecision !== undefined &&
+      (!Number.isSafeInteger(value.originalPrecision) || value.originalPrecision < 0)) {
+    throw new TypeError("Evidence original precision must be a non-negative safe integer");
+  }
+  if (value.originalValue !== undefined &&
+      (typeof value.originalUnit !== "string" || !value.originalUnit.trim() ||
+       value.originalPrecision === undefined)) {
+    throw new TypeError("Evidence original value requires its original unit and precision");
   }
 }
 
