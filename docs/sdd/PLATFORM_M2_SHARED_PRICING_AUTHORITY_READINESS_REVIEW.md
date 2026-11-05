@@ -9,6 +9,8 @@
 
 ---
 
+**Subsequent owner decision:** The owner confirmed on 6 November 2026 that VeriLyft has not started operating and no actual operating-cost records exist. The separate `PLATFORM_M2_CONFIGURABLE_ACTIVITY_COST_FOUNDATION_DECISION.md` supersedes this review's actual-evidence-first execution sequence and its blanket prohibition on internal cost-configuration code, solely for the bounded configurable activity-cost foundation. All customer-pricing, quote, DEC-047, booking/payment/physical-operation and DEC-036 gates remain unchanged.
+
 ## 1. Executive decision
 
 **Decision: proceed with evidence collection and validation; do not begin shared customer-pricing calculation, service pricing configuration, quote issuance or quote acceptance code yet.**
