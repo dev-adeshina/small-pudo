@@ -495,3 +495,13 @@ VLY-025 remains blocked for physical verification/inventory approval because the
 The owner reported successful live browser testing after PR #138. The current SDD does not contain a scenario-by-scenario test record. Generic browser testing should not remain an open task; retain only specifically identified scenarios that were not covered. Initial Staff Permission Administrator technical provisioning remains a separate unresolved administrative action and must not be inferred from the policy appointment.
 
 **Evidence boundary:** owner-reported evidence only; no independent browser reproduction, production verification, source/runtime change or new operational evidence is claimed here.
+
+
+### M2 Stage 0 — structured cost-evidence contract awaiting owner approval (5 November 2026)
+
+**Status:** Proposed technical contract prepared; Stage 1 application-code work remains blocked.
+
+- Review `PLATFORM_M2_COST_EVIDENCE_STAGE0_TECHNICAL_CONTRACT.md`.
+- Decide D0-01–D0-10, including embedded evidence items versus a separate registry (recommended: embedded), multi-source evidence, submission completeness, controlled treatment values and legacy compatibility.
+- Approve or amend the exact Stage 1 source-file boundary and 20-case acceptance matrix.
+- Do not begin application-code changes, create collections, alter permissions/workflow, migrate historical records or enable pricing/quote/booking/physical operations before explicit approval.
