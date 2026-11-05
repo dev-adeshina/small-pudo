@@ -1,3 +1,19 @@
+## Current continuation — PR #140 merged; M2 implementation-readiness plan submitted — 5 November 2026
+
+- **Repository:** dev-adeshina/small-pudo.
+- **Documentation baseline:** PR #140 merge `8b62d218847beea5e49dc7afcee203f44bc68da9`.
+- **Application-source baseline:** PR #137 merge `55dff8c2a4f4cf6f0e983676e692f0f126f7ec27`; PRs #138–#140 are documentation-only.
+- **Requirements baseline:** owner-approved M2 package in PR #139, reconciled by PR #140.
+- **Active review artifact:** `PLATFORM_M2_IMPLEMENTATION_READINESS_AND_STAGED_PLAN.md`, submitted for owner review. It concludes no customer-facing M2 pricing/quote/booking capability is currently ready for code.
+- **First bounded candidate:** structured evidence capture on the existing operational-cost component model, reusing the current store, APIs, staff page, immutable versions, permissions and Operations → Finance → independent approval workflow. This is only a candidate for Stage 0 technical-contract closure; no new registry/workflow or customer pricing engine.
+- **Next:** owner review of the staged plan. If approved, complete Stage 0 technical contract and executable acceptance fixtures. Stage 1 application code requires a separate explicit owner approval after the contract and exact bounded scope are reviewed.
+- **Preserve gates:** DEC-048 B/D deferred; no service model, rate, formula, currency, unit, conversion, charge, tax, rounding, quote validity or handover duration is approved. DEC-047's twelve combinations remain unavailable. DB-01/02/05 design is approved (PR #117) and internal quote persistence is implemented (PR #118); DB-03/04/06–12 remain open where relevant. DEC-036 release evidence remains separate.
+- **Browser evidence:** the owner reported successful live browser testing after PR #138. Exact scenario coverage is not enumerated; do not schedule generic repeat testing or claim unlisted cases passed.
+- **Separate workstream:** initial designated Staff Permission Administrator technical provisioning has not successfully run; it is not a prerequisite for the M2 evidence-model contract.
+- **Guardrails:** do not start application code from plan approval alone; do not expose quote calculation/issuance/acceptance, booking, payment, intake, custody, route or dispatch as part of the internal evidence slice.
+
+See `CURRENT_IMPLEMENTATION_STATUS.md`, `ISSUES.md` and the staged plan for the current decision and evidence ledger.
+
 ## Current continuation — PR #137 merged; SDD reconciliation — 5 November 2026
 
 - **Repository:** dev-adeshina/small-pudo; current main is 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137).
