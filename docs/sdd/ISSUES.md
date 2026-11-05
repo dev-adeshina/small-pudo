@@ -1,6 +1,6 @@
 # VeriLyft Issues, Risks, and Open Questions
 
-**Last updated:** 5 November 2026  
+**Last updated:** 5 November 2026
 **Repository:** `dev-adeshina/small-pudo`  
 **Owner decisions:** D-01–D-15 (DEC-022–DEC-036), DEC-037–DEC-049, PM-01–PM-12, and BP-01–BP-22 have accepted owner-policy outcomes at their recorded levels. Detailed operational procedures, technical contracts, acceptance-test specifications, runtime evidence, and production readiness remain open.
 
