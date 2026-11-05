@@ -1,12 +1,23 @@
 # VeriLyft Issues, Risks, and Open Questions
 
-**Last updated:** 3 November 2026  
+**Last updated:** 5 November 2026  
 **Repository:** `dev-adeshina/small-pudo`  
 **Owner decisions:** D-01–D-15 (DEC-022–DEC-036), DEC-037–DEC-049, PM-01–PM-12, and BP-01–BP-22 have accepted owner-policy outcomes at their recorded levels. Detailed operational procedures, technical contracts, acceptance-test specifications, runtime evidence, and production readiness remain open.
 
 This is the current issue register. Older archive-based observations have been reconciled where current implementation or later test evidence supersedes them. Source presence is not the same as runtime verification.
 
 Status labels: `OPEN`, `INVESTIGATING`, `BLOCKED`, `DEFERRED`, `RESOLVED`.
+
+## Current implementation reconciliation — 5 November 2026
+
+- **Main baseline:** PR #137 merge 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27; PR #136 adds staff invitation and permission management; PR #137 moves activation into the staff workspace. PR #135 is the previous SDD reconciliation after PRs #133/#134.
+- **Staff implementation status:** invitation, verified identity, staff directory, audited permission lifecycle and workspace activation are implemented. Activation grants no operational permissions. The initial designated permission-administrator provisioning CLI has not successfully run; policy appointment and technical provisioning remain distinct.
+- **Verification evidence:** owner-reported local PR #137 checks: 100/100 Firestore Emulator tests across 14 suites; TypeScript, lint, production build and git diff --check passed. These do not establish browser or production readiness.
+- **Browser verification still open:** invitation email delivery; email/password and Google onboarding; verified/mismatched/expired/revoked invitation paths; workspace activation; staff-directory visibility; permission assignment/suspension/expiry/revocation; generic Admin denial; designated-administrator access; and Operations/Finance/independent-approver separation.
+- **Next implementation selection:** review DB-01–DB-12 and current capability gates after browser verification. Do not repeat the already completed internal operational-cost configuration persistence/API/UI work as an upcoming task.
+- **Unchanged capability gates:** no verified PUDO inventory or accountable Operations position; DEC-047's twelve service/endpoint combinations unavailable; customer pricing/quotation/acceptance unresolved; confirmed booking, shipment payment, intake, physical custody and route/dispatch/delivery incomplete; DEC-036 P0/Conditional P0 release evidence remains outstanding.
+
+See CURRENT_IMPLEMENTATION_STATUS.md for the current accomplishments, evidence boundaries and ordered execution sequence.
 
 ## Open / investigating items
 
