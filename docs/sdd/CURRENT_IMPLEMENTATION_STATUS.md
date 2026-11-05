@@ -2,7 +2,8 @@
 
 **As of:** 5 November 2026
 **Repository:** dev-adeshina/small-pudo
-**Current baseline:** main at 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137)
+**Documentation baseline:** main at 364909e15dcdb719ac64ff96b10592f8b4e183f5 (PR #139)
+**Application-source baseline:** 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137; PRs #138 and #139 are documentation-only)
 **Purpose:** Current, source-aligned execution summary. This document supersedes older “current” checkpoint wording in historical SDD sections where dates/baselines differ; accepted decisions and historical records remain intact.
 
 ## Repository position
@@ -10,7 +11,9 @@
 - PR #135 reconciled the SDD after PRs #133 and #134.
 - PR #136 merged staff invitations, staff directory and permission-management foundations (399473be54e50224ebfd7841ab5d10d6eee9ab14).
 - PR #137 moved staff activation into the authenticated staff workspace (55dff8c2a4f4cf6f0e983676e692f0f126f7ec27).
-- GitHub review found no open pull requests and no open issues at this checkpoint.
+- PR #138 reconciled the SDD with the PR #137 application-source baseline; merge f1d4f29ed0645145a277af5558b8fbcd8f537b4c.
+- PR #139 added the owner-approved M2 pre-implementation review package; merge 364909e15dcdb719ac64ff96b10592f8b4e183f5.
+- PRs #138 and #139 are documentation-only. The application-source baseline remains PR #137.
 - No application-code change is part of this SDD reconciliation.
 
 ## Accomplished
@@ -39,13 +42,13 @@ PR #136 adds invitation delivery/expiry/revocation, verified-email matching, ema
 
 These are owner-reported local results, not independently reproduced by this documentation review and not production verification. Expected permission-denial logs in negative Rules tests do not indicate suite failure.
 
-**Still unverified in browser/runtime:** invitation delivery and complete email/password/Google onboarding; pending/expired/mismatched/revoked invitation cases; activation and staff-directory visibility; permission assignment/suspension/expiry/revocation; designated administrator access versus generic Admin denial; and the complete Operations → Finance → independent approval workflow using correctly permissioned, distinct test accounts.
+**Owner-reported live browser verification:** the user subsequently reported successful live browser testing after PR #138. The available status record does not enumerate the exact scenarios exercised, so it does not support claiming that every invitation, permission lifecycle, actor-separation or operational-cost workflow case was covered. Do not keep generic browser testing open; retain only specific cases shown to be untested by the user's scenario record.
 
 The guarded initial permission-administrator provisioning CLI has not successfully run. The user's prior invocation was refused because explicit --confirm-initial-designation confirmation was absent. Do not describe the designation as technically provisioned or run it against production without a separately reviewed and explicitly approved operation.
 
 ## What remains
 
-1. **Staff and operational-cost browser verification:** use controlled test accounts; verify positive and negative paths, actor separation, audit events and permission expiry. Keep production provisioning separate.
+1. **Scenario-specific staff/operational-cost evidence:** reconcile the successful owner-reported live browser test against the precise invitation, permission lifecycle, actor-separation, audit and expiry cases. Keep only uncovered cases open; keep initial permission-administrator provisioning separate.
 2. **PUDO capability readiness:** accountable Operations position remains unassigned; authoritative initial inventory source is unidentified; no verified PUDO inventory or capability matrix is available. DEC-050 responsibility boundaries remain accepted.
 3. **M2 pricing and quotation:** DEC-048 commercial unit/governance decisions are accepted, but Standard/Express/Scheduled pricing models, actual cost evidence, rates/formulas, inputs/units/conversions, monetary treatment, quote validity and handover deadlines remain unresolved. Quote issuance and acceptance remain disabled.
 4. **DEC-047 eligibility:** all twelve service/endpoint combinations remain pending verification and unavailable by default.
@@ -55,10 +58,11 @@ The guarded initial permission-administrator provisioning CLI has not successful
 
 ## Next execution sequence
 
-1. Complete and review this SDD reconciliation PR.
-2. Perform controlled staff/operational-cost browser verification and record results without claiming production readiness.
-3. Review DB-01–DB-12 and current capability gates; select one bounded, independently Ready implementation slice under DEC-045.
-4. Do not invent rates, formulas, currency, fees, durations, PUDO inventory, operational owners or service eligibility to make a feature appear complete.
+1. Complete and review the consolidated M2 SDD reconciliation PR.
+2. Complete one final implementation-readiness review and publish a consolidated, staged implementation plan with source traceability, dependencies, acceptance criteria and capability-specific blockers.
+3. Obtain the owner's explicit approval of that implementation plan before application-code changes.
+4. Implement only independently Ready slices through small, reviewable PRs; do not treat approval of the M2 requirements package as blanket implementation or quote-issuance authorization.
+5. Do not invent rates, formulas, currency, fees, durations, PUDO inventory, operational owners or service eligibility to make a feature appear complete.
 
 ## Authority and guardrails
 
