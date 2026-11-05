@@ -529,3 +529,16 @@ PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. T
 8. After the SDD reconciliation PR is reviewed and approved, perform one consolidated implementation-readiness review and produce a staged plan with source traceability, dependencies, acceptance criteria, capability gates and independently Ready slices.
 9. Do not begin application-code changes until the owner explicitly approves that implementation plan. Do not treat that approval as blanket permission to issue quotes, enable DEC-047 combinations, accept bookings or execute physical operations.
 10. Preserve the existing Next.js/Firebase architecture, source-backed contracts, small focused PRs, tests for positive/negative/concurrency/replay/recovery paths, and the distinction between booking, payment, physical possession, custody and movement.
+
+
+## Current handoff — M2 Stage 0 cost-evidence contract review — 5 November 2026
+
+**Repository baseline:** PR #141 merge `0ed56ee0e62b6792d7b3b4e0d5af4fc982e1d199`. Stage 0 documentation branch: `docs/m2-cost-evidence-stage0-contract`.
+
+1. Read `PLATFORM_M2_COST_EVIDENCE_STAGE0_TECHNICAL_CONTRACT.md` as the single Stage 0 owner-review package.
+2. The source refresh rechecked current-main operational-cost component validation/persistence, immutable versions, expected-version concurrency, approval workflow/events, token-revocation and action-permission checks, existing staff UI, Firestore client denial and relevant Emulator test foundations.
+3. The proposed model embeds one or more structured evidence items within each existing cost component. No evidence registry or authoritative evidence record was found in the inspected source tree. The proposal preserves legacy `evidenceDescription` and `treatment` fields and historical snapshots.
+4. Review D0-01–D0-10 and the 20-case acceptance matrix. Amend the contract if needed, then obtain explicit approval of the data representation, legacy compatibility, submission validation, exact Stage 1 files/services, exclusions and test matrix.
+5. Do not begin Stage 1 application-code changes until that approval is explicit. Stage 1 must reuse the existing store, workflow, APIs, permissions, staff interface and Rules boundary.
+6. No tests/build/browser/production checks were run for this read-only Stage 0 documentation work. Do not claim otherwise.
+7. Preserve all DEC-047/048/049, DB-03/04/06–DB-12 and DEC-036 gates. No customer pricing, quote, booking, payment, eligibility, PUDO, route, dispatch, intake, custody or fulfilment capability is enabled.
