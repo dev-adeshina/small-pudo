@@ -10,6 +10,7 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 - `PLATFORM_PUDO_LOCATION_REGISTRATION_AND_VERIFICATION_WORKFLOW.md` — owner-approved DEC-050 responsibility split for proposed-location registration, Operations physical verification/approval, and separately authorised activation.
 - `PLATFORM_PUDO_LOCATION_VERIFICATION_CHECKLIST_AND_EVIDENCE.md` — proposed five-area Operations verification checklist and evidence categories; requires validation by the accountable Operations owner and is not yet a mandatory evidence policy.
 - `CURRENT_IMPLEMENTATION_STATUS.md` — current source-aligned implementation, verification, outstanding gates and next execution sequence as of 5 November 2026.
+- `PLATFORM_M2_IMPLEMENTATION_READINESS_AND_STAGED_PLAN.md` — consolidated readiness assessment and staged M2 execution plan after PR #140; identifies the first bounded technical-contract candidate, source-backed foundations, acceptance gates and explicit code-authorization boundary.
 
 - `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` — single ordered implementation plan
 
