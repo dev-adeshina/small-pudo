@@ -346,7 +346,8 @@ function assertEvidenceItem(value: unknown): asserts value is OperationalCostEvi
   assertOptionalString(value.originalValue, "Evidence original value", 80);
   assertOptionalString(value.originalUnit, "Evidence original unit", 80);
   assertOptionalString(value.originalCurrencyCode, "Evidence original currency code", 3);
-  if (value.originalCurrencyCode !== undefined && !/^[A-Z]{3}$/.test(value.originalCurrencyCode)) {
+  if (value.originalCurrencyCode !== undefined &&
+      (typeof value.originalCurrencyCode !== "string" || !/^[A-Z]{3}$/.test(value.originalCurrencyCode))) {
     throw new TypeError("Evidence original currency code must be a three-letter uppercase code");
   }
   if (value.originalPrecision !== undefined &&
