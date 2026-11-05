@@ -351,7 +351,8 @@ function assertEvidenceItem(value: unknown): asserts value is OperationalCostEvi
     throw new TypeError("Evidence original currency code must be a three-letter uppercase code");
   }
   if (value.originalPrecision !== undefined &&
-      (!Number.isSafeInteger(value.originalPrecision) || value.originalPrecision < 0)) {
+      (typeof value.originalPrecision !== "number" ||
+       !Number.isSafeInteger(value.originalPrecision) || value.originalPrecision < 0)) {
     throw new TypeError("Evidence original precision must be a non-negative safe integer");
   }
   if (value.originalValue !== undefined &&
