@@ -79,6 +79,8 @@ export default function OperationalCostDefinitionsPage() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [adminEmail, setAdminEmail] = useState("");
   const [token, setToken] = useState("");
+  const [activationStatus, setActivationStatus] = useState<"pending" | "active" | "none" | "expired" | "unknown">("unknown");
+  const [activationBusy, setActivationBusy] = useState(false);
   const [definitions, setDefinitions] = useState<DefinitionSummary[]>([]);
   const [selected, setSelected] = useState<DefinitionDetail | null>(null);
   const [form, setForm] = useState<DefinitionPayload>(emptyForm);
@@ -135,10 +137,26 @@ export default function OperationalCostDefinitionsPage() {
       if (!active) return;
       setAdminEmail(user.email ?? "");
       setToken(idToken);
+      let nextStatus: "pending" | "active" | "none" | "expired" | "unknown" = "unknown";
+      try {
+        const response = await fetch("/api/staff/invitations/activate", {
+          headers: { Authorization: "Bearer " + idToken },
+          cache: "no-store",
+        });
+        const result = await response.json();
+        if (response.ok && ["pending", "active", "expired", "none"].includes(result.status)) {
+          nextStatus = result.status;
+        }
+      } catch {
+        // Existing staff access should remain usable if the onboarding-status check is temporarily unavailable.
+      }
+      if (!active) return;
+      setActivationStatus(nextStatus);
       setCheckingAuth(false);
-      // The page accepts a verified Firebase identity; each data/action request
-      // is independently authorized by its server-side action permission.
-      void loadDefinitions(idToken);
+      if (nextStatus !== "pending" && nextStatus !== "expired") {
+        // The server independently checks each operational action permission.
+        void loadDefinitions(idToken);
+      }
     });
     return () => { active = false; unsubscribe(); };
   }, [loadDefinitions, router]);
@@ -264,6 +282,28 @@ export default function OperationalCostDefinitionsPage() {
     }
   }
 
+  async function activateStaffAccount() {
+    if (!token) return;
+    setActivationBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch("/api/staff/invitations/activate", {
+        method: "POST",
+        headers: headers(token),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? "Staff activation could not be completed.");
+      setActivationStatus("active");
+      setNotice(result.message ?? "Your staff account is active. No operational permissions have been assigned.");
+      await loadDefinitions(token);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Staff activation could not be completed.");
+    } finally {
+      setActivationBusy(false);
+    }
+  }
+
   async function handleLogout() {
     await logoutAdmin();
     router.replace("/staff/sign-in");
@@ -292,7 +332,7 @@ export default function OperationalCostDefinitionsPage() {
             <h1>Operational cost <em>definitions.</em></h1>
             <p>Maintain activity cost definitions through the existing Operations, Finance and independent approval workflow.</p>
           </div>
-          <button type="button" className="cost-primary-button" onClick={startCreate} disabled={loading || Boolean(listError)}><Plus size={17} /> New draft</button>
+          {activationStatus !== "pending" && activationStatus !== "expired" && <button type="button" className="cost-primary-button" onClick={startCreate} disabled={loading || Boolean(listError)}><Plus size={17} /> New draft</button>}
         </section>
 
         <div className="cost-boundary-note">
@@ -302,6 +342,18 @@ export default function OperationalCostDefinitionsPage() {
         {notice && <div className="cost-feedback cost-feedback-success"><CheckCircle2 size={17} />{notice}</div>}
         {error && <div className="cost-feedback cost-feedback-error"><AlertCircle size={17} />{error}</div>}
 
+        {activationStatus === "pending" ? (
+          <section className="cost-panel">
+            <div className="cost-panel-heading"><div><span className="section-label">STAFF ONBOARDING</span><h2>Complete your staff activation</h2></div><ShieldCheck size={22}/></div>
+            <p>Your email address is verified and your invitation is ready. Activate your staff account to complete onboarding. This does not assign operational permissions; those are managed separately by an authorized administrator.</p>
+            <div className="cost-form-actions"><button type="button" className="cost-primary-button" onClick={() => void activateStaffAccount()} disabled={activationBusy}>{activationBusy ? "Activating…" : "Activate my staff account"}</button></div>
+          </section>
+        ) : activationStatus === "expired" ? (
+          <section className="cost-panel">
+            <div className="cost-panel-heading"><div><span className="section-label">STAFF ONBOARDING</span><h2>Invitation expired</h2></div><AlertCircle size={22}/></div>
+            <p>Your staff invitation has expired. Please contact the administrator who invited you and ask them to issue a new invitation.</p>
+          </section>
+        ) : (
         <div className="cost-workspace">
           <section className="cost-panel cost-list-panel">
             <div className="cost-panel-heading">
@@ -420,6 +472,7 @@ export default function OperationalCostDefinitionsPage() {
             ) : <div className="cost-empty cost-detail-empty"><ClipboardList size={34} /><strong>Select an activity definition</strong><p>Review immutable versions and workflow decisions, or create a new internal draft.</p></div>}
           </section>
         </div>
+        )}
         <p className="cost-footer-note">Access is enforced by existing staff action permissions. Admin access alone does not grant view, proposal, validation, Finance or approval authority. Permission assignments remain outside this interface.</p>
       </div>
     </main>

@@ -166,6 +166,65 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
         return {outcome:"updated" as const,status};
       });
     },
+    async getInvitationStatus(input:{uid:string;email:unknown}) {
+      const email=requiredString(input.email,"A verified account email",254).toLowerCase();
+      const staff=await db.collection("staffDirectory").doc(input.uid).get();
+      if(staff.exists) {
+        const data=staff.data()!;
+        return data.email===email&&data.status==="active"
+          ? {status:"active" as const}
+          : {status:"none" as const};
+      }
+      const matches=await db.collection("staffInvitations").where("email","==",email).limit(10).get();
+      const accepted=matches.docs.find(document=>{
+        const data=document.data();
+        return data.status==="accepted"&&data.acceptedBy===input.uid;
+      });
+      if(accepted) return {status:"active" as const};
+      const pending=matches.docs.find(document=>document.data().status==="pending");
+      if(!pending) return {status:"none" as const};
+      const expiresAt=pending.data().expiresAt;
+      if(!expiresAt||typeof expiresAt.toDate!=="function"||expiresAt.toDate().getTime()<=Date.now()) {
+        return {status:"expired" as const};
+      }
+      return {status:"pending" as const};
+    },
+    async activatePendingInvitation(input:{uid:string;email:unknown}) {
+      const email=requiredString(input.email,"A verified account email",254).toLowerCase();
+      const matches=await db.collection("staffInvitations").where("email","==",email).limit(10).get();
+      const pending=matches.docs.find(document=>document.data().status==="pending");
+      if(!pending) {
+        const staff=await db.collection("staffDirectory").doc(input.uid).get();
+        if(staff.exists&&staff.data()?.email===email&&staff.data()?.status==="active") {
+          return {outcome:"already_active" as const};
+        }
+        return {outcome:"invalid" as const};
+      }
+      const invitationRef=pending.ref;
+      const staffRef=db.collection("staffDirectory").doc(input.uid);
+      const auditRef=db.collection("staffManagementAudit").doc();
+      return db.runTransaction(async transaction=>{
+        const invitation=await transaction.get(invitationRef);
+        if(!invitation.exists) return {outcome:"invalid" as const};
+        const data=invitation.data()!;
+        if(data.status==="accepted"&&data.acceptedBy===input.uid&&data.email===email) {
+          return {outcome:"already_active" as const};
+        }
+        if(data.status!=="pending") return {outcome:"unavailable" as const};
+        if(data.email!==email) return {outcome:"email_mismatch" as const};
+        if(!data.expiresAt||typeof data.expiresAt.toDate!=="function"||data.expiresAt.toDate().getTime()<=Date.now()) {
+          transaction.update(invitationRef,{status:"expired",updatedAt:serverTimestamp()});
+          transaction.create(auditRef,{action:"invitation.expired",actorUid:input.uid,targetEmail:email,invitationId:invitationRef.id,reason:"Invitation expiry was reached before activation.",outcome:"denied",occurredAt:serverTimestamp()});
+          return {outcome:"expired" as const};
+        }
+        const existing=await transaction.get(staffRef);
+        if(existing.exists) return {outcome:"unavailable" as const};
+        transaction.create(staffRef,{email,status:"active",invitationId:invitationRef.id,activatedAt:serverTimestamp(),updatedAt:serverTimestamp(),createdAt:serverTimestamp()});
+        transaction.update(invitationRef,{status:"accepted",acceptedBy:input.uid,acceptedAt:serverTimestamp()});
+        transaction.create(auditRef,{action:"invitation.accepted",actorUid:input.uid,targetUid:input.uid,targetEmail:email,invitationId:invitationRef.id,reason:"Verified invited account activated from the staff workspace.",outcome:"success",occurredAt:serverTimestamp()});
+        return {outcome:"activated" as const};
+      });
+    },
     async activateInvitation(input:{token:unknown;uid:string;email:unknown}) {
       const token=requiredString(input.token,"An invitation token",256), email=requiredString(input.email,"A verified account email",254).toLowerCase();
       const matches=await db.collection("staffInvitations").where("tokenHash","==",tokenHash(token)).limit(1).get();

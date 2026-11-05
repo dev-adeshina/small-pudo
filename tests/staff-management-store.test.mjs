@@ -7,15 +7,16 @@ import { createStaffManagementStore } from "../lib/server/staff-management-core.
 import { createOperationalCostDefinitionStore } from "../lib/server/operational-cost-definition-store-core.ts";
 const enabled=Boolean(process.env.FIRESTORE_EMULATOR_HOST);
 describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
- let app,db,store,costStore;const prefix=randomUUID(),actor=`perm-admin-${prefix}`,uid=`staff-${prefix}`,activeUid=`active-staff-${prefix}`,invites=[];
+ let app,db,store,costStore;const prefix=randomUUID(),actor=`perm-admin-${prefix}`,uid=`staff-${prefix}`,activeUid=`active-staff-${prefix}`,workspaceUid=`workspace-staff-${prefix}`,invites=[];
  before(()=>{app=initializeApp({projectId:"demo-verilyft-staff-management"},`staff-management-${prefix}`);db=getFirestore(app);store=createStaffManagementStore({db,serverTimestamp:()=>FieldValue.serverTimestamp()});costStore=createOperationalCostDefinitionStore({db,serverTimestamp:()=>FieldValue.serverTimestamp()});});
  after(async()=>{
   for(const id of invites)await db.collection("staffInvitations").doc(id).delete();
   const perms=await db.collection("staffActionPermissions").doc(uid).collection("permissions").listDocuments();await Promise.all(perms.map(d=>d.delete()));
-  await db.collection("staffActionPermissions").doc(uid).delete();await db.collection("staffDirectory").doc(uid).delete();await db.collection("staffDirectory").doc(activeUid).delete();
+  await db.collection("staffActionPermissions").doc(uid).delete();await db.collection("staffDirectory").doc(uid).delete();await db.collection("staffDirectory").doc(activeUid).delete();await db.collection("staffDirectory").doc(workspaceUid).delete();
   const audit=await db.collection("staffManagementAudit").where("actorUid","==",actor).get();
   const targetAudit=await db.collection("staffManagementAudit").where("targetUid","==",uid).get();
-  await Promise.all([...audit.docs,...targetAudit.docs].map(d=>d.ref.delete()));
+  const workspaceAudit=await db.collection("staffManagementAudit").where("targetUid","==",workspaceUid).get();
+  await Promise.all([...audit.docs,...targetAudit.docs,...workspaceAudit.docs].map(d=>d.ref.delete()));
   if(app)await deleteApp(app);
  });
  it("stores only a token hash and requires an explicit future expiry",async()=>{
@@ -49,6 +50,15 @@ describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
   assert.equal((await db.collection("staffDirectory").doc(uid).get()).data().status,"active");
   assert.equal((await db.collection("staffActionPermissions").doc(uid).collection("permissions").get()).empty,true);
   assert.deepEqual(await store.activateInvitation({token:invite.token,uid,email:"staff.activate@example.com"}),{outcome:"already_active"});
+ });
+ it("detects and activates a pending invitation from the verified staff workspace identity",async()=>{
+  const email="staff.workspace-activation@example.com";
+  const invite=await store.createInvitation({email,expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Workspace activation test",actorUid:actor});invites.push(invite.invitationId);
+  assert.deepEqual(await store.getInvitationStatus({uid:workspaceUid,email}),{status:"pending"});
+  assert.deepEqual(await store.activatePendingInvitation({uid:workspaceUid,email}),{outcome:"activated"});
+  assert.deepEqual(await store.getInvitationStatus({uid:workspaceUid,email}),{status:"active"});
+  assert.deepEqual(await store.activatePendingInvitation({uid:workspaceUid,email}),{outcome:"already_active"});
+  assert.equal((await db.collection("staffActionPermissions").doc(workspaceUid).collection("permissions").get()).empty,true);
  });
  it("assigns, expires, suspends and revokes only approved permissions with audit events",async()=>{
   await db.collection("staffDirectory").doc(uid).set({email:"staff.activate@example.com",status:"active",updatedAt:FieldValue.serverTimestamp()});
