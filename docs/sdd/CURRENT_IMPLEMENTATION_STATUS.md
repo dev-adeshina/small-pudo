@@ -2,7 +2,7 @@
 
 **As of:** 5 November 2026
 **Repository:** dev-adeshina/small-pudo
-**Documentation baseline:** main at 364909e15dcdb719ac64ff96b10592f8b4e183f5 (PR #139)
+**Documentation baseline:** main at 8b62d218847beea5e49dc7afcee203f44bc68da9 (PR #140)
 **Application-source baseline:** 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137; PRs #138 and #139 are documentation-only)
 **Purpose:** Current, source-aligned execution summary. This document supersedes older “current” checkpoint wording in historical SDD sections where dates/baselines differ; accepted decisions and historical records remain intact.
 
@@ -13,7 +13,8 @@
 - PR #137 moved staff activation into the authenticated staff workspace (55dff8c2a4f4cf6f0e983676e692f0f126f7ec27).
 - PR #138 reconciled the SDD with the PR #137 application-source baseline; merge f1d4f29ed0645145a277af5558b8fbcd8f537b4c.
 - PR #139 added the owner-approved M2 pre-implementation review package; merge 364909e15dcdb719ac64ff96b10592f8b4e183f5.
-- PRs #138 and #139 are documentation-only. The application-source baseline remains PR #137.
+- PR #140 reconciled the specialist M2 SDD documents against the PR #137 source baseline; merge 8b62d218847beea5e49dc7afcee203f44bc68da9.
+- PRs #138–#140 are documentation-only. The application-source baseline remains PR #137.
 - No application-code change is part of this SDD reconciliation.
 
 ## Accomplished
@@ -58,11 +59,12 @@ The guarded initial permission-administrator provisioning CLI has not successful
 
 ## Next execution sequence
 
-1. Complete and review the consolidated M2 SDD reconciliation PR.
-2. Complete one final implementation-readiness review and publish a consolidated, staged implementation plan with source traceability, dependencies, acceptance criteria and capability-specific blockers.
-3. Obtain the owner's explicit approval of that implementation plan before application-code changes.
-4. Implement only independently Ready slices through small, reviewable PRs; do not treat approval of the M2 requirements package as blanket implementation or quote-issuance authorization.
-5. Do not invent rates, formulas, currency, fees, durations, PUDO inventory, operational owners or service eligibility to make a feature appear complete.
+1. PR #140 completed the consolidated M2 SDD reconciliation; the documentation baseline is now 8b62d218847beea5e49dc7afcee203f44bc68da9.
+2. Review `PLATFORM_M2_IMPLEMENTATION_READINESS_AND_STAGED_PLAN.md` as the single consolidated implementation-readiness decision.
+3. If approved, complete Stage 0: a source-aligned technical contract and executable acceptance fixtures for the internal structured cost-evidence enhancement.
+4. Obtain separate explicit owner approval of that technical contract and bounded Stage 1 implementation scope before application-code changes.
+5. Implement only independently Ready slices through small, reviewable PRs. The first candidate must reuse the existing operational-cost store/workflow; customer pricing, quote issuance/acceptance and DEC-047 activation remain separately gated.
+6. Do not invent rates, formulas, currency, fees, durations, PUDO inventory, operational owners or service eligibility to make a feature appear complete.
 
 ## Authority and guardrails
 
