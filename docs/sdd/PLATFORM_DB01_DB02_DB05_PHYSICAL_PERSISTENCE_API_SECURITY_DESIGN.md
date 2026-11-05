@@ -52,6 +52,8 @@ The following paths were re-fetched at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90
 - Node's built-in test runner is used. Firestore Admin-store tests run against the Firestore Emulator when `FIRESTORE_EMULATOR_HOST` is configured; the existing store suite otherwise skips.
 - Rules tests use `@firebase/rules-unit-testing` and load the repository's actual `firestore.rules`.
 
+PR #118 implemented the bounded lineage/version foundation tests for transactional creation, immutable history, stale and concurrent revisions, accepted-lineage protection and validation, and added direct-client Rules-denial coverage for quote roots, versions, bookings and parcels. The owner later reported the complete PR #137 Firestore Emulator-backed suite passing 100/100 across 14 suites. Quote acceptance, confirmed booking and parcel/intake cases remain blocked specifications, not implemented commands.
+
 ### 2.2 Boundaries and gaps found
 
 - The existing draft path is `users/{uid}/shipmentBookingDrafts/{draftId}`. It is preparation-only. Do not place confirmed bookings, quote lineages, parcels or custody records beneath that path or treat its shape/status as a template.
@@ -65,7 +67,7 @@ The following paths were re-fetched at `0ca77ea2cff30d38ea10e279810f4e0cae65cd90
 
 ### 2.3 Evidence limitation
 
-This was a bounded re-fetch of the relevant current source paths, not a full-repository audit. No tests, build, lint, Emulator run, deployed Firestore Rules check, production query or production-data inspection was performed for this design.
+This was a bounded re-fetch of the relevant source paths at the PR #116 baseline, not a full-repository audit. No tests, build, lint, Emulator run, deployed Firestore Rules check, production query or production-data inspection was performed for the original design. PR #118 later implemented the bounded internal quote-lineage/version store and added synthetic Emulator and Rules-denial test sources; the owner subsequently reported the full PR #137 Emulator suite passing. This later evidence does not convert the original source review into a production audit.
 
 ## 3. Approved physical representation
 
