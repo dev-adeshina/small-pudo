@@ -727,7 +727,7 @@ The UI at /admin/operational-cost-definitions reuses the existing APIs and displ
 
 ### 24.3 Quote-lineage source facts
 
-- lib/server/shipment-quote-store-core.ts and lib/server/shipment-quote-store.ts provide internal Firestore quote-lineage and immutable-version persistence primitives.
+- PR #118 merge d54f337439947207e1967d1b915a02018e0b856a implemented the bounded persistence foundation approved by PR #117. lib/server/shipment-quote-store-core.ts and lib/server/shipment-quote-store.ts provide internal Firestore quote-lineage and immutable-version persistence primitives.
 - tests/shipment-quote-store.test.mjs provides Emulator-backed store test coverage.
 - The quote snapshot is opaque to this store. The store does not calculate or issue customer quotes, expose a customer API, confirm bookings, or authorize customer access.
 - This internal persistence foundation must not be described as a pricing engine, quote issuer or customer acceptance flow.
