@@ -8,7 +8,17 @@ Use this as the single implementation pointer. Preserve accepted decisions. Do n
 
 The owner's explicit instruction to proceed supersedes the previous blanket implementation freeze. It does not approve unresolved business-policy proposals or remove P0 release evidence requirements.
 
-## Current position — PR #133 and PR #134 merged; next implementation selection
+## Current position — PR #137 merged; post-merge execution — 5 November 2026
+
+**Current baseline:** main at 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137). PR #136 delivered staff invitations, staff directory and permission administration; PR #137 moved activation into the signed-in staff workspace. See CURRENT_IMPLEMENTATION_STATUS.md for the consolidated status and evidence ledger.
+
+**Verification:** the owner reported 100/100 Firestore Emulator-backed tests across 14 suites, plus successful TypeScript, lint, production build and git diff --check. Browser verification remains outstanding. The initial designated Staff Permission Administrator provisioning CLI has not successfully run; do not treat the policy appointment as technical provisioning.
+
+**Immediate next work:** controlled browser verification of staff onboarding, directory visibility, permission lifecycle and the separated operational-cost workflow. Then review DB-01–DB-12 and capability gates to select one bounded Ready implementation slice. The older PR #133/#134 checkpoint and the historical cost-configuration-discovery-next instructions below are superseded: operational-cost persistence/API/workflow and the staff interface have since been implemented.
+
+**Still gated:** customer pricing/quotation and quote acceptance; all twelve DEC-047 service/endpoint combinations; PUDO inventory and accountable Operations ownership; confirmed shipment booking/payment; parcel intake/custody; route/dispatch/delivery; and DEC-036 P0/Conditional P0 release evidence.
+
+## Historical checkpoint — PR #133 and PR #134 merged (3 November 2026; superseded by the PR #137 checkpoint above)
 
 **Completed:** PR #133 merged the staff interface at `/admin/operational-cost-definitions` over the existing list/create/read/revise/workflow APIs. It reuses the existing Firestore stores, immutable versions, action permissions, default-deny Rules and transaction semantics. No new persistence model, API or permission catalogue was introduced.
 
@@ -214,7 +224,7 @@ The proposal recommends:
 The persistence foundation is a bounded technical prerequisite and does not replace or approve the ordered M2 commercial pricing/quotation readiness work. Quote issuance and acceptance remain disabled until M2 and the other independent prerequisites are approved and evidenced.
 
 
-## Current M2 execution checkpoint — DEC-048 reconciled; evidence collection next — 2 November 2026
+## Historical M2 execution checkpoint — DEC-048 reconciled; evidence collection next — 2 November 2026
 
 - **Repository baseline:** PR #118 merged at `d54f337439947207e1967d1b915a02018e0b856a`; user reports local `main` synchronized.
 - **Completed foundation:** PR #117 approved the DB-01/DB-02/DB-05 physical contract. PR #118 implemented the internal quote-lineage/immutable-version persistence foundation and Rules/Emulator tests. The user reported 57 tests passing with zero failures, and TypeScript, lint and production build passing.
@@ -227,7 +237,7 @@ The persistence foundation is a bounded technical prerequisite and does not repl
 - **Independent work:** DB-03, DB-04, DB-06–DB-12, M0 and DEC-036 P0/Conditional P0 release evidence remain separate.
 
 
-## Current M2 direction — Standard operational scope captured; bounded cost-configuration discovery next — 2 November 2026
+## Historical M2 direction — Standard operational scope captured; bounded cost-configuration discovery next — 2 November 2026 (superseded by the 5 November checkpoint above)
 
 - **Latest confirmed documentation baseline:** PR #119 merged at 3d324d4a7b9a5eb751106b0da30defe79ea332ce. Its workbook is an evidence template, not pricing approval.
 - **Owner's latest priority:** keep the remaining evidence work minimal and move toward implementation.

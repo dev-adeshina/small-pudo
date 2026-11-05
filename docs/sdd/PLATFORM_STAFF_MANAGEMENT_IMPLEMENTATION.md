@@ -2,7 +2,18 @@
 
 **Implementation branch:** `feat/staff-invitation-permission-management`  
 **Policy basis:** PM-01–PM-02 and the approved five operational-cost action permissions.  
-**Status:** Implemented on the feature branch; local Emulator, TypeScript, lint, production-build and browser verification are pending. No production Firebase provisioning has been run.
+**Status:** PR #136 and PR #137 are merged to main. The invitation, staff directory, permission-management and workspace-activation implementation is present. Owner-reported local Emulator, TypeScript, lint, production-build and diff checks passed after PR #137; browser verification remains pending. The initial permission-administrator Firebase provisioning has not successfully run.
+
+## Post-merge status — PR #136 and PR #137 — 5 November 2026
+
+- PR #136 merged the staff invitation and permission-management implementation. PR #137 moved the activation action into the authenticated staff workspace.
+- The invitation acceptance page now guides account registration/verification/sign-in. After signing in with a verified email matching a pending invitation, the staff workspace checks invitation status and presents the activation action. The activation endpoint supports status lookup and activation using the verified Firebase identity; the legacy token path remains supported during transition.
+- Successful activation creates/activates the staff-directory record and marks the invitation accepted. It does not assign any operational action permission.
+- The owner reports 100/100 Firestore Emulator-backed tests across 14 suites, zero failures and zero skipped, plus successful TypeScript, lint, production build and git diff --check. These results are owner-reported and are not browser or production evidence.
+- Browser verification remains open for invitation delivery, email/password and Google onboarding, verification, pending/expired/mismatched/revoked cases, workspace activation, staff-directory visibility, permission lifecycle and the operational-cost workflow with distinct actors.
+- The initial Designated Staff Permission Administrator policy appointment is separate from technical provisioning. The guarded provisioning command was refused when invoked without --confirm-initial-designation; there is no evidence that provisioning subsequently succeeded. Do not claim the designation is technically active.
+
+
 
 ## Scope delivered
 
@@ -59,26 +70,37 @@ If any are missing, invitation creation is not attempted and the API returns a c
 
 ## Verification handoff
 
-From the local feature branch, run:
+### Owner-reported local verification after PR #137
 
-```bash
-npx --yes firebase-tools emulators:start --only firestore --project demo-verilyft-staff-management
-```
+The owner ran the full Firestore Emulator-backed suite using:
 
-In another terminal, run the focused tests and then the full project checks:
+    npx firebase-tools emulators:exec --only firestore --project demo-verilyft-staff-management "npm test"
 
-```bash
-node --test tests/staff-management-store.test.mjs tests/staff-management-auth.test.mjs tests/staff-action-permissions.rules.test.mjs
-npm test
-npx tsc --noEmit
-npm run lint
-npm run build
-git diff --check
-```
+Reported result: 100 tests across 14 suites; 100 passed, 0 failed, 0 skipped. The owner also reported successful:
 
-Also verify the UI with a designated permission-administrator test account in the Emulator/test environment, and confirm that a generic active Admin without a designation is denied. Exercise email/password and Google invite activation, mismatched email denial, expired/revoked invite denial, permission assignment/suspension/expiry/revocation and the existing operational-cost workflow.
+    npx tsc --noEmit
+    npm run lint
+    npm run build
+    git diff --check
 
-The Emulator suite is intentionally preserved for the owner to run locally. No local test result is claimed by this implementation record.
+These are user-reported local results. They are not independently reproduced by this document update and do not establish browser behaviour or production configuration.
+
+### Browser verification still required
+
+Use controlled test accounts and verify:
+
+1. Invitation creation and Resend delivery confirmation.
+2. Email/password and Google registration/sign-in; verified email must match the invitation.
+3. Pending invitation detection and activation from the authenticated staff workspace.
+4. Expired, revoked, mismatched-email, duplicate and already-active invitation behaviour.
+5. Staff-directory visibility after activation.
+6. Permission assignment, modification, suspension, expiry and revocation; verify self-assignment and unsupported permission denial.
+7. Generic Admin denial and designated Staff Permission Administrator access.
+8. Operational-cost proposal, Operations validation, Finance review and independent approval with distinct actors; proposer self-validation and missing/expired permission denial; confirm audit events.
+
+### Controlled provisioning remains separate
+
+The initial designated-administrator policy appointment is recorded, but the Firebase provisioning CLI has not successfully run. A prior invocation was refused because --confirm-initial-designation was not supplied. Do not run it against production without reviewing target UID, provisioning actor, expected project, reason and explicit owner approval. Designated-administrator recovery/successor and suspension lifecycle remains open.
 
 ## Explicit exclusions and remaining controls
 
@@ -88,4 +110,4 @@ The Emulator suite is intentionally preserved for the owner to run locally. No l
 - No second-approval rule is added for permission changes; PM-01 does not resolve that detail.
 - The initial designation is not active until controlled provisioning is separately approved and run.
 - Designated-admin recovery/successor and suspension lifecycle remains open.
-- Invitation delivery requires live Resend configuration; browser verification and local regression checks remain pending.
+- Invitation delivery requires live Resend configuration; browser verification remains pending. Owner-reported local regression checks after PR #137 passed (100/100 Firestore Emulator tests, TypeScript, lint, production build and `git diff --check`).

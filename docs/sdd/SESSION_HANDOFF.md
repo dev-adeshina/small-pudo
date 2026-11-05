@@ -1,12 +1,16 @@
-## Current continuation — PR #133/#134 SDD reconciliation
+## Current continuation — PR #137 merged; SDD reconciliation — 5 November 2026
 
-- **Repository:** `dev-adeshina/small-pudo`; PR #133 merge `f38b65be67e365bdc8ba6ba5994c5354228d9c2cc`; PR #134 merge `c05b01340d5f858826223c5b12d13f90973eb973`.
-- **Scope:** one final reconciliation of `PROGRESS.md`, `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md`, `ISSUES.md`, `README.md` and this handoff. Preserve historical records and accepted decisions; no application-code changes.
-- **PR #133:** staff UI at `/admin/operational-cost-definitions` uses existing APIs, persistence, workflow and action permissions. User-reported local checks passed: 86/86 Firestore Emulator tests, TypeScript, lint, production build and `git diff --check`. Browser verification with accounts carrying view/propose/validate/finance_review/approve remains outstanding. Generic Admin denial is expected when the action permission is absent.
-- **PR #134:** records the initial Designated Staff Permission Administrator appointment under PM-01. It grants no operational-cost or other action permissions. Firebase technical provisioning is not activated; trusted mechanism, audit evidence and recovery/successor lifecycle remain open.
-- **Preserve:** DEC-045 bounded authority; DEC-047's twelve unavailable combinations; DEC-036 P0/Conditional P0 release gates; unassigned Operations accountability and unidentified initial PUDO inventory source; DB-01–DB-12 unresolved technical contracts. DEC-050 responsibility split remains accepted.
-- **Next:** finish this single reconciliation PR. Once merged, review DB-01–DB-12 contract readiness and capability gates, then select the next buildable implementation slice. Do not restart platform-wide reconciliation or reopen accepted decisions without new evidence or a concrete conflict.
-- **Guardrails:** draft preparation is not booking; internal cost definitions are not customer prices; appointment is not technical provisioning or permission grant; route/dispatch intent is not actual physical custody.
+- **Repository:** dev-adeshina/small-pudo; current main is 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137).
+- **Current task:** complete one focused documentation-only SDD reconciliation PR on branch docs/reconcile-sdd-after-pr-137. Do not change application code and do not merge without the owner's explicit approval.
+- **Recent implementation:** PR #136 merged staff invitations, staff directory and the five approved operational-cost action-permission lifecycle. PR #137 moved activation into the authenticated staff workspace. Staff activation creates the directory record but grants no operational permissions. PR #135 is the previous SDD reconciliation after PRs #133/#134.
+- **User-reported local verification after PR #137:** Firestore Emulator-backed suite 100/100 across 14 suites, zero failures and zero skipped; npx tsc --noEmit, npm run lint, npm run build and git diff --check passed. Attribute this to the user; it was not independently rerun by the documentation review.
+- **Still unverified:** browser onboarding/invitation paths, staff-directory visibility, permission lifecycle, designated-admin versus generic-Admin access, and the complete distinct-actor Operations/Finance/independent approval workflow.
+- **Provisioning:** the initial permission-administrator policy appointment is recorded, but the guarded Firebase provisioning CLI has not successfully run. The user's invocation was refused without --confirm-initial-designation. Do not treat it as provisioned or execute it against production without explicit approval.
+- **Next after reconciliation:** controlled browser verification; then review DB-01–DB-12 and capability gates to select one bounded Ready implementation slice. Do not repeat operational-cost configuration persistence/API/UI work already implemented.
+- **Preserve:** DEC-045 bounded authority; DEC-047's twelve unavailable combinations; DEC-036 P0/Conditional P0 release gates; DEC-050 responsibility boundaries; unassigned accountable Operations position and unidentified initial PUDO inventory source; unresolved M2 rates/formulas/inputs/terms and DB technical gates.
+- **Guardrails:** draft preparation is not booking; quote lineage is not quote issuance; internal cost definitions are not customer prices; staff activation is not permission assignment; route/dispatch intent is not physical custody.
+
+See CURRENT_IMPLEMENTATION_STATUS.md for the consolidated status and evidence ledger.
 
 ## Historical continuation — PR #129 merged; current-main readiness reconciliation — 3 November 2026
 

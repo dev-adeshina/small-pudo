@@ -1,11 +1,19 @@
 # VeriLyft Progress Tracker
 
-> **Current direction (3 November 2026):** PR #133 (merge `f38b65be67e365bdc8ba6ba5994c5354228d9c2cc`) adds the staff-facing operational-cost definition interface over the existing APIs. PR #134 (merge `c05b01340d5f858826223c5b12d13f90973eb973`) records the owner's appointment of the initial Designated Staff Permission Administrator under PM-01. Both are merged. PR #133's user-reported local checks passed: 86/86 Firestore Emulator tests, TypeScript, lint, production build and `git diff --check`. Browser verification of the interface with correctly permissioned staff accounts remains outstanding; a generic Admin account without operational-cost action permissions is correctly denied. PR #134 does not grant operational-cost or other action permissions and does not activate Firebase technical provisioning. DEC-047, Operations ownership/PUDO inventory, DB-01–DB-12 contract review and DEC-036 P0/Conditional P0 release gates remain in force.
+## Current authoritative checkpoint — 5 November 2026
 
-**Last updated:** 3 November 2026  
+The current main baseline is PR #137 merge 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27. PR #136 merged staff invitation and permission-management foundations; PR #137 moved staff activation into the authenticated staff workspace. PR #135 reconciled the earlier PR #133/#134 checkpoint. See CURRENT_IMPLEMENTATION_STATUS.md for the consolidated status, accomplishments, evidence boundaries and remaining work.
+
+**Post-PR #137 user-reported local verification:** Firestore Emulator suite 100/100 across 14 suites, zero failures and zero skipped; TypeScript, lint, production build and git diff --check passed. This is reported local evidence, not browser or production verification. Staff onboarding, directory visibility, permission lifecycle and the complete operational-cost workflow still require controlled browser verification. The initial permission-administrator provisioning CLI has not successfully run.
+
+**Current next step:** complete this SDD reconciliation, then perform controlled browser verification and review DB-01–DB-12/capability gates before selecting the next bounded implementation slice. DEC-047's twelve combinations, PUDO inventory/Operations ownership, customer pricing/quotation, confirmed booking, payment, intake, custody, dispatch and DEC-036 release evidence remain gated.
+
+> **Historical checkpoint (3 November 2026; superseded by the 5 November 2026 checkpoint above):** PR #133 (merge `f38b65be67e365bdc8ba6ba5994c5354228d9c2cc`) adds the staff-facing operational-cost definition interface over the existing APIs. PR #134 (merge `c05b01340d5f858826223c5b12d13f90973eb973`) records the owner's appointment of the initial Designated Staff Permission Administrator under PM-01. Both are merged. PR #133's user-reported local checks passed: 86/86 Firestore Emulator tests, TypeScript, lint, production build and `git diff --check`. Browser verification of the interface with correctly permissioned staff accounts remains outstanding; a generic Admin account without operational-cost action permissions is correctly denied. PR #134 does not grant operational-cost or other action permissions and does not activate Firebase technical provisioning. DEC-047, Operations ownership/PUDO inventory, DB-01–DB-12 contract review and DEC-036 P0/Conditional P0 release gates remain in force.
+
+**Last updated:** 5 November 2026
 **Repository:** `dev-adeshina/small-pudo`  
 **Project baseline branch:** `main`  
-**Latest confirmed main merges:** PR #133 at `f38b65be67e365bdc8ba6ba5994c5354228d9c2cc`; PR #134 at `c05b01340d5f858826223c5b12d13f90973eb973`. Both are documentation/application scope as described in their PR records; PR #133 contains the operational-cost management UI, while PR #134 is documentation-only.  
+**Latest confirmed main merge:** PR #137 at `55dff8c2a4f4cf6f0e983676e692f0f126f7ec27`; PR #136 is the preceding staff-management implementation merge. PR #133/#134 are historical checkpoints superseded by PR #135 and later work.
 **Bounded PUDO source-inspection baseline:** read-only source/tree review against PR #125 at e7966332024fd38eb7cb5b8a1adebc0b584ac894; the PR #125-to-#129 compare confirmed no intervening application/configuration/test changes at that checkpoint. Later PRs #131–#134 do not refresh the PUDO registry inspection. The review found no dedicated PUDO location registry, location-capability service, or customer PUDO directory in the inspected tree; shipment-draft origin/destination values remain free text. This is not a full source, runtime, production-data, or operational audit.  
 **Current phase:** Milestone 4 bounded implementation. The operational-cost definition management interface is merged in PR #133. PR #134 records the initial Designated Staff Permission Administrator appointment, but technical Firebase permission provisioning is not activated. Next: finish this focused SDD reconciliation, then review DB-01–DB-12 contracts and capability gates to select the next buildable implementation slice. Commercial pricing/quotation, all twelve DEC-047 service/endpoint combinations, booking confirmation, payment, intake and custody remain independently gated. M0 regression safety and DEC-036 P0/Conditional P0 release evidence remain active.
 
@@ -18,9 +26,9 @@
 - [ ] Not implemented or not yet verified.
 - [?] Requires inspection or a decision.
 
-## 1. Current position
+## 1. Historical position — superseded by the 5 November 2026 checkpoint
 
-### Current execution position — Milestone 4 and bounded implementation
+### Historical execution position — Milestone 4 and bounded implementation (3 November 2026)
 
 - **Current merged baseline:** PR #133 is merged at `f38b65be67e365bdc8ba6ba5994c5354228d9c2cc`; PR #134 is merged at `c05b01340d5f858826223c5b12d13f90973eb973`.
 - **PR #133 — operational-cost definition management interface:** the staff UI at `/admin/operational-cost-definitions` uses existing APIs, Firestore persistence, workflow and action permissions. It introduces no new persistence/API/permission model and does not activate costing, customer pricing or downstream services.
@@ -1826,13 +1834,13 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 - [x] Added the staff directory and designated-administrator-only UI at `/admin/staff`.
 - [x] Added assignment, modification, suspension, optional expiry and revocation for only the five approved platform-wide operational-cost permissions. Existing workflow separation-of-duties checks remain unchanged.
 - [x] Added server-side designated Staff Permission Administrator authorization, transactionally audited permission/invitation actions, and explicit Firestore client denial for staff-management records.
-- [x] Added a guarded initial-designation provisioning CLI that checks the expected Firebase project and both verified active Admin identities. The CLI has not been executed.
+- [x] Added a guarded initial-designation provisioning CLI that checks the expected Firebase project and both verified active Admin identities. The CLI has not successfully provisioned the designation; a prior invocation was refused without explicit `--confirm-initial-designation`.
 - [x] Added Emulator-backed store, expiry and Firestore Rules coverage plus unit authorization tests, including duplicate-invitation and invitation-secret redaction assertions.
-- [ ] Owner to run the focused and full Firestore Emulator suites using `firebase emulators:exec`, then TypeScript, lint, production build and `git diff --check` on the synced branch.
+- [x] Owner-reported post-PR #137 verification: full Firestore Emulator suite 100/100 across 14 suites, plus TypeScript, lint, production build and `git diff --check` passed. See the 5 November authoritative checkpoint; these results are not browser or production evidence.
 - [ ] Complete browser verification for invitation delivery and both activation methods, negative invitation cases, the permission lifecycle, and generic-Admin denial versus designated-Admin access.
-- [ ] Keep the initial permission-administrator designation inactive until its target UID, provisioning actor, project and reason are reviewed and the controlled command is explicitly approved and run.
+- [~] Initial permission-administrator technical provisioning remains inactive/unverified. The user's command invocation was refused without `--confirm-initial-designation`; do not treat the policy appointment as technical provisioning.
 - [ ] Define the separate designated-administrator suspension, recovery and successor lifecycle before relying on this role as a long-term governance control.
 
 **Preserved boundaries:** staff activation grants no operational permissions; Admin status alone grants neither operational permissions nor permission-administration authority; only the five approved permissions are assignable; no second-approval rule, location scope, production Firebase change, customer pricing, booking, payment, custody or dispatch capability is introduced.
 
-**Evidence boundary:** implementation and tests are present on the PR branch. The Vercel preview is a deployment check only. No local Emulator, TypeScript, lint, production-build or browser-verification result is claimed here. No production Firebase provisioning was performed.
+**Historical PR #136 evidence boundary:** at the time PR #136 was prepared, no local Emulator, TypeScript, lint or production-build result was claimed. After PR #137, the owner subsequently reported the 100/100 full Emulator suite and passing TypeScript, lint, production build and diff check recorded in the 5 November authoritative checkpoint. Browser verification remains outstanding. No production Firebase provisioning was performed.

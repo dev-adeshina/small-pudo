@@ -2,7 +2,7 @@
 
 **Document status:** Read-only source inventory — historical platform pass plus focused M1 shipper-portal source review; policy reconciliation remains separate  
 **Inspection date:** 30 October 2026 (historical platform source pass); focused M1 account/draft source review performed 1 November 2026; current-main source and operational-cost interface review performed 3 November 2026  
-**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Focused M1 source-review baseline:** PR #98 merge `71225e3bdd6d827b288a883debb61a03695daef5`; subsequent dashboard source PR #100 and shipment workspace hardening PR #102 are separately traced in Sections 11–12. **Latest main baseline:** PR #132 merge `7ecc24f2b14fe34f09a37bfd4f22b45fe7e37eaf`. PR #131 is the latest merged application-code change; PR #132 is documentation-only. Section 21 records the PR #129 source snapshot as historical; Section 22 records the PR #132 and current implementation-branch review.  
+**Historical repository baseline:** `main` at `e0f69055d33dd9399c23e1d793f359468229c856` (PR #31 merge; refreshed in PR #32). **Focused M1 source-review baseline:** PR #98 merge `71225e3bdd6d827b288a883debb61a03695daef5`; subsequent dashboard source PR #100 and shipment workspace hardening PR #102 are separately traced in Sections 11–12. **Latest main baseline:** PR #137 merge `55dff8c2a4f4cf6f0e983676e692f0f126f7ec27`. PR #136 is the preceding staff-management application merge; PR #137 updates staff activation in the workspace. Sections 21–22 remain historical source reviews; Section 23 records the bounded PR #136/#137 source refresh.
 **Scope:** Active application source mapped to A-01–A-20 and ADM-R01–ADM-R54; the root `pudo.zip` archive and production environment remain uninspected  
 **Authority:** Source facts only. This document does not approve product policy, prove runtime behaviour, or authorize implementation.
 
@@ -647,7 +647,7 @@ This was a read-only repository/document/source inspection. No application code,
 
 Outcome: PR #125 remains the latest application-source baseline; PR #129 is the current SDD/documentation baseline. The next implementation decision must be based on a bounded capability whose accepted policy, current source reuse, authorization, technical representation, and acceptance criteria are all ready. PUDO verification/inventory approval, customer quote issuance, and DEC-047 service/endpoint activation remain gated.
 
-## 22. PR #132 current-main and operational-cost interface branch review — 3 November 2026
+## 22. Historical PR #132 main snapshot and operational-cost interface branch review — 3 November 2026 (superseded by Section 23)
 
 ### 22.1 Baseline and method
 
@@ -672,3 +672,29 @@ The broader source review does not establish customer quote issuance, confirmed 
 
 **Evidence boundary:** the source-tree and file inspection was read-only. The proposed branch changes are recorded for review, not described as tested or merged. User-reported historical test evidence remains attributed to its original PR checkpoints.
 
+
+
+## 23. PR #136/#137 staff-management and workspace-activation source refresh — 5 November 2026
+
+### 23.1 Baseline and scope
+
+- Current main: 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137).
+- PR #136 merge: 399473be54e50224ebfd7841ab5d10d6eee9ab14; PR #137 merge: 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27.
+- This is a bounded source refresh based on the merged PR file lists and targeted current-main reads of lib/server/staff-management-core.ts, app/api/staff/invitations/activate/route.ts, app/admin/staff/page.tsx, app/admin/operational-cost-definitions/page.tsx, lib/server/operational-cost-definition-workflow-store-core.ts and package.json. It is not a new recursive repository-tree or production inspection.
+
+### 23.2 Source facts now present
+
+- Staff management uses staffInvitations, staffDirectory, staffActionPermissions/{uid}/permissions/{permissionId}, staffPermissionAdministrators and staffManagementAudit. Staff identity and permission-management operations are handled through server routes and the existing Firebase Admin/Firestore architecture.
+- The assignable action-permission set remains limited to operational_cost_definition.view, operational_cost_definition.propose, operational_cost_definition.validate, operational_cost_definition.finance_review and operational_cost_definition.approve. The staff-management API requires existing active Admin authorization plus an active designated Staff Permission Administrator record. Generic Admin status alone is insufficient.
+- Invitation creation records explicit expiry and reason, checks duplicate/pending/active identities, and uses Resend confirmation. Tokens are stored as hashes. Invitation activation requires a verified Firebase ID token and matching email; the store writes the staff-directory/accepted-invitation state transactionally and records audit evidence.
+- PR #137 adds authenticated invitation-status lookup and activation from the operational-cost staff workspace. The page withholds staff actions while the invitation is pending/expired. The activation success message explicitly states that no operational permissions are assigned. The API preserves the legacy token-based path during transition and accepts an already-active outcome for retry/idempotency.
+- The operational-cost workflow store now checks permission expiry as well as existence, active state and audit metadata before allowing an action.
+
+### 23.3 Verification and remaining limits
+
+- The owner reports 100/100 Firestore Emulator-backed tests across 14 suites, plus passing TypeScript, lint, production build and git diff --check after PR #137. This remains attributed owner-reported local evidence; this source refresh did not execute those commands.
+- No browser verification, live Resend delivery, production Firebase provisioning, production Rules parity, or production permission lifecycle was established by this review.
+- The guarded initial permission-administrator provisioning CLI is present but has not successfully run; the prior invocation was refused without --confirm-initial-designation. Do not infer a technically active designation from the owner appointment recorded in PR #134.
+- This source refresh does not establish customer quote issuance, confirmed independent shipment booking, independent shipment payment, PUDO inventory/capability, parcel intake/custody, route/movement execution, delivery proof or production readiness. Those remain separately gated.
+
+**Evidence boundary:** current source was inspected selectively for the merged staff-management and activation paths. No application code, Rules, configuration, production data or provider state was changed or executed in this documentation review.

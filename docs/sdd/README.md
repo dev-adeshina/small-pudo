@@ -9,6 +9,10 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 - `PLATFORM_PUDO_LOCATION_REGISTRY_AND_CAPABILITY_FOUNDATION.md` — proposed PUDO location registry, independent service/action capabilities, configuration authority, customer endpoint discovery, and DEC-047 eligibility boundaries; no physical schema or implementation is approved.
 - `PLATFORM_PUDO_LOCATION_REGISTRATION_AND_VERIFICATION_WORKFLOW.md` — owner-approved DEC-050 responsibility split for proposed-location registration, Operations physical verification/approval, and separately authorised activation.
 - `PLATFORM_PUDO_LOCATION_VERIFICATION_CHECKLIST_AND_EVIDENCE.md` — proposed five-area Operations verification checklist and evidence categories; requires validation by the accountable Operations owner and is not yet a mandatory evidence policy.
+- `CURRENT_IMPLEMENTATION_STATUS.md` — current source-aligned implementation, verification, outstanding gates and next execution sequence as of 5 November 2026.
+
+- `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` — single ordered implementation plan
+
 - `PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md` — single ordered implementation plan derived from accepted policy and existing source findings; identifies buildable work, unresolved capability gates, deferred scope and acceptance evidence without inventing business rules or technical schema.
 
 - `SPEC.md` — product requirements, user flows, architecture, implementation principles, UI conventions, security expectations, acceptance criteria, and historical roadmap (not the current work order).
@@ -38,7 +42,7 @@ This folder is the continuity and specification guide for VeriLyft — Beyond Bo
 - `DECISIONS.md` — architecture and product decisions, including constraints that future sessions must preserve.
 - `SESSION_HANDOFF.md` — copy/paste instructions for starting a new ChatGPT session with these documents.
 
-### Current execution direction — PR #133 and PR #134 merged
+### Historical execution direction — PR #133 and PR #134 merged (3 November 2026; superseded by the PR #137 direction above)
 
 PR #133 merged the staff-facing operational-cost definition interface at `/admin/operational-cost-definitions`, reusing the existing APIs, Firestore persistence, workflow and action permissions. User-reported local checks passed: 86/86 Firestore Emulator tests, TypeScript, lint, production build and `git diff --check`. Browser verification with accounts holding the relevant action permissions remains outstanding. A generic Admin without those permissions is correctly denied; Admin status alone grants no operational-cost action permission.
 
@@ -47,6 +51,14 @@ PR #134 records the initial Designated Staff Permission Administrator appointmen
 DEC-050's registration/verification/activation responsibility split remains accepted. The accountable Operations position is still unassigned and the authoritative initial PUDO inventory source is unidentified; no verified PUDO inventory exists. All twelve DEC-047 service/endpoint combinations remain unavailable pending independent operational evidence and approvals. DEC-045 permits bounded implementation under accepted policy; DEC-036 P0/Conditional P0 release evidence remains a separate launch gate.
 
 After this focused reconciliation is merged, review DB-01–DB-12 contracts and capability gates to select the next buildable implementation slice. Do not reopen accepted decisions without new evidence or a concrete conflict.
+
+### Current execution direction — PR #137 merged (5 November 2026)
+
+Current main is 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137). PR #136 implemented staff invitations and permission management; PR #137 moved staff activation into the signed-in staff workspace. The owner reports 100/100 Firestore Emulator-backed tests across 14 suites and passing TypeScript, lint, production build and git diff --check. Browser verification and technical provisioning of the designated permission administrator remain outstanding.
+
+The current consolidated status and execution order are in CURRENT_IMPLEMENTATION_STATUS.md. The previous PR #133/#134 checkpoint and later historical continuation notes must not be used as the current work pointer. Immediate next work is controlled browser verification, followed by DB-01–DB-12/capability-gate review and selection of one bounded Ready implementation slice.
+
+Customer pricing/quotation, all twelve DEC-047 combinations, verified PUDO inventory, confirmed shipment booking/payment, intake/custody, route/dispatch/delivery and DEC-036 P0/Conditional P0 release evidence remain independently gated.
 
 ### SDD-first working protocol
 
@@ -78,7 +90,7 @@ Use each source for the kind of fact it can establish:
 
 When sources conflict, do not silently favour code or documentation. Record the discrepancy, identify whether it concerns intended behaviour, implementation, or verification, and resolve it explicitly. The current repository is the evidence for what exists; the approved SDD is the authority for what the system is intended to do.
 
-### Current Milestone 4 status
+### Historical Milestone 4 status — baseline through PR #129 (superseded by the 5 November 2026 direction above)
 
 The current main baseline is PR #129 merge commit a2247efd2d0a7103c85d156f89ea210a696b33e2. The latest application-source baseline remains PR #125 at e7966332024fd38eb7cb5b8a1adebc0b584ac894; the PR #125-to-#129 compare confirms only SDD documentation paths changed. Current source findings and their limits are recorded in IMPLEMENTATION_SOURCE_TRACEABILITY.md Sections 20–21. This does not constitute runtime, deployed-configuration or production verification.
 
