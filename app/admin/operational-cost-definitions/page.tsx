@@ -11,7 +11,9 @@ import { logoutAdmin } from "@/lib/auth";
 
 type InputType = "string" | "number" | "boolean" | "date";
 type InputDefinition = { key: string; label: string; description?: string; valueType: InputType; required: boolean; source?: string; unit?: string; precision?: number; conversion?: string };
-type CostComponent = { key: string; label: string; description?: string; amount?: string; currencyCode?: string; basis?: string; treatment?: string; evidenceDescription?: string };
+type EvidenceItem = { sourceReference: string; sourceOwner: string; sourceType: string; representedScope: string; observationPeriod: { startDate?: string; endDate?: string; description?: string }; coverage: string; collectionMethod: string; originalValue?: string; originalUnit?: string; originalCurrencyCode?: string; originalPrecision?: number; limitations?: string };
+type TreatmentClass = "direct" | "shared" | "included" | "exception_related";
+type CostComponent = { key: string; label: string; description?: string; amount?: string; currencyCode?: string; basis?: string; treatment?: string; treatmentClass?: TreatmentClass; evidenceDescription?: string; evidenceItems?: EvidenceItem[] };
 type DefinitionPayload = { activityCode: string; activityName: string; activityDescription: string; applicability: "general"; inputs: InputDefinition[]; costComponents: CostComponent[] };
 type WorkflowState = "draft" | "pending_operations_validation" | "pending_finance_review" | "pending_independent_approval" | "changes_requested" | "approved" | "rejected";
 type Workflow = { state: WorkflowState };
@@ -228,6 +230,47 @@ export default function OperationalCostDefinitionsPage() {
     }));
   }
 
+  function updateEvidenceItem(componentIndex: number, evidenceIndex: number, field: keyof EvidenceItem, value: string) {
+    setForm((current) => ({
+      ...current,
+      costComponents: current.costComponents.map((component, index) => {
+        if (index !== componentIndex) return component;
+        const evidenceItems = [...(component.evidenceItems ?? [])];
+        const item = { ...evidenceItems[evidenceIndex] };
+        if (field === "observationPeriod") return component;
+        if (field === "sourceReference" || field === "sourceOwner" || field === "sourceType" ||
+            field === "representedScope" || field === "coverage" || field === "collectionMethod" ||
+            field === "originalValue" || field === "originalUnit" || field === "originalCurrencyCode" ||
+            field === "limitations") {
+          if (value.trim() === "" && ["originalValue", "originalUnit", "originalCurrencyCode", "limitations"].includes(field)) {
+            delete (item as Record<string, unknown>)[field];
+          } else {
+            (item as Record<string, unknown>)[field] = value;
+          }
+        }
+        evidenceItems[evidenceIndex] = item;
+        return { ...component, evidenceItems };
+      }),
+    }));
+  }
+
+  function updateEvidencePeriod(componentIndex: number, evidenceIndex: number, field: "startDate" | "endDate" | "description", value: string) {
+    setForm((current) => ({
+      ...current,
+      costComponents: current.costComponents.map((component, index) => {
+        if (index !== componentIndex) return component;
+        const evidenceItems = [...(component.evidenceItems ?? [])];
+        const item = { ...evidenceItems[evidenceIndex] };
+        const observationPeriod = { ...item.observationPeriod };
+        if (value.trim() === "") delete observationPeriod[field];
+        else observationPeriod[field] = value;
+        item.observationPeriod = observationPeriod;
+        evidenceItems[evidenceIndex] = item;
+        return { ...component, evidenceItems };
+      }),
+    }));
+  }
+
   async function saveDraft(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!token) return;
@@ -421,8 +464,32 @@ export default function OperationalCostDefinitionsPage() {
                     <label className="cost-field"><span>Amount (decimal)</span><input inputMode="decimal" value={component.amount ?? ""} maxLength={40} onChange={(event) => updateComponent(index, "amount", event.target.value)} placeholder="No default amount" /></label>
                     <label className="cost-field"><span>Currency code</span><input value={component.currencyCode ?? ""} maxLength={3} onChange={(event) => updateComponent(index, "currencyCode", event.target.value.toUpperCase())} placeholder="Explicit ISO code" /></label>
                     <label className="cost-field"><span>Basis / unit</span><input value={component.basis ?? ""} maxLength={120} onChange={(event) => updateComponent(index, "basis", event.target.value)} placeholder="Evidence-backed basis" /></label>
-                    <label className="cost-field"><span>Treatment</span><input value={component.treatment ?? ""} maxLength={80} onChange={(event) => updateComponent(index, "treatment", event.target.value)} placeholder="If Finance classified" /></label>
-                    <label className="cost-field cost-field-wide"><span>Evidence description</span><textarea rows={3} value={component.evidenceDescription ?? ""} maxLength={1000} onChange={(event) => updateComponent(index, "evidenceDescription", event.target.value)} placeholder="Source record, source owner, observation period and limitations." /></label>
+                    <label className="cost-field"><span>Legacy treatment note</span><input value={component.treatment ?? ""} maxLength={80} onChange={(event) => updateComponent(index, "treatment", event.target.value)} placeholder="Historical free-text value" /></label>
+                    <label className="cost-field"><span>Finance treatment classification</span><select value={component.treatmentClass ?? ""} onChange={(event) => updateComponent(index, "treatmentClass", event.target.value)}><option value="">Not classified</option><option value="direct">Direct</option><option value="shared">Shared</option><option value="included">Included</option><option value="exception_related">Exception-related</option></select></label>
+                    <label className="cost-field cost-field-wide"><span>Legacy evidence description</span><textarea rows={3} value={component.evidenceDescription ?? ""} maxLength={1000} onChange={(event) => updateComponent(index, "evidenceDescription", event.target.value)} placeholder="Historical narrative evidence note. This does not satisfy the new structured-evidence submission requirement." /></label>
+                    <div className="cost-field-wide">
+                      <div className="cost-section-heading"><div><h4>Structured evidence</h4><p>Each source is recorded separately. Do not invent missing source details.</p></div><button type="button" className="cost-secondary-button" onClick={() => setForm((current) => ({ ...current, costComponents: current.costComponents.map((item, itemIndex) => itemIndex === index ? { ...item, evidenceItems: [...(item.evidenceItems ?? []), { sourceReference: "", sourceOwner: "", sourceType: "", representedScope: "", observationPeriod: {}, coverage: "", collectionMethod: "" }] } : item) }))}><Plus size={14} /> Add evidence</button></div>
+                      {(component.evidenceItems ?? []).map((evidence, evidenceIndex) => <div className="cost-editor-card" key={"evidence-" + index + "-" + evidenceIndex}>
+                        <div className="cost-editor-card-heading"><strong>Evidence source {evidenceIndex + 1}</strong><button type="button" onClick={() => setForm((current) => ({ ...current, costComponents: current.costComponents.map((item, itemIndex) => itemIndex === index ? { ...item, evidenceItems: (item.evidenceItems ?? []).filter((_, i) => i !== evidenceIndex) } : item) }))}>Remove</button></div>
+                        <div className="cost-form-grid">
+                          <label className="cost-field"><span>Source reference</span><input value={evidence.sourceReference} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "sourceReference", event.target.value)} /></label>
+                          <label className="cost-field"><span>Source owner</span><input value={evidence.sourceOwner} maxLength={200} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "sourceOwner", event.target.value)} /></label>
+                          <label className="cost-field"><span>Source type</span><input value={evidence.sourceType} maxLength={120} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "sourceType", event.target.value)} /></label>
+                          <label className="cost-field"><span>Represented scope</span><input value={evidence.representedScope} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "representedScope", event.target.value)} /></label>
+                          <label className="cost-field"><span>Observation start</span><input type="date" value={evidence.observationPeriod?.startDate ?? ""} onChange={(event) => updateEvidencePeriod(index, evidenceIndex, "startDate", event.target.value)} /></label>
+                          <label className="cost-field"><span>Observation end</span><input type="date" value={evidence.observationPeriod?.endDate ?? ""} onChange={(event) => updateEvidencePeriod(index, evidenceIndex, "endDate", event.target.value)} /></label>
+                          <label className="cost-field cost-field-wide"><span>Period description (if dates unavailable)</span><input value={evidence.observationPeriod?.description ?? ""} maxLength={300} onChange={(event) => updateEvidencePeriod(index, evidenceIndex, "description", event.target.value)} /></label>
+                          <label className="cost-field"><span>Coverage / population</span><input value={evidence.coverage} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "coverage", event.target.value)} /></label>
+                          <label className="cost-field"><span>Collection method</span><input value={evidence.collectionMethod} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "collectionMethod", event.target.value)} /></label>
+                          <label className="cost-field"><span>Original value (optional)</span><input value={evidence.originalValue ?? ""} maxLength={80} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "originalValue", event.target.value)} /></label>
+                          <label className="cost-field"><span>Original unit</span><input value={evidence.originalUnit ?? ""} maxLength={80} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "originalUnit", event.target.value)} /></label>
+                          <label className="cost-field"><span>Original currency (if monetary)</span><input value={evidence.originalCurrencyCode ?? ""} maxLength={3} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "originalCurrencyCode", event.target.value.toUpperCase())} /></label>
+                          <label className="cost-field"><span>Original precision</span><input type="number" min="0" step="1" value={evidence.originalPrecision ?? ""} onChange={(event) => setForm((current) => ({ ...current, costComponents: current.costComponents.map((item, itemIndex) => { if (itemIndex !== index) return item; const items = [...(item.evidenceItems ?? [])]; const next = { ...items[evidenceIndex] }; if (event.target.value === "") delete next.originalPrecision; else next.originalPrecision = Number(event.target.value); items[evidenceIndex] = next; return { ...item, evidenceItems: items }; }) }))} /></label>
+                          <label className="cost-field cost-field-wide"><span>Known limitations</span><textarea rows={2} value={evidence.limitations ?? ""} maxLength={1000} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "limitations", event.target.value)} /></label>
+                        </div>
+                      </div>)}
+                      {(component.evidenceItems ?? []).length === 0 && <p className="cost-inline-empty">No structured evidence sources added. This component cannot be submitted for review until evidence is recorded.</p>}
+                    </div>
                     <label className="cost-field cost-field-wide"><span>Component description</span><input value={component.description ?? ""} maxLength={500} onChange={(event) => updateComponent(index, "description", event.target.value)} placeholder="Optional scope or exclusions." /></label>
                   </div>
                 </div>)}
@@ -448,7 +515,7 @@ export default function OperationalCostDefinitionsPage() {
                   {selectedVersion.inputs?.length ? selectedVersion.inputs.map((input) => <div className="cost-readonly-row" key={input.key}><strong>{input.label}</strong><span>{input.key} · {input.valueType} · {input.required ? "Required" : "Optional"}</span><small>{[input.source, input.unit, input.description, input.conversion].filter(Boolean).join(" · ") || "No source details recorded."}</small></div>) : <p className="cost-inline-empty">No operational inputs configured.</p>}
                 </div>
                 <div className="cost-detail-section"><h3>Cost components</h3>
-                  {selectedVersion.costComponents?.length ? selectedVersion.costComponents.map((component) => <div className="cost-readonly-row" key={component.key}><strong>{component.label}</strong><span>{component.amount ? component.amount + " " + (component.currencyCode ?? "") : "Amount not recorded"} · {component.basis ?? "Basis not recorded"}</span><small>{component.evidenceDescription || "No evidence description recorded."}</small></div>) : <p className="cost-inline-empty">No cost components configured.</p>}
+                  {selectedVersion.costComponents?.length ? selectedVersion.costComponents.map((component) => <div className="cost-readonly-row" key={component.key}><strong>{component.label}</strong><span>{component.amount ? component.amount + " " + (component.currencyCode ?? "") : "Amount not recorded"} · {component.basis ?? "Basis not recorded"} · {component.treatmentClass?.replace(/_/g, " ") ?? "Treatment not classified"}</span><small>{component.evidenceDescription || "No legacy evidence description recorded."}</small>{component.evidenceItems?.map((item, itemIndex) => <small key={component.key + "-evidence-" + itemIndex}>Source {itemIndex + 1}: {item.sourceReference} · {item.sourceOwner} · {item.sourceType} · {item.representedScope} · {item.observationPeriod?.startDate ?? item.observationPeriod?.description ?? "Period not recorded"}{item.observationPeriod?.endDate ? " to " + item.observationPeriod.endDate : ""} · Coverage: {item.coverage} · Method: {item.collectionMethod}{item.limitations ? " · Limitations: " + item.limitations : ""}</small>)}</div>) : <p className="cost-inline-empty">No cost components configured.</p>}
                 </div>
                 <div className="cost-workflow-actions">
                   {canRevise && <button type="button" className="cost-secondary-button" onClick={startRevision}><FilePlus2 size={15} /> Create new version</button>}
