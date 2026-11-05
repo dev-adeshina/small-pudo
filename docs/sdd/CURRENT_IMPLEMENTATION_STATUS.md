@@ -24,7 +24,7 @@ Product/category catalogue, cart, checkout, storefront order creation, stock res
 
 ### Independent shipment preparation
 
-Customer-scoped shipment drafts, draft editing/dashboard integration, and internal quote-lineage/immutable-version persistence foundations exist. These are preparation and persistence foundations only; they do not issue customer quotes or confirm shipment bookings.
+Customer-scoped shipment drafts and draft editing/dashboard integration exist. PR #118 also implemented the internal quote-lineage/immutable-version persistence foundation approved by PR #117. These are preparation and persistence foundations only; they do not calculate or issue customer quotes, accept quotes or confirm shipment bookings.
 
 ### Operational-cost definitions
 
