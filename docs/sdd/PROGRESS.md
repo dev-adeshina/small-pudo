@@ -1891,3 +1891,19 @@ Expected `PERMISSION_DENIED` messages came from negative Firestore Rules tests. 
 **Current gate:** Stage 0 technical contract is prepared for review. No application code, Firestore schema, API, permission, workflow, production data or configuration was changed. Stage 1 remains unauthorized until the owner explicitly approves the contract, exact scope and acceptance matrix.
 
 **Evidence boundary:** source review was read-only. No tests, emulator, TypeScript, lint, build, browser or production checks were run for this Stage 0 document.
+
+## 86. M2 Stage 1 structured cost-evidence implementation prepared — 5 November 2026
+
+- [x] PR #142 merged at `9a95bd8f71e1599a5714e572eafe05b4c48d92fb`; Stage 0 owner approval is satisfied.
+- [x] Implemented an additive `evidenceItems` array and controlled `treatmentClass` on existing operational-cost components.
+- [x] Added strict server-side validation for evidence source attribution, scope, observation period, coverage, collection method, optional original value/unit/currency/precision and limitations.
+- [x] Tightened the existing submission gate so each newly submitted component requires structured evidence and one controlled treatment classification, in addition to existing amount/currency/basis requirements.
+- [x] Extended the existing staff editor and read-only detail view; preserved legacy narrative fields.
+- [x] Added store and workflow Emulator test cases for structured evidence, legacy reads, invalid metadata and submission rejection.
+- [ ] Run focused Emulator tests, full test suite, TypeScript, lint, build and diff checks locally.
+- [ ] Review resulting UI in browser for evidence add/edit/remove, legacy display and submission validation.
+- [ ] Address any validation findings before merging.
+
+**Current gate:** Stage 1 implementation is prepared on `feat/m2-structured-cost-evidence` for review and local verification. No new collection, permission, workflow state, Firestore Rules grant, migration, upload store, cost calculation, pricing, quote, booking or physical-operation capability was added.
+
+**Validation boundary:** the assistant cannot execute the repository's local Node/Firestore Emulator environment in this session. No tests, TypeScript, lint, build or browser checks are claimed as passing. The PR review must include the owner's local command results before merge.

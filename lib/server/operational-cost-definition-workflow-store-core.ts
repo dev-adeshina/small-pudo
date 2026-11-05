@@ -99,10 +99,25 @@ function assertVersionReadyForSubmission(version: VersionDocument): void {
       !/^[A-Z]{3}$/.test(component.currencyCode) ||
       typeof component.basis !== "string" ||
       !component.basis.trim() ||
-      typeof component.evidenceDescription !== "string" ||
-      !component.evidenceDescription.trim()
+      !["direct", "shared", "included", "exception_related"].includes(component.treatmentClass) ||
+      !Array.isArray(component.evidenceItems) ||
+      component.evidenceItems.length === 0
     ) {
-      throw new TypeError("Each cost component needs an amount, explicit currency, basis and evidence description before submission");
+      throw new TypeError("Each cost component needs an amount, explicit currency, basis, structured evidence and treatment classification before submission");
+    }
+    for (const item of component.evidenceItems) {
+      if (
+        !item || typeof item !== "object" ||
+        typeof item.sourceReference !== "string" || !item.sourceReference.trim() ||
+        typeof item.sourceOwner !== "string" || !item.sourceOwner.trim() ||
+        typeof item.sourceType !== "string" || !item.sourceType.trim() ||
+        typeof item.representedScope !== "string" || !item.representedScope.trim() ||
+        typeof item.coverage !== "string" || !item.coverage.trim() ||
+        typeof item.collectionMethod !== "string" || !item.collectionMethod.trim() ||
+        !item.observationPeriod || typeof item.observationPeriod !== "object"
+      ) {
+        throw new TypeError("Each cost component needs complete structured evidence before submission");
+      }
     }
   }
 }

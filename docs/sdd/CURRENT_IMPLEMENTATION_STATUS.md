@@ -84,3 +84,15 @@ Accepted policy remains in DECISIONS.md and the relevant approved policy documen
 PR #141 is merged at `0ed56ee0e62b6792d7b3b4e0d5af4fc982e1d199`. The current-main source refresh is complete for the existing operational-cost store, workflow, API, staff page, Firestore Rules and relevant tests. The proposed Stage 0 technical contract and acceptance matrix are in `PLATFORM_M2_COST_EVIDENCE_STAGE0_TECHNICAL_CONTRACT.md`.
 
 **Current status:** owner review required. No Stage 1 code is authorized. The proposed implementation is limited to structured evidence metadata and a controlled treatment classification nested in the existing cost component/version model. Legacy snapshots, the existing workflow and permissions, and the Firestore client-denial boundary must be preserved. All customer pricing, quote, booking, payment, service eligibility and physical-operation gates remain unchanged.
+
+## M2 Stage 1 — structured cost-evidence implementation
+
+PR #142 is merged at `9a95bd8f71e1599a5714e572eafe05b4c48d92fb`. Stage 0 is closed. The bounded Stage 1 implementation is prepared on `feat/m2-structured-cost-evidence`:
+
+- Additive structured `evidenceItems` and controlled `treatmentClass` fields on the existing cost-component/version snapshot.
+- Server-side shape and value validation; new submissions require each component to include structured evidence and a supported treatment classification.
+- Existing staff editor/detail view extended; legacy narrative fields retained.
+- Existing versioning, APIs, permissions, workflow, workflow events and Firestore client-denial rules are reused unchanged.
+- Focused store/workflow tests added.
+
+**Status:** implementation review and local verification pending. No tests, Emulator, TypeScript, lint, build or browser checks are claimed as passing. No new collection, migration, permission, workflow state, Rules grant, cost calculation, allocation, pricing, quote, booking, payment or physical operation is introduced.

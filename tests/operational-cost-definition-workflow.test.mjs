@@ -7,7 +7,7 @@ import { createOperationalCostDefinitionStore } from "../lib/server/operational-
 import { createOperationalCostDefinitionWorkflowStore } from "../lib/server/operational-cost-definition-workflow-store-core.ts";
 
 const enabled = Boolean(process.env.FIRESTORE_EMULATOR_HOST);
-const definition = { activityCode: "ACT-02", activityName: "Synthetic workflow activity", applicability: "general", inputs: [{ key: "count", label: "Count", valueType: "number", required: true }], costComponents: [{ key: "handling", label: "Synthetic handling", amount: "100.00", currencyCode: "NGN", basis: "Synthetic unit", evidenceDescription: "Synthetic supporting evidence" }] };
+const definition = { activityCode: "ACT-02", activityName: "Synthetic workflow activity", applicability: "general", inputs: [{ key: "count", label: "Count", valueType: "number", required: true }], costComponents: [{ key: "handling", label: "Synthetic handling", amount: "100.00", currencyCode: "NGN", basis: "Synthetic unit", evidenceDescription: "Synthetic supporting evidence", treatmentClass: "direct", evidenceItems: [{ sourceReference: "synthetic://workflow/001", sourceOwner: "Synthetic supplier", sourceType: "invoice", representedScope: "Synthetic handling service", observationPeriod: { description: "One synthetic test observation" }, coverage: "One synthetic test item", collectionMethod: "Synthetic document review" }] }] };
 const permissions = ["operational_cost_definition.propose", "operational_cost_definition.validate", "operational_cost_definition.finance_review", "operational_cost_definition.approve"];
 
 describe("operational cost approval workflow", { skip: !enabled }, () => {
@@ -107,7 +107,29 @@ describe("operational cost approval workflow", { skip: !enabled }, () => {
     await grant(proposer, permissions[0]);
     await assert.rejects(
       workflow.transition({ definitionId: created.definitionId, versionId: created.versionId, actorUid: proposer, action: "submit" }),
-      /amount, explicit currency, basis and evidence description/
+      /amount, explicit currency, basis, structured evidence and treatment classification/
+    );
+    const state = await db.collection("operationalCostDefinitions").doc(created.definitionId)
+      .collection("versions").doc(created.versionId).collection("approval").doc("workflow").get();
+    assert.equal(state.exists, false);
+  });
+
+  it("rejects legacy narrative evidence without structured evidence and treatment classification", async () => {
+    const legacy = {
+      ...definition,
+      costComponents: [{
+        key: "handling", label: "Legacy handling", amount: "100.00",
+        currencyCode: "NGN", basis: "Synthetic unit",
+        evidenceDescription: "Historical narrative only",
+      }],
+    };
+    const proposer = `proposer-${randomUUID()}`;
+    const created = await definitions.createDefinition(proposer, legacy);
+    ids.add(created.definitionId);
+    await grant(proposer, permissions[0]);
+    await assert.rejects(
+      workflow.transition({ definitionId: created.definitionId, versionId: created.versionId, actorUid: proposer, action: "submit" }),
+      /structured evidence and treatment classification/
     );
     const state = await db.collection("operationalCostDefinitions").doc(created.definitionId)
       .collection("versions").doc(created.versionId).collection("approval").doc("workflow").get();

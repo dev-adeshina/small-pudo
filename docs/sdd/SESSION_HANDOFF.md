@@ -542,3 +542,23 @@ PR #114 was reviewed and merged at `26d93cb2748041c8fa0e34bb8a65693949bce0e8`. T
 5. Do not begin Stage 1 application-code changes until that approval is explicit. Stage 1 must reuse the existing store, workflow, APIs, permissions, staff interface and Rules boundary.
 6. No tests/build/browser/production checks were run for this read-only Stage 0 documentation work. Do not claim otherwise.
 7. Preserve all DEC-047/048/049, DB-03/04/06–DB-12 and DEC-036 gates. No customer pricing, quote, booking, payment, eligibility, PUDO, route, dispatch, intake, custody or fulfilment capability is enabled.
+
+## Current handoff — M2 Stage 1 structured cost-evidence implementation — 5 November 2026
+
+**Baseline:** PR #142 merge `9a95bd8f71e1599a5714e572eafe05b4c48d92fb`.  
+**Branch:** `feat/m2-structured-cost-evidence`.
+
+1. Stage 0 is closed by the merged and owner-approved `PLATFORM_M2_COST_EVIDENCE_STAGE0_TECHNICAL_CONTRACT.md`.
+2. Review the Stage 1 changes in the existing operational-cost store core, workflow store core, staff page, and focused store/workflow tests.
+3. The new evidence item is embedded in each existing cost component/version. There is no new evidence collection or upload store.
+4. Every newly submitted component must have amount, explicit currency, basis, at least one structured evidence item and a controlled treatment class. Incomplete drafts remain saveable. Legacy snapshots without new fields remain readable; legacy narrative fields are preserved.
+5. Existing API routes, action permissions, separated reviewer actors, workflow events, immutable versioning, expected-version concurrency and Firestore client-denial rules are not intentionally changed.
+6. Run from the repository root:
+   - `npm test` with the configured Firestore Emulator running;
+   - `npx tsc --noEmit`;
+   - `npm run lint`;
+   - `npm run build`;
+   - `git diff --check`.
+7. Browser-check the existing operational-cost page for adding/editing/removing multiple evidence items, date-range or period-description entry, optional original value metadata, treatment classification, legacy narrative display and server rejection of incomplete submission.
+8. Do not merge until these checks pass and any findings are fixed. No local test/build/browser result has been verified by this assistant session.
+9. Preserve all commercial and release gates: no customer price, cost calculation/allocation, quote, booking, payment, service eligibility, PUDO activation, route, dispatch, intake, custody or fulfilment behaviour.
