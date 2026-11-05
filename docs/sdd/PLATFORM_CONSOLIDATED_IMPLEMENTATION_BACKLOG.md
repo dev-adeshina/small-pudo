@@ -8,7 +8,17 @@ Use this as the single implementation pointer. Preserve accepted decisions. Do n
 
 The owner's explicit instruction to proceed supersedes the previous blanket implementation freeze. It does not approve unresolved business-policy proposals or remove P0 release evidence requirements.
 
-## Current position — PR #133 and PR #134 merged; next implementation selection
+## Current position — PR #137 merged; post-merge execution — 5 November 2026
+
+**Current baseline:** main at 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27 (PR #137). PR #136 delivered staff invitations, staff directory and permission administration; PR #137 moved activation into the signed-in staff workspace. See CURRENT_IMPLEMENTATION_STATUS.md for the consolidated status and evidence ledger.
+
+**Verification:** the owner reported 100/100 Firestore Emulator-backed tests across 14 suites, plus successful TypeScript, lint, production build and git diff --check. Browser verification remains outstanding. The initial designated Staff Permission Administrator provisioning CLI has not successfully run; do not treat the policy appointment as technical provisioning.
+
+**Immediate next work:** controlled browser verification of staff onboarding, directory visibility, permission lifecycle and the separated operational-cost workflow. Then review DB-01–DB-12 and capability gates to select one bounded Ready implementation slice. The older PR #133/#134 checkpoint and the historical cost-configuration-discovery-next instructions below are superseded: operational-cost persistence/API/workflow and the staff interface have since been implemented.
+
+**Still gated:** customer pricing/quotation and quote acceptance; all twelve DEC-047 service/endpoint combinations; PUDO inventory and accountable Operations ownership; confirmed shipment booking/payment; parcel intake/custody; route/dispatch/delivery; and DEC-036 P0/Conditional P0 release evidence.
+
+## Historical checkpoint — PR #133 and PR #134 merged (3 November 2026; superseded by the PR #137 checkpoint above)
 
 **Completed:** PR #133 merged the staff interface at `/admin/operational-cost-definitions` over the existing list/create/read/revise/workflow APIs. It reuses the existing Firestore stores, immutable versions, action permissions, default-deny Rules and transaction semantics. No new persistence model, API or permission catalogue was introduced.
 
