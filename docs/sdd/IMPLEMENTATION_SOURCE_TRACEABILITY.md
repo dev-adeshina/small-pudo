@@ -647,7 +647,7 @@ This was a read-only repository/document/source inspection. No application code,
 
 Outcome: PR #125 remains the latest application-source baseline; PR #129 is the current SDD/documentation baseline. The next implementation decision must be based on a bounded capability whose accepted policy, current source reuse, authorization, technical representation, and acceptance criteria are all ready. PUDO verification/inventory approval, customer quote issuance, and DEC-047 service/endpoint activation remain gated.
 
-## 22. PR #132 current-main and operational-cost interface branch review — 3 November 2026
+## 22. Historical PR #132 main snapshot and operational-cost interface branch review — 3 November 2026 (superseded by Section 23)
 
 ### 22.1 Baseline and method
 
