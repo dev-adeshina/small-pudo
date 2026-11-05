@@ -53,7 +53,7 @@ The guarded initial permission-administrator provisioning CLI has not successful
 3. **M2 pricing and quotation:** DEC-048 commercial unit/governance decisions are accepted, but Standard/Express/Scheduled pricing models, actual cost evidence, rates/formulas, inputs/units/conversions, monetary treatment, quote validity and handover deadlines remain unresolved. Quote issuance and acceptance remain disabled.
 4. **DEC-047 eligibility:** all twelve service/endpoint combinations remain pending verification and unavailable by default.
 5. **Independent shipment fulfilment:** confirmed booking, independent shipment payment, physical parcel intake, custody transfers, route/dispatch execution, delivery proof and operational exceptions are not a complete implemented customer journey. Route/dispatch intent must never be represented as completed physical custody.
-6. **Technical contracts:** DB-01–DB-12 must be assessed against current implementation and evidence before selecting another booking-related slice; open DB contracts remain separate gates.
+6. **Technical contracts:** the bounded DB-01/DB-02/DB-05 physical persistence/API/security design is owner-approved in PR #117; DB-03, DB-04 and DB-06–DB-12 remain capability-specific open contracts and must be resolved before implementing the affected capabilities.
 7. **Production/release readiness:** DEC-036 P0/Conditional P0 evidence, deployed Rules/configuration parity, privileged API/revocation checks, backup/restore, monitoring, incident response, rollback and named operational ownership remain outstanding.
 
 ## Next execution sequence
