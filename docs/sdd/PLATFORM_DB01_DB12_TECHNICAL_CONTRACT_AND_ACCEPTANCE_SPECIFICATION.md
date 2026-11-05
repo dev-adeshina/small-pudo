@@ -330,9 +330,9 @@ The relationship table and case-level specifications above are reconciled to the
 - one quote lineage per independent booking has immutable issued versions, one current offer and exact-version acceptance bound to one immutable accepted snapshot;
 - concurrent/replayed acceptance and intake cannot create duplicate bookings or parcels.
 
-**Readiness remains blocked:** pricing models/values/arithmetic/quote and handover durations, DEC-047 service/endpoint evidence, location/action authority, physical proof/evidence, and concrete API/persistence/security design remain unresolved. DB-03, DB-04, DB-06–DB-12 and M0/DEC-036 remain independent gates. The case specifications express required behaviour; they are not executable tests and do not make the capabilities available.
+**Readiness remains blocked for the affected capabilities:** pricing models/values/arithmetic/quote and handover durations, DEC-047 service/endpoint evidence, location/action authority, physical proof/evidence, and the still-open DB-03/04/06–12 API/persistence/security contracts remain unresolved. The bounded DB-01/02/05 physical persistence/API/security design was subsequently approved in PR #117 (see Section 10); that approval does not make quote issuance, acceptance, booking or parcel intake available. M0/DEC-036 remains an independent release gate. The case specifications express required behaviour; they are not executable tests and do not make the capabilities available.
 
-**Next:** perform a separate source-aligned physical persistence/API/security design review for only the accepted DB-01/02/05 rules, without implementing quote issuance, booking acceptance or parcel intake while their independent prerequisites remain blocked.
+**Next:** use the approved PR #117 physical contract as the DB-01/02/05 design authority. Do not repeat that design review absent new source evidence or a concrete conflict. Select the next independently Ready implementation slice only after the consolidated SDD reconciliation and implementation-readiness review; complete the slice-specific contracts and executable acceptance fixtures for any still-open DB-03/04/06–12 dependency before implementing an affected capability.
 
 
 ## 10. Physical design approval — PR #117 — 2 November 2026
