@@ -77,3 +77,10 @@ Accepted policy remains in DECISIONS.md and the relevant approved policy documen
 - Admin status is not staff permission-administration authority;
 - dispatch intent is not physical custody transfer;
 - source presence or a passing build is not production readiness.
+
+
+## M2 Stage 0 — current status
+
+PR #141 is merged at `0ed56ee0e62b6792d7b3b4e0d5af4fc982e1d199`. The current-main source refresh is complete for the existing operational-cost store, workflow, API, staff page, Firestore Rules and relevant tests. The proposed Stage 0 technical contract and acceptance matrix are in `PLATFORM_M2_COST_EVIDENCE_STAGE0_TECHNICAL_CONTRACT.md`.
+
+**Current status:** owner review required. No Stage 1 code is authorized. The proposed implementation is limited to structured evidence metadata and a controlled treatment classification nested in the existing cost component/version model. Legacy snapshots, the existing workflow and permissions, and the Firestore client-denial boundary must be preserved. All customer pricing, quote, booking, payment, service eligibility and physical-operation gates remain unchanged.
