@@ -224,7 +224,7 @@ The proposal recommends:
 The persistence foundation is a bounded technical prerequisite and does not replace or approve the ordered M2 commercial pricing/quotation readiness work. Quote issuance and acceptance remain disabled until M2 and the other independent prerequisites are approved and evidenced.
 
 
-## Current M2 execution checkpoint — DEC-048 reconciled; evidence collection next — 2 November 2026
+## Historical M2 execution checkpoint — DEC-048 reconciled; evidence collection next — 2 November 2026
 
 - **Repository baseline:** PR #118 merged at `d54f337439947207e1967d1b915a02018e0b856a`; user reports local `main` synchronized.
 - **Completed foundation:** PR #117 approved the DB-01/DB-02/DB-05 physical contract. PR #118 implemented the internal quote-lineage/immutable-version persistence foundation and Rules/Emulator tests. The user reported 57 tests passing with zero failures, and TypeScript, lint and production build passing.
@@ -237,7 +237,7 @@ The persistence foundation is a bounded technical prerequisite and does not repl
 - **Independent work:** DB-03, DB-04, DB-06–DB-12, M0 and DEC-036 P0/Conditional P0 release evidence remain separate.
 
 
-## Current M2 direction — Standard operational scope captured; bounded cost-configuration discovery next — 2 November 2026
+## Historical M2 direction — Standard operational scope captured; bounded cost-configuration discovery next — 2 November 2026 (superseded by the 5 November checkpoint above)
 
 - **Latest confirmed documentation baseline:** PR #119 merged at 3d324d4a7b9a5eb751106b0da30defe79ea332ce. Its workbook is an evidence template, not pricing approval.
 - **Owner's latest priority:** keep the remaining evidence work minimal and move toward implementation.
