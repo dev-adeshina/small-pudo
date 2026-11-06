@@ -107,11 +107,62 @@ describe("operational cost approval workflow", { skip: !enabled }, () => {
     await grant(proposer, permissions[0]);
     await assert.rejects(
       workflow.transition({ definitionId: created.definitionId, versionId: created.versionId, actorUid: proposer, action: "submit" }),
-      /amount, explicit currency, basis, structured evidence and treatment classification/
+      /configured or explicitly classified as no separate cost/
     );
     const state = await db.collection("operationalCostDefinitions").doc(created.definitionId)
       .collection("versions").doc(created.versionId).collection("approval").doc("workflow").get();
     assert.equal(state.exists, false);
+  });
+
+  it("allows a supported no-separate-cost component but rejects missing supporting evidence", async () => {
+    const noSeparateCost = {
+      ...definition,
+      costComponents: [{
+        key: "handling",
+        label: "Covered handling",
+        configurationState: "no_separate_cost",
+        amount: null,
+        currencyCode: null,
+        basis: null,
+        noSeparateCostReason: "Covered by the existing partner service charge.",
+        treatmentClass: "included",
+        evidenceItems: definition.costComponents[0].evidenceItems,
+      }],
+    };
+    const proposer = `proposer-${randomUUID()}`;
+    const created = await definitions.createDefinition(proposer, noSeparateCost);
+    ids.add(created.definitionId);
+    await grant(proposer, permissions[0]);
+    await workflow.transition({
+      definitionId: created.definitionId,
+      versionId: created.versionId,
+      actorUid: proposer,
+      action: "submit",
+    });
+    const submitted = await db.collection("operationalCostDefinitions").doc(created.definitionId)
+      .collection("versions").doc(created.versionId).collection("approval").doc("workflow").get();
+    assert.equal(submitted.data().state, "pending_operations_validation");
+
+    const unsupported = {
+      ...noSeparateCost,
+      costComponents: [{
+        ...noSeparateCost.costComponents[0],
+        evidenceItems: [],
+      }],
+    };
+    const secondProposer = `proposer-${randomUUID()}`;
+    const second = await definitions.createDefinition(secondProposer, unsupported);
+    ids.add(second.definitionId);
+    await grant(secondProposer, permissions[0]);
+    await assert.rejects(
+      workflow.transition({
+        definitionId: second.definitionId,
+        versionId: second.versionId,
+        actorUid: secondProposer,
+        action: "submit",
+      }),
+      /reason, structured supporting evidence and treatment classification/
+    );
   });
 
   it("rejects legacy narrative evidence without structured evidence and treatment classification", async () => {
