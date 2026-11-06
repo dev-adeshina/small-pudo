@@ -308,14 +308,32 @@ function assertDefinitionInput(
           (component.basis !== undefined && component.basis !== null)) {
         throw new TypeError("A no-separate-cost component must have a null amount, no currency and no basis");
       }
-      assertNonEmptyString(component.noSeparateCostReason, "No-separate-cost reason", 1000);
-    } else if (state === "configured" || (state === undefined && component.amount !== undefined && component.amount !== null)) {
+      // Drafts may record the intended state before the explanation is ready.
+      // The approval workflow requires a non-empty reason before submission.
+    } else if (state === "configured") {
+      // Drafts may be saved progressively. Validate supplied values, but leave
+      // completeness (amount, currency and basis) to the submission gate.
+      if (component.amount !== undefined && component.amount !== null &&
+          (typeof component.amount !== "string" ||
+           component.amount.length > 40 ||
+           !/^(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$/.test(component.amount))) {
+        throw new TypeError("A configured cost amount must be a non-negative decimal string");
+      }
+      if (component.currencyCode !== undefined && component.currencyCode !== null &&
+          (typeof component.currencyCode !== "string" || !/^[A-Z]{3}$/.test(component.currencyCode))) {
+        throw new TypeError("Cost component currency code must be a three-letter uppercase code");
+      }
+      if (component.noSeparateCostReason !== undefined) {
+        throw new TypeError("A configured cost component cannot include a no-separate-cost reason");
+      }
+    } else if (state === undefined && component.amount !== undefined && component.amount !== null) {
+      // Preserve strict validation for legacy amount-bearing components.
       if (
         typeof component.amount !== "string" ||
         component.amount.length > 40 ||
-        !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(component.amount)
+        !/^(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$/.test(component.amount)
       ) {
-        throw new TypeError("A configured cost component needs a non-negative decimal amount");
+        throw new TypeError("A configured cost amount must be a non-negative decimal string");
       }
       assertNonEmptyString(component.currencyCode, "Cost component currency code", 3);
       if (!/^[A-Z]{3}$/.test(component.currencyCode)) {
