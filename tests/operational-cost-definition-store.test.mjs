@@ -345,6 +345,37 @@ describe(
       );
     });
 
+    it("persists all explicit configuration states and rejects contradictory state values", async () => {
+      const explicit = {
+        ...validDefinition,
+        costComponents: [
+          { key: "unknown", label: "Unknown activity cost", configurationState: "not_configured", amount: null },
+          { key: "noCharge", label: "No separate payment", configurationState: "no_separate_cost", amount: null, noSeparateCostReason: "Covered by an existing partner service charge." },
+          { key: "known", label: "Known activity cost", configurationState: "configured", amount: "1250.50", currencyCode: "NGN", basis: "per parcel" },
+        ],
+      };
+      const created = await createDefinition(explicit);
+      const version = await db.collection("operationalCostDefinitions").doc(created.definitionId)
+        .collection("versions").doc(created.versionId).get();
+      assert.deepEqual(version.data().costComponents, explicit.costComponents);
+
+      const invalid = [
+        { key: "unknown", label: "Unknown", configurationState: "not_configured", amount: null, currencyCode: "NGN" },
+        { key: "unknown", label: "Unknown", configurationState: "not_configured", amount: "0" },
+        { key: "known", label: "Known", configurationState: "configured", amount: null, currencyCode: "NGN", basis: "per parcel" },
+        { key: "known", label: "Known", configurationState: "configured", amount: "10.00", currencyCode: "NGN" },
+        { key: "none", label: "None", configurationState: "no_separate_cost", amount: null },
+        { key: "none", label: "None", configurationState: "no_separate_cost", amount: "0", noSeparateCostReason: "Not separately payable." },
+        { key: "none", label: "None", configurationState: "no_separate_cost", amount: null, noSeparateCostReason: " " },
+      ];
+      for (const component of invalid) {
+        await assert.rejects(store.createDefinition("actor-one", {
+          ...validDefinition,
+          costComponents: [component],
+        }));
+      }
+    });
+
     it("persists structured evidence and treatment classification in immutable component snapshots", async () => {
       const created = await createDefinition();
       const version = await db.collection("operationalCostDefinitions").doc(created.definitionId)
