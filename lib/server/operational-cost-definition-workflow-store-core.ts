@@ -90,21 +90,53 @@ function assertVersionReadyForSubmission(version: VersionDocument): void {
   }
 
   for (const component of version.costComponents) {
-    if (
-      !component ||
-      typeof component !== "object" ||
-      typeof component.amount !== "string" ||
-      !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(component.amount) ||
-      typeof component.currencyCode !== "string" ||
-      !/^[A-Z]{3}$/.test(component.currencyCode) ||
-      typeof component.basis !== "string" ||
-      !component.basis.trim() ||
-      !["direct", "shared", "included", "exception_related"].includes(component.treatmentClass) ||
-      !Array.isArray(component.evidenceItems) ||
-      component.evidenceItems.length === 0
-    ) {
-      throw new TypeError("Each cost component needs an amount, explicit currency, basis, structured evidence and treatment classification before submission");
+    if (!component || typeof component !== "object") {
+      throw new TypeError("Each cost component must be a valid object before submission");
     }
+
+    const state = component.configurationState;
+    const legacyConfigured = state === undefined &&
+      typeof component.amount === "string";
+    if (state === "not_configured" ||
+        (state === undefined && !legacyConfigured)) {
+      throw new TypeError("Every cost component must be configured or explicitly classified as no separate cost before submission");
+    }
+
+    const configured = state === "configured" || legacyConfigured;
+    const noSeparateCost = state === "no_separate_cost";
+    if (!configured && !noSeparateCost) {
+      throw new TypeError("Each cost component needs a supported configuration state before submission");
+    }
+
+    const commonRequirements =
+      ["direct", "shared", "included", "exception_related"].includes(component.treatmentClass) &&
+      Array.isArray(component.evidenceItems) &&
+      component.evidenceItems.length > 0;
+
+    if (configured) {
+      if (
+        typeof component.amount !== "string" ||
+        !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(component.amount) ||
+        typeof component.currencyCode !== "string" ||
+        !/^[A-Z]{3}$/.test(component.currencyCode) ||
+        typeof component.basis !== "string" ||
+        !component.basis.trim() ||
+        component.noSeparateCostReason !== undefined ||
+        !commonRequirements
+      ) {
+        throw new TypeError("Each configured cost component needs an amount, explicit currency, basis, structured evidence and treatment classification before submission");
+      }
+    } else if (
+      component.amount !== null ||
+      (component.currencyCode !== undefined && component.currencyCode !== null) ||
+      (component.basis !== undefined && component.basis !== null) ||
+      typeof component.noSeparateCostReason !== "string" ||
+      !component.noSeparateCostReason.trim() ||
+      !commonRequirements
+    ) {
+      throw new TypeError("Each no-separate-cost component needs a null amount, a reason, structured supporting evidence and treatment classification before submission");
+    }
+
     for (const item of component.evidenceItems) {
       if (
         !item || typeof item !== "object" ||
