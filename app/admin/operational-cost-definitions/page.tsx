@@ -13,7 +13,8 @@ type InputType = "string" | "number" | "boolean" | "date";
 type InputDefinition = { key: string; label: string; description?: string; valueType: InputType; required: boolean; source?: string; unit?: string; precision?: number; conversion?: string };
 type EvidenceItem = { sourceReference: string; sourceOwner: string; sourceType: string; representedScope: string; observationPeriod: { startDate?: string; endDate?: string; description?: string }; coverage: string; collectionMethod: string; originalValue?: string; originalUnit?: string; originalCurrencyCode?: string; originalPrecision?: number; limitations?: string };
 type TreatmentClass = "direct" | "shared" | "included" | "exception_related";
-type CostComponent = { key: string; label: string; description?: string; amount?: string; currencyCode?: string; basis?: string; treatment?: string; treatmentClass?: TreatmentClass; evidenceDescription?: string; evidenceItems?: EvidenceItem[] };
+type ConfigurationState = "not_configured" | "configured" | "no_separate_cost";
+type CostComponent = { key: string; label: string; description?: string; configurationState?: ConfigurationState; amount?: string | null; currencyCode?: string | null; basis?: string | null; noSeparateCostReason?: string; treatment?: string; treatmentClass?: TreatmentClass; evidenceDescription?: string; evidenceItems?: EvidenceItem[] };
 type DefinitionPayload = { activityCode: string; activityName: string; activityDescription: string; applicability: "general"; inputs: InputDefinition[]; costComponents: CostComponent[] };
 type WorkflowState = "draft" | "pending_operations_validation" | "pending_finance_review" | "pending_independent_approval" | "changes_requested" | "approved" | "rejected";
 type Workflow = { state: WorkflowState };
@@ -53,6 +54,11 @@ const emptyForm = (): DefinitionPayload => ({
   inputs: [],
   costComponents: [],
 });
+
+function configurationStateOf(component: CostComponent): ConfigurationState {
+  return component.configurationState ??
+    (component.amount !== undefined && component.amount !== null ? "configured" : "not_configured");
+}
 
 function formatDate(value: unknown): string {
   if (!value) return "—";
@@ -189,7 +195,13 @@ export default function OperationalCostDefinitionsPage() {
       activityDescription: selectedVersion.activityDescription ?? "",
       applicability: "general",
       inputs: (selectedVersion.inputs ?? []).map((item) => ({ ...item })),
-      costComponents: (selectedVersion.costComponents ?? []).map((item) => ({ ...item })),
+      costComponents: (selectedVersion.costComponents ?? []).map((item) => ({
+        ...item,
+        configurationState: configurationStateOf(item),
+        ...(configurationStateOf(item) === "not_configured"
+          ? { amount: null, currencyCode: null, basis: null }
+          : {}),
+      })),
     });
     setEditing(true);
     setCreating(false);
@@ -226,6 +238,22 @@ export default function OperationalCostDefinitionsPage() {
         }
 
         return { ...next, [field]: value } as CostComponent;
+      }),
+    }));
+  }
+
+  function updateConfigurationState(index: number, configurationState: ConfigurationState) {
+    setForm((current) => ({
+      ...current,
+      costComponents: current.costComponents.map((item, itemIndex) => {
+        if (itemIndex !== index) return item;
+        if (configurationState === "configured") {
+          return { ...item, configurationState, amount: undefined, currencyCode: undefined, basis: undefined, noSeparateCostReason: undefined };
+        }
+        if (configurationState === "no_separate_cost") {
+          return { ...item, configurationState, amount: null, currencyCode: null, basis: null, noSeparateCostReason: item.noSeparateCostReason ?? "" };
+        }
+        return { ...item, configurationState, amount: null, currencyCode: null, basis: null, noSeparateCostReason: undefined };
       }),
     }));
   }
@@ -454,16 +482,22 @@ export default function OperationalCostDefinitionsPage() {
                   </div>
                 </div>)}
 
-                <div className="cost-section-heading"><div><h3>Cost components</h3><p>Do not enter amounts, currencies or bases without source evidence.</p></div><button type="button" className="cost-secondary-button" onClick={() => setForm((current) => ({ ...current, costComponents: [...current.costComponents, { key: "", label: "" }] }))}><Plus size={15} /> Add component</button></div>
+                <div className="cost-section-heading"><div><h3>Cost components</h3><p>Do not enter amounts, currencies or bases without source evidence.</p></div><button type="button" className="cost-secondary-button" onClick={() => setForm((current) => ({ ...current, costComponents: [...current.costComponents, { key: "", label: "", configurationState: "not_configured", amount: null }] }))}><Plus size={15} /> Add component</button></div>
                 {form.costComponents.length === 0 && <p className="cost-inline-empty">No cost components yet. An incomplete draft can be saved but cannot be submitted.</p>}
                 {form.costComponents.map((component, index) => <div className="cost-editor-card" key={"component-" + index}>
                   <div className="cost-editor-card-heading"><strong>Cost component {index + 1}</strong><button type="button" onClick={() => setForm((current) => ({ ...current, costComponents: current.costComponents.filter((_, i) => i !== index) }))}>Remove</button></div>
                   <div className="cost-form-grid">
                     <label className="cost-field"><span>Stable key</span><input value={component.key} maxLength={64} onChange={(event) => updateComponent(index, "key", event.target.value)} placeholder="e.g. partnerService" /></label>
                     <label className="cost-field"><span>Component label</span><input value={component.label} maxLength={120} onChange={(event) => updateComponent(index, "label", event.target.value)} placeholder="Cost description" /></label>
-                    <label className="cost-field"><span>Amount (decimal)</span><input inputMode="decimal" value={component.amount ?? ""} maxLength={40} onChange={(event) => updateComponent(index, "amount", event.target.value)} placeholder="No default amount" /></label>
-                    <label className="cost-field"><span>Currency code</span><input value={component.currencyCode ?? ""} maxLength={3} onChange={(event) => updateComponent(index, "currencyCode", event.target.value.toUpperCase())} placeholder="Explicit ISO code" /></label>
-                    <label className="cost-field"><span>Basis / unit</span><input value={component.basis ?? ""} maxLength={120} onChange={(event) => updateComponent(index, "basis", event.target.value)} placeholder="Evidence-backed basis" /></label>
+                    <label className="cost-field"><span>Configuration state</span><select value={configurationStateOf(component)} onChange={(event) => updateConfigurationState(index, event.target.value as ConfigurationState)}><option value="not_configured">Not configured</option><option value="configured">Configured</option><option value="no_separate_cost">No separate cost</option></select></label>
+                    {configurationStateOf(component) === "configured" ? <>
+                      <label className="cost-field"><span>Amount (decimal)</span><input inputMode="decimal" value={component.amount ?? ""} maxLength={40} onChange={(event) => updateComponent(index, "amount", event.target.value)} placeholder="Enter a supported amount" /></label>
+                      <label className="cost-field"><span>Currency code</span><input value={component.currencyCode ?? ""} maxLength={3} onChange={(event) => updateComponent(index, "currencyCode", event.target.value.toUpperCase())} placeholder="Explicit ISO code" /></label>
+                      <label className="cost-field"><span>Basis / unit</span><input value={component.basis ?? ""} maxLength={120} onChange={(event) => updateComponent(index, "basis", event.target.value)} placeholder="e.g. per parcel, kilometre, trip" /></label>
+                    </> : configurationStateOf(component) === "no_separate_cost" ? <>
+                      <label className="cost-field cost-field-wide"><span>Reason no separate cost applies</span><textarea rows={2} value={component.noSeparateCostReason ?? ""} maxLength={1000} onChange={(event) => updateComponent(index, "noSeparateCostReason", event.target.value)} placeholder="Explain the supported scope and why no separate payment applies." /></label>
+                      <p className="cost-inline-empty">This is not a zero amount or a free customer service. Supporting evidence is required before submission.</p>
+                    </> : <p className="cost-inline-empty">Cost is unknown or not yet configured. It is not treated as zero and cannot be submitted for approval.</p>}
                     <label className="cost-field"><span>Legacy treatment note</span><input value={component.treatment ?? ""} maxLength={80} onChange={(event) => updateComponent(index, "treatment", event.target.value)} placeholder="Historical free-text value" /></label>
                     <label className="cost-field"><span>Finance treatment classification</span><select value={component.treatmentClass ?? ""} onChange={(event) => updateComponent(index, "treatmentClass", event.target.value)}><option value="">Not classified</option><option value="direct">Direct</option><option value="shared">Shared</option><option value="included">Included</option><option value="exception_related">Exception-related</option></select></label>
                     <label className="cost-field cost-field-wide"><span>Legacy evidence description</span><textarea rows={3} value={component.evidenceDescription ?? ""} maxLength={1000} onChange={(event) => updateComponent(index, "evidenceDescription", event.target.value)} placeholder="Historical narrative evidence note. This does not satisfy the new structured-evidence submission requirement." /></label>
@@ -515,7 +549,14 @@ export default function OperationalCostDefinitionsPage() {
                   {selectedVersion.inputs?.length ? selectedVersion.inputs.map((input) => <div className="cost-readonly-row" key={input.key}><strong>{input.label}</strong><span>{input.key} · {input.valueType} · {input.required ? "Required" : "Optional"}</span><small>{[input.source, input.unit, input.description, input.conversion].filter(Boolean).join(" · ") || "No source details recorded."}</small></div>) : <p className="cost-inline-empty">No operational inputs configured.</p>}
                 </div>
                 <div className="cost-detail-section"><h3>Cost components</h3>
-                  {selectedVersion.costComponents?.length ? selectedVersion.costComponents.map((component) => <div className="cost-readonly-row" key={component.key}><strong>{component.label}</strong><span>{component.amount ? component.amount + " " + (component.currencyCode ?? "") : "Amount not recorded"} · {component.basis ?? "Basis not recorded"} · {component.treatmentClass?.replace(/_/g, " ") ?? "Treatment not classified"}</span><small>{component.evidenceDescription || "No legacy evidence description recorded."}</small>{component.evidenceItems?.map((item, itemIndex) => <small key={component.key + "-evidence-" + itemIndex}>Source {itemIndex + 1}: {item.sourceReference} · {item.sourceOwner} · {item.sourceType} · {item.representedScope} · {item.observationPeriod?.startDate ?? item.observationPeriod?.description ?? "Period not recorded"}{item.observationPeriod?.endDate ? " to " + item.observationPeriod.endDate : ""} · Coverage: {item.coverage} · Method: {item.collectionMethod}{item.limitations ? " · Limitations: " + item.limitations : ""}</small>)}</div>) : <p className="cost-inline-empty">No cost components configured.</p>}
+                  {selectedVersion.costComponents?.length ? selectedVersion.costComponents.map((component) => {
+                    const componentState = configurationStateOf(component);
+                    const stateLabel = componentState === "no_separate_cost" ? "No separate cost" : componentState === "configured" ? "Configured" : "Not configured";
+                    const amountLabel = componentState === "configured" && component.amount != null
+                      ? component.amount + " " + (component.currencyCode ?? "")
+                      : stateLabel;
+                    return <div className="cost-readonly-row" key={component.key}><strong>{component.label}</strong><span>{stateLabel} · {amountLabel} · {component.basis ?? "No basis"} · {component.treatmentClass?.replace(/_/g, " ") ?? "Treatment not classified"}</span>{component.noSeparateCostReason && <small>Reason: {component.noSeparateCostReason}</small>}<small>{component.evidenceDescription || "No legacy evidence description recorded."}</small>{component.evidenceItems?.map((item, itemIndex) => <small key={component.key + "-evidence-" + itemIndex}>Source {itemIndex + 1}: {item.sourceReference} · {item.sourceOwner} · {item.sourceType} · {item.representedScope} · {item.observationPeriod?.startDate ?? item.observationPeriod?.description ?? "Period not recorded"}{item.observationPeriod?.endDate ? " to " + item.observationPeriod.endDate : ""} · Coverage: {item.coverage} · Method: {item.collectionMethod}{item.limitations ? " · Limitations: " + item.limitations : ""}</small>)}</div>;
+                  }) : <p className="cost-inline-empty">No cost components configured.</p>}
                 </div>
                 <div className="cost-workflow-actions">
                   {canRevise && <button type="button" className="cost-secondary-button" onClick={startRevision}><FilePlus2 size={15} /> Create new version</button>}

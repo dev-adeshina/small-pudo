@@ -56,13 +56,20 @@ export type OperationalCostTreatmentClass =
   | "included"
   | "exception_related";
 
+export type OperationalCostConfigurationState =
+  | "not_configured"
+  | "configured"
+  | "no_separate_cost";
+
 export interface OperationalCostComponentInput {
   key: string;
   label: string;
   description?: string;
-  amount?: string;
-  currencyCode?: string;
-  basis?: string;
+  configurationState?: OperationalCostConfigurationState;
+  amount?: string | null;
+  currencyCode?: string | null;
+  basis?: string | null;
+  noSeparateCostReason?: string;
   treatment?: string;
   evidenceDescription?: string;
   treatmentClass?: OperationalCostTreatmentClass;
@@ -252,7 +259,7 @@ function assertDefinitionInput(
     assertPlainMap(component, "Each operational cost component");
     assertOnlyKeys(
       component,
-      ["key", "label", "description", "amount", "currencyCode", "basis", "treatment", "evidenceDescription", "treatmentClass", "evidenceItems"],
+      ["key", "label", "description", "configurationState", "amount", "currencyCode", "basis", "noSeparateCostReason", "treatment", "evidenceDescription", "treatmentClass", "evidenceItems"],
       "An operational cost component"
     );
 
@@ -269,7 +276,8 @@ function assertDefinitionInput(
 
     assertNonEmptyString(component.label, "Cost component label", 120);
     assertOptionalString(component.description, "Cost component description");
-    assertOptionalString(component.basis, "Cost component basis", 120);
+    assertOptionalString(component.basis ?? undefined, "Cost component basis", 120);
+    assertOptionalString(component.noSeparateCostReason, "No-separate-cost reason", 1000);
     assertOptionalString(component.treatment, "Cost component treatment", 80);
     assertOptionalString(component.evidenceDescription, "Cost evidence description", 1000);
     if (component.treatmentClass !== undefined && !TREATMENT_CLASSES.has(component.treatmentClass)) {
@@ -282,22 +290,68 @@ function assertDefinitionInput(
       for (const item of component.evidenceItems) assertEvidenceItem(item);
     }
 
-    if (component.amount !== undefined) {
+    const state = component.configurationState;
+    if (state !== undefined && !["not_configured", "configured", "no_separate_cost"].includes(state)) {
+      throw new TypeError("Cost component configuration state is unsupported");
+    }
+
+    if (state === "not_configured") {
+      if (component.amount !== null ||
+          (component.currencyCode !== undefined && component.currencyCode !== null) ||
+          (component.basis !== undefined && component.basis !== null) ||
+          component.noSeparateCostReason !== undefined) {
+        throw new TypeError("A not-configured cost component must have a null amount, no currency or basis, and no no-separate-cost reason");
+      }
+    } else if (state === "no_separate_cost") {
+      if (component.amount !== null ||
+          (component.currencyCode !== undefined && component.currencyCode !== null) ||
+          (component.basis !== undefined && component.basis !== null)) {
+        throw new TypeError("A no-separate-cost component must have a null amount, no currency and no basis");
+      }
+      // Drafts may record the intended state before the explanation is ready.
+      // The approval workflow requires a non-empty reason before submission.
+    } else if (state === "configured") {
+      // Drafts may be saved progressively. Validate supplied values, but leave
+      // completeness (amount, currency and basis) to the submission gate.
+      if (component.amount !== undefined && component.amount !== null &&
+          (typeof component.amount !== "string" ||
+           component.amount.length > 40 ||
+           !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(component.amount))) {
+        throw new TypeError("A configured cost amount must be a non-negative decimal string");
+      }
+      if (component.currencyCode !== undefined && component.currencyCode !== null &&
+          (typeof component.currencyCode !== "string" || !/^[A-Z]{3}$/.test(component.currencyCode))) {
+        throw new TypeError("Cost component currency code must be a three-letter uppercase code");
+      }
+      if (component.noSeparateCostReason !== undefined) {
+        throw new TypeError("A configured cost component cannot include a no-separate-cost reason");
+      }
+    } else if (state === undefined && component.amount !== undefined && component.amount !== null) {
+      // Preserve strict validation for legacy amount-bearing components.
       if (
         typeof component.amount !== "string" ||
         component.amount.length > 40 ||
         !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(component.amount)
       ) {
-        throw new TypeError("Cost component amount must be a non-negative decimal string");
+        throw new TypeError("A configured cost amount must be a non-negative decimal string");
       }
       assertNonEmptyString(component.currencyCode, "Cost component currency code", 3);
       if (!/^[A-Z]{3}$/.test(component.currencyCode)) {
         throw new TypeError("Cost component currency code must be a three-letter uppercase code");
       }
       assertNonEmptyString(component.basis, "Cost component basis", 120);
-    } else if (component.currencyCode !== undefined) {
-      if (!/^[A-Z]{3}$/.test(component.currencyCode)) {
-        throw new TypeError("Cost component currency code must be a three-letter uppercase code");
+      if (component.noSeparateCostReason !== undefined) {
+        throw new TypeError("A configured cost component cannot include a no-separate-cost reason");
+      }
+    } else {
+      // Legacy components without configurationState remain readable/revisable.
+      if (component.amount !== undefined && component.amount !== null) {
+        throw new TypeError("Legacy cost component amount is invalid");
+      }
+      if ((component.currencyCode !== undefined && component.currencyCode !== null) ||
+          (component.basis !== undefined && component.basis !== null) ||
+          component.noSeparateCostReason !== undefined) {
+        throw new TypeError("An unconfigured legacy cost component cannot include currency, basis or a no-separate-cost reason");
       }
     }
   }
