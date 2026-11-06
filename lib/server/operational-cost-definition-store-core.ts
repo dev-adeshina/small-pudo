@@ -316,7 +316,7 @@ function assertDefinitionInput(
       if (component.amount !== undefined && component.amount !== null &&
           (typeof component.amount !== "string" ||
            component.amount.length > 40 ||
-           !/^(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$/.test(component.amount))) {
+           !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(component.amount))) {
         throw new TypeError("A configured cost amount must be a non-negative decimal string");
       }
       if (component.currencyCode !== undefined && component.currencyCode !== null &&
@@ -331,7 +331,7 @@ function assertDefinitionInput(
       if (
         typeof component.amount !== "string" ||
         component.amount.length > 40 ||
-        !/^(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$/.test(component.amount)
+        !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(component.amount)
       ) {
         throw new TypeError("A configured cost amount must be a non-negative decimal string");
       }
