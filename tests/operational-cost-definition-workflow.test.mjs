@@ -112,6 +112,26 @@ describe("operational cost approval workflow", { skip: !enabled }, () => {
     const state = await db.collection("operationalCostDefinitions").doc(created.definitionId)
       .collection("versions").doc(created.versionId).collection("approval").doc("workflow").get();
     assert.equal(state.exists, false);
+
+    for (const component of [
+      { key: "handling", label: "Partially configured", configurationState: "configured", amount: null, currencyCode: null, basis: null },
+      { key: "handling", label: "Reason still pending", configurationState: "no_separate_cost", amount: null, noSeparateCostReason: "" },
+    ]) {
+      const progressive = await definitions.createDefinition(proposer, {
+        ...definition,
+        costComponents: [component],
+      });
+      ids.add(progressive.definitionId);
+      await assert.rejects(
+        workflow.transition({
+          definitionId: progressive.definitionId,
+          versionId: progressive.versionId,
+          actorUid: proposer,
+          action: "submit",
+        }),
+        /configured or explicitly classified as no separate cost|amount, explicit currency, basis|reason, structured supporting evidence/
+      );
+    }
   });
 
   it("allows a supported no-separate-cost component but rejects missing supporting evidence", async () => {
