@@ -359,14 +359,25 @@ describe(
         .collection("versions").doc(created.versionId).get();
       assert.deepEqual(version.data().costComponents, explicit.costComponents);
 
+      const progressiveDraft = {
+        ...validDefinition,
+        costComponents: [
+          { key: "inProgress", label: "Cost being configured", configurationState: "configured", amount: null, currencyCode: null, basis: null },
+          { key: "pendingReason", label: "No separate payment yet explained", configurationState: "no_separate_cost", amount: null, noSeparateCostReason: "" },
+        ],
+      };
+      const progressive = await createDefinition(progressiveDraft);
+      const progressiveVersion = await db.collection("operationalCostDefinitions").doc(progressive.definitionId)
+        .collection("versions").doc(progressive.versionId).get();
+      assert.deepEqual(progressiveVersion.data().costComponents, progressiveDraft.costComponents);
+
       const invalid = [
         { key: "unknown", label: "Unknown", configurationState: "not_configured", amount: null, currencyCode: "NGN" },
         { key: "unknown", label: "Unknown", configurationState: "not_configured", amount: "0" },
-        { key: "known", label: "Known", configurationState: "configured", amount: null, currencyCode: "NGN", basis: "per parcel" },
-        { key: "known", label: "Known", configurationState: "configured", amount: "10.00", currencyCode: "NGN" },
-        { key: "none", label: "None", configurationState: "no_separate_cost", amount: null },
+        { key: "known", label: "Known", configurationState: "configured", amount: "10.00", currencyCode: "NGN", basis: "per parcel", noSeparateCostReason: "Contradictory state" },
+        { key: "known", label: "Known", configurationState: "configured", amount: "not-a-number" },
         { key: "none", label: "None", configurationState: "no_separate_cost", amount: "0", noSeparateCostReason: "Not separately payable." },
-        { key: "none", label: "None", configurationState: "no_separate_cost", amount: null, noSeparateCostReason: " " },
+        { key: "none", label: "None", configurationState: "no_separate_cost", amount: null, currencyCode: "NGN", noSeparateCostReason: "Not separately payable." },
       ];
       for (const component of invalid) {
         await assert.rejects(store.createDefinition("actor-one", {
