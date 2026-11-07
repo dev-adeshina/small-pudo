@@ -37,6 +37,9 @@ service cloud.firestore {
     match /staffManagementAudit/{auditId} {
       allow read, write: if false;
     }
+    match /staffActionPermissionGrants/{grantId} {
+      allow read, write: if false;
+    }
     match /staffActionPermissions/{userId} {
       allow read, write: if false;
       match /permissions/{permissionId} {
