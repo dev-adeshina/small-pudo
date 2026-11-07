@@ -387,6 +387,7 @@ export default function OperationalCostDefinitionsPage() {
       <header className="admin-header">
         <Link href="/" className="admin-logo"><Image src="/logo.svg" width={60} height={20} alt="VeriLyft" priority /></Link>
         <div className="admin-header-right">
+          <Link href="/staff/delegations" className="admin-action">Delegate activity</Link>
           <span className="admin-email">{adminEmail}</span>
           <button type="button" className="admin-logout" onClick={handleLogout} aria-label="Sign out"><LogOut size={17} /></button>
         </div>
