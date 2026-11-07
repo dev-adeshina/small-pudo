@@ -6,10 +6,11 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 type StaffOption = { uid: string; email?: string };
-type Options = { permissions: string[]; staff: StaffOption[] };
+type IssuedGrant = { grantId: string; targetUid: string; targetEmail?: string | null; permissionId: string; status: string; expiresAt?: string | null; reason?: string; delegable?: boolean };
+type Options = { permissions: string[]; staff: StaffOption[]; issued: IssuedGrant[] };
 
 export default function StaffDelegationsPage() {
-  const [options, setOptions] = useState<Options>({ permissions: [], staff: [] });
+  const [options, setOptions] = useState<Options>({ permissions: [], staff: [], issued: [] });
   const [permissionId, setPermissionId] = useState("");
   const [targetUid, setTargetUid] = useState("");
   const [reason, setReason] = useState("");
@@ -20,10 +21,10 @@ export default function StaffDelegationsPage() {
   const [error, setError] = useState("");
   const [feedback, setFeedback] = useState("");
 
-  const api = useCallback(async (method: string, body?: unknown) => {
+  const api = useCallback(async (method: string, body?: unknown, path = "/api/staff/delegations") => {
     const user = auth.currentUser;
     if (!user) throw new Error("Your staff session has ended. Sign in again.");
-    const response = await fetch("/api/staff/delegations", {
+    const response = await fetch(path, {
       method,
       headers: {
         Authorization: `Bearer ${await user.getIdToken()}`,
@@ -42,7 +43,7 @@ export default function StaffDelegationsPage() {
     setError("");
     try {
       const result = await api("GET");
-      setOptions({ permissions: result.permissions, staff: result.staff });
+      setOptions({ permissions: result.permissions, staff: result.staff, issued: result.issued ?? [] });
       setPermissionId((current: string) => result.permissions.includes(current) ? current : result.permissions[0] ?? "");
       setTargetUid((current: string) => result.staff.some((person: StaffOption) => person.uid === current) ? current : "");
     } catch (cause) {
@@ -134,6 +135,18 @@ export default function StaffDelegationsPage() {
             </form>
           </section>
         )}
+        <section className="cost-panel" style={{ marginTop: 22 }}>
+          <div className="cost-panel-heading"><div><span className="section-label">02 / DELEGATIONS YOU ISSUED</span><h2>Delegated activity history</h2></div></div>
+          {!options.issued.length ? <div className="cost-empty"><strong>No delegated activities</strong><p>Delegations you issue will appear here. You may revoke your own active grants.</p></div> : options.issued.map(grant => (
+            <article className="cost-readonly-row" key={grant.grantId}>
+              <strong>{grant.permissionId}</strong>
+              <span>Recipient: {grant.targetEmail || grant.targetUid} · Status: {grant.status}</span>
+              <small>{grant.expiresAt ? "Expires " + new Date(grant.expiresAt).toLocaleString() : "No scheduled expiry"} · {grant.delegable ? "Further delegation permitted" : "No further delegation"}</small>
+              <small>{grant.reason || "No reason recorded."}</small>
+              {grant.status === "active" && <button className="cost-danger-button" type="button" disabled={busy} onClick={() => void revoke(grant.grantId)}>Revoke delegation</button>}
+            </article>
+          ))}
+        </section>
       </div>
     </main>
   );
