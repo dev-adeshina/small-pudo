@@ -693,3 +693,37 @@ Exact service-specific handover proof; signature/photo/OTP or other verification
 - **Still unresolved:** Actual location inventory and its source; accountable Operations owner; verification checklist and evidence sufficiency; exact location-kind representation; technical permission catalogue and grants; lifecycle/status vocabulary; schema/API/security/audit/evidence contracts; service/location/action assignments; DEC-047 outcomes; and mapping-provider evaluation.
 - **Implementation boundary:** DEC-050 approves the responsibility split and governance boundaries only. It does not approve a schema, field, collection, endpoint, status enum, permission ID, evidence-retention period, map provider, location capability assignment, customer PUDO selection, or application-code change. A source-aligned technical contract and remaining operational inputs are required before implementation.
 - **Status:** Owner-approved workflow responsibility policy; detailed operational checklist, technical representation, inventory, implementation, and release remain open.
+
+
+## DEC-051 — Business-owner accountability and incremental PUDO registration
+
+- **Decision date:** 7 November 2026.
+- **Owner response:** The business owner is the accountable top organisational authority for the PUDO inventory and its operational governance. Authorised staff may register locations on the business owner's behalf.
+- **Accountability:** The business owner retains overall accountability for the PUDO inventory, verification governance, and operational approval. The business owner's existing Admin identity does not automatically grant every operational permission.
+- **Incremental registration:** PUDO candidates are added one at a time through an authenticated staff registration form as locations are identified. The initial inventory is built incrementally; a bulk-import requirement or a pre-existing complete location list is not assumed.
+- **Registration authority:** Admins may assign PUDO registration activity to staff. Staff may perform registration only when that activity is assigned within their scope. Registration creates a proposed candidate, not a verified or active PUDO location.
+- **Verification and activation:** Physical verification, Operations approval, and activation remain separate actions. Each requires its own assigned authority and attributable record. Registration authority alone does not grant verification, approval, or activation authority.
+- **Status:** Owner-approved business and responsibility direction. Technical fields, API, security rules, lifecycle vocabulary, and implementation are specified separately.
+
+## DEC-052 — Platform-wide staff activity delegation
+
+- **Decision date:** 7 November 2026.
+- **Owner response:** Approved a general VeriLyft staff authority model in which Admins may assign activities to staff and staff with explicit delegation authority may assign permitted activities to other staff.
+- **Organisational accountability:** The business owner is the top organisational accountability authority. This does not create an implicit application permission or bypass explicit authorization.
+- **Activity-based authority:** Staff receive explicit activity permissions and applicable scope. Admin status, staff membership, or a job title alone does not imply every operational permission.
+- **Delegation:** An Admin may assign permitted activities to staff within the Admin's own assignment authority. A staff member may delegate an activity only when explicitly authorised to delegate it and only within the permission, scope, and constraints the staff member holds.
+- **No escalation:** No actor may grant themselves authority, grant a permission they do not hold or control, broaden its scope, remove its constraints, or delegate an activity that is not delegable. A recipient cannot receive more authority than the delegator can lawfully pass on.
+- **Lineage and revocation:** Every assignment must identify its assigner, recipient, activity, scope, and parent assignment where delegated. Assignment, change, and revocation must be auditable. Revoking an upstream assignment makes descendant assignments derived from it ineffective for new actions; historical records remain intact.
+- **Separation of duties:** Sensitive approval, activation, financial, custody, and other consequential activities retain their independent approval and separation-of-duties requirements. Delegation does not collapse those controls.
+- **Implementation boundary:** Extend the existing staff permission/assignment foundations. Do not create a parallel role system or treat Admin as unrestricted operational authority. Exact permission identifiers and data representation must follow the existing source conventions and be reviewed in the technical contract.
+- **Status:** Owner-approved platform-wide authority policy; implementation and executable acceptance tests remain required.
+
+## DEC-053 — PUDO geolocation coordinates for distance calculation
+
+- **Decision date:** 7 November 2026.
+- **Owner response:** Every submitted PUDO location must have geographical coordinates so the platform can calculate distances.
+- **Coordinate requirement:** A PUDO location submission must include valid latitude and longitude representing the physical site. Coordinates use WGS 84 decimal degrees. An incomplete draft may be saved without coordinates, but it cannot be submitted as a PUDO candidate until coordinates are present and valid.
+- **Capture and attribution:** The registration workflow may capture coordinates using device geolocation or accept manually supplied coordinates. The capture method, capture time, and responsible staff actor must be attributable. A future mapping/geolocation provider is not selected by this decision.
+- **Distance meaning:** Coordinates support geographic proximity and straight-line distance calculations. Straight-line distance must not be presented as road/route distance. Road distance and route estimation require a separately approved routing source and method.
+- **Evidence boundary:** Coordinates or a map pin do not prove that a site physically exists, that its address or operating arrangement is genuine, that it is authorised, or that it has passed verification, approval, activation, capability, or service-eligibility checks.
+- **Status:** Owner-approved requirement; technical representation and capture UX are proposed in the PUDO implementation-readiness contract.

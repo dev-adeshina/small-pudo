@@ -1,3 +1,5 @@
+> **7 November 2026 update — DEC-051 to DEC-053:** This proposal is now read together with `PLATFORM_PUDO_FINAL_IMPLEMENTATION_READINESS.md`, which incorporates the owner's decisions on incremental staff-led registration, required geolocation coordinates, business-owner accountability, and platform-wide staff-to-staff activity delegation. The technical contract in that document is the current review target; this earlier proposal's statements that geolocation and staff delegation are wholly undecided are superseded to the extent clarified there. Mapping-provider selection, road-distance calculation, exact PUDO kind representation, capability matrix, and verification evidence/retention remain gated.
+
 # PUDO Location Registry, Capability, and Shipper Discovery Foundation
 
 **Status:** Technical-design proposal for owner review. This document translates accepted DEC-018, DEC-025, DEC-038, DEC-043, DEC-046, and DEC-047 policy into a bounded location-foundation design. It does not approve a physical schema, API, permission catalogue, provider, service/location assignment, or application implementation.
