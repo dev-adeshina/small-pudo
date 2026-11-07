@@ -96,6 +96,10 @@ describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
    store.delegatePermission({targetUid:thirdUid,actorUid:delegatorUid,permissionId:id,reason:"Attempt to exceed authority",expiresAt:new Date(Date.now()+3*3600000).toISOString()}),
    /cannot outlive/
   );
+  await assert.rejects(
+   store.delegatePermission({targetUid:thirdUid,actorUid:delegatorUid,permissionId:"operational_cost_definition.view",reason:"Attempt to escalate into another activity"}),
+   /explicitly delegable/
+  );
   const first=await store.delegatePermission({targetUid:delegateeUid,actorUid:delegatorUid,permissionId:id,reason:"Delegate registration activity",expiresAt:new Date(Date.now()+3600000).toISOString(),allowFurtherDelegation:true});
   assert.equal(first.outcome,"delegated");
   assert.equal(await costStore.hasPermission(delegateeUid,id),true);
