@@ -51,7 +51,7 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
         const permissions = await db.collection("staffActionPermissions").doc(document.id).collection("permissions").get();
         const data = document.data();
         return { uid: document.id, ...data, createdAt: iso(data.createdAt), updatedAt: iso(data.updatedAt), activatedAt: iso(data.activatedAt),
-          permissions: permissions.docs.map(item => ({ permissionId: item.id, ...item.data(), assignedAt: iso(item.data().assignedAt), updatedAt: iso(item.data().updatedAt), revokedAt: iso(item.data().revokedAt), expiresAt: iso(item.data().expiresAt) })) };
+          permissions: await Promise.all(permissions.docs.map(async item => ({ permissionId: item.id, ...item.data(), effectiveActive: await hasStaffActionPermission(db, document.id, item.id), assignedAt: iso(item.data().assignedAt), updatedAt: iso(item.data().updatedAt), revokedAt: iso(item.data().revokedAt), expiresAt: iso(item.data().expiresAt) }))) };
       }));
       return {
         staff,
