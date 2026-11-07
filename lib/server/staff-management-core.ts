@@ -288,12 +288,12 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
         if(parent) permissions.push(id);
       }
       const [staffSnapshot,issuedSnapshot]=await Promise.all([
-        db.collection("staffDirectory").where("status","==","active").limit(100).get(),
+        permissions.length ? db.collection("staffDirectory").where("status","==","active").limit(100).get() : Promise.resolve(null),
         db.collection("staffActionPermissionGrants").where("grantorUid","==",actorUid).limit(100).get(),
       ]);
-      const staff=staffSnapshot.docs.filter(document=>document.id!==actorUid).map(document=>({
+      const staff=staffSnapshot?.docs.filter(document=>document.id!==actorUid).map(document=>({
         uid:document.id,email:document.data().email,
-      }));
+      })) ?? [];
       const issued=await Promise.all(issuedSnapshot.docs.map(async document=>{
         const grant=document.data();
         const target=typeof grant.targetUid==="string"?await db.collection("staffDirectory").doc(grant.targetUid).get():null;
