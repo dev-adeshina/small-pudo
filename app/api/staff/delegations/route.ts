@@ -5,6 +5,22 @@ import { staffManagementStore } from "@/lib/server/staff-management-store";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+export async function GET(request: Request) {
+  const auth = await authorizeStaffWorkspace(request);
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.status });
+  try {
+    const result = await staffManagementStore.listDelegationOptions(auth.uid);
+    if (result.outcome === "delegator_unavailable") {
+      return NextResponse.json({ error: "An active staff account is required." }, { status: 403 });
+    }
+    return NextResponse.json({ success: true, ...result }, {
+      headers: { "Cache-Control": "no-store" },
+    });
+  } catch {
+    return NextResponse.json({ error: "Delegation options could not be loaded." }, { status: 503 });
+  }
+}
+
 export async function POST(request: Request) {
   const auth = await authorizeStaffWorkspace(request);
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.status });
