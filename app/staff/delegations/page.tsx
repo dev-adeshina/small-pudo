@@ -147,7 +147,7 @@ export default function StaffDelegationsPage() {
                 <input type="datetime-local" value={expiresAt} onChange={event => setExpiresAt(event.target.value)} />
                 <small>If your own grant expires, this delegated grant expires with it.</small>
               </label>
-              <label className="cost-field cost-field-wide"><span><input type="checkbox" checked={allowFurther} onChange={event => setAllowFurther(event.target.checked)} /> Allow the recipient to delegate this same activity onward</span><small>This does not grant any additional activity. The recipient may only delegate within this grant's authority and expiry.</small></label>
+              <label className="cost-field cost-field-wide"><span><input type="checkbox" checked={allowFurther} onChange={event => setAllowFurther(event.target.checked)} /> Allow the recipient to delegate this same activity onward</span><small>This does not grant any additional activity. The recipient may only delegate within this grant&apos;s authority and expiry.</small></label>
               <div className="cost-form-actions cost-field-wide"><button className="cost-primary-button" disabled={busy || !targetUid || !permissionId}>Delegate activity</button></div>
             </form>
           </section>
