@@ -1,4 +1,5 @@
 import type { FieldValue, Firestore } from "firebase-admin/firestore";
+import { hasStaffActionPermissionInTransaction } from "./staff-permission-grants-core";
 
 
 export const OPERATIONAL_COST_ACTION_PERMISSIONS = {
@@ -217,25 +218,10 @@ export function createOperationalCostDefinitionWorkflowStore({
           ? workflowSnapshot.data()
           : { state: "draft" }) as WorkflowDocument;
         const permission = permissionFor(action, current.state);
-        const permissionRef = db.collection("staffActionPermissions")
-          .doc(actorUid).collection("permissions").doc(permission);
-        const permissionSnapshot = await transaction.get(permissionRef);
-        const assignment = permissionSnapshot.data();
-        const expiry = assignment?.expiresAt;
-        const notExpired = expiry == null ||
-          (typeof expiry === "object" && "toDate" in expiry &&
-            typeof (expiry as { toDate?: unknown }).toDate === "function" &&
-            (expiry as { toDate(): Date }).toDate().getTime() > Date.now());
-        if (
-          !permissionSnapshot.exists ||
-          assignment?.active !== true ||
-          !notExpired ||
-          typeof assignment.assignedBy !== "string" ||
-          !assignment.assignedBy.trim() ||
-          typeof assignment.reason !== "string" ||
-          !assignment.reason.trim() ||
-          !assignment.assignedAt
-        ) {
+        const authorized = await hasStaffActionPermissionInTransaction(
+          transaction, db, actorUid, permission,
+        );
+        if (!authorized) {
           throw new Error("The actor does not have the required active, audited action permission");
         }
 
