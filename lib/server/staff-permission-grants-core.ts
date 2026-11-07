@@ -119,3 +119,23 @@ export async function hasStaffActionPermission(
     hasStaffActionPermissionInTransaction(transaction, db, uid, permissionId),
   );
 }
+
+export async function findDelegableStaffActionGrantInTransaction(
+  transaction: Transaction,
+  db: Firestore,
+  uid: string,
+  permissionId: string,
+): Promise<{ grantId: string; grant: Record<string, unknown> } | null> {
+  const snapshot = await transaction.get(
+    db.collection("staffActionPermissionGrants").where("targetUid", "==", uid),
+  );
+  for (const document of snapshot.docs) {
+    const grant = document.data();
+    if (grant.permissionId !== permissionId || grant.delegable !== true ||
+        grant.status !== "active") continue;
+    if (await validGrantLineage(transaction, db, document.id, uid, permissionId, Date.now())) {
+      return { grantId: document.id, grant };
+    }
+  }
+  return null;
+}
