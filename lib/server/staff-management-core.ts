@@ -244,6 +244,28 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
         return {outcome:"delegated" as const,grantId:grantRef.id,expiresAt:expiry?.toISOString()??null,delegable:allowFurther};
       });
     },
+    async listDelegationOptions(actorUid:string) {
+      const actor=await db.collection("staffDirectory").doc(actorUid).get();
+      if(!actor.exists||actor.data()?.status!=="active") {
+        return {outcome:"delegator_unavailable" as const,permissions:[],staff:[]};
+      }
+      const grants=await db.collection("staffActionPermissionGrants").where("targetUid","==",actorUid).get();
+      const permissionIds=[...new Set(grants.docs
+        .filter(document=>document.data().delegable===true&&document.data().status==="active")
+        .map(document=>String(document.data().permissionId)))];
+      const permissions:string[]=[];
+      for(const id of permissionIds) {
+        const parent=await db.runTransaction(transaction=>
+          findDelegableStaffActionGrantInTransaction(transaction,db,actorUid,id)
+        );
+        if(parent) permissions.push(id);
+      }
+      const staffSnapshot=await db.collection("staffDirectory").where("status","==","active").limit(100).get();
+      const staff=staffSnapshot.docs.filter(document=>document.id!==actorUid).map(document=>({
+        uid:document.id,email:document.data().email,
+      }));
+      return {outcome:"ready" as const,permissions,staff};
+    },
     async hasPermission(uid:string, permission:string):Promise<boolean> {
       return hasStaffActionPermission(db,uid,permission);
     },
