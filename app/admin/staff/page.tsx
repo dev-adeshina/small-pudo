@@ -5,13 +5,13 @@ import { ArrowLeft,RefreshCw,UserPlus,Users } from "lucide-react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { verifyAdminAccess } from "@/lib/admin-auth";
-const permissions=["operational_cost_definition.view","operational_cost_definition.propose","operational_cost_definition.validate","operational_cost_definition.finance_review","operational_cost_definition.approve"] as const;
+const permissions=["operational_cost_definition.view","operational_cost_definition.propose","operational_cost_definition.validate","operational_cost_definition.finance_review","operational_cost_definition.approve","pudo_location.register"] as const;
 type Staff={uid:string;email:string;status:string;permissions:Array<{permissionId:string;status:string;reason?:string;expiresAt?:string|null}>};
 type Invite={invitationId:string;email:string;status:string;expiresAt:string|null};
 export default function StaffManagementPage(){
  const [loading,setLoading]=useState(true),[authorized,setAuthorized]=useState(false),[staff,setStaff]=useState<Staff[]>([]),[invitations,setInvitations]=useState<Invite[]>([]),[audit,setAudit]=useState<Array<Record<string,unknown>>>([]);
  const [email,setEmail]=useState(""),[expiresAt,setExpiresAt]=useState(""),[inviteReason,setInviteReason]=useState("");
- const [targetUid,setTargetUid]=useState(""),[permissionId,setPermissionId]=useState<string>(permissions[0]),[permissionStatus,setPermissionStatus]=useState("active"),[permissionExpiresAt,setPermissionExpiresAt]=useState(""),[permissionReason,setPermissionReason]=useState("");
+ const [targetUid,setTargetUid]=useState(""),[permissionId,setPermissionId]=useState<string>(permissions[0]),[permissionStatus,setPermissionStatus]=useState("active"),[permissionExpiresAt,setPermissionExpiresAt]=useState(""),[permissionReason,setPermissionReason]=useState(""),[allowDelegation,setAllowDelegation]=useState(false);
  const [feedback,setFeedback]=useState(""),[error,setError]=useState(""),[busy,setBusy]=useState(false);
  const api=useCallback(async(path:string,method="GET",body?:unknown)=>{
   const user=auth.currentUser;if(!user)throw new Error("Your Admin session has ended. Sign in again.");
@@ -36,7 +36,7 @@ export default function StaffManagementPage(){
  }
  async function changePermission(event:FormEvent<HTMLFormElement>){
   event.preventDefault();if(!targetUid)return;setBusy(true);setError("");setFeedback("");
-  try{await api(`/api/admin/staff/${encodeURIComponent(targetUid)}`,"PATCH",{permissionId,status:permissionStatus,reason:permissionReason,expiresAt:permissionStatus==="active"&&permissionExpiresAt?new Date(permissionExpiresAt).toISOString():null});setPermissionReason("");setPermissionExpiresAt("");setFeedback("Staff permission updated and audited.");await load();}
+  try{await api(`/api/admin/staff/${encodeURIComponent(targetUid)}`,"PATCH",{permissionId,status:permissionStatus,reason:permissionReason,expiresAt:permissionStatus==="active"&&permissionExpiresAt?new Date(permissionExpiresAt).toISOString():null,delegable:permissionStatus==="active"&&allowDelegation});setPermissionReason("");setAllowDelegation(false);setPermissionExpiresAt("");setFeedback("Staff permission updated and audited.");await load();}
   catch(cause){setError(cause instanceof Error?cause.message:"Permission update failed.");}finally{setBusy(false);}
  }
  async function revokeInvitation(id:string){
@@ -47,8 +47,8 @@ export default function StaffManagementPage(){
  return <main className="admin-page"><header className="admin-header"><Link href="/admin" className="admin-logo">VERILyFT / ADMIN</Link><Link href="/admin" className="admin-action"><ArrowLeft size={16}/> Dashboard</Link></header>
  <div className="admin-shell cost-admin-shell">
   <div className="cost-page-topline"><span className="section-label">ADMIN / STAFF ACCESS</span><button className="cost-secondary-button" type="button" onClick={load} disabled={loading||busy}><RefreshCw size={16}/> Refresh</button></div>
-  <div className="cost-page-heading"><div><h1>Staff <em>management.</em></h1><p>Invite staff, manage the five approved operational-cost permissions, and review attributable access history.</p></div></div>
-  <div className="cost-boundary-note"><Users size={22}/><div><strong>Restricted administration</strong><p>Admin status alone does not grant staff permission-management authority. Staff activation grants no operational permissions. The five supported assignments have platform-wide scope.</p></div></div>
+  <div className="cost-page-heading"><div><h1>Staff <em>management.</em></h1><p>Invite staff, manage approved platform activity permissions, and review attributable access history.</p></div></div>
+  <div className="cost-boundary-note"><Users size={22}/><div><strong>Restricted administration</strong><p>Admin status alone does not grant staff permission-management authority. Staff activation grants no operational permissions. Supported assignments have platform-wide scope. Delegation is granted separately for each activity.</p></div></div>
   {feedback&&<div className="cost-feedback cost-feedback-success">{feedback}</div>}{error&&<div className="cost-feedback cost-feedback-error">{error}</div>}
   {loading?<div className="cost-panel">Loading staff access records…</div>:!authorized?<div className="cost-panel"><h2>Permission administrator access required</h2><p className="cost-subtitle">{error||"This account is not technically designated to manage staff access."}</p></div>:<>
    <section className="cost-panel"><div className="cost-panel-heading"><div><span className="section-label">01 / INVITATIONS</span><h2>Invite a staff member</h2></div><UserPlus size={22}/></div>
@@ -71,9 +71,9 @@ export default function StaffManagementPage(){
      <label className="cost-field">Permission<select value={permissionId} onChange={e=>setPermissionId(e.target.value)}>{permissions.map(id=><option key={id}>{id}</option>)}</select></label>
      <label className="cost-field">New status<select value={permissionStatus} onChange={e=>setPermissionStatus(e.target.value)}><option value="active">Active / assign</option><option value="suspended">Suspend</option><option value="revoked">Revoke</option></select></label>
      {permissionStatus==="active"&&<label className="cost-field cost-field-wide">Permission expiry (optional)<input type="datetime-local" value={permissionExpiresAt} onChange={e=>setPermissionExpiresAt(e.target.value)}/><small>Leave blank for no scheduled expiry.</small></label>}
-     <label className="cost-field cost-field-wide">Reason<textarea required maxLength={1000} value={permissionReason} onChange={e=>setPermissionReason(e.target.value)}/></label>
+     <label className="cost-field cost-field-wide"><span><input type="checkbox" checked={allowDelegation} onChange={e=>setAllowDelegation(e.target.checked)} disabled={permissionStatus!=="active"}/> Allow this staff member to delegate this activity to another staff member</span><small>Delegation remains limited to this activity and cannot outlive this grant.</small></label><label className="cost-field cost-field-wide">Reason<textarea required maxLength={1000} value={permissionReason} onChange={e=>setPermissionReason(e.target.value)}/></label>
      <div className="cost-form-actions cost-field-wide"><button className="cost-primary-button" disabled={busy||!targetUid}>Save permission change</button></div>
-    </form><p className="cost-footer-note">Self-assignment is denied. The server validates the active designation, staff account and approved permission catalogue before atomically writing the permission and audit event.</p>
+    </form><p className="cost-footer-note">Self-assignment is denied. The server validates the active designation, staff account and approved activity catalogue. Delegation authority is explicit, activity-specific and audited.</p>
    </section>
    <section className="cost-panel" style={{marginTop:22}}><div className="cost-panel-heading"><div><span className="section-label">04 / INVITATION HISTORY</span><h2>Invitations</h2></div></div>
     {!invitations.length?<div className="cost-empty"><strong>No invitations</strong></div>:invitations.map(invite=><div className="cost-version-row" key={invite.invitationId}><strong>{invite.email}</strong><span>{invite.status}</span><small>Expires: {invite.expiresAt?new Date(invite.expiresAt).toLocaleString():"—"}</small>{invite.status==="pending"&&<button type="button" className="cost-danger-button" disabled={busy} onClick={()=>revokeInvitation(invite.invitationId)}>Revoke</button>}</div>)}
