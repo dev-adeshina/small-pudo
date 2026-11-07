@@ -8,6 +8,8 @@ type Grant = {
   delegable?: unknown;
   parentGrantId?: unknown;
   expiresAt?: unknown;
+  rootGrantId?: unknown;
+  source?: unknown;
 };
 
 function expiryMillis(value: unknown): number | null {
@@ -53,8 +55,8 @@ async function validGrantLineage(
       !isUnexpired(grant.expiresAt, now)) return false;
 
   if (typeof grant.parentGrantId !== "string" || !grant.parentGrantId) {
-    return grant.grantorUid === "system:administrator" ||
-      (typeof grant.grantorUid === "string" && grant.grantorUid.startsWith("admin:"));
+    return grant.source === "administrator" && grant.rootGrantId === grantId &&
+      typeof grant.grantorUid === "string" && grant.grantorUid.startsWith("admin:");
   }
 
   if (typeof grant.grantorUid !== "string" || !grant.grantorUid ||
