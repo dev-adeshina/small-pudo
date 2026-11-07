@@ -5,7 +5,7 @@ export type StaffWorkspaceAuthorization =
   | { ok: false; status: 401 | 503; error: string };
 
 export async function authorizeStaffWorkspace(request: Request): Promise<StaffWorkspaceAuthorization> {
-  const match = request.headers.get("authorization")?.match(/^Bearer\\s+(.+)$/i);
+  const match = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i);
   if (!match) return { ok: false, status: 401, error: "Authentication required." };
   try {
     const decoded = await adminAuth.verifyIdToken(match[1], true);
