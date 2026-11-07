@@ -56,7 +56,7 @@ export default function StaffDelegationsPage() {
     let active = true;
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        window.location.replace("/admin/sign-in");
+        window.location.replace("/staff/sign-in");
         return;
       }
       if (active) await load();
