@@ -119,6 +119,30 @@ describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
    /explicitly delegable/
   );
  });
+ it("lets a grantor revoke a delegation and invalidates its descendants",async()=>{
+  for(const staffUid of [delegatorUid,delegateeUid,thirdUid]){
+   await db.collection("staffDirectory").doc(staffUid).set({email:`${staffUid}@example.test`,status:"active"});
+  }
+  const id="operational_cost_definition.view";
+  await store.setPermission({targetUid:delegatorUid,actorUid:actor,permissionId:id,status:"active",reason:"Delegation revocation test",delegable:true});
+  const first=await store.delegatePermission({targetUid:delegateeUid,actorUid:delegatorUid,permissionId:id,reason:"Grant first level",allowFurtherDelegation:true});
+  const second=await store.delegatePermission({targetUid:thirdUid,actorUid:delegateeUid,permissionId:id,reason:"Grant second level"});
+  assert.equal(await costStore.hasPermission(thirdUid,id),true);
+  await assert.rejects(
+   store.revokeDelegatedPermission({grantId:first.grantId,actorUid:delegateeUid,reason:"Not the grantor"}),
+   /personally issued/
+  );
+  assert.deepEqual(
+   await store.revokeDelegatedPermission({grantId:first.grantId,actorUid:delegatorUid,reason:"Delegation no longer required"}),
+   {outcome:"revoked"}
+  );
+  assert.equal(await costStore.hasPermission(delegateeUid,id),false);
+  assert.equal(await costStore.hasPermission(thirdUid,id),false);
+  const secondGrant=await db.collection("staffActionPermissionGrants").doc(second.grantId).get();
+  assert.equal(secondGrant.data().status,"active");
+  const events=await db.collection("staffManagementAudit").where("grantId","==",first.grantId).get();
+  assert.equal(events.docs.filter(document=>document.data().action==="permission.delegation_revoked").length,1);
+ });
  it("does not allow delegation from an ordinary non-delegable assignment",async()=>{
   await db.collection("staffDirectory").doc(workspaceUid).set({email:"nondelegable@example.test",status:"active"});
   await db.collection("staffDirectory").doc(thirdUid).set({email:"recipient@example.test",status:"active"});
