@@ -6,7 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { verifyAdminAccess } from "@/lib/admin-auth";
 const permissions=["operational_cost_definition.view","operational_cost_definition.propose","operational_cost_definition.validate","operational_cost_definition.finance_review","operational_cost_definition.approve","pudo_location.register"] as const;
-type Staff={uid:string;email:string;status:string;permissions:Array<{permissionId:string;status:string;reason?:string;expiresAt?:string|null}>};
+type Staff={uid:string;email:string;status:string;permissions:Array<{permissionId:string;status:string;effectiveActive?:boolean;reason?:string;expiresAt?:string|null}>};
 type Invite={invitationId:string;email:string;status:string;expiresAt:string|null};
 export default function StaffManagementPage(){
  const [loading,setLoading]=useState(true),[authorized,setAuthorized]=useState(false),[staff,setStaff]=useState<Staff[]>([]),[invitations,setInvitations]=useState<Invite[]>([]),[audit,setAudit]=useState<Array<Record<string,unknown>>>([]);
@@ -61,7 +61,7 @@ export default function StaffManagementPage(){
    </section>
    <section className="cost-panel" style={{marginTop:22}}><div className="cost-panel-heading"><div><span className="section-label">02 / STAFF DIRECTORY</span><h2>Staff accounts</h2></div><span className="cost-state-badge">{staff.length} records</span></div>
     {!staff.length?<div className="cost-empty"><strong>No staff accounts yet</strong><p>Invited staff appear here after verified activation.</p></div>:staff.map(person=><article className="cost-readonly-row" key={person.uid}><strong>{person.email}</strong><span>Account: {person.status} · UID: {person.uid}</span>
-     <div className="cost-version-list">{permissions.map(id=>{const item=person.permissions.find(p=>p.permissionId===id);return <div className="cost-version-row" key={id}><span>{id}</span><strong>{item?.status??"unassigned"}</strong><small>{item?.expiresAt?`Expires ${new Date(item.expiresAt).toLocaleString()}`:item?.reason??"No assignment"}</small></div>;})}</div>
+     <div className="cost-version-list">{permissions.map(id=>{const item=person.permissions.find(p=>p.permissionId===id);return <div className="cost-version-row" key={id}><span>{id}</span><strong>{item?(item.effectiveActive?"active":item.status==="active"?"inactive":item.status):"unassigned"}</strong><small>{item?.expiresAt?`Expires ${new Date(item.expiresAt).toLocaleString()}`:item?.reason??"No assignment"}</small></div>;})}</div>
      <button className="cost-secondary-button" type="button" onClick={()=>setTargetUid(person.uid)}>Manage permissions</button>
     </article>)}
    </section>
