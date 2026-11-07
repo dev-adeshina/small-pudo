@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import type { Firestore, FieldValue } from "firebase-admin/firestore";
-import { findDelegableStaffActionGrantInTransaction, hasStaffActionPermission } from "./staff-permission-grants-core";
+import { findDelegableStaffActionGrantInTransaction, hasStaffActionPermission } from "./staff-permission-grants-core.ts";
 export const STAFF_ACTION_PERMISSIONS = ["operational_cost_definition.view","operational_cost_definition.propose","operational_cost_definition.validate","operational_cost_definition.finance_review","operational_cost_definition.approve","pudo_location.register"] as const;
 export type StaffActionPermission = typeof STAFF_ACTION_PERMISSIONS[number];
 export type StaffPermissionStatus = "active" | "suspended" | "revoked";
