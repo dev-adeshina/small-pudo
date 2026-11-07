@@ -1,5 +1,5 @@
 import type { FieldValue, Firestore } from "firebase-admin/firestore";
-import { hasStaffActionPermissionInTransaction } from "./staff-permission-grants-core";
+import { hasStaffActionPermissionInTransaction } from "./staff-permission-grants-core.ts";
 
 
 export const OPERATIONAL_COST_ACTION_PERMISSIONS = {
