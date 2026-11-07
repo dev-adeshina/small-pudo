@@ -41,6 +41,7 @@ describe("staff action permission Firestore access", () => {
         "staffInvitations/invitation-one",
         "staffManagementAudit/event-one",
         "staffActionPermissions/staff-user/permissions/operational_cost_definition.view",
+        "staffActionPermissionGrants/grant-one",
       ]) {
         await assertFails(getDoc(doc(db, path)));
         await assertFails(setDoc(doc(db, path), { active: true, status: "active" }));

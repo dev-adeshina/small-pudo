@@ -1,4 +1,5 @@
 import type { FieldValue, Firestore } from "firebase-admin/firestore";
+import { hasStaffActionPermission } from "./staff-permission-grants-core.ts";
 
 export type OperationalCostInputType =
   | "string"
@@ -429,17 +430,6 @@ function assertDefinitionId(value: string): void {
   }
 }
 
-function hasAuditedActiveAssignment(value: Record<string, unknown> | undefined): boolean {
-  const expiry = value?.expiresAt;
-  const notExpired = expiry == null ||
-    (typeof expiry === "object" && "toDate" in expiry &&
-      typeof (expiry as { toDate?: unknown }).toDate === "function" &&
-      (expiry as { toDate(): Date }).toDate().getTime() > Date.now());
-  return value?.active === true && notExpired &&
-    typeof value.assignedBy === "string" && Boolean(value.assignedBy.trim()) &&
-    typeof value.reason === "string" && Boolean(value.reason.trim()) &&
-    Boolean(value.assignedAt);
-}
 
 /**
  * Server-side persistence primitives only. These records do not calculate
@@ -453,9 +443,7 @@ export function createOperationalCostDefinitionStore({
     async hasPermission(actorUid: string, permissionId: string): Promise<boolean> {
       assertActorUid(actorUid);
       assertNonEmptyString(permissionId, "A staff action permission ID", 128);
-      const snapshot = await db.collection("staffActionPermissions")
-        .doc(actorUid).collection("permissions").doc(permissionId).get();
-      return snapshot.exists && hasAuditedActiveAssignment(snapshot.data());
+      return hasStaffActionPermission(db, actorUid, permissionId);
     },
 
     async listDefinitions(limit = 50): Promise<Array<Record<string, unknown>>> {

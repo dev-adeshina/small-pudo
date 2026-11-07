@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import type { Firestore, FieldValue } from "firebase-admin/firestore";
-export const STAFF_ACTION_PERMISSIONS = ["operational_cost_definition.view","operational_cost_definition.propose","operational_cost_definition.validate","operational_cost_definition.finance_review","operational_cost_definition.approve"] as const;
+import { findDelegableStaffActionGrantInTransaction, hasStaffActionPermission } from "./staff-permission-grants-core.ts";
+export const STAFF_ACTION_PERMISSIONS = ["operational_cost_definition.view","operational_cost_definition.propose","operational_cost_definition.validate","operational_cost_definition.finance_review","operational_cost_definition.approve","pudo_location.register"] as const;
 export type StaffActionPermission = typeof STAFF_ACTION_PERMISSIONS[number];
 export type StaffPermissionStatus = "active" | "suspended" | "revoked";
 type Dependencies = { db: Firestore; serverTimestamp: () => FieldValue };
@@ -50,7 +51,7 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
         const permissions = await db.collection("staffActionPermissions").doc(document.id).collection("permissions").get();
         const data = document.data();
         return { uid: document.id, ...data, createdAt: iso(data.createdAt), updatedAt: iso(data.updatedAt), activatedAt: iso(data.activatedAt),
-          permissions: permissions.docs.map(item => ({ permissionId: item.id, ...item.data(), assignedAt: iso(item.data().assignedAt), updatedAt: iso(item.data().updatedAt), revokedAt: iso(item.data().revokedAt), expiresAt: iso(item.data().expiresAt) })) };
+          permissions: await Promise.all(permissions.docs.map(async item => ({ permissionId: item.id, ...item.data(), effectiveActive: await hasStaffActionPermission(db, document.id, item.id), assignedAt: iso(item.data().assignedAt), updatedAt: iso(item.data().updatedAt), revokedAt: iso(item.data().revokedAt), expiresAt: iso(item.data().expiresAt) }))) };
       }));
       return {
         staff,
@@ -138,12 +139,13 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
         return {outcome:"revoked" as const};
       });
     },
-    async setPermission(input:{targetUid:string;actorUid:string;permissionId:unknown;status:unknown;reason:unknown;expiresAt?:unknown}) {
+    async setPermission(input:{targetUid:string;actorUid:string;permissionId:unknown;status:unknown;reason:unknown;expiresAt?:unknown;delegable?:unknown}) {
       const targetUid=requiredString(input.targetUid,"A target staff UID",128);
       if(targetUid===input.actorUid) throw new TypeError("A permission administrator cannot assign or change their own operational permissions.");
       const permission=permissionId(input.permissionId);
       if(!["active","suspended","revoked"].includes(String(input.status))) throw new TypeError("Permission status must be active, suspended, or revoked.");
       const status=input.status as StaffPermissionStatus, reason=requiredString(input.reason,"A permission-change reason",1000);
+      const delegable=status==="active"&&input.delegable===true;
       let expiry:Date|null=null;
       if(status==="active"&&input.expiresAt!==undefined&&input.expiresAt!==null&&input.expiresAt!==""){
         expiry=new Date(requiredString(input.expiresAt,"Permission expiry",80));
@@ -151,20 +153,158 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
       }
       const staffRef=db.collection("staffDirectory").doc(targetUid);
       const permissionRef=db.collection("staffActionPermissions").doc(targetUid).collection("permissions").doc(permission);
+      const grantId="admin-"+createHash("sha256").update(targetUid+"|"+permission).digest("hex").slice(0,48);
+      const grantRef=db.collection("staffActionPermissionGrants").doc(grantId);
       const auditRef=db.collection("staffManagementAudit").doc();
       return db.runTransaction(async transaction=>{
-        const staff=await transaction.get(staffRef);
+        const [staff,current,grant]=await Promise.all([
+          transaction.get(staffRef),transaction.get(permissionRef),transaction.get(grantRef),
+        ]);
         if(!staff.exists||staff.data()?.status!=="active") return {outcome:"staff_unavailable" as const};
-        const current=await transaction.get(permissionRef);
-        const action=status==="active"?(current.exists?"permission.changed":"permission.assigned"):status==="suspended"?"permission.suspended":"permission.revoked";
-        const next:Record<string,unknown>={active:status==="active",status,assignedBy:current.exists?current.data()?.assignedBy??input.actorUid:input.actorUid,reason,updatedBy:input.actorUid,updatedAt:serverTimestamp()};
-        if(!current.exists) next.assignedAt=serverTimestamp();
-        if(status==="active") next.expiresAt=expiry;
-        if(status==="revoked"){next.revokedBy=input.actorUid;next.revokedAt=serverTimestamp();} else {next.revokedBy=null;next.revokedAt=null;}
+        const action=status==="active"?(grant.exists?"permission.changed":"permission.assigned"):status==="suspended"?"permission.suspended":"permission.revoked";
+        const assignedAt=grant.exists?grant.data()?.assignedAt??serverTimestamp():serverTimestamp();
+        transaction.set(grantRef,{
+          targetUid,grantorUid:"admin:"+input.actorUid,permissionId:permission,
+          status,delegable,parentGrantId:null,rootGrantId:grantId,source:"administrator",
+          scope:"platform",reason,assignedAt,expiresAt:status==="active"?expiry:null,
+          updatedBy:input.actorUid,updatedAt:serverTimestamp(),
+          ...(status==="revoked"?{revokedBy:input.actorUid,revokedAt:serverTimestamp()}:{revokedBy:null,revokedAt:null}),
+        },{merge:true});
+        const next:Record<string,unknown>={
+          active:status==="active",status,assignedBy:input.actorUid,reason,
+          updatedBy:input.actorUid,updatedAt:serverTimestamp(),
+          assignedAt:current.exists?current.data()?.assignedAt??assignedAt:assignedAt,
+          expiresAt:status==="active"?expiry:null,grantModelVersion:1,
+          delegable,grantId,
+        };
+        if(status==="revoked"){next.revokedBy=input.actorUid;next.revokedAt=serverTimestamp();}
+        else {next.revokedBy=null;next.revokedAt=null;}
         transaction.set(permissionRef,next,{merge:true});
-        transaction.create(auditRef,{action,actorUid:input.actorUid,targetUid,permissionId:permission,scope:"platform",reason,previousStatus:current.exists?current.data()?.status??"active":"unassigned",resultingStatus:status,expiresAt:expiry?.toISOString()??null,outcome:"success",occurredAt:serverTimestamp()});
-        return {outcome:"updated" as const,status};
+        transaction.create(auditRef,{
+          action,actorUid:input.actorUid,targetUid,permissionId:permission,scope:"platform",
+          reason,previousStatus:current.exists?current.data()?.status??"active":"unassigned",
+          resultingStatus:status,expiresAt:expiry?.toISOString()??null,delegable,
+          grantId,outcome:"success",occurredAt:serverTimestamp(),
+        });
+        return {outcome:"updated" as const,status,delegable,grantId};
       });
+    },
+    async delegatePermission(input:{targetUid:string;actorUid:string;permissionId:unknown;reason:unknown;expiresAt?:unknown;allowFurtherDelegation?:unknown}) {
+      const targetUid=requiredString(input.targetUid,"A target staff UID",128);
+      const actorUid=requiredString(input.actorUid,"An authenticated staff UID",128);
+      if(targetUid===actorUid) throw new TypeError("Staff cannot delegate an activity to themselves.");
+      const permission=permissionId(input.permissionId);
+      const reason=requiredString(input.reason,"A delegation reason",1000);
+      let requestedExpiry:Date|null=null;
+      if(input.expiresAt!==undefined&&input.expiresAt!==null&&input.expiresAt!==""){
+        requestedExpiry=new Date(requiredString(input.expiresAt,"Delegated permission expiry",80));
+        if(!Number.isFinite(requestedExpiry.getTime())||requestedExpiry.getTime()<=Date.now()) throw new TypeError("Delegated permission expiry must be a valid future date and time.");
+      }
+      const actorRef=db.collection("staffDirectory").doc(actorUid);
+      const targetRef=db.collection("staffDirectory").doc(targetUid);
+      const permissionRef=db.collection("staffActionPermissions").doc(targetUid).collection("permissions").doc(permission);
+      const auditRef=db.collection("staffManagementAudit").doc();
+      const grantRef=db.collection("staffActionPermissionGrants").doc();
+      return db.runTransaction(async transaction=>{
+        const [actor,target,parent]=await Promise.all([
+          transaction.get(actorRef),transaction.get(targetRef),
+          findDelegableStaffActionGrantInTransaction(transaction,db,actorUid,permission),
+        ]);
+        if(!actor.exists||actor.data()?.status!=="active") return {outcome:"delegator_unavailable" as const};
+        if(!target.exists||target.data()?.status!=="active") return {outcome:"staff_unavailable" as const};
+        if(!parent) throw new TypeError("You do not hold an active, explicitly delegable grant for this activity.");
+        const parentExpiry=parent.grant.expiresAt;
+        const parentExpiryDate=parentExpiry&&typeof parentExpiry==="object"&&"toDate" in parentExpiry&&typeof (parentExpiry as {toDate?:unknown}).toDate==="function"
+          ?(parentExpiry as {toDate():Date}).toDate()
+          :parentExpiry instanceof Date?parentExpiry:null;
+        const expiry=requestedExpiry??parentExpiryDate;
+        if(parentExpiryDate&&(!expiry||expiry.getTime()>parentExpiryDate.getTime())) {
+          throw new TypeError("A delegated grant cannot outlive the authority used to create it.");
+        }
+        const allowFurther=input.allowFurtherDelegation===true;
+        const timestamp=serverTimestamp();
+        const rootGrantId=typeof parent.grant.rootGrantId==="string"?parent.grant.rootGrantId:parent.grantId;
+        transaction.create(grantRef,{
+          targetUid,grantorUid:actorUid,permissionId:permission,status:"active",
+          delegable:allowFurther,parentGrantId:parent.grantId,rootGrantId,
+          source:"staff_delegation",scope:"platform",reason,assignedAt:timestamp,
+          expiresAt:expiry,createdAt:timestamp,updatedAt:timestamp,
+        });
+        transaction.set(permissionRef,{
+          active:true,status:"active",assignedBy:actorUid,reason,assignedAt:timestamp,
+          updatedBy:actorUid,updatedAt:timestamp,expiresAt:expiry,
+          grantModelVersion:1,delegable:allowFurther,grantId:grantRef.id,source:"staff_delegation",
+        },{merge:true});
+        transaction.create(auditRef,{
+          action:"permission.delegated",actorUid,targetUid,permissionId:permission,
+          parentGrantId:parent.grantId,grantId:grantRef.id,rootGrantId,
+          scope:"platform",reason,expiresAt:expiry?.toISOString()??null,
+          delegable:allowFurther,outcome:"success",occurredAt:timestamp,
+        });
+        return {outcome:"delegated" as const,grantId:grantRef.id,expiresAt:expiry?.toISOString()??null,delegable:allowFurther};
+      });
+    },
+    async revokeDelegatedPermission(input:{grantId:string;actorUid:string;reason:unknown}) {
+      const grantId=requiredString(input.grantId,"A delegation grant ID",128);
+      if(!/^[A-Za-z0-9_-]{1,128}$/.test(grantId)) throw new TypeError("A valid delegation grant ID is required.");
+      const reason=requiredString(input.reason,"A revocation reason",1000);
+      const grantRef=db.collection("staffActionPermissionGrants").doc(grantId);
+      const auditRef=db.collection("staffManagementAudit").doc();
+      return db.runTransaction(async transaction=>{
+        const snapshot=await transaction.get(grantRef);
+        if(!snapshot.exists) return {outcome:"not_found" as const};
+        const grant=snapshot.data()!;
+        if(grant.source!=="staff_delegation"||grant.grantorUid!==input.actorUid) {
+          throw new TypeError("You may revoke only a delegation that you personally issued.");
+        }
+        if(grant.status!=="active") return {outcome:"not_active" as const};
+        transaction.update(grantRef,{
+          status:"revoked",delegable:false,revokedBy:input.actorUid,
+          revokedAt:serverTimestamp(),revocationReason:reason,updatedAt:serverTimestamp(),
+        });
+        transaction.create(auditRef,{
+          action:"permission.delegation_revoked",actorUid:input.actorUid,
+          targetUid:grant.targetUid,permissionId:grant.permissionId,
+          grantId,parentGrantId:grant.parentGrantId,rootGrantId:grant.rootGrantId,
+          scope:grant.scope??"platform",reason,outcome:"success",occurredAt:serverTimestamp(),
+        });
+        return {outcome:"revoked" as const};
+      });
+    },
+    async listDelegationOptions(actorUid:string) {
+      const actor=await db.collection("staffDirectory").doc(actorUid).get();
+      if(!actor.exists||actor.data()?.status!=="active") {
+        return {outcome:"delegator_unavailable" as const,permissions:[],staff:[]};
+      }
+      const grants=await db.collection("staffActionPermissionGrants").where("targetUid","==",actorUid).get();
+      const permissionIds=[...new Set(grants.docs
+        .filter(document=>document.data().delegable===true&&document.data().status==="active")
+        .map(document=>String(document.data().permissionId)))];
+      const permissions:string[]=[];
+      for(const id of permissionIds) {
+        const parent=await db.runTransaction(transaction=>
+          findDelegableStaffActionGrantInTransaction(transaction,db,actorUid,id)
+        );
+        if(parent) permissions.push(id);
+      }
+      const [staffSnapshot,issuedSnapshot]=await Promise.all([
+        permissions.length ? db.collection("staffDirectory").where("status","==","active").limit(100).get() : Promise.resolve(null),
+        db.collection("staffActionPermissionGrants").where("grantorUid","==",actorUid).limit(100).get(),
+      ]);
+      const staff=staffSnapshot?.docs.filter(document=>document.id!==actorUid).map(document=>({
+        uid:document.id,email:document.data().email,
+      })) ?? [];
+      const issued=await Promise.all(issuedSnapshot.docs.map(async document=>{
+        const grant=document.data();
+        const target=typeof grant.targetUid==="string"?await db.collection("staffDirectory").doc(grant.targetUid).get():null;
+        return {grantId:document.id,targetUid:grant.targetUid,targetEmail:target?.data()?.email??null,
+          permissionId:grant.permissionId,status:grant.status,expiresAt:iso(grant.expiresAt),
+          reason:grant.reason,delegable:grant.delegable};
+      }));
+      return {outcome:"ready" as const,permissions,staff,issued};
+    },
+    async hasPermission(uid:string, permission:string):Promise<boolean> {
+      return hasStaffActionPermission(db,uid,permission);
     },
     async getInvitationStatus(input:{uid:string;email:unknown}) {
       const email=requiredString(input.email,"A verified account email",254).toLowerCase();

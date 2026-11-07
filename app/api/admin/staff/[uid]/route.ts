@@ -11,7 +11,7 @@ export async function PATCH(request:Request,context:{params:Promise<{uid:string}
  catch{return NextResponse.json({error:"A valid permission update is required."},{status:400});}
  try{
   const {uid}=await context.params;
-  const result=await staffManagementStore.setPermission({targetUid:uid,actorUid:auth.uid,permissionId:body.permissionId,status:body.status,reason:body.reason,expiresAt:body.expiresAt});
+  const result=await staffManagementStore.setPermission({targetUid:uid,actorUid:auth.uid,permissionId:body.permissionId,status:body.status,reason:body.reason,expiresAt:body.expiresAt,delegable:body.delegable});
   if(result.outcome==="staff_unavailable")return NextResponse.json({error:"The target is not an active staff account."},{status:404});
   return NextResponse.json({success:true,...result},{headers:{"Cache-Control":"no-store"}});
  }catch(error){return NextResponse.json({error:error instanceof Error?error.message:"The permission could not be updated."},{status:400});}
