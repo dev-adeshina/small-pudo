@@ -90,6 +90,23 @@ export default function StaffDelegationsPage() {
     }
   }
 
+  async function revoke(grantId: string) {
+    const reason = window.prompt("Reason for revoking this delegation:");
+    if (!reason?.trim()) return;
+    setBusy(true);
+    setError("");
+    setFeedback("");
+    try {
+      await api("DELETE", { reason }, "/api/staff/delegations/" + encodeURIComponent(grantId));
+      setFeedback("Delegation revoked. Any descendants of this grant are now ineffective.");
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "The delegation could not be revoked.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <main className="admin-page">
       <header className="admin-header">
