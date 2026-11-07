@@ -1,5 +1,5 @@
 import type { FieldValue, Firestore } from "firebase-admin/firestore";
-import { hasStaffActionPermission } from "./staff-permission-grants-core";
+import { hasStaffActionPermission } from "./staff-permission-grants-core.ts";
 
 export type OperationalCostInputType =
   | "string"
