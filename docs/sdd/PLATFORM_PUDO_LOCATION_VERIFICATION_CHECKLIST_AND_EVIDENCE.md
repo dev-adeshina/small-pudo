@@ -1,3 +1,5 @@
+> **7 November 2026 update — DEC-051 to DEC-053:** The business owner has been identified as the accountable top organisational authority for PUDO inventory and verification governance. Candidate locations will be registered individually and incrementally by staff explicitly assigned registration activity. Submitted records require attributable WGS 84 latitude/longitude for distance calculation. Coordinates assist geographic calculation but do not establish physical existence, authority, or verification. The earlier statements that the Operations owner and incremental registration approach were unassigned are superseded. Evidence sufficiency, evidence capture format, and retention remain open for the business owner to validate. See `PLATFORM_PUDO_FINAL_IMPLEMENTATION_READINESS.md`.
+
 # PUDO Location Verification Checklist and Evidence Requirements
 
 **Status:** Proposed operational checklist for owner and Operations review; not yet approved as a mandatory evidence policy. The accountable Operations position has not yet been assigned (confirmed by the owner on 3 November 2026).  
