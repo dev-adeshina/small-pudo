@@ -1,4 +1,5 @@
 import type { FieldValue, Firestore } from "firebase-admin/firestore";
+import { hasStaffActionPermission } from "./staff-permission-grants-core";
 
 export type OperationalCostInputType =
   | "string"
@@ -453,9 +454,7 @@ export function createOperationalCostDefinitionStore({
     async hasPermission(actorUid: string, permissionId: string): Promise<boolean> {
       assertActorUid(actorUid);
       assertNonEmptyString(permissionId, "A staff action permission ID", 128);
-      const snapshot = await db.collection("staffActionPermissions")
-        .doc(actorUid).collection("permissions").doc(permissionId).get();
-      return snapshot.exists && hasAuditedActiveAssignment(snapshot.data());
+      return hasStaffActionPermission(db, actorUid, permissionId);
     },
 
     async listDefinitions(limit = 50): Promise<Array<Record<string, unknown>>> {
