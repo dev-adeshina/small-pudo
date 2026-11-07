@@ -244,6 +244,33 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
         return {outcome:"delegated" as const,grantId:grantRef.id,expiresAt:expiry?.toISOString()??null,delegable:allowFurther};
       });
     },
+    async revokeDelegatedPermission(input:{grantId:string;actorUid:string;reason:unknown}) {
+      const grantId=requiredString(input.grantId,"A delegation grant ID",128);
+      if(!/^[A-Za-z0-9_-]{1,128}$/.test(grantId)) throw new TypeError("A valid delegation grant ID is required.");
+      const reason=requiredString(input.reason,"A revocation reason",1000);
+      const grantRef=db.collection("staffActionPermissionGrants").doc(grantId);
+      const auditRef=db.collection("staffManagementAudit").doc();
+      return db.runTransaction(async transaction=>{
+        const snapshot=await transaction.get(grantRef);
+        if(!snapshot.exists) return {outcome:"not_found" as const};
+        const grant=snapshot.data()!;
+        if(grant.source!=="staff_delegation"||grant.grantorUid!==input.actorUid) {
+          throw new TypeError("You may revoke only a delegation that you personally issued.");
+        }
+        if(grant.status!=="active") return {outcome:"not_active" as const};
+        transaction.update(grantRef,{
+          status:"revoked",delegable:false,revokedBy:input.actorUid,
+          revokedAt:serverTimestamp(),revocationReason:reason,updatedAt:serverTimestamp(),
+        });
+        transaction.create(auditRef,{
+          action:"permission.delegation_revoked",actorUid:input.actorUid,
+          targetUid:grant.targetUid,permissionId:grant.permissionId,
+          grantId,parentGrantId:grant.parentGrantId,rootGrantId:grant.rootGrantId,
+          scope:grant.scope??"platform",reason,outcome:"success",occurredAt:serverTimestamp(),
+        });
+        return {outcome:"revoked" as const};
+      });
+    },
     async listDelegationOptions(actorUid:string) {
       const actor=await db.collection("staffDirectory").doc(actorUid).get();
       if(!actor.exists||actor.data()?.status!=="active") {
@@ -260,11 +287,21 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
         );
         if(parent) permissions.push(id);
       }
-      const staffSnapshot=await db.collection("staffDirectory").where("status","==","active").limit(100).get();
+      const [staffSnapshot,issuedSnapshot]=await Promise.all([
+        db.collection("staffDirectory").where("status","==","active").limit(100).get(),
+        db.collection("staffActionPermissionGrants").where("grantorUid","==",actorUid).limit(100).get(),
+      ]);
       const staff=staffSnapshot.docs.filter(document=>document.id!==actorUid).map(document=>({
         uid:document.id,email:document.data().email,
       }));
-      return {outcome:"ready" as const,permissions,staff};
+      const issued=await Promise.all(issuedSnapshot.docs.map(async document=>{
+        const grant=document.data();
+        const target=typeof grant.targetUid==="string"?await db.collection("staffDirectory").doc(grant.targetUid).get():null;
+        return {grantId:document.id,targetUid:grant.targetUid,targetEmail:target?.data()?.email??null,
+          permissionId:grant.permissionId,status:grant.status,expiresAt:iso(grant.expiresAt),
+          reason:grant.reason,delegable:grant.delegable};
+      }));
+      return {outcome:"ready" as const,permissions,staff,issued};
     },
     async hasPermission(uid:string, permission:string):Promise<boolean> {
       return hasStaffActionPermission(db,uid,permission);
