@@ -54,7 +54,7 @@ export async function GET(request: Request, context: RouteContext) {
     return response({ candidate });
   } catch (error) {
     console.error("PUDO candidate retrieval failed:", error);
-    return response({ error: "Unable to retrieve candidate." }, 
+    return response({ error: "Unable to retrieve candidate." },
        storeErrorStatus(error, 500),
     );
   }
