@@ -68,5 +68,13 @@ service cloud.firestore {
         allow read, write: if false;
       }
     }
+
+    match /pudoLocations/{locationId} {
+      allow read, write: if false;
+
+      match /auditEvents/{eventId} {
+        allow read, write: if false;
+      }
+    }
   }
 }

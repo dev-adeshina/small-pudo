@@ -81,3 +81,44 @@ describe("staff action permission Firestore access", () => {
     }
   });
 });
+
+
+it("keeps PUDO candidates and their audit events server-only", async () => {
+  await environment.withSecurityRulesDisabled(async (context) => {
+    const db = context.firestore();
+
+    await setDoc(doc(db, "pudoLocations/candidate-one"), {
+      name: "Synthetic candidate",
+      lifecycle: "draft",
+    });
+
+    await setDoc(
+      doc(db, "pudoLocations/candidate-one/auditEvents/event-one"),
+      {
+        action: "created",
+        actorUid: "staff-user",
+      },
+    );
+  });
+
+  const clientContexts = [
+    environment.unauthenticatedContext().firestore(),
+    environment.authenticatedContext("customer-user").firestore(),
+    environment.authenticatedContext("admin-user", {
+      email_verified: true,
+      admin: true,
+    }).firestore(),
+  ];
+
+  for (const db of clientContexts) {
+    for (const path of [
+      "pudoLocations/candidate-one",
+      "pudoLocations/candidate-one/auditEvents/event-one",
+    ]) {
+      await assertFails(getDoc(doc(db, path)));
+      await assertFails(setDoc(doc(db, path), {
+        name: "Client-side modification",
+      }));
+    }
+  }
+});
