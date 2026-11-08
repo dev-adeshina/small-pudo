@@ -20,6 +20,17 @@ function response(data: unknown, status = 200) {
   });
 }
 
+function storeErrorStatus(error: unknown, fallback: number) {
+    if (
+        error instanceof Error &&
+        error.message.includes("not authorised to register PUDO locations")
+    ) {
+        return 403;
+    }
+
+    return fallback;
+}
+
 async function getLocationId(context: RouteContext) {
   const { locationId } = await context.params;
   return locationId;
@@ -54,10 +65,10 @@ export async function PATCH(request: Request, context: RouteContext) {
     return response({ error: auth.error }, auth.status);
   }
 
-  let input = (await request.json()) as PudoLocationInput;
+  let input: PudoLocationInput;
 
   try {
-    input = await request.json();
+    input = await request.json() as PudoLocationInput;
   } catch {
     return response({ error: "A valid JSON body is required." }, 400);
   }
@@ -75,7 +86,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     console.error("PUDO candidate update failed:", error);
     return response(
       { error: error instanceof Error ? error.message : "Unable to update candidate." },
-      400,
+       storeErrorStatus(error, 400),
     );
   }
 }
@@ -99,7 +110,7 @@ export async function POST(request: Request, context: RouteContext) {
     console.error("PUDO candidate submission failed:", error);
     return response(
       { error: error instanceof Error ? error.message : "Unable to submit candidate." },
-      400,
+       storeErrorStatus(error, 400),
     );
   }
 }

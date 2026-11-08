@@ -54,11 +54,6 @@ export default function PudoLocationEditorPage() {
   useEffect(() => {
     if (!user || isNew) 
       return;
-      
-    // {
-    //   // if (isNew) setLoading(false);
-    //   return;
-    // }
 
     let cancelled = false;
 
@@ -143,7 +138,7 @@ export default function PudoLocationEditorPage() {
         captureMethod,
       };
 
-      if (accuracyMeters.trim() !== "") {
+      if (captureMethod === "device" && accuracyMeters.trim() !== "") {
         const accuracy = Number(accuracyMeters);
 
         if (!Number.isFinite(accuracy) || accuracy < 0) {
@@ -407,6 +402,7 @@ export default function PudoLocationEditorPage() {
                 onChange={(event) => {
                   setLatitude(event.target.value);
                   setCaptureMethod("manual");
+                  setAccuracyMeters("");
                 }}
                 disabled={isSubmitted || saving}
                 placeholder="e.g. 6.5244"
@@ -423,6 +419,7 @@ export default function PudoLocationEditorPage() {
                 onChange={(event) => {
                   setLongitude(event.target.value);
                   setCaptureMethod("manual");
+                  setAccuracyMeters("");
                 }}
                 disabled={isSubmitted || saving}
                 placeholder="e.g. 3.3792"

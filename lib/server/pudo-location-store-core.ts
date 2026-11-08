@@ -249,6 +249,7 @@ export function createPudoLocationStore({
           createdBy: previous?.createdBy ?? actorUid,
           createdAt: previous?.createdAt ?? now,
           updatedBy: actorUid,
+          updatedAt: now,
           // updatedAt: now,
           // ...(lifecycle === "submitted" ? {
           //   submittedBy: previous?.submittedBy,

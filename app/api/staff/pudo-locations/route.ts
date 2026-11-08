@@ -13,6 +13,17 @@ function response(data: unknown, status = 200) {
     });
 }
 
+function storeErrorStatus(error: unknown, fallback: number) {
+    if (
+        error instanceof Error &&
+        error.message.includes("not authorised to register PUDO locations")
+    ) {
+        return 403;
+    }
+
+    return fallback;
+}
+
 export async function GET(request: Request) {
     const auth = await authorizeStaffWorkspace(request);
 
@@ -36,10 +47,10 @@ export async function POST(request: Request) {
         return response({ error: auth.error }, auth.status);
     }
 
-    let input = (await request.json()) as PudoLocationInput;
+    let input: PudoLocationInput;
 
     try {
-        input = await request.json();
+        input = await request.json() as PudoLocationInput;
     } catch {
         return response({ error: "A valid JSON body is required." }, 400);
     }
@@ -51,7 +62,7 @@ export async function POST(request: Request) {
         console.error("PUDO candidate creation failed:", error);
         return response(
             { error: error instanceof Error ? error.message : "Unable to save candidate." },
-            400,
+             storeErrorStatus(error, 400),
         );
     }
 }
