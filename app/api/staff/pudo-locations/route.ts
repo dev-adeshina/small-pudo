@@ -36,7 +36,9 @@ export async function GET(request: Request) {
         return response({ candidates });
     } catch (error) {
         console.error("PUDO candidate listing failed:", error);
-        return response({ error: "Unable to retrieve PUDO candidates." }, 500);
+        return response({ error: "Unable to retrieve PUDO candidates." }, 
+            storeErrorStatus(error, 500),
+        );
     }
 }
 

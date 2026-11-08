@@ -52,7 +52,7 @@ export default function PudoLocationEditorPage() {
   }, []);
 
   useEffect(() => {
-    if (!user || isNew) 
+    if (!user || isNew)
       return;
 
     let cancelled = false;
@@ -431,7 +431,14 @@ export default function PudoLocationEditorPage() {
               <select
                 id="pudo-capture-method"
                 value={captureMethod}
-                onChange={(event) => setCaptureMethod(event.target.value as CaptureMethod)}
+                onChange={(event) => {
+                  const method = event.target.value as CaptureMethod;
+                  setCaptureMethod(method);
+
+                  if (method === "manual") {
+                    setAccuracyMeters("");
+                  }
+                }}
                 disabled={isSubmitted || saving}
               >
                 <option value="manual">Manual</option>
