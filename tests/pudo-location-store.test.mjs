@@ -123,6 +123,43 @@ describe("PUDO candidate registration store", { skip: !enabled }, () => {
       created.locationId,
     );
 
+    // Explicitly clearing coordinates must remove previously captured coordinates.
+    await store.saveCandidate(
+      staffUid,
+      {
+        geo: null,
+      },
+      created.locationId,
+    );
+
+    const cleared = await store.getCandidate(
+      staffUid,
+      created.locationId,
+    );
+
+    assert.equal(cleared.geo, null);
+
+    // Coordinates can subsequently be recorded again before submission.
+    await store.saveCandidate(
+      staffUid,
+      {
+        geo: {
+          latitude: 6.5244,
+          longitude: 3.3792,
+          captureMethod: "manual",
+        },
+      },
+      created.locationId,
+    );
+
+    const restored = await store.getCandidate(
+      staffUid,
+      created.locationId,
+    );
+
+    assert.equal(restored.geo.latitude, 6.5244);
+    assert.equal(restored.geo.longitude, 3.3792);
+
     const updated = await store.getCandidate(staffUid, created.locationId);
 
     assert.equal(updated.name, "Updated collection point");

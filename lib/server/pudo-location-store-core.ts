@@ -15,7 +15,7 @@ export interface PudoLocationInput {
     longitude?: number | null;
     captureMethod?: PudoCoordinateCaptureMethod;
     accuracyMeters?: number | null;
-  };
+  } | null;
 }
 
 interface Dependencies {
@@ -56,7 +56,7 @@ function assertInput(input: PudoLocationInput): void {
     }
   }
 
-  if (input.geo !== undefined) {
+  if (input.geo !== undefined && input.geo !== null) {
     if (!input.geo || typeof input.geo !== "object" || Array.isArray(input.geo)) {
       throw new TypeError("Geographic coordinates must be a valid object.");
     }

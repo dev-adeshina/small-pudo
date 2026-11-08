@@ -149,6 +149,8 @@ export default function PudoLocationEditorPage() {
       }
 
       payload.geo = geo;
+    } else {
+      payload.geo = null;
     }
 
     return payload;
@@ -428,22 +430,13 @@ export default function PudoLocationEditorPage() {
 
             <div className="cost-field">
               <label htmlFor="pudo-capture-method">Capture method</label>
-              <select
-                id="pudo-capture-method"
-                value={captureMethod}
-                onChange={(event) => {
-                  const method = event.target.value as CaptureMethod;
-                  setCaptureMethod(method);
-
-                  if (method === "manual") {
-                    setAccuracyMeters("");
-                  }
-                }}
-                disabled={isSubmitted || saving}
-              >
-                <option value="manual">Manual</option>
-                <option value="device">Device</option>
-              </select>
+              <p id="pudo-capture-method">
+                {!latitude.trim() || !longitude.trim()
+                  ? "Not captured"
+                  : captureMethod === "device"
+                    ? "Device (browser geolocation)"
+                    : "Manual"}
+              </p>
             </div>
 
             <div className="cost-field">
