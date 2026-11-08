@@ -123,6 +123,11 @@ describe("PUDO candidate registration store", { skip: !enabled }, () => {
       created.locationId,
     );
 
+    const textUpdated = await store.getCandidate(staffUid, created.locationId);
+    assert.equal(textUpdated.geo.latitude, 6.5244);
+    assert.equal(textUpdated.geo.longitude, 3.3792);
+    assert.equal(textUpdated.geo.captureMethod, "manual");
+
     // Explicitly clearing coordinates must remove previously captured coordinates.
     await store.saveCandidate(
       staffUid,
@@ -208,10 +213,10 @@ describe("PUDO candidate registration store", { skip: !enabled }, () => {
       .orderBy("timestamp")
       .get();
 
-    assert.equal(events.size, 3);
+    assert.equal(events.size, 5);
     assert.deepEqual(
       events.docs.map((document) => document.data().action),
-      ["created", "updated", "submitted"],
+      ["created", "updated", "updated", "updated", "submitted"],
     );
     assert.ok(events.docs.every(
       (document) => document.data().actorUid === staffUid,
