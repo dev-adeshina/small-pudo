@@ -148,17 +148,19 @@ export function createPudoLocationStore({
   function candidateData(
     input: PudoLocationInput,
     actorUid: string,
-    previousGeo?: Record<string, unknown>,
+    previous?: Record<string, unknown>,
   ) {
+    const previousGeo = previous?.geo as Record<string, unknown> | undefined;
     const geo = input.geo;
     const hasCoordinates =
       typeof geo?.latitude === "number" ||
       typeof geo?.longitude === "number";
 
     return {
-      name: input.name?.trim() ?? "",
-      address: input.address?.trim() ?? "",
-      registrationNote: input.registrationNote?.trim() ?? "",
+      name: input.name?.trim() ?? (previous?.name as string | undefined) ?? "",
+      address: input.address?.trim() ?? (previous?.address as string | undefined) ?? "",
+      registrationNote: input.registrationNote?.trim() ??
+        (previous?.registrationNote as string | undefined) ?? "",
       geo: geo === undefined
         ? previousGeo ?? null
         : hasCoordinates
@@ -232,14 +234,13 @@ export function createPudoLocationStore({
         }
 
         const previous = existing?.data();
-        const previousGeo = previous?.geo as Record<string, unknown> | undefined;
         const lifecycle = (previous?.lifecycle ?? "draft") as PudoLocationLifecycle;
 
         if (lifecycle !== "draft") {
           throw new Error("Submitted PUDO candidates cannot be edited.");
         }
 
-        const changes = candidateData(input, actorUid, previousGeo);
+        const changes = candidateData(input, actorUid, previous);
         const now = serverTimestamp();
 
         const next = {
