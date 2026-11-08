@@ -115,3 +115,15 @@ Standard, Express and Scheduled are independently not ready for quote issuance. 
 **Decision:** After the focused decision document is merged, implement `configurationState` values `not_configured`, `configured` and `no_separate_cost` in the existing activity-cost component/version model. `not_configured` and `no_separate_cost` use an explicit null amount but remain distinct; `no_separate_cost` requires a reason and supporting basis before submission. A null amount is never zero. Reuse the existing activity catalogue, versioning, APIs, permissions, approval workflow and Firestore boundary; do not add a registry, migration or parallel workflow.
 
 **Implementation boundary:** This authorizes only the internal configurable activity-cost foundation. It does not authorize cost calculation/allocation, customer prices, Standard/Express/Scheduled model selection, quote issuance/acceptance, booking, payment, DEC-047 activation or physical operations. Real evidence and separated approval remain required before configured costs are approved for financial/commercial reliance.
+
+
+## PUDO milestones — 8 November 2026 update
+
+- **PUDO-1 — Candidate registration:** Complete. PR #149 merged to main at `8b6e6f4e1a1637cba39a52bff2339b5942177728`. The user confirmed local `main` is synced to this merge commit.
+- **PUDO-2 — Physical verification and Operations approval:** The owner-approved operational baseline is recorded in `PLATFORM_PUDO2_VERIFICATION_AND_OPERATIONS_APPROVAL_CONTRACT.md` and DEC-054. It requires in-person Operations inspection, attributable findings, arrangement-dependent supporting evidence, correction/further-information and not-approved outcomes, auditable decision history, and separate approval-to-activate semantics. The Operations Owner role is approved but the named person is not assigned.
+- **PUDO-2 technical implementation:** Not yet implemented. Next work is a focused source-aligned technical design covering explicit activity permissions/scopes, evidence-reference handling, persistence/API/security boundaries, correction/review history, and executable acceptance fixtures. The owner-approved operational baseline is not reopened by that technical design.
+- **Open policy details:** No universal evidence-document list, mandatory photograph, evidence-retention duration, fixed re-verification interval, or named Operations Owner is approved. Do not invent these.
+- **PUDO-3 — Activation and capability configuration:** Remains separate and gated.
+- **PUDO-4 — Discovery and routing:** Remains separate and gated.
+
+PUDO-2 approval does not activate a location, grant service/action capabilities, make a candidate customer-selectable, establish DEC-047 eligibility, or authorize intake, custody, payment, dispatch, or transport.

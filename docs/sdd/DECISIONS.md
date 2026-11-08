@@ -727,3 +727,20 @@ Exact service-specific handover proof; signature/photo/OTP or other verification
 - **Distance meaning:** Coordinates support geographic proximity and straight-line distance calculations. Straight-line distance must not be presented as road/route distance. Road distance and route estimation require a separately approved routing source and method.
 - **Evidence boundary:** Coordinates or a map pin do not prove that a site physically exists, that its address or operating arrangement is genuine, that it is authorised, or that it has passed verification, approval, activation, capability, or service-eligibility checks.
 - **Status:** Owner-approved requirement; technical representation and capture UX are proposed in the PUDO implementation-readiness contract.
+
+
+## DEC-054 — PUDO-2 physical verification and Operations approval baseline
+
+- **Decision date:** 8 November 2026.
+- **Owner response:** Approved the proposed PUDO-2 verification baseline and Operations Owner role.
+- **Physical inspection:** An Operations representative must conduct an in-person physical inspection of the actual candidate site before an approval-to-proceed decision. A map result, coordinate, directory listing, unsupported photograph, or verbal assertion alone is not a substitute.
+- **Inspection record:** The verifier, candidate/site, inspection date/time, nature of inspection, findings, discrepancies/limitations, evidence reviewed, and reasoned outcome must be attributable and reconstructable.
+- **Verification areas:** Physical existence/site identity; name/address/location identity; actual operating arrangement and authority to participate; operational readiness for the proposed purpose; and evidence review/reasoned outcome.
+- **Arrangement-dependent evidence:** Supporting evidence must be relevant to the actual operating arrangement. No universal mandatory document list or mandatory photograph is imposed. Evidence must be genuine, attributable, relevant, and sufficiently current for the question it supports. Insufficient, conflicting, unauthenticated, unavailable, or unreliable evidence cannot support approval.
+- **Outcomes:** Operations may approve the candidate to proceed to separate activation, request further information/correction, or mark it not approved. These are decision meanings, not approved persisted status strings or enums. Correction and re-review must preserve the original submission and prior history.
+- **Operations Owner:** An accountable Operations Owner role is approved and may initially be held by one person. The role oversees inspection standards, evidence sufficiency, verification decisions/unresolved discrepancies, consistency of records, and re-verification requirements. The named person is not assigned by this decision and must be designated through the existing staff activity delegation process. The role title does not itself grant application permissions.
+- **Separation:** Registration, physical verification, Operations decision, and activation remain attributable and distinct responsibilities. Approval to proceed is not activation. PUDO-3 activation remains a separate action by a separately authorised staff member.
+- **Open details:** Evidence-retention duration, evidence file/storage format, universal document categories, fixed re-verification intervals/triggers, named role-holder, technical fields, APIs, permission IDs, and application implementation are not approved by this decision. They must not be invented.
+- **Preserved boundaries:** PUDO-2 does not grant service/action capability, staff authority beyond explicit PUDO-2 assignments, DEC-047 eligibility, customer discovery, route coverage, intake, custody, payment, dispatch, or transport. All twelve DEC-047 combinations remain unavailable until independently evidenced and approved.
+- **Implementation boundary:** DEC-054 approves the bounded operational baseline only. A source-aligned technical design and executable acceptance fixtures are required before PUDO-2 application implementation.
+- **Status:** Owner-approved PUDO-2 operational baseline; technical design and implementation remain outstanding.

@@ -1,6 +1,6 @@
 # PUDO Registry and Staff Delegation — Final Implementation Readiness Contract
 
-**Status:** Consolidated technical proposal for owner review.  
+**Status:** PUDO-1 implementation contract completed in PR #149; PUDO-2 operational baseline owner-approved 8 November 2026. This document remains the PUDO-1 and milestone-boundary reference; see `PLATFORM_PUDO2_VERIFICATION_AND_OPERATIONS_APPROVAL_CONTRACT.md` for PUDO-2.  
 **Decision baseline:** DEC-043, DEC-045, DEC-047, DEC-050, DEC-051, DEC-052 and DEC-053.  
 **Scope:** First PUDO registry implementation slice and the shared staff activity-delegation foundation it depends on.  
 **Important:** This contract authorises only the bounded behaviour described below when merged. It does not activate PUDO locations, customer PUDO discovery, service eligibility, or physical shipment operations.
@@ -42,7 +42,7 @@ The platform-wide staff authority model is activity-based:
 - Service support or location/action capability assignment.
 - DEC-047 service/endpoint eligibility or availability.
 - Physical parcel intake, custody, collection/release, payment, routing, dispatch, or transport.
-- Location verification approval or activation actions until the accountable business owner validates the outstanding evidence sufficiency and inspection-capture procedure.
+- PUDO-2 verification/approval implementation (now governed by the owner-approved PUDO-2 contract and a separate source-aligned technical design). Activation remains excluded and separately gated under PUDO-3.
 - Invented partner agreements, opening hours, capacity, rates, or operating costs.
 
 The first slice must produce a saved and submitted candidate record, not a location that customers or operations can already use.
@@ -196,7 +196,7 @@ The later conceptual stages remain distinct and must not be collapsed:
 4. independent service support and action capability configuration;
 5. DEC-047 journey eligibility.
 
-Do not add a transition from submitted directly to active. Do not expose an activation control in the first slice. The business owner must validate evidence sufficiency and the physical inspection/evidence-capture procedure before verification and approval controls are enabled. The activation actor must hold separate explicit authority after approval.
+Do not add a transition from submitted directly to active. Do not expose an activation control in the first slice. The owner-approved PUDO-2 evidence and inspection baseline is defined in `PLATFORM_PUDO2_VERIFICATION_AND_OPERATIONS_APPROVAL_CONTRACT.md`. Verification/approval controls still require the focused source-aligned technical design. The activation actor must hold separate explicit authority after approval.
 
 ## 8. Acceptance criteria
 
@@ -234,7 +234,7 @@ Do not add a transition from submitted directly to active. Do not expose an acti
 | Milestone | Scope | Gate |
 |---|---|---|
 | PUDO-1 — Candidate registry | Incremental staff registration, coordinates, draft/submission, audit, and staff activity delegation foundation. | This contract reviewed and merged. |
-| PUDO-2 — Verification and approval | Physical inspection capture, evidence references, correction/rejection, Operations approval. | Business owner validates evidence sufficiency, inspection procedure, reviewer authority, and evidence capture/retention policy. |
+| PUDO-2 — Verification and approval | Physical in-person inspection, arrangement-dependent evidence, correction/rejection, auditable Operations decision. | Operational baseline approved 8 November 2026; complete source-aligned technical design, permission/scope reconciliation, evidence-reference handling, and executable acceptance fixtures before implementation. Retention duration remains open and must not be invented. |
 | PUDO-3 — Activation and capabilities | Separate activation, service/action capability assignment and revocation. | Explicit permission catalogue, separation-of-duties rules, and approved service/location/action matrix. |
 | PUDO-4 — Discovery and routing | Nearby eligible-centre discovery and route-distance support. | DEC-047 evidence for affected journeys plus approved geolocation/routing provider, privacy, cost, and route-distance method. |
 
@@ -261,3 +261,12 @@ This PR asks the owner to approve the bounded technical proposal for PUDO-1:
 - explicit deferral of verification approval, activation, capability assignment, customer discovery, and route-distance calculation until their evidence gates are met.
 
 Once this contract is merged, proceed directly to the focused PUDO-1 application implementation PR. Do not reopen the already accepted M2 pricing decisions or create another general planning/review sequence.
+
+
+## PUDO-2 owner-approved baseline — 8 November 2026
+
+The owner approved the operational baseline in `PLATFORM_PUDO2_VERIFICATION_AND_OPERATIONS_APPROVAL_CONTRACT.md`. This approval supersedes the earlier PUDO-2 gate wording in this document that treated the inspection procedure and evidence sufficiency as awaiting owner validation.
+
+The baseline requires an in-person physical inspection by Operations, an attributable inspection record, evidence appropriate to the actual operating arrangement, no universal mandatory document list or photograph requirement, no approval where evidence is insufficient or conflicting, auditable correction and decision history, and a distinct Operations Owner accountability role. The named role-holder, retention duration, technical fields, permission IDs, and implementation representation remain unassigned/unapproved.
+
+PUDO-2 remains a separate milestone from PUDO-3 activation/capability configuration and PUDO-4 discovery/routing.

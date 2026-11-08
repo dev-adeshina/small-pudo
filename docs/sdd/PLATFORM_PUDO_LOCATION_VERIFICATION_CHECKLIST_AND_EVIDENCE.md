@@ -1,8 +1,10 @@
+> **8 November 2026 owner-approved PUDO-2 update:** The physical inspection and evidence baseline in `PLATFORM_PUDO2_VERIFICATION_AND_OPERATIONS_APPROVAL_CONTRACT.md` is approved. This checklist remains guidance for the five verification areas; evidence categories remain arrangement-dependent, not a universal document list. In-person physical inspection is mandatory; photographs are not universally mandatory; insufficient/conflicting evidence cannot pass. Evidence retention duration and technical capture representation remain open. This update supersedes the earlier statement below that the evidence sufficiency and capture procedure await owner validation.
+
 > **7 November 2026 update — DEC-051 to DEC-053:** The business owner has been identified as the accountable top organisational authority for PUDO inventory and verification governance. Candidate locations will be registered individually and incrementally by staff explicitly assigned registration activity. Submitted records require attributable WGS 84 latitude/longitude for distance calculation. Coordinates assist geographic calculation but do not establish physical existence, authority, or verification. The earlier statements that the Operations owner and incremental registration approach were unassigned are superseded. Evidence sufficiency, evidence capture format, and retention remain open for the business owner to validate. See `PLATFORM_PUDO_FINAL_IMPLEMENTATION_READINESS.md`.
 
 # PUDO Location Verification Checklist and Evidence Requirements
 
-**Status:** Proposed operational checklist for owner and Operations review; not yet approved as a mandatory evidence policy. The accountable Operations position has not yet been assigned (confirmed by the owner on 3 November 2026).  
+**Status:** Owner-approved operational baseline for PUDO-2 as bounded by the 8 November 2026 addendum; this document's evidence examples remain contextual prompts, not universal mandatory items. The Operations Owner role is approved, but the named role-holder has not been assigned.  
 **Prepared:** 3 November 2026  
 **Related decisions:** DEC-018, DEC-025, DEC-043, DEC-047, DEC-050.  
 **Related workflow:** `PLATFORM_PUDO_LOCATION_REGISTRATION_AND_VERIFICATION_WORKFLOW.md`.  
