@@ -88,7 +88,8 @@ describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
   for(const staffUid of [delegatorUid,delegateeUid,thirdUid]){
    await db.collection("staffDirectory").doc(staffUid).set({email:`${staffUid}@example.test`,status:"active"});
   }
-  const id="pudo_location.register";
+//   const id="pudo_location.register";
+  const id="pudo_location.verify";
   const rootExpiry=new Date(Date.now()+2*3600000);
   const root=await store.setPermission({targetUid:delegatorUid,actorUid:actor,permissionId:id,status:"active",reason:"Authorise PUDO registration delegation",expiresAt:rootExpiry.toISOString(),delegable:true});
   assert.equal(root.delegable,true);

@@ -42,6 +42,9 @@ describe("staff action permission Firestore access", () => {
         "staffManagementAudit/event-one",
         "staffActionPermissions/staff-user/permissions/operational_cost_definition.view",
         "staffActionPermissionGrants/grant-one",
+        "pudoLocationVerifications/candidate-one",
+        "pudoLocationVerifications/candidate-one/inspectionRecords/inspection-one",
+        "pudoLocationVerifications/candidate-one/auditEvents/event-one",
       ]) {
         await assertFails(getDoc(doc(db, path)));
         await assertFails(setDoc(doc(db, path), { active: true, status: "active" }));
@@ -60,6 +63,34 @@ describe("staff action permission Firestore access", () => {
         versionNumber: 1,
         activityName: "Synthetic activity",
       });
+
+      await setDoc(
+        doc(db, "pudoLocationVerifications/candidate-one"),
+        {
+          status: "inspection_recorded",
+        },
+      );
+
+      await setDoc(
+        doc(
+          db,
+          "pudoLocationVerifications/candidate-one/inspectionRecords/inspection-one",
+        ),
+        {
+          findings: "Synthetic inspection",
+        },
+      );
+
+      await setDoc(
+        doc(
+          db,
+          "pudoLocationVerifications/candidate-one/auditEvents/event-one",
+        ),
+        {
+          action: "inspection_recorded",
+          actorUid: "staff-user",
+        },
+      );
     });
 
     const clientContexts = [
@@ -99,6 +130,34 @@ it("keeps PUDO candidates and their audit events server-only", async () => {
         actorUid: "staff-user",
       },
     );
+
+    await setDoc(
+      doc(db, "pudoLocationVerifications/candidate-one"),
+      {
+        status: "inspection_recorded",
+      },
+    );
+
+    await setDoc(
+      doc(
+        db,
+        "pudoLocationVerifications/candidate-one/inspectionRecords/inspection-one",
+      ),
+      {
+        findings: "Synthetic inspection",
+      },
+    );
+
+    await setDoc(
+      doc(
+        db,
+        "pudoLocationVerifications/candidate-one/auditEvents/event-one",
+      ),
+      {
+        action: "inspection_recorded",
+        actorUid: "staff-user",
+      },
+    );
   });
 
   const clientContexts = [
@@ -114,6 +173,9 @@ it("keeps PUDO candidates and their audit events server-only", async () => {
     for (const path of [
       "pudoLocations/candidate-one",
       "pudoLocations/candidate-one/auditEvents/event-one",
+      "pudoLocationVerifications/candidate-one",
+      "pudoLocationVerifications/candidate-one/inspectionRecords/inspection-one",
+      "pudoLocationVerifications/candidate-one/auditEvents/event-one",
     ]) {
       await assertFails(getDoc(doc(db, path)));
       await assertFails(setDoc(doc(db, path), {

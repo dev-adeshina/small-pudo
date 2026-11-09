@@ -5,11 +5,11 @@ service cloud.firestore {
 
     function hasActiveAdminAccess() {
       return exists(
-          /databases/$(database)/documents/adminAccess/$(request.auth.uid)
-        )
+      /databases/$(database)/documents/adminAccess/$(request.auth.uid)
+      )
         && get(
-          /databases/$(database)/documents/adminAccess/$(request.auth.uid)
-        ).data.active == true;
+      /databases/$(database)/documents/adminAccess/$(request.auth.uid)
+      ).data.active == true;
     }
 
     function isAdmin() {
@@ -71,6 +71,18 @@ service cloud.firestore {
 
     match /pudoLocations/{locationId} {
       allow read, write: if false;
+
+      match /auditEvents/{eventId} {
+        allow read, write: if false;
+      }
+    }
+
+    match /pudoLocationVerifications/{locationId} {
+      allow read, write: if false;
+
+      match /inspectionRecords/{inspectionId} {
+        allow read, write: if false;
+      }
 
       match /auditEvents/{eventId} {
         allow read, write: if false;

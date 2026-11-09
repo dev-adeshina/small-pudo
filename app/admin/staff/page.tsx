@@ -5,7 +5,15 @@ import { ArrowLeft,RefreshCw,UserPlus,Users } from "lucide-react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { verifyAdminAccess } from "@/lib/admin-auth";
-const permissions=["operational_cost_definition.view","operational_cost_definition.propose","operational_cost_definition.validate","operational_cost_definition.finance_review","operational_cost_definition.approve","pudo_location.register"] as const;
+const permissions=[
+    "operational_cost_definition.view",
+    "operational_cost_definition.propose",
+    "operational_cost_definition.validate",
+    "operational_cost_definition.finance_review",
+    "operational_cost_definition.approve",
+    "pudo_location.register",
+    "pudo_location.verify",
+] as const;
 type Staff={uid:string;email:string;status:string;permissions:Array<{permissionId:string;status:string;effectiveActive?:boolean;reason?:string;expiresAt?:string|null}>};
 type Invite={invitationId:string;email:string;status:string;expiresAt:string|null};
 export default function StaffManagementPage(){
