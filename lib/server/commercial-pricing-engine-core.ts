@@ -14,7 +14,7 @@ export interface CommercialPricingInputDefinition {
   required: boolean;
   valueType: "number";
   source?: string;
-  unit?: string;
+  unit: string;
 }
 
 export type CommercialPricingExpression =
@@ -370,7 +370,7 @@ function evaluateExpression(
     }
     const supplied = suppliedValues[expression.key];
     assertFiniteNumber(supplied, "Pricing input " + expression.key);
-    return { value: supplied, unit: definition.unit as string };
+    return { value: supplied, unit: definition.unit };
   }
 
   if (expression.kind === "constant") {
