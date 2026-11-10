@@ -117,7 +117,7 @@ export async function PATCH(
       expectedCurrentVersionNumber:
         input.expectedCurrentVersionNumber,
       actorUid: authorization.uid,
-      configuration: input.configuration as Record<string, unknown>,
+      configuration: { ...input.configuration },
     });
 
     if (result.outcome === "not_found") {
