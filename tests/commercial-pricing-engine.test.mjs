@@ -85,6 +85,7 @@ describe("commercial pricing evaluation core", () => {
   it("evaluates sums only when all terms use the same unit", () => {
     const configuration = {
       ...validConfiguration,
+      pricingModel: "fixed",
       components: [{
         key: "combined",
         label: "Combined",
@@ -149,6 +150,7 @@ describe("commercial pricing evaluation core", () => {
 
     const overflowing = {
       ...validConfiguration,
+      pricingModel: "fixed",
       components: [{
         key: "overflow",
         label: "Overflow",
@@ -178,6 +180,7 @@ describe("commercial pricing evaluation core", () => {
   it("rejects incompatible units in sums and component totals", () => {
     const invalidSum = {
       ...validConfiguration,
+      pricingModel: "fixed",
       components: [{
         key: "invalid_sum",
         label: "Invalid sum",
@@ -262,6 +265,7 @@ describe("commercial pricing evaluation core", () => {
 
     const undefinedReference = {
       ...validConfiguration,
+      pricingModel: "calculated",
       components: [{
         key: "bad_reference",
         label: "Bad reference",
@@ -344,6 +348,7 @@ describe("commercial pricing evaluation core", () => {
   it("rejects multiplication when factor units do not produce the declared result unit", () => {
     const invalidProduct = {
       ...validConfiguration,
+      pricingModel: "calculated",
       components: [{
         key: "invalid_product",
         label: "Invalid product",
