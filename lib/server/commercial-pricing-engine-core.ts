@@ -124,6 +124,48 @@ function assertFiniteNumber(value: unknown, label: string): asserts value is num
   }
 }
 
+function collectExpressionInputKeys(
+  expression: CommercialPricingExpression,
+  keys: Set<string>
+): void {
+  if (expression.kind === "input") {
+    keys.add(expression.key);
+  } else if (expression.kind === "sum") {
+    for (const term of expression.terms) collectExpressionInputKeys(term, keys);
+  } else if (expression.kind === "multiply") {
+    for (const factor of expression.factors) collectExpressionInputKeys(factor, keys);
+  }
+}
+
+function unitSignature(unit: string): string {
+  const tokens = unit.match(/[*/]|[A-Za-z][A-Za-z0-9_-]*(?:\\^-?\\d+)?/g);
+  if (!tokens || tokens.join("") !== unit) {
+    throw new TypeError("Pricing unit must use the supported unit-expression syntax");
+  }
+  const dimensions = new Map<string, number>();
+  let operator: "*" | "/" = "*";
+  let expectUnit = true;
+  for (const token of tokens) {
+    if (token === "*" || token === "/") {
+      if (expectUnit) throw new TypeError("Pricing unit expression is malformed");
+      operator = token;
+      expectUnit = true;
+      continue;
+    }
+    if (!expectUnit) throw new TypeError("Pricing unit expression is malformed");
+    const match = /^([A-Za-z][A-Za-z0-9_-]*)(?:\\^(-?\\d+))?$/.exec(token);
+    if (!match) throw new TypeError("Pricing unit expression is malformed");
+    const exponent = Number(match[2] ?? 1) * (operator === "/" ? -1 : 1);
+    const next = (dimensions.get(match[1]) ?? 0) + exponent;
+    if (next === 0) dimensions.delete(match[1]);
+    else dimensions.set(match[1], next);
+    expectUnit = false;
+  }
+  if (expectUnit) throw new TypeError("Pricing unit expression is malformed");
+  return [...dimensions.entries()].sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, exponent]) => name + "^" + exponent).join("*");
+}
+
 function assertExpression(
   value: unknown,
   inputKeys: ReadonlySet<string>,
@@ -187,6 +229,7 @@ function assertExpression(
       throw new TypeError("A multiply expression requires 2 to 50 factors");
     }
     assertNonEmptyString(value.resultUnit, "Pricing multiplication result unit", 80);
+    unitSignature(value.resultUnit);
     for (const factor of value.factors) {
       assertExpression(factor, inputKeys, depth + 1);
     }
@@ -281,6 +324,33 @@ export function assertCommercialPricingConfiguration(
     }
     assertExpression(component.expression, inputKeys);
   }
+
+  const inputDefinitions = new Map<string, CommercialPricingInputDefinition>(
+    value.inputs.map((input) => [input.key as string, input as unknown as CommercialPricingInputDefinition])
+  );
+  const componentInputDependencies = value.components.map((component) => {
+    const dependencies = new Set<string>();
+    collectExpressionInputKeys(component.expression as CommercialPricingExpression, dependencies);
+    for (const key of dependencies) {
+      if (!inputDefinitions.get(key)?.required) {
+        throw new TypeError(
+          "An optional pricing input cannot be referenced by an unconditional component: " + key
+        );
+      }
+    }
+    return dependencies.size > 0;
+  });
+
+  const hasInputDependentComponent = componentInputDependencies.some(Boolean);
+  const hasFixedComponent = componentInputDependencies.some((dependent) => !dependent);
+  const model = value.pricingModel as CommercialPricingModel | undefined;
+  if (
+    model === "fixed" && hasInputDependentComponent ||
+    model === "calculated" && hasFixedComponent ||
+    model === "hybrid" && (!hasInputDependentComponent || !hasFixedComponent)
+  ) {
+    throw new TypeError("Pricing model does not match the configured component structure");
+  }
 }
 
 interface EvaluatedValue {
@@ -312,8 +382,9 @@ function evaluateExpression(
       evaluateExpression(term, inputDefinitions, suppliedValues)
     );
     const unit = evaluated[0].unit;
-    if (evaluated.some((item) => item.unit !== unit)) {
-      throw new TypeError("A sum expression cannot combine different units");
+    const signature = unitSignature(unit);
+    if (evaluated.some((item) => unitSignature(item.unit) !== signature)) {
+      throw new TypeError("A sum expression cannot combine dimensionally different units");
     }
     const value = evaluated.reduce((total, item) => total + item.value, 0);
     assertFiniteNumber(value, "Pricing sum result");
@@ -325,6 +396,24 @@ function evaluateExpression(
   );
   const value = evaluated.reduce((total, item) => total * item.value, 1);
   assertFiniteNumber(value, "Pricing multiplication result");
+  const resultSignature = unitSignature(expression.resultUnit);
+  const factorDimensions = new Map<string, number>();
+  for (const item of evaluated) {
+    const signature = unitSignature(item.unit);
+    if (signature) {
+      for (const dimension of signature.split("*")) {
+        const [name, exponentText] = dimension.split("^");
+        factorDimensions.set(name, (factorDimensions.get(name) ?? 0) + Number(exponentText));
+      }
+    }
+  }
+  const factorSignature = [...factorDimensions.entries()]
+    .filter(([, exponent]) => exponent !== 0)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, exponent]) => name + "^" + exponent).join("*");
+  if (factorSignature !== resultSignature) {
+    throw new TypeError("Multiplication factor units do not produce the declared result unit");
+  }
   return { value, unit: expression.resultUnit };
 }
 
@@ -383,8 +472,9 @@ export function evaluateCommercialPricing(
   });
 
   const unit = components[0].unit;
-  if (components.some((component) => component.unit !== unit)) {
-    throw new TypeError("Pricing components with different units cannot be totalled");
+  const totalUnitSignature = unitSignature(unit);
+  if (components.some((component) => unitSignature(component.unit) !== totalUnitSignature)) {
+    throw new TypeError("Pricing components with dimensionally different units cannot be totalled");
   }
   const total = components.reduce((sum, component) => sum + component.value, 0);
   assertFiniteNumber(total, "Pricing total");
