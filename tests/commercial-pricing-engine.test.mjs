@@ -157,8 +157,8 @@ describe("commercial pricing evaluation core", () => {
         expression: {
           kind: "multiply",
           factors: [
-            { kind: "constant", value: Number.MAX_VALUE, unit: "a" },
-            { kind: "constant", value: 2, unit: "b" },
+            { kind: "constant", value: Number.MAX_VALUE, unit: "test-unit" },
+            { kind: "constant", value: 2, unit: "test-unit" },
           ],
           resultUnit: "test-unit^2",
         },
@@ -207,6 +207,7 @@ describe("commercial pricing evaluation core", () => {
 
     const invalidTotal = {
       ...validConfiguration,
+      pricingModel: "fixed",
       components: [
         validConfiguration.components[0],
         {
