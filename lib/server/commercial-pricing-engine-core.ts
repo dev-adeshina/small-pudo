@@ -253,9 +253,7 @@ export function assertCommercialPricingConfiguration(
     if (input.source !== undefined) {
       assertNonEmptyString(input.source, "Commercial pricing input source", 200);
     }
-    if (input.unit !== undefined) {
-      assertNonEmptyString(input.unit, "Commercial pricing input unit", 80);
-    }
+    assertNonEmptyString(input.unit, "Commercial pricing input unit", 80);
   }
 
   if (
@@ -302,7 +300,7 @@ function evaluateExpression(
     }
     const supplied = suppliedValues[expression.key];
     assertFiniteNumber(supplied, "Pricing input " + expression.key);
-    return { value: supplied, unit: definition.unit ?? "" };
+    return { value: supplied, unit: definition.unit as string };
   }
 
   if (expression.kind === "constant") {
@@ -347,6 +345,9 @@ export function evaluateCommercialPricing(
     throw new TypeError("Pricing version number must be a positive safe integer");
   }
   assertCommercialPricingConfiguration(input.configuration);
+  if (input.configuration.pricingModel === undefined) {
+    throw new TypeError("A pricing model must be selected before evaluating this configuration");
+  }
   assertPlainMap(input.values, "Pricing input values");
 
   const definitions = new Map(
