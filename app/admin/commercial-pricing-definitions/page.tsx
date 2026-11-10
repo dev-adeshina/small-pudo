@@ -7,6 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
 import { logoutAdmin } from "@/lib/auth";
+import { LogOut } from "lucide-react";
 
 type ServiceCode = "standard" | "express" | "scheduled";
 type Applicability = "applicable" | "not_applicable" | "undetermined";
@@ -275,7 +276,7 @@ export default function CommercialPricingDefinitionsPage() {
         <div className="admin-header-right">
           <Link href="/admin/operational-cost-definitions" className="admin-action">Operational costs</Link>
           <span className="admin-email">{email}</span>
-          <button type="button" className="admin-logout" onClick={logout}>Sign out</button>
+          <button type="button" className="admin-logout" onClick={logout} aria-label="Sign out"><LogOut size={17} /></button>
         </div>
       </header>
       <div className="admin-shell cost-admin-shell">
