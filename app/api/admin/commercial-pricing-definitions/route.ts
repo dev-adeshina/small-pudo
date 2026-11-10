@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     assertCommercialPricingConfiguration(configuration);
     const result = await commercialPricingStore.createDefinition(
       authorization.uid,
-      configuration as Record<string, unknown>
+      { ...configuration }
     );
 
     return NextResponse.json(result, { status: 201 });
