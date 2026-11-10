@@ -138,7 +138,7 @@ function collectExpressionInputKeys(
 }
 
 function unitSignature(unit: string): string {
-  const tokens = unit.match(/[*/]|[A-Za-z][A-Za-z0-9_-]*(?:\^-?\\d+)?/g);
+  const tokens = unit.match(/[*/]|[A-Za-z][A-Za-z0-9_-]*(?:\^-?[0-9]+)?/g);
   if (!tokens || tokens.join("") !== unit) {
     throw new TypeError("Pricing unit must use the supported unit-expression syntax");
   }
@@ -153,7 +153,7 @@ function unitSignature(unit: string): string {
       continue;
     }
     if (!expectUnit) throw new TypeError("Pricing unit expression is malformed");
-    const match = /^([A-Za-z][A-Za-z0-9_-]*)(?:\^(-?\\d+))?$/.exec(token);
+    const match = /^([A-Za-z][A-Za-z0-9_-]*)(?:\^(-?[0-9]+))?$/.exec(token);
     if (!match) throw new TypeError("Pricing unit expression is malformed");
     const exponent = Number(match[2] ?? 1) * (operator === "/" ? -1 : 1);
     const next = (dimensions.get(match[1]) ?? 0) + exponent;
