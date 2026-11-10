@@ -29,7 +29,7 @@ type Configuration = {
   pricingModel?: "fixed" | "calculated" | "hybrid";
   inputs: Array<Record<string, unknown>>;
   components: Array<Record<string, unknown>>;
-  activityPricing: { schemaVersion: 1; activities: Activity[] };
+  activityPricing?: { schemaVersion: 1; activities: Activity[] };
 };
 type Version = Configuration & { versionId: string; versionNumber: number; createdAt?: unknown };
 type Summary = {
@@ -335,7 +335,7 @@ export default function CommercialPricingDefinitionsPage() {
           </div>
           <p>Service: {selectedVersion?.serviceCode} · Version {selected.currentVersionNumber}</p>
           <p>Activity assignments: {(selectedVersion?.activityPricing?.activities ?? []).filter((item) => item.applicability !== "undetermined").length} of 11 decided.</p>
-          <div className="cost-version-list">{selected.currentVersion.activityPricing.activities.map((item) => <div className="cost-version-row" key={item.activityCode}>
+          <div className="cost-version-list">{(selectedVersion?.activityPricing?.activities ?? CATALOGUE.map(([activityCode, activityName]) => ({ activityCode, activityName, applicability: "undetermined" as const, treatment: "undetermined" as const }))).map((item) => <div className="cost-version-row" key={item.activityCode}>
             <strong>{item.activityCode} — {item.activityName}</strong><span>{APPLICABILITY_LABELS[item.applicability]}</span><small>{TREATMENT_LABELS[item.treatment]}</small>
           </div>)}</div>
           <p className="cost-footer-note">No commercial approval or publication state is represented here. All service eligibility and quote-readiness gates remain separate.</p>
