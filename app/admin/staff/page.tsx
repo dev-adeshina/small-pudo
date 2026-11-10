@@ -13,6 +13,8 @@ const permissions=[
     "operational_cost_definition.approve",
     "pudo_location.register",
     "pudo_location.verify",
+    "commercial_pricing.view",
+    "commercial_pricing.propose",
 ] as const;
 type Staff={uid:string;email:string;status:string;permissions:Array<{permissionId:string;status:string;effectiveActive?:boolean;reason?:string;expiresAt?:string|null}>};
 type Invite={invitationId:string;email:string;status:string;expiresAt:string|null};
