@@ -29,9 +29,9 @@ type Configuration = {
   pricingModel?: "fixed" | "calculated" | "hybrid";
   inputs: Array<Record<string, unknown>>;
   components: Array<Record<string, unknown>>;
-  activityPricing?: { schemaVersion: 1; activities: Activity[] };
+  activityPricing: { schemaVersion: 1; activities: Activity[] };
 };
-type Version = Configuration & { versionId: string; versionNumber: number; createdAt?: unknown };
+type Version = Omit<Configuration, "activityPricing"> & { activityPricing?: { schemaVersion: 1; activities: Activity[] }; versionId: string; versionNumber: number; createdAt?: unknown };
 type Summary = {
   definitionId: string;
   currentVersionId: string;
@@ -125,9 +125,11 @@ export default function CommercialPricingDefinitionsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-  const selectedVersion = selected?.versions.find((version) => version.versionId === selected.currentVersionId)
-    ?? selected?.versions[selected.versions.length - 1]
-    ?? null;
+  const selectedVersion = selected
+    ? selected.versions.find((version) => version.versionId === selected.currentVersionId)
+      ?? selected.versions[selected.versions.length - 1]
+      ?? null
+    : null;
 
   const loadDefinitions = useCallback(async (idToken: string) => {
     setLoading(true);
