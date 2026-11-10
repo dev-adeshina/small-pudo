@@ -395,6 +395,58 @@ describe(
     });
 
 
+    it("persists and retrieves a typed commercial pricing configuration without altering its structure", async () => {
+      const typedConfiguration = {
+        schemaVersion: 1,
+        configurationName: "Synthetic typed pricing configuration",
+        serviceCode: "standard",
+        pricingModel: "calculated",
+        inputs: [{
+          key: "distance",
+          label: "Distance",
+          required: true,
+          valueType: "number",
+          source: "Synthetic test input",
+          unit: "km",
+        }],
+        components: [{
+          key: "transport",
+          label: "Transport component",
+          expression: {
+            kind: "multiply",
+            factors: [
+              { kind: "input", key: "distance" },
+              { kind: "constant", value: 2, unit: "test-rate" },
+            ],
+            resultUnit: "test-unit",
+          },
+        }],
+      };
+
+      const created = await createDefinition(typedConfiguration);
+      const retrieved = await store.getDefinition(created.definitionId);
+
+      assert.ok(retrieved);
+      assert.deepEqual(
+        retrieved.versions[0],
+        {
+          versionId: created.versionId,
+          versionNumber: 1,
+          ...typedConfiguration,
+          createdAt: retrieved.versions[0].createdAt,
+          createdBy: retrieved.versions[0].createdBy,
+        }
+      );
+      assert.deepEqual(
+        retrieved.versions[0].inputs,
+        typedConfiguration.inputs
+      );
+      assert.deepEqual(
+        retrieved.versions[0].components,
+        typedConfiguration.components
+      );
+    });
+
     it("requires an active audited assignment for commercial pricing permissions", async () => {
       const uid = `commercial-pricing-${randomUUID()}`;
 
