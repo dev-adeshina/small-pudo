@@ -416,7 +416,7 @@ describe(
             kind: "multiply",
             factors: [
               { kind: "input", key: "distance" },
-              { kind: "constant", value: 2, unit: "test-rate" },
+              { kind: "constant", value: 2, unit: "test-unit/km" },
             ],
             resultUnit: "test-unit",
           },
