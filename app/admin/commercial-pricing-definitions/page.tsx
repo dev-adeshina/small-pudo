@@ -38,7 +38,7 @@ type Summary = {
   currentVersionNumber: number;
   currentVersion: Version;
 };
-type Detail = Summary & { versions: Version[] };
+type Detail = { definitionId: string; currentVersionId: string; currentVersionNumber: number; versions: Version[] };
 
 const CATALOGUE = [
   ["ACT-01", "Origin PUDO presentation and receipt"],
@@ -87,7 +87,7 @@ function emptyConfiguration(serviceCode: ServiceCode = "standard"): Configuratio
 }
 
 function configurationFromVersion(version: Version): Configuration {
-  const known = new Map(version.activityPricing.activities.map((item) => [item.activityCode, item]));
+  const known = new Map((version.activityPricing?.activities ?? []).map((item) => [item.activityCode, item]));
   return {
     schemaVersion: 1,
     configurationName: version.configurationName,
@@ -125,6 +125,9 @@ export default function CommercialPricingDefinitionsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const selectedVersion = selected?.versions.find((version) => version.versionId === selected.currentVersionId)
+    ?? selected?.versions[selected.versions.length - 1]
+    ?? null;
 
   const loadDefinitions = useCallback(async (idToken: string) => {
     setLoading(true);
@@ -327,11 +330,11 @@ export default function CommercialPricingDefinitionsPage() {
           <p className="cost-footer-note">Saving creates an immutable draft version only. It does not select a pricing model, add rates or formulas, approve or publish a price, activate a service, or permit quotation issuance.</p>
         </section>}
         {selected && !editing && <section className="cost-panel" style={{ marginTop: 22 }}>
-          <div className="cost-panel-heading"><div><span className="section-label">03 / VERSION DETAIL</span><h2>{selected.currentVersion.configurationName}</h2></div>
-            <button className="cost-primary-button" type="button" onClick={() => { setForm(configurationFromVersion(selected.versions.find((v) => v.versionId === selected.currentVersionId)!)); setEditing(true); setCreating(false); }}>Revise draft</button>
+          <div className="cost-panel-heading"><div><span className="section-label">03 / VERSION DETAIL</span><h2>{selectedVersion?.configurationName}</h2></div>
+            <button className="cost-primary-button" type="button" onClick={() => { if (selectedVersion) setForm(configurationFromVersion(selectedVersion)); setEditing(true); setCreating(false); }}>Revise draft</button>
           </div>
-          <p>Service: {selected.currentVersion.serviceCode} · Version {selected.currentVersionNumber}</p>
-          <p>Activity assignments: {selected.currentVersion.activityPricing.activities.filter((item) => item.applicability !== "undetermined").length} of 11 decided.</p>
+          <p>Service: {selectedVersion?.serviceCode} · Version {selected.currentVersionNumber}</p>
+          <p>Activity assignments: {(selectedVersion?.activityPricing?.activities ?? []).filter((item) => item.applicability !== "undetermined").length} of 11 decided.</p>
           <div className="cost-version-list">{selected.currentVersion.activityPricing.activities.map((item) => <div className="cost-version-row" key={item.activityCode}>
             <strong>{item.activityCode} — {item.activityName}</strong><span>{APPLICABILITY_LABELS[item.applicability]}</span><small>{TREATMENT_LABELS[item.treatment]}</small>
           </div>)}</div>
