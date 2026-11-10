@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { authorizeCommercialPricingRequest } from "@/lib/server/commercial-pricing-request-auth";
 import { commercialPricingStore } from "@/lib/server/commercial-pricing-store";
+import { assertCommercialPricingConfiguration } from "@/lib/server/commercial-pricing-engine-core";
 
 interface RouteContext {
   params: Promise<{ definitionId: string }>;
@@ -108,6 +109,7 @@ export async function PATCH(
   }
 
   try {
+    assertCommercialPricingConfiguration(input.configuration);
     const { definitionId } = await context.params;
 
     const result = await commercialPricingStore.reviseDefinition({
