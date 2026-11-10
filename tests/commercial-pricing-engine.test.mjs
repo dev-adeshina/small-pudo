@@ -10,7 +10,7 @@ const validConfiguration = {
   schemaVersion: 1,
   configurationName: "Synthetic engine test configuration",
   serviceCode: "standard",
-  pricingModel: "calculated",
+  pricingModel: "hybrid",
   inputs: [
     {
       key: "distance",
@@ -38,7 +38,7 @@ const validConfiguration = {
         kind: "multiply",
         factors: [
           { kind: "input", key: "distance" },
-          { kind: "constant", value: 2, unit: "test-rate" },
+          { kind: "constant", value: 2, unit: "test-unit/km" },
         ],
         resultUnit: "test-unit",
       },
@@ -158,7 +158,7 @@ describe("commercial pricing evaluation core", () => {
             { kind: "constant", value: Number.MAX_VALUE, unit: "a" },
             { kind: "constant", value: 2, unit: "b" },
           ],
-          resultUnit: "test-unit",
+          resultUnit: "test-unit^2",
         },
       }],
     };
@@ -272,6 +272,101 @@ describe("commercial pricing evaluation core", () => {
     assert.throws(
       () => assertCommercialPricingConfiguration(undefinedReference),
       /undefined input/
+    );
+  });
+
+
+  it("requires the selected pricing model to match component dependencies", () => {
+    const fixedWithInput = { ...validConfiguration, pricingModel: "fixed" };
+    assert.throws(
+      () => assertCommercialPricingConfiguration(fixedWithInput),
+      /does not match the configured component structure/
+    );
+
+    const calculatedWithFixedComponent = {
+      ...validConfiguration,
+      pricingModel: "calculated",
+    };
+    assert.throws(
+      () => assertCommercialPricingConfiguration(calculatedWithFixedComponent),
+      /does not match the configured component structure/
+    );
+
+    const fixed = {
+      ...validConfiguration,
+      pricingModel: "fixed",
+      components: [{
+        key: "fixed_component",
+        label: "Fixed component",
+        expression: { kind: "constant", value: 4, unit: "test-unit" },
+      }],
+    };
+    assert.doesNotThrow(() => assertCommercialPricingConfiguration(fixed));
+  });
+
+  it("allows omitted optional inputs only when no unconditional component depends on them", () => {
+    const optionalUnused = {
+      ...validConfiguration,
+      inputs: [
+        ...validConfiguration.inputs,
+        {
+          key: "optionalContext",
+          label: "Optional context",
+          required: false,
+          valueType: "number",
+          unit: "kg",
+        },
+      ],
+    };
+    assert.doesNotThrow(() =>
+      evaluateCommercialPricing({
+        definitionId: "definition-1",
+        versionId: "version-1",
+        versionNumber: 1,
+        configuration: optionalUnused,
+        values: { distance: 5 },
+      })
+    );
+
+    const optionalReferenced = {
+      ...validConfiguration,
+      inputs: [{
+        ...validConfiguration.inputs[0],
+        required: false,
+      }],
+    };
+    assert.throws(
+      () => assertCommercialPricingConfiguration(optionalReferenced),
+      /optional pricing input cannot be referenced/
+    );
+  });
+
+  it("rejects multiplication when factor units do not produce the declared result unit", () => {
+    const invalidProduct = {
+      ...validConfiguration,
+      components: [{
+        key: "invalid_product",
+        label: "Invalid product",
+        expression: {
+          kind: "multiply",
+          factors: [
+            { kind: "input", key: "distance" },
+            { kind: "constant", value: 2, unit: "kg" },
+          ],
+          resultUnit: "test-unit",
+        },
+      }],
+    };
+
+    assert.throws(
+      () => evaluateCommercialPricing({
+        definitionId: "definition-1",
+        versionId: "version-1",
+        versionNumber: 1,
+        configuration: invalidProduct,
+        values: { distance: 5 },
+      }),
+      /factor units do not produce/
     );
   });
 
