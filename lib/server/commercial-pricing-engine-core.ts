@@ -53,6 +53,7 @@ export interface CommercialPricingActivityAssignment {
   activityCode: CommercialPricingActivityCode;
   applicability: CommercialPricingActivityApplicability;
   treatment: CommercialPricingActivityTreatment;
+  activityName?: string;
 }
 
 export interface CommercialPricingActivityConfiguration {
@@ -331,14 +332,19 @@ export function assertCommercialPricingConfiguration(
     for (const assignment of value.activityPricing.activities) {
       assertPlainMap(assignment, "A commercial activity assignment");
       if (Object.keys(assignment).some((key) =>
-        key !== "activityCode" && key !== "applicability" && key !== "treatment"
+        key !== "activityCode" && key !== "activityName" && key !== "applicability" && key !== "treatment"
       )) {
         throw new TypeError("Commercial activity assignment contains an unsupported field");
       }
-      if (!COMMERCIAL_PRICING_ACTIVITY_CATALOGUE.some((item) =>
+      const catalogueActivity = COMMERCIAL_PRICING_ACTIVITY_CATALOGUE.find((item) =>
         item.activityCode === assignment.activityCode
-      )) {
+      );
+      if (!catalogueActivity) {
         throw new TypeError("Commercial activity assignment references an unknown activity");
+      }
+      if (assignment.activityName !== undefined &&
+          assignment.activityName !== catalogueActivity.activityName) {
+        throw new TypeError("Commercial activity assignment name does not match the activity catalogue");
       }
       if (seenActivities.has(assignment.activityCode as string)) {
         throw new TypeError("Commercial activity assignments must be unique");
