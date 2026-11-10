@@ -34,11 +34,56 @@ export interface CommercialPricingComponent {
   expression: CommercialPricingExpression;
 }
 
+
+export type CommercialPricingActivityCode =
+  | "ACT-01" | "ACT-02" | "ACT-03" | "ACT-04" | "ACT-05" | "ACT-06"
+  | "ACT-07" | "ACT-08" | "ACT-09" | "ACT-10" | "ACT-11";
+
+export type CommercialPricingActivityApplicability =
+  | "applicable" | "not_applicable" | "undetermined";
+
+export type CommercialPricingActivityTreatment =
+  | "included_in_service_charge"
+  | "separately_itemized"
+  | "no_separate_customer_charge"
+  | "not_applicable"
+  | "undetermined";
+
+export interface CommercialPricingActivityAssignment {
+  activityCode: CommercialPricingActivityCode;
+  applicability: CommercialPricingActivityApplicability;
+  treatment: CommercialPricingActivityTreatment;
+  activityName?: string;
+}
+
+export interface CommercialPricingActivityConfiguration {
+  schemaVersion: 1;
+  activities: CommercialPricingActivityAssignment[];
+}
+
+export const COMMERCIAL_PRICING_ACTIVITY_CATALOGUE: ReadonlyArray<{
+  activityCode: CommercialPricingActivityCode;
+  activityName: string;
+}> = [
+  { activityCode: "ACT-01", activityName: "Origin PUDO presentation and receipt" },
+  { activityCode: "ACT-02", activityName: "Parcel verification and measurement at origin PUDO" },
+  { activityCode: "ACT-03", activityName: "Origin PUDO custody acceptance" },
+  { activityCode: "ACT-04", activityName: "Transport / movement between operational points" },
+  { activityCode: "ACT-05", activityName: "Destination PUDO receipt / custody acceptance" },
+  { activityCode: "ACT-06", activityName: "Delivery to an address / recipient handover" },
+  { activityCode: "ACT-07", activityName: "Collection / release to an authorized collector" },
+  { activityCode: "ACT-08", activityName: "Failed collection or delivery attempt" },
+  { activityCode: "ACT-09", activityName: "Return-to-Sender (RTS) journey" },
+  { activityCode: "ACT-10", activityName: "Exception review and resolution" },
+  { activityCode: "ACT-11", activityName: "Origin PUDO substitution handling" },
+];
+
 export interface CommercialPricingConfiguration {
   schemaVersion: 1;
   configurationName: string;
   serviceCode: CommercialPricingServiceCode;
   pricingModel?: CommercialPricingModel;
+  activityPricing?: CommercialPricingActivityConfiguration;
   inputs: CommercialPricingInputDefinition[];
   components: CommercialPricingComponent[];
 }
@@ -248,6 +293,7 @@ export function assertCommercialPricingConfiguration(
     "configurationName",
     "serviceCode",
     "pricingModel",
+    "activityPricing",
     "inputs",
     "components",
   ]);
@@ -267,6 +313,65 @@ export function assertCommercialPricingConfiguration(
     !PRICING_MODELS.has(value.pricingModel as CommercialPricingModel)
   ) {
     throw new TypeError("Commercial pricing model is unsupported");
+  }
+
+
+  if (value.activityPricing !== undefined) {
+    assertPlainMap(value.activityPricing, "Commercial activity pricing configuration");
+    if (Object.keys(value.activityPricing).some((key) =>
+      key !== "schemaVersion" && key !== "activities"
+    )) {
+      throw new TypeError("Commercial activity pricing configuration contains an unsupported field");
+    }
+    if (value.activityPricing.schemaVersion !== 1 ||
+        !Array.isArray(value.activityPricing.activities) ||
+        value.activityPricing.activities.length !== COMMERCIAL_PRICING_ACTIVITY_CATALOGUE.length) {
+      throw new TypeError("Activity pricing must explicitly classify all 11 catalogue activities");
+    }
+    const seenActivities = new Set<string>();
+    for (const assignment of value.activityPricing.activities) {
+      assertPlainMap(assignment, "A commercial activity assignment");
+      if (Object.keys(assignment).some((key) =>
+        key !== "activityCode" && key !== "activityName" && key !== "applicability" && key !== "treatment"
+      )) {
+        throw new TypeError("Commercial activity assignment contains an unsupported field");
+      }
+      const catalogueActivity = COMMERCIAL_PRICING_ACTIVITY_CATALOGUE.find((item) =>
+        item.activityCode === assignment.activityCode
+      );
+      if (!catalogueActivity) {
+        throw new TypeError("Commercial activity assignment references an unknown activity");
+      }
+      if (assignment.activityName !== undefined &&
+          assignment.activityName !== catalogueActivity.activityName) {
+        throw new TypeError("Commercial activity assignment name does not match the activity catalogue");
+      }
+      if (seenActivities.has(assignment.activityCode as string)) {
+        throw new TypeError("Commercial activity assignments must be unique");
+      }
+      seenActivities.add(assignment.activityCode as string);
+      const applicability = assignment.applicability;
+      const treatment = assignment.treatment;
+      if (!["applicable", "not_applicable", "undetermined"].includes(String(applicability))) {
+        throw new TypeError("Commercial activity applicability is unsupported");
+      }
+      if (![
+        "included_in_service_charge",
+        "separately_itemized",
+        "no_separate_customer_charge",
+        "not_applicable",
+        "undetermined",
+      ].includes(String(treatment))) {
+        throw new TypeError("Commercial activity treatment is unsupported");
+      }
+      if (
+        applicability === "not_applicable" && treatment !== "not_applicable" ||
+        applicability === "undetermined" && treatment !== "undetermined" ||
+        applicability === "applicable" && treatment === "not_applicable"
+      ) {
+        throw new TypeError("Commercial activity applicability and treatment are inconsistent");
+      }
+    }
   }
 
   if (!Array.isArray(value.inputs) || value.inputs.length > MAX_INPUTS) {
@@ -301,8 +406,8 @@ export function assertCommercialPricingConfiguration(
 
   if (
     !Array.isArray(value.components) ||
-    value.components.length < 1 ||
-    value.components.length > MAX_COMPONENTS
+    value.components.length > MAX_COMPONENTS ||
+    (value.components.length < 1 && (value.activityPricing === undefined || value.pricingModel !== undefined))
   ) {
     throw new TypeError("A pricing configuration requires 1 to 100 components");
   }
