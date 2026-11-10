@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { authorizeCommercialPricingRequest } from "@/lib/server/commercial-pricing-request-auth";
 import { commercialPricingStore } from "@/lib/server/commercial-pricing-store";
+import { assertCommercialPricingConfiguration } from "@/lib/server/commercial-pricing-engine-core";
 
 export async function GET(request: Request) {
   const authorization = await authorizeCommercialPricingRequest(
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
   }
 
   try {
+    assertCommercialPricingConfiguration(configuration);
     const result = await commercialPricingStore.createDefinition(
       authorization.uid,
       configuration as Record<string, unknown>
