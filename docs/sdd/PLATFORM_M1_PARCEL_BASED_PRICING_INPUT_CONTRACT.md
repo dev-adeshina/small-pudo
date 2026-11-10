@@ -1,15 +1,15 @@
 # M1 — Parcel-based pricing input contract
 
-**Scope:** M1 Execution 3, first bounded implementation slice  
+**Scope:** M1 Execution 3, parcel input and classification evidence slices  
 **Implementation branch:** `feat/m1-parcel-based-pricing`  
 **Base:** `main` after PR #154 merge, `b1c8b415614136be39a50ea2a3a5fb83b2e6cb00`  
 **Authority:** Existing DEC-019, DEC-026, DEC-039, DEC-040, DEC-047, DEC-048 and DEC-050; bounded implementation authorization in the project thread.
 
 ## Purpose
 
-Establish a reusable, server-side contract for parcel measurement evidence. The contract preserves customer-declared measurements separately from later actual measurements, records provenance for each evidence set, and allows extensible handling characteristics without assigning them commercial effects.
+Establish reusable, server-side contracts for parcel measurement and classification evidence. Measurement records preserve customer declarations separately from later actual measurements. Classification records preserve explicit present, absent or not-assessed outcomes with provenance for assessed outcomes. Neither contract assigns commercial effects.
 
-This is an input/evidence foundation only. It does not calculate parcel-based prices, classify parcel bands, decide service eligibility, adjust quotations, or authorize booking.
+These are input/evidence foundations only. They do not calculate parcel-based prices, infer classifications from measurements, decide service eligibility, adjust quotations, or authorize booking.
 
 ## Measurement contract
 
@@ -32,7 +32,7 @@ The contract deliberately does not prescribe a unit catalogue or perform unit co
 
 ## Handling characteristics
 
-Handling characteristics use unique stable codes and string or boolean values. The contract does not define a closed catalogue or infer a price effect from a characteristic. Fragility, size labels, vehicle suitability and other handling classifications require separately approved definitions and service applicability before they can affect pricing.
+The separate classification contract defines these initial codes:\n\n| Code | Group | Meaning at this stage |\n|---|---|---|\n| `fragile` | handling | Fragility characteristic |\n| `durable` | handling | Durability characteristic; not the automatic inverse of fragile |\n| `bulky` | handling | Bulky handling characteristic |\n| `small` | size | Reserved size classification; no threshold is defined |\n| `large` | size | Reserved size classification; no threshold is defined |\n\nA parcel may have multiple independent classifications. Each classification has `present`, `absent` or `not_assessed` status. An omitted classification is also unknown, never absent. `present` and `absent` require timestamp, actor and source provenance; `not_assessed` carries no assessment evidence. The catalogue is extensible through additional stable codes in the `other` group. The generic handling-characteristics field remains compatible and is not silently rewritten into the separate classification contract.
 
 ## Validation and exclusions
 
@@ -43,14 +43,14 @@ This slice does not establish:
 - approved weight or dimension units, conversion rules or normalization;
 - dimensional/volumetric weight formula, divisor or rounding;
 - parcel size/weight bands or thresholds;
-- fragile, durable, bulky, small/large or other classification rules;
+- automatic classification from weight or dimensions;\n- approved weight or dimension bands, thresholds or measurement-based small/large/bulky rules;\n- service-specific classification applicability for Standard, Express or Scheduled;
 - service-specific applicability for Standard, Express or Scheduled;
 - a customer charge, rate, coefficient, surcharge, minimum or fee;
 - pricing approval/publication, quotation issuance, measurement-discrepancy review or customer consent;
 - service/endpoint activation under DEC-047.
 
-The existing commercial pricing engine remains non-authoritative. This parcel contract is not yet connected to customer pricing or shipment booking. Any discrepancy between declared and actual measurements remains evidence for the separately governed DEC-040 review and consent process; this contract does not itself adjust a quote.
+The existing commercial pricing engine remains non-authoritative. These parcel contracts are not yet connected to customer pricing or shipment booking. Classification labels do not create surcharges, alter service eligibility, or prescribe handling instructions. Any discrepancy between declared and actual measurements remains evidence for the separately governed DEC-040 review and consent process; this contract does not itself adjust a quote.
 
 ## Completion evidence
 
-The contract and focused tests are the first implementation slice of Execution 3. Execution 3 remains incomplete until the parcel classification and pricing-integration requirements are separately resolved and implemented, all automated checks pass, documentation is reconciled, and the change is reviewed and explicitly approved for merge.
+The measurement evidence contract and classification evidence contract are implemented as separate bounded slices of Execution 3. The remaining parcel-pricing integration is still incomplete. All automated checks, documentation reconciliation, review and explicit merge approval remain required before this branch is considered complete.
