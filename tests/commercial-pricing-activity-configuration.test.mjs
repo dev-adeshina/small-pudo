@@ -72,6 +72,15 @@ describe("commercial pricing activity configuration", () => {
     );
   });
 
+  it("rejects activity labels that conflict with the authoritative catalogue", () => {
+    const invalidLabel = configuration();
+    invalidLabel.activityPricing.activities[0].activityName = "Invented activity label";
+    assert.throws(
+      () => assertCommercialPricingConfiguration(invalidLabel),
+      /does not match the activity catalogue/
+    );
+  });
+
   it("allows applicable activities to be included, itemized, or have no separate customer charge", () => {
     const configured = configuration();
     configured.activityPricing.activities[0] = {
