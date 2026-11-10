@@ -350,8 +350,8 @@ export function evaluateCommercialPricing(
   }
   assertPlainMap(input.values, "Pricing input values");
 
-  const definitions = new Map(
-    input.configuration.inputs.map((definition) => [definition.key, definition])
+  const definitions = new Map<string, CommercialPricingInputDefinition>(
+    input.configuration.inputs.map((definition) => [definition.key, definition] as const)
   );
   for (const definition of input.configuration.inputs) {
     const supplied = Object.prototype.hasOwnProperty.call(input.values, definition.key);
