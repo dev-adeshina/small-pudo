@@ -83,6 +83,11 @@ describe("commercial parcel pricing input adapter", () => {
         key: "actualWeight",
         source: "parcel.actual.weight",
       }],
+      components: [{
+        key: "actual_weight",
+        label: "Actual weight",
+        expression: { kind: "input", key: "actualWeight" },
+      }],
     };
 
     assert.deepEqual(
