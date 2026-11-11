@@ -34,6 +34,28 @@ The contract deliberately does not prescribe a unit catalogue or perform unit co
 
 The separate classification contract defines these initial codes:\n\n| Code | Group | Meaning at this stage |\n|---|---|---|\n| `fragile` | handling | Fragility characteristic |\n| `durable` | handling | Durability characteristic; not the automatic inverse of fragile |\n| `bulky` | handling | Bulky handling characteristic |\n| `small` | size | Reserved size classification; no threshold is defined |\n| `large` | size | Reserved size classification; no threshold is defined |\n\nA parcel may have multiple independent classifications. Each classification has `present`, `absent` or `not_assessed` status. An omitted classification is also unknown, never absent. `present` and `absent` require timestamp, actor and source provenance; `not_assessed` carries no assessment evidence. The catalogue is extensible through additional stable codes in the `other` group. The generic handling-characteristics field remains compatible and is not silently rewritten into the separate classification contract.
 
+
+## Bounded pricing-input integration
+
+The parcel-to-pricing adapter maps only measurement fields explicitly named by a numeric pricing input definition's `source`:
+
+| Source | Evidence selected |
+|---|---|
+| `parcel.declared.weight` | Declared weight |
+| `parcel.declared.length` | Declared length |
+| `parcel.declared.width` | Declared width |
+| `parcel.declared.height` | Declared height |
+| `parcel.actual.weight` | Actual weight |
+| `parcel.actual.length` | Actual length |
+| `parcel.actual.width` | Actual width |
+| `parcel.actual.height` | Actual height |
+
+The adapter validates both contracts before mapping. It does not select declared or actual evidence on behalf of a service; the configuration must name the exact source. A configured source whose evidence is absent produces no value. The existing evaluator then rejects the request if that input is required. Optional missing inputs remain omitted.
+
+The measurement unit must exactly match the input definition's unit string. A mismatch is rejected; no conversion, normalization or rounding is performed. Sources outside the parcel namespace remain available to other input providers. Unknown sources inside the `parcel.` namespace are rejected rather than silently ignored.
+
+Classification evidence and generic handling characteristics are not mapped to numeric pricing inputs. No classification-to-charge mapping, size inference, price formula, threshold, coefficient or service-specific rule is introduced. Callers combine adapter-produced values with independently supplied non-parcel values before invoking the existing evaluator. The evaluator's `non_authoritative` result status is unchanged.
+
 ## Validation and exclusions
 
 The validator rejects malformed records, unknown fields, duplicate characteristic codes, invalid provenance, non-finite or non-positive measurements, and unsupported measurement names.
