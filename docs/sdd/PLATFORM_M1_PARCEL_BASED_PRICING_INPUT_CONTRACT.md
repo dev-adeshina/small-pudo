@@ -34,7 +34,15 @@ The contract deliberately does not prescribe a unit catalogue or perform unit co
 
 The separate classification contract defines these initial codes:
 
-| Code | Group | Meaning at this stage |\n|---|---|---|\n| `fragile` | handling | Fragility characteristic |\n| `durable` | handling | Durability characteristic; not the automatic inverse of fragile |\n| `bulky` | handling | Bulky handling characteristic |\n| `small` | size | Reserved size classification; no threshold is defined |\n| `large` | size | Reserved size classification; no threshold is defined |\n\nA parcel may have multiple independent classifications. Each classification has `present`, `absent` or `not_assessed` status. An omitted classification is also unknown, never absent. `present` and `absent` require timestamp, actor and source provenance; `not_assessed` carries no assessment evidence. The catalogue is extensible through additional stable codes in the `other` group. The generic handling-characteristics field remains compatible and is not silently rewritten into the separate classification contract.
+| Code | Group | Meaning at this stage |
+|---|---|---|
+| `fragile` | handling | Fragility characteristic |
+| `durable` | handling | Durability characteristic; not the automatic inverse of fragile |
+| `bulky` | handling | Bulky handling characteristic |
+| `small` | size | Reserved size classification; no threshold is defined |
+| `large` | size | Reserved size classification; no threshold is defined |
+
+A parcel may have multiple independent classifications. Each classification has `present`, `absent` or `not_assessed` status. An omitted classification is also unknown, never absent. `present` and `absent` require timestamp, actor and source provenance; `not_assessed` carries no assessment evidence. The catalogue is extensible through additional stable codes in the `other` group. The generic handling-characteristics field remains compatible and is not silently rewritten into the separate classification contract.
 
 
 ## Bounded pricing-input integration
@@ -67,8 +75,8 @@ This slice does not establish:
 - approved weight or dimension units, conversion rules or normalization;
 - dimensional/volumetric weight formula, divisor or rounding;
 - parcel size/weight bands or thresholds;
-- automatic classification from weight or dimensions without approved thresholds;\n- service-specific classification applicability for Standard, Express or Scheduled;
-- service-specific applicability for Standard, Express or Scheduled;
+- automatic classification from weight or dimensions without approved thresholds;
+- service-specific classification applicability for Standard, Express or Scheduled;
 - a customer charge, rate, coefficient, surcharge, minimum or fee;
 - pricing approval/publication, quotation issuance, measurement-discrepancy review or customer consent;
 - service/endpoint activation under DEC-047.
