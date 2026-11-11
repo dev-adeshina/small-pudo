@@ -32,7 +32,9 @@ The contract deliberately does not prescribe a unit catalogue or perform unit co
 
 ## Handling characteristics
 
-The separate classification contract defines these initial codes:\n\n| Code | Group | Meaning at this stage |\n|---|---|---|\n| `fragile` | handling | Fragility characteristic |\n| `durable` | handling | Durability characteristic; not the automatic inverse of fragile |\n| `bulky` | handling | Bulky handling characteristic |\n| `small` | size | Reserved size classification; no threshold is defined |\n| `large` | size | Reserved size classification; no threshold is defined |\n\nA parcel may have multiple independent classifications. Each classification has `present`, `absent` or `not_assessed` status. An omitted classification is also unknown, never absent. `present` and `absent` require timestamp, actor and source provenance; `not_assessed` carries no assessment evidence. The catalogue is extensible through additional stable codes in the `other` group. The generic handling-characteristics field remains compatible and is not silently rewritten into the separate classification contract.
+The separate classification contract defines these initial codes:
+
+| Code | Group | Meaning at this stage |\n|---|---|---|\n| `fragile` | handling | Fragility characteristic |\n| `durable` | handling | Durability characteristic; not the automatic inverse of fragile |\n| `bulky` | handling | Bulky handling characteristic |\n| `small` | size | Reserved size classification; no threshold is defined |\n| `large` | size | Reserved size classification; no threshold is defined |\n\nA parcel may have multiple independent classifications. Each classification has `present`, `absent` or `not_assessed` status. An omitted classification is also unknown, never absent. `present` and `absent` require timestamp, actor and source provenance; `not_assessed` carries no assessment evidence. The catalogue is extensible through additional stable codes in the `other` group. The generic handling-characteristics field remains compatible and is not silently rewritten into the separate classification contract.
 
 
 ## Bounded pricing-input integration
@@ -65,7 +67,7 @@ This slice does not establish:
 - approved weight or dimension units, conversion rules or normalization;
 - dimensional/volumetric weight formula, divisor or rounding;
 - parcel size/weight bands or thresholds;
-- automatic classification from weight or dimensions;\n- approved weight or dimension bands, thresholds or measurement-based small/large/bulky rules;\n- service-specific classification applicability for Standard, Express or Scheduled;
+- automatic classification from weight or dimensions without approved thresholds;\n- service-specific classification applicability for Standard, Express or Scheduled;
 - service-specific applicability for Standard, Express or Scheduled;
 - a customer charge, rate, coefficient, surcharge, minimum or fee;
 - pricing approval/publication, quotation issuance, measurement-discrepancy review or customer consent;
@@ -75,4 +77,4 @@ The existing commercial pricing engine remains non-authoritative. These parcel c
 
 ## Completion evidence
 
-The measurement evidence contract and classification evidence contract are implemented as separate bounded slices of Execution 3. The remaining parcel-pricing integration is still incomplete. All automated checks, documentation reconciliation, review and explicit merge approval remain required before this branch is considered complete.
+The measurement evidence contract, classification evidence contract and bounded parcel-to-pricing input adapter are implemented as the parcel input/evidence foundation for M1 Execution 3. The adapter maps only explicitly configured declared or actual measurement sources; it does not calculate or authorize a customer price. Customer-facing parcel pricing, approved units and conversions, volumetric rules, thresholds, service applicability and commercial effects remain deferred. This PR completes the bounded input/evidence foundation, not the remaining parcel-pricing rules or customer quotation workflow.
