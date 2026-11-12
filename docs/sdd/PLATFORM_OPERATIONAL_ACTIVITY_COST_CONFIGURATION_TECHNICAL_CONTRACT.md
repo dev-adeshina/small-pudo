@@ -230,3 +230,62 @@ This is a useful configurable foundation, but it is not yet the complete evidenc
 - No cost-definition collection, duplicate workflow, parallel permission catalogue or new evidence registry is approved by this reconciliation.
 
 **Verification boundary:** the source paths above were read at the PR #137 application-source baseline. The owner reported 100/100 Firestore Emulator-backed tests, TypeScript, lint, production build and git diff --check passing after PR #137. This documentation review did not rerun those commands or inspect production data/runtime state.
+
+### 13.1 ACT-04 transport arrangement metadata — Chunk 3 Part 1
+
+**Scope:** Vehicle and transport arrangement metadata on ACT-04 operational cost components.
+
+**Status:** Implementation and documentation complete; focused PR review and merge pending.
+
+The existing operational-cost definition lineage, immutable version snapshots, server-side persistence boundary and four-person approval workflow remain authoritative. This change extends the existing cost-component schema; it does not introduce a parallel transport-cost model, collection, workflow, permission or approval process.
+
+#### ACT-04 component metadata
+
+An ACT-04 cost component may optionally record:
+
+- `transportArrangement`:
+  - `business_owned_vehicle`
+  - `driver_owned_vehicle`
+  - `external_transport_partner`
+- `agreementBasis`:
+  - `per_trip`
+  - `distance`
+  - `per_parcel`
+  - `fixed`
+  - `time`
+  - `hybrid`
+  - `negotiated`
+
+Both fields are optional. An unspecified value remains unspecified; the system must not infer or select a default arrangement or agreement basis. These fields are descriptive metadata and do not establish a cost amount, payment obligation, reimbursement entitlement, cost allocation or customer charge.
+
+The metadata is permitted only on ACT-04 components. Unsupported values and use on other activity codes must be rejected by server-side validation.
+
+#### Cost and evidence boundaries
+
+Transport metadata does not replace or relax the existing cost-component configuration requirements. A component submitted for review must continue to satisfy the existing configuration-state, amount, currency, cost-basis, treatment-classification and structured-evidence requirements.
+
+In particular:
+
+- A driver-owned vehicle or external transport-partner arrangement does not, by itself, establish a separate fuel or vehicle-operating-expense payment.
+- No separate fuel or operating-expense reimbursement is to be assumed on top of a driver or partner charge unless an actual agreement or source record establishes that separate payment.
+- Business-owned vehicle cost treatment remains unconfigured until supported by actual source records and the existing Operations and Finance review.
+- The `agreementBasis` metadata is not a substitute for the existing cost-component `basis` field.
+
+#### Versioning and approval
+
+The metadata is stored as part of the existing immutable cost-definition version. Revisions continue to create new versions under the existing concurrency and lineage rules. Historical versions remain unchanged.
+
+Submission, Operations validation, Finance review and independent approval continue through the existing workflow, permissions and four-person separation of duties. Transport metadata does not bypass submission evidence requirements or create an alternative approval path.
+
+#### Explicit exclusions
+
+This slice does not implement or authorize:
+
+- transport rates, monetary defaults, coefficients or calculation formulas;
+- automatic fuel, vehicle or driver-expense reimbursement;
+- route-distance measurement, distance bands or route-based pricing;
+- automatic cost aggregation, allocation or shipment-cost consumption;
+- customer-facing prices, quotations or charges;
+- service activation under DEC-047 or physical operational execution.
+
+These remain subject to their own evidence, business decisions and implementation gates.

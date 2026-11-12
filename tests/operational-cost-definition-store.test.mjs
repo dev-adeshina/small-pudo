@@ -496,5 +496,103 @@ describe(
         /missing current version/
       );
     });
+
+    it("persists structured transport metadata on ACT-04 components", async () => {
+      const transportDefinition = {
+        ...validDefinition,
+        activityCode: "ACT-04",
+        activityName: "Synthetic transport activity",
+        costComponents: [{
+          ...validDefinition.costComponents[0],
+          transportArrangement: "external_transport_partner",
+          agreementBasis: "per_trip",
+        }],
+      };
+
+      const created = await createDefinition(transportDefinition);
+      const version = await db
+        .collection("operationalCostDefinitions")
+        .doc(created.definitionId)
+        .collection("versions")
+        .doc(created.versionId)
+        .get();
+
+      assert.equal(
+        version.data().costComponents[0].transportArrangement,
+        "external_transport_partner"
+      );
+      assert.equal(
+        version.data().costComponents[0].agreementBasis,
+        "per_trip"
+      );
+    });
+
+    it("allows ACT-04 drafts with unspecified transport metadata", async () => {
+      const transportDefinition = {
+        ...validDefinition,
+        activityCode: "ACT-04",
+        activityName: "Transport draft",
+      };
+
+      const created = await createDefinition(transportDefinition);
+      const version = await db
+        .collection("operationalCostDefinitions")
+        .doc(created.definitionId)
+        .collection("versions")
+        .doc(created.versionId)
+        .get();
+
+      assert.equal(
+        version.data().costComponents[0].transportArrangement,
+        undefined
+      );
+      assert.equal(
+        version.data().costComponents[0].agreementBasis,
+        undefined
+      );
+    });
+
+    it("rejects unsupported transport arrangements and agreement bases", async () => {
+      const base = {
+        ...validDefinition,
+        activityCode: "ACT-04",
+        activityName: "Invalid transport draft",
+      };
+
+      await assert.rejects(
+        store.createDefinition("transport-test-actor", {
+          ...base,
+          costComponents: [{
+            ...base.costComponents[0],
+            transportArrangement: "unverified_vehicle_type",
+          }],
+        }),
+        /Transport arrangement is unsupported/
+      );
+
+      await assert.rejects(
+        store.createDefinition("transport-test-actor", {
+          ...base,
+          costComponents: [{
+            ...base.costComponents[0],
+            agreementBasis: "per_kilometre_by_default",
+          }],
+        }),
+        /Transport agreement basis is unsupported/
+      );
+    });
+
+    it("rejects transport metadata on non-ACT-04 activities", async () => {
+      await assert.rejects(
+        store.createDefinition("transport-test-actor", {
+          ...validDefinition,
+          costComponents: [{
+            ...validDefinition.costComponents[0],
+            transportArrangement: "driver_owned_vehicle",
+          }],
+        }),
+        /Transport metadata is only supported for ACT-04/
+      );
+    });
   }
 );
