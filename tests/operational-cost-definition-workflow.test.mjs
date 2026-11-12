@@ -241,4 +241,88 @@ describe("operational cost approval workflow", { skip: !enabled }, () => {
     const old = await db.collection("operationalCostDefinitions").doc(d.definitionId).collection("versions").doc(d.versionId).collection("approval").doc("workflow").get();
     assert.equal(old.data().state, "changes_requested");
   });
+
+  it("preserves ACT-04 transport metadata without bypassing submission evidence requirements", async () => {
+    const act04 = {
+      ...definition,
+      activityCode: "ACT-04",
+      activityName: "Synthetic transport activity",
+      costComponents: [{
+        ...definition.costComponents[0],
+        key: "vehicle_transport",
+        label: "Vehicle transport",
+        transportArrangement: "driver_owned_vehicle",
+        agreementBasis: "per_trip",
+      }],
+    };
+
+    const proposer = `proposer-${randomUUID()}`;
+    const created = await definitions.createDefinition(proposer, act04);
+    ids.add(created.definitionId);
+    await grant(proposer, permissions[0]);
+
+    await workflow.transition({
+      definitionId: created.definitionId,
+      versionId: created.versionId,
+      actorUid: proposer,
+      action: "submit",
+    });
+
+    const versionRef = db.collection("operationalCostDefinitions")
+      .doc(created.definitionId)
+      .collection("versions")
+      .doc(created.versionId);
+
+    const [version, workflowState] = await Promise.all([
+      versionRef.get(),
+      versionRef.collection("approval").doc("workflow").get(),
+    ]);
+
+    assert.equal(workflowState.data().state, "pending_operations_validation");
+    assert.equal(
+      version.data().costComponents[0].transportArrangement,
+      "driver_owned_vehicle"
+    );
+    assert.equal(
+      version.data().costComponents[0].agreementBasis,
+      "per_trip"
+    );
+
+    const incompleteProposer = `proposer-${randomUUID()}`;
+    const incomplete = await definitions.createDefinition(incompleteProposer, {
+      ...act04,
+      costComponents: [{
+        ...act04.costComponents[0],
+        configurationState: "configured",
+        amount: null,
+        currencyCode: null,
+        basis: null,
+        evidenceItems: [],
+      }],
+    });
+
+    ids.add(incomplete.definitionId);
+    await grant(incompleteProposer, permissions[0]);
+
+    await assert.rejects(
+      workflow.transition({
+        definitionId: incomplete.definitionId,
+        versionId: incomplete.versionId,
+        actorUid: incompleteProposer,
+        action: "submit",
+      }),
+      /amount, explicit currency, basis, structured evidence and treatment classification/
+    );
+
+    const blockedState = await db.collection("operationalCostDefinitions")
+      .doc(incomplete.definitionId)
+      .collection("versions")
+      .doc(incomplete.versionId)
+      .collection("approval")
+      .doc("workflow")
+      .get();
+
+    assert.equal(blockedState.exists, false);
+
+  });
 });

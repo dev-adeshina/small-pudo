@@ -62,6 +62,19 @@ export type OperationalCostConfigurationState =
   | "configured"
   | "no_separate_cost";
 
+export type OperationalTransportArrangement =
+  | "business_owned_vehicle"
+  | "driver_owned_vehicle"
+  | "external_transport_partner";
+
+export type OperationalTransportAgreementBasis =
+  | "per_trip"
+  | "distance"
+  | "per_parcel"
+  | "fixed"
+  | "time"
+  | "hybrid"
+  | "negotiated";
 export interface OperationalCostComponentInput {
   key: string;
   label: string;
@@ -75,6 +88,8 @@ export interface OperationalCostComponentInput {
   evidenceDescription?: string;
   treatmentClass?: OperationalCostTreatmentClass;
   evidenceItems?: OperationalCostEvidenceItem[];
+  transportArrangement?: OperationalTransportArrangement;
+  agreementBasis?: OperationalTransportAgreementBasis;
 }
 
 export interface OperationalCostDefinitionInput {
@@ -188,7 +203,14 @@ function assertDefinitionInput(
   assertPlainMap(value, "An operational cost definition");
   assertOnlyKeys(
     value,
-    ["activityCode", "activityName", "activityDescription", "applicability", "inputs", "costComponents"],
+    [
+      "activityCode",
+      "activityName",
+      "activityDescription",
+      "applicability",
+      "inputs",
+      "costComponents",
+    ],
     "An operational cost definition"
   );
 
@@ -260,10 +282,36 @@ function assertDefinitionInput(
     assertPlainMap(component, "Each operational cost component");
     assertOnlyKeys(
       component,
-      ["key", "label", "description", "configurationState", "amount", "currencyCode", "basis", "noSeparateCostReason", "treatment", "evidenceDescription", "treatmentClass", "evidenceItems"],
+      [
+        "key",
+        "label",
+        "description",
+        "configurationState",
+        "amount",
+        "currencyCode",
+        "basis",
+        "noSeparateCostReason",
+        "treatment",
+        "evidenceDescription",
+        "treatmentClass",
+        "evidenceItems",
+        "transportArrangement",
+        "agreementBasis",
+      ],
       "An operational cost component"
     );
 
+    if (value.activityCode !== "ACT-04" && (component.transportArrangement !== undefined || component.agreementBasis !== undefined)) {
+      throw new TypeError("Transport metadata is only supported for ACT-04 cost components");
+    }
+
+    if (component.transportArrangement !== undefined && !["business_owned_vehicle", "driver_owned_vehicle", "external_transport_partner",].includes(component.transportArrangement)) {
+      throw new TypeError("Transport arrangement is unsupported");
+    }
+
+    if (component.agreementBasis !== undefined && !["per_trip", "distance", "per_parcel", "fixed", "time", "hybrid", "negotiated",].includes(component.agreementBasis)) {
+      throw new TypeError("Transport agreement basis is unsupported");
+    }
     if (
       typeof component.key !== "string" ||
       !/^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(component.key)
