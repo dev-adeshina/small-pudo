@@ -4,7 +4,7 @@ import { hasStaffActionPermissionInTransaction } from "./staff-permission-grants
 const PERMISSION = "pudo_location.register";
 
 export type PudoCoordinateCaptureMethod = "device" | "manual";
-export type PudoLocationLifecycle = "draft" | "submitted";
+export type PudoLocationLifecycle = "draft" | "submitted" | "active";
 
 export interface PudoLocationInput {
   name?: string;
