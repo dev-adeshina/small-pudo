@@ -9,6 +9,7 @@ const STAFF_ACTION_PERMISSIONS = [
   "operational_cost_definition.approve",
   "pudo_location.register",
   "pudo_location.verify",
+  "pudo_location.activate",
   "commercial_pricing.view",
   "commercial_pricing.propose",
 ] as const;
