@@ -16,7 +16,7 @@ function expiryMillis(value: unknown): number | null {
   if (value == null) return null;
   if (value instanceof Date) return value.getTime();
   if (typeof value === "object" && "toDate" in value &&
-      typeof (value as { toDate?: unknown }).toDate === "function") {
+    typeof (value as { toDate?: unknown }).toDate === "function") {
     return (value as { toDate(): Date }).toDate().getTime();
   }
   return Number.NaN;
@@ -41,45 +41,65 @@ async function validGrantLineage(
   grantId: string,
   expectedTargetUid: string,
   permissionId: string,
+  expectedRootGrantId: string,
   now: number,
   visited = new Set<string>(),
 ): Promise<boolean> {
   if (visited.has(grantId)) return false;
   visited.add(grantId);
-  const snapshot = await transaction.get(db.collection("staffActionPermissionGrants").doc(grantId));
+
+  const snapshot = await transaction.get(
+    db.collection("staffActionPermissionGrants").doc(grantId),
+  );
   if (!snapshot.exists) return false;
+
   const grant = snapshot.data() as Grant;
   if (grant.targetUid !== expectedTargetUid ||
-      grant.permissionId !== permissionId ||
-      grant.status !== "active" ||
-      !isUnexpired(grant.expiresAt, now)) return false;
+    grant.permissionId !== permissionId ||
+    grant.rootGrantId !== expectedRootGrantId ||
+    grant.status !== "active" ||
+    !isUnexpired(grant.expiresAt, now)) return false;
 
-  if (typeof grant.parentGrantId !== "string" || !grant.parentGrantId) {
-    return grant.source === "administrator" && grant.rootGrantId === grantId &&
-      typeof grant.grantorUid === "string" && grant.grantorUid.startsWith("admin:");
+  if (grant.parentGrantId === null) {
+    return grantId === expectedRootGrantId &&
+      grant.source === "administrator" &&
+      typeof grant.grantorUid === "string" &&
+      grant.grantorUid.startsWith("admin:");
   }
 
-  if (typeof grant.grantorUid !== "string" || !grant.grantorUid ||
-      !/^[A-Za-z0-9_-]{1,128}$/.test(grant.parentGrantId)) return false;
+  if (typeof grant.parentGrantId !== "string" ||
+    !/^[A-Za-z0-9_-]{1,128}$/.test(grant.parentGrantId) ||
+    typeof grant.grantorUid !== "string" ||
+    !grant.grantorUid) return false;
 
   const parentSnapshot = await transaction.get(
     db.collection("staffActionPermissionGrants").doc(grant.parentGrantId),
   );
   if (!parentSnapshot.exists) return false;
+
   const parent = parentSnapshot.data() as Grant;
   if (parent.targetUid !== grant.grantorUid ||
-      parent.permissionId !== permissionId ||
-      parent.delegable !== true ||
-      parent.status !== "active" ||
-      !isUnexpired(parent.expiresAt, now)) return false;
+    parent.permissionId !== permissionId ||
+    parent.rootGrantId !== expectedRootGrantId ||
+    parent.delegable !== true ||
+    parent.status !== "active" ||
+    !isUnexpired(parent.expiresAt, now)) return false;
 
   const childExpiry = expiryMillis(grant.expiresAt);
   const parentExpiry = expiryMillis(parent.expiresAt);
   if (parentExpiry !== null &&
-      (childExpiry === null || !Number.isFinite(childExpiry) || childExpiry > parentExpiry)) return false;
+    (childExpiry === null || !Number.isFinite(childExpiry) ||
+      childExpiry > parentExpiry)) return false;
 
   return validGrantLineage(
-    transaction, db, grant.parentGrantId, grant.grantorUid, permissionId, now, visited,
+    transaction,
+    db,
+    grant.parentGrantId,
+    grant.grantorUid,
+    permissionId,
+    expectedRootGrantId,
+    now,
+    visited,
   );
 }
 
@@ -107,7 +127,13 @@ export async function hasStaffActionPermissionInTransaction(
   }
 
   for (const grant of grants) {
-    if (await validGrantLineage(transaction, db, grant.id, uid, permissionId, now)) return true;
+    const rootGrantId = grant.data().rootGrantId;
+    if (typeof rootGrantId !== "string" ||
+      !/^[A-Za-z0-9_-]{1,128}$/.test(rootGrantId)) continue;
+
+    if (await validGrantLineage(
+      transaction, db, grant.id, uid, permissionId, rootGrantId, now,
+    )) return true;
   }
   return false;
 }
@@ -134,8 +160,14 @@ export async function findDelegableStaffActionGrantInTransaction(
   for (const document of snapshot.docs) {
     const grant = document.data();
     if (grant.permissionId !== permissionId || grant.delegable !== true ||
-        grant.status !== "active") continue;
-    if (await validGrantLineage(transaction, db, document.id, uid, permissionId, Date.now())) {
+      grant.status !== "active") continue;
+    const rootGrantId = grant.rootGrantId;
+    if (typeof rootGrantId !== "string" ||
+      !/^[A-Za-z0-9_-]{1,128}$/.test(rootGrantId)) continue;
+
+    if (await validGrantLineage(
+      transaction, db, document.id, uid, permissionId, rootGrantId, Date.now(),
+    )) {
       return { grantId: document.id, grant };
     }
   }
