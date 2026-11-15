@@ -1,5 +1,57 @@
 # VeriLyft Progress Tracker
 
+
+## Development execution rules — 15 November 2026
+
+The following rules govern ongoing VeriLyft application development and take
+precedence over older execution instructions in historical progress entries.
+
+### 1. Implement in the actual application
+
+- Work from the real VeriLyft project root and its active development environment.
+- Use the existing `package.json`, installed dependencies, environment variables,
+  Firebase configuration and Next.js application structure.
+- Do not develop application functionality in isolated source files, disconnected
+  prototypes or separate worktrees when the actual application should be modified.
+- Create new source files only when the existing architecture genuinely requires
+  a separate module.
+- Reuse existing services, APIs, persistence, authorization, components and
+  established implementation patterns.
+- Avoid duplicate implementations and repeated corrections caused by working
+  without the full application context.
+
+### 2. Prioritise implementation
+
+- Application-code implementation is the primary development activity.
+- Avoid prolonged planning, repeated design reviews and unnecessary documentation
+  cycles.
+- Implement complete, usable functionality within each agreed development chunk.
+- Keep changes focused and consistent with the existing application architecture.
+
+### 3. Live browser testing is the primary verification method
+
+- Do not create or run standalone automated test cycles as the default development
+  workflow.
+- Verify implemented functionality through actual live browser workflows.
+- Exercise relevant user roles, permissions, successful workflows and failure
+  scenarios in the running application.
+- Fix issues discovered during live testing and repeat the affected browser
+  workflow.
+- Do not claim functionality is verified until the relevant live browser workflow
+  has succeeded.
+
+### 4. Development discipline
+
+- Preserve existing business rules, authorization boundaries and accepted decisions.
+- Do not invent operational data, pricing rates or service capabilities.
+- Do not mark unfinished implementation or unverified functionality as complete.
+- Keep the project focused on delivering working functionality and meeting
+  implementation deadlines.
+
+**Priority:** Build in the real application, use its actual environment, prioritise
+code implementation, and verify functionality through live browser testing.
+
+
 ## Current authoritative checkpoint — 5 November 2026
 
 The current main baseline is PR #137 merge 55dff8c2a4f4cf6f0e983676e692f0f126f7ec27. PR #136 merged staff invitation and permission-management foundations; PR #137 moved staff activation into the authenticated staff workspace. PR #135 reconciled the earlier PR #133/#134 checkpoint. See CURRENT_IMPLEMENTATION_STATUS.md for the consolidated status, accomplishments, evidence boundaries and remaining work.
