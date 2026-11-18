@@ -252,6 +252,8 @@ export function createCommercialRouteDistanceStore({
         await readActiveLocation(transaction, originOperationalPointRef, "Origin");
         await readActiveLocation(transaction, destinationOperationalPointRef, "Destination");
         transaction.create(evidenceRef, {
+          originOperationalPointRef,
+          destinationOperationalPointRef,
           evidence,
           createdAt: serverTimestamp(),
           createdBy: actorUid,
