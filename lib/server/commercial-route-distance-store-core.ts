@@ -66,8 +66,7 @@ function assertManualDistance(value: unknown): asserts value is { value: number;
     !Number.isFinite(distance.value) ||
     distance.value <= 0 ||
     typeof distance.unit !== "string" ||
-    !distance.unit.trim() ||
-    distance.unit.length > 40
+    !["m", "km", "mi"].includes(distance.unit)
   ) {
     throw new TypeError("Distance must contain a positive finite value and a valid unit.");
   }
