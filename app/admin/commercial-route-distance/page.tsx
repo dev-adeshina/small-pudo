@@ -240,9 +240,13 @@ export default function CommercialRouteDistancePage() {
             <h1>Route-distance evidence</h1>
             <p>Record directed distance measurements between active PUDO locations. Evidence is retained as an immutable history and is not an operational dispatch record or a price.</p>
           </div>
-          <button className="cost-secondary-button" type="button" onClick={refresh} disabled={loading}>
-            <RefreshCw size={16} /> Refresh
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link className="admin-action" href="/staff/pudo-locations">PUDO location registry</Link>
+            <Link className="admin-action" href="/staff/pudo-verifications">Verification queue</Link>
+            <button className="cost-secondary-button" type="button" onClick={refresh} disabled={loading}>
+              <RefreshCw size={16} /> Refresh
+            </button>
+          </div>
         </div>
 
         {error && <div className="cost-alert"><strong>Unable to continue</strong><span>{error}</span></div>}
@@ -253,7 +257,21 @@ export default function CommercialRouteDistancePage() {
             <div><span className="section-label">01 / ROUTE SELECTION</span><h2>Choose operational points</h2></div>
           </div>
           {loading ? <p>Loading active PUDO locations...</p> : locations.length < 2 ? (
-            <p>At least two PUDO locations must be active before a route measurement can be recorded.</p>
+            <div className="space-y-3">
+              <p>
+                {locations.length === 0
+                  ? "No PUDO locations are currently active. Register a candidate, submit it for physical verification, and complete the separately authorised activation process before recording route distances."
+                  : "Only one PUDO location is active. A route requires two different active locations. Register and complete verification and activation for another location before recording route distances."}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Link className="admin-action" href="/staff/pudo-locations">Open PUDO location registry</Link>
+                <Link className="admin-action" href="/staff/pudo-locations/new">Register a PUDO candidate</Link>
+                <Link className="admin-action" href="/staff/pudo-verifications">Open verification queue</Link>
+              </div>
+              <p className="text-sm text-gray-600">
+                Registration and submission do not activate a PUDO. Only locations with an approved verification and a completed activation record appear in this route selector.
+              </p>
+            </div>
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
               <label className="block text-sm font-medium">Origin PUDO
