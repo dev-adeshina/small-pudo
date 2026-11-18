@@ -27,6 +27,14 @@ type Evidence = {
   recordedAt: string;
   recordedBy: string;
   source: string;
+  measuredOn?: string;
+  supportingReference?: string;
+  coordinatesUsed?: {
+    origin: { latitude: number; longitude: number };
+    destination: { latitude: number; longitude: number };
+    coordinateReferenceSystem: "WGS84";
+    calculation: "Haversine";
+  };
 };
 
 function headers(token: string): HeadersInit {
@@ -62,6 +70,8 @@ export default function CommercialRouteDistancePage() {
   const [distanceValue, setDistanceValue] = useState("");
   const [distanceUnit, setDistanceUnit] = useState("km");
   const [source, setSource] = useState("");
+  const [measuredOn, setMeasuredOn] = useState(new Date().toISOString().slice(0, 10));
+  const [supportingReference, setSupportingReference] = useState("");
   const [evidence, setEvidence] = useState<Evidence[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -171,6 +181,8 @@ export default function CommercialRouteDistancePage() {
             method,
             distance: { value: Number(distanceValue), unit: distanceUnit },
             source: source.trim(),
+            measuredOn,
+            ...(supportingReference.trim() ? { supportingReference: supportingReference.trim() } : {}),
           };
       const response = await fetch("/api/admin/commercial-route-distance/evidence", {
         method: "POST", headers: headers(token), body: JSON.stringify(body),
@@ -180,6 +192,8 @@ export default function CommercialRouteDistancePage() {
       setNotice("New route-distance evidence recorded. Previous measurements remain in the history.");
       setDistanceValue("");
       setSource("");
+      setSupportingReference("");
+      setMeasuredOn(new Date().toISOString().slice(0, 10));
       await loadEvidence(token, origin, destination);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to record route distance.");
@@ -243,9 +257,13 @@ export default function CommercialRouteDistancePage() {
             </div>
           )}
           {selectedOrigin && selectedDestination && (
-            <p className="mt-4 text-sm text-gray-600">
-              Directed route: <strong>{selectedOrigin.name}</strong> → <strong>{selectedDestination.name}</strong>. The reverse direction has its own evidence history.
-            </p>
+            <div className="mt-4 rounded-lg bg-gray-50 p-3 text-sm text-gray-700">
+              <p>Directed route: <strong>{selectedOrigin.name}</strong> → <strong>{selectedDestination.name}</strong>. The reverse direction has its own evidence history.</p>
+              <p className="mt-2">{selectedOrigin.address}</p>
+              <p>Coordinates: {selectedOrigin.geo ? `${selectedOrigin.geo.latitude}, ${selectedOrigin.geo.longitude} (WGS84)` : "Not registered"}</p>
+              <p className="mt-2">{selectedDestination.address}</p>
+              <p>Coordinates: {selectedDestination.geo ? `${selectedDestination.geo.latitude}, ${selectedDestination.geo.longitude} (WGS84)` : "Not registered"}</p>
+            </div>
           )}
         </section>
 
@@ -263,10 +281,13 @@ export default function CommercialRouteDistancePage() {
             </label>
             {method === "straight_line" ? (
               <p className="rounded-lg bg-gray-50 p-3 text-sm text-gray-700">
-                The system calculates the Haversine distance in metres using the registered WGS84 coordinates of both active PUDO locations. No road route is inferred.
+                {selectedOrigin?.geo && selectedDestination?.geo
+                  ? "The system calculates Haversine distance in metres from the displayed WGS84 coordinates and preserves those exact coordinates in the evidence record. No road route is inferred."
+                  : "Straight-line measurement is unavailable because both selected PUDOs must have valid registered WGS84 coordinates. Choose manual or road-network evidence instead, or correct the location coordinates."}
               </p>
             ) : (
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-3">
                 <label className="block text-sm font-medium">Distance
                   <input className="mt-2 w-full rounded-lg border p-3" type="number" min="0.000001" step="any" required value={distanceValue} onChange={(event) => setDistanceValue(event.target.value)} />
                 </label>
@@ -280,9 +301,18 @@ export default function CommercialRouteDistancePage() {
                 <label className="block text-sm font-medium">Measurement source
                   <input className="mt-2 w-full rounded-lg border p-3" type="text" maxLength={80} required placeholder={method === "road_network" ? "e.g. named mapping provider / source" : "e.g. supplied measurement"} value={source} onChange={(event) => setSource(event.target.value)} />
                 </label>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <label className="block text-sm font-medium">Measurement date
+                    <input className="mt-2 w-full rounded-lg border p-3" type="date" required value={measuredOn} onChange={(event) => setMeasuredOn(event.target.value)} />
+                  </label>
+                  <label className="block text-sm font-medium">Supporting reference (optional)
+                    <input className="mt-2 w-full rounded-lg border p-3" type="text" maxLength={200} placeholder="Document, route ID or measurement reference" value={supportingReference} onChange={(event) => setSupportingReference(event.target.value)} />
+                  </label>
+                </div>
               </div>
             )}
-            <button className="cost-primary-button" type="submit" disabled={saving || !origin || !destination || origin === destination || locations.length < 2}>
+            <button className="cost-primary-button" type="submit" disabled={saving || !origin || !destination || origin === destination || locations.length < 2 || (method === "straight_line" && (!selectedOrigin?.geo || !selectedDestination?.geo))}>
               <Save size={16} /> {saving ? "Recording..." : "Record immutable evidence"}
             </button>
           </form>
@@ -305,6 +335,9 @@ export default function CommercialRouteDistancePage() {
                       <span className="text-sm text-gray-500">{formatDate(item.recordedAt)}</span>
                     </div>
                     <p className="mt-2 text-sm">Source: {item.source}</p>
+                    {item.measuredOn && <p className="mt-1 text-sm">Measurement date: {formatDate(item.measuredOn + "T00:00:00")}</p>}
+                    {item.supportingReference && <p className="mt-1 break-all text-sm">Supporting reference: {item.supportingReference}</p>}
+                    {item.coordinatesUsed && <p className="mt-1 text-xs text-gray-500">WGS84 coordinates used: {item.coordinatesUsed.origin.latitude}, {item.coordinatesUsed.origin.longitude} → {item.coordinatesUsed.destination.latitude}, {item.coordinatesUsed.destination.longitude}</p>}
                     <p className="mt-1 text-xs text-gray-500">Recorded by staff identity {item.recordedBy}</p>
                   </article>
                 ))}
