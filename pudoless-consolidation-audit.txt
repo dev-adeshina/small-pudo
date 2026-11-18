@@ -1,0 +1,2355 @@
+VERILYFT CONSOLIDATION AUDIT
+Generated: Wed 18 Nov 2026 10:44:22 AM WAT
+
+===== CANONICAL REPOSITORY =====
+## feat/m1-parcel-based-pricing...origin/feat/m1-parcel-based-pricing
+commit d582a21d1e964d23aa4229ae0781b9c748176556
+Author:     dev-adeshina <shina.oladoja@outlook.com>
+AuthorDate: Wed Nov 18 10:01:58 2026 +0100
+Commit:     dev-adeshina <shina.oladoja@outlook.com>
+CommitDate: Wed Nov 18 10:01:58 2026 +0100
+
+    feat: add commercial pricing approval and publication workflow
+
+===== ALL LOCAL BRANCHES NOT CONTAINED IN MAIN =====
+
+--- docs/reconcile-sdd-after-pr-134 ---
+
+--- docs/reconcile-sdd-after-pr-137 ---
+
+--- feat/m1-activity-based-pricing-foundation ---
+
+--- feat/m1-commercial-pricing-quotations ---
+
+--- feat/m1-distance-route-pricing ---
+d1eb6d7 docs: establish implementation and live browser testing rules
+
+--- feat/m1-parcel-based-pricing ---
+d582a21 feat: add commercial pricing approval and publication workflow
+50b5ab7 chore: sync latest implementation progress
+5916f14 docs: establish implementation and live browser testing rules
+3aa9778 fix: harden staff grant lineage and transport configuration
+
+--- feat/m1-vehicle-transport-route-pricing ---
+b2ed1c0 feat: add straight-line distance utility
+
+--- feat/m2-configurable-activity-costs ---
+
+--- feat/m2-structured-cost-evidence ---
+
+--- feat/operational-cost-definition-approval ---
+
+--- feat/operational-cost-definition-configuration-api ---
+
+--- feat/operational-cost-definition-store ---
+
+--- feat/operational-cost-management-ui ---
+
+--- feat/platform-staff-activity-delegation ---
+e439a0b fix: allow TypeScript import extensions
+350446d fix: resolve Node ESM imports and lint apostrophe
+3ab273d fix: resolve Node ESM imports and lint apostrophe
+33ba18f fix: resolve Node ESM imports and lint apostrophe
+eb3cfb2 fix: resolve Node ESM imports and lint apostrophe
+edac4bf test: reject cross-activity permission escalation
+ab4ceab security: limit staff directory exposure to delegators
+e086e21 test: verify grantor revocation invalidates delegated descendants
+385e550 fix: show effective staff permission state
+569d332 fix: display effective permissions after lineage validation
+510c575 security: require verified identity for staff workspace APIs
+da880d9 fix: add staff delegation revoke action handler
+e3b9750 feat: show and revoke issued staff delegations
+7037f31 feat: add staff delegation revocation endpoint
+c4e67f4 feat: allow staff to revoke their own delegated grants
+06a2933 fix: validate administrator root grant provenance
+d238eec fix: route unauthenticated staff to staff sign-in
+7463b6e fix: correct bearer token matching for staff workspace
+318540d feat: link staff activity delegation from workspace
+cdb2475 test: deny client access to staff permission grant lineage
+491c17c test: cover delegated authority chains and upstream revocation
+74b55a2 security: deny direct client access to permission grants
+4d11045 chore: remove obsolete permission projection checker
+0edef59 fix: parse staff bearer authorization correctly
+29906f3 feat: add staff activity delegation workspace
+8b74b26 feat: list available staff delegation options
+816c7f0 feat: expose only active delegable activities to staff
+18059f5 feat: add staff-to-staff activity delegation endpoint
+7d67363 feat: add authenticated staff workspace token guard
+3b1708c feat: expose activity delegation authority in staff administration
+3ecec7a feat: allow explicit delegation authority on admin grants
+e29d9d2 fix: enforce grant lineage in approval transactions
+6649f7a fix: validate operational cost permissions through grant lineage
+4c60270 feat: add delegated staff activity grants
+ffcced6 feat: expose explicit delegable grant lookup
+8238499 feat: add lineage-aware staff permission checks
+
+--- feat/pudo-2-physical-verification ---
+
+--- feat/pudo-candidate-registration ---
+
+--- feat/pudo-candidate-registry ---
+
+--- feat/pudo-location-activation ---
+1b71c07 feat: add authorised PUDO location activation
+
+--- feat/shipment-quote-lineage-foundation ---
+
+--- feat/staff-activation-in-workspace ---
+0eb2e7b test: clean up workspace activation audit records
+6de5039 fix: correct bearer token header matching
+445efb3 copy: clarify staff invitation email action
+72df149 fix: parse bearer authorization header
+3fd6160 copy: clarify staff sign-in onboarding
+40b3a33 fix: hide staff actions before activation
+6c06bb2 test: cover workspace staff activation
+f732908 fix: validate optional activation request body
+6b27270 fix: preserve staff workspace when status check fails
+51c5b3e refactor: move staff activation into workspace
+271eb7c feat: show staff activation in workspace
+ef33965 feat: activate invited staff by verified identity
+5582e58 feat: support staff activation from workspace
+
+--- feat/staff-invitation-permission-management ---
+
+--- fix/shipment-draft-api-node-tests ---
+
+--- main ---
+
+--- test/admin-authorization-regression ---
+
+--- test/shipment-draft-firestore-store ---
+
+===== ROUTE WORKTREE: COMPLETE UNCOMMITTED PATCH =====
+diff --git a/app/admin/commercial-pricing-definitions/page.tsx b/app/admin/commercial-pricing-definitions/page.tsx
+index d823e7e..00ed921 100644
+--- a/app/admin/commercial-pricing-definitions/page.tsx
++++ b/app/admin/commercial-pricing-definitions/page.tsx
+@@ -9,6 +9,28 @@ import { auth } from "@/lib/firebase";
+ import { logoutAdmin } from "@/lib/auth";
+ import { LogOut } from "lucide-react";
+ 
++type PricingInput = {
++  key: string;
++  label: string;
++  required: boolean;
++  valueType: "number";
++  source?: string;
++  unit: string;
++};
++
++type PricingExpression =
++  | { kind: "input"; key: string }
++  | { kind: "constant"; value: number; unit: string }
++  | { kind: "sum"; terms: PricingExpression[] }
++  | { kind: "multiply"; factors: PricingExpression[]; resultUnit: string };
++
++type PricingComponent = {
++  key: string;
++  label: string;
++  description?: string;
++  expression: PricingExpression;
++};
++
+ type ServiceCode = "standard" | "express" | "scheduled";
+ type Applicability = "applicable" | "not_applicable" | "undetermined";
+ type Treatment =
+@@ -28,9 +50,12 @@ type Configuration = {
+   configurationName: string;
+   serviceCode: ServiceCode;
+   pricingModel?: "fixed" | "calculated" | "hybrid";
+-  inputs: Array<Record<string, unknown>>;
+-  components: Array<Record<string, unknown>>;
+-  activityPricing: { schemaVersion: 1; activities: Activity[] };
++  inputs: PricingInput[];
++  components: PricingComponent[];
++  activityPricing: {
++    schemaVersion: 1;
++    activities: Activity[];
++  };
+ };
+ type Version = Omit<Configuration, "activityPricing"> & { activityPricing?: { schemaVersion: 1; activities: Activity[] }; versionId: string; versionNumber: number; createdAt?: unknown };
+ type Summary = {
+@@ -55,6 +80,16 @@ const CATALOGUE = [
+   ["ACT-11", "Origin PUDO substitution handling"],
+ ] as const;
+ 
++const PRICING_INPUT_SOURCES = [
++  { value: "", label: "Manual / externally supplied" },
++  { value: "route.distance", label: "Route distance" },
++  { value: "parcel.declared.weight", label: "Declared parcel weight" },
++  { value: "parcel.actual.weight", label: "Measured parcel weight" },
++  { value: "parcel.actual.length", label: "Measured parcel length" },
++  { value: "parcel.actual.width", label: "Measured parcel width" },
++  { value: "parcel.actual.height", label: "Measured parcel height" },
++] as const;
++
+ const APPLICABILITY_LABELS: Record<Applicability, string> = {
+   applicable: "Applicable",
+   not_applicable: "Not applicable",
+
+===== ROUTE WORKTREE: UNTRACKED FILE CONTENTS =====
+
+--- lib/server/commercial-route-distance-input-core.ts ---
+/**
+ * Commercial route-distance evidence contract.
+ *
+ * This module validates route-distance evidence only.
+ * It does not calculate routes, convert units, verify road networks,
+ * determine operational movements, or calculate prices.
+ */
+
+export type CommercialRouteDistanceMethod =
+  | "road_network"
+  | "straight_line"
+  | "manual";
+
+export interface CommercialRouteDistanceEvidence {
+  schemaVersion: 1;
+  originOperationalPointRef: string;
+  destinationOperationalPointRef: string;
+  distance: {
+    value: number;
+    unit: string;
+  };
+  method: CommercialRouteDistanceMethod;
+  recordedAt: string;
+  recordedBy: string;
+  source: string;
+}
+
+const ROUTE_DISTANCE_METHODS = new Set<CommercialRouteDistanceMethod>([
+  "road_network",
+  "straight_line",
+  "manual",
+]);
+
+const IDENTIFIER = /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$/;
+
+function assertMap(
+  value: unknown,
+  label: string
+): asserts value is Record<string, unknown> {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    throw new TypeError(label + " must be an object");
+  }
+
+  const prototype = Object.getPrototypeOf(value);
+
+  if (prototype !== Object.prototype && prototype !== null) {
+    throw new TypeError(label + " must be a plain object");
+  }
+}
+
+function assertIdentifier(value: unknown, label: string): asserts value is string {
+  if (typeof value !== "string" || !IDENTIFIER.test(value)) {
+    throw new TypeError(label + " must be a valid non-empty identifier");
+  }
+}
+
+function assertTimestamp(value: unknown, label: string): asserts value is string {
+  if (
+    typeof value !== "string" ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/.test(value) ||
+    !Number.isFinite(Date.parse(value))
+  ) {
+    throw new TypeError(
+      label + " must be an ISO 8601 timestamp with timezone"
+    );
+  }
+}
+
+/**
+ * Validates route-distance evidence while preserving its original values
+ * and provenance.
+ *
+ * No distance conversion, route calculation, or verification is performed.
+ */
+export function assertCommercialRouteDistanceEvidence(
+  value: unknown
+): asserts value is CommercialRouteDistanceEvidence {
+  assertMap(value, "Commercial route-distance evidence");
+
+  const allowedFields = new Set([
+    "schemaVersion",
+    "originOperationalPointRef",
+    "destinationOperationalPointRef",
+    "distance",
+    "method",
+    "recordedAt",
+    "recordedBy",
+    "source",
+  ]);
+
+  if (Object.keys(value).some((key) => !allowedFields.has(key))) {
+    throw new TypeError(
+      "Commercial route-distance evidence contains an unsupported field"
+    );
+  }
+
+  if (value.schemaVersion !== 1) {
+    throw new TypeError(
+      "Commercial route-distance evidence schema version is unsupported"
+    );
+  }
+
+  assertIdentifier(
+    value.originOperationalPointRef,
+    "Route origin operational point reference"
+  );
+
+  assertIdentifier(
+    value.destinationOperationalPointRef,
+    "Route destination operational point reference"
+  );
+
+  if (
+    value.originOperationalPointRef === value.destinationOperationalPointRef
+  ) {
+    throw new TypeError(
+      "Route origin and destination operational points must be different"
+    );
+  }
+
+  assertMap(value.distance, "Route distance");
+
+  if (
+    Object.keys(value.distance).some(
+      (key) => key !== "value" && key !== "unit"
+    )
+  ) {
+    throw new TypeError("Route distance contains an unsupported field");
+  }
+
+  if (
+    typeof value.distance.value !== "number" ||
+    !Number.isFinite(value.distance.value) ||
+    value.distance.value <= 0
+  ) {
+    throw new TypeError(
+      "Route distance value must be a finite positive number"
+    );
+  }
+
+  if (
+    typeof value.distance.unit !== "string" ||
+    !value.distance.unit.trim() ||
+    value.distance.unit.length > 40
+  ) {
+    throw new TypeError(
+      "Route distance unit must be a non-empty string"
+    );
+  }
+
+  if (
+    typeof value.method !== "string" ||
+    !ROUTE_DISTANCE_METHODS.has(
+      value.method as CommercialRouteDistanceMethod
+    )
+  ) {
+    throw new TypeError("Route distance method is unsupported");
+  }
+
+  assertTimestamp(value.recordedAt, "Route distance recordedAt");
+
+  assertIdentifier(value.recordedBy, "Route distance recordedBy");
+
+  if (
+    typeof value.source !== "string" ||
+    !value.source.trim() ||
+    value.source.length > 80
+  ) {
+    throw new TypeError(
+      "Route distance source must be a non-empty string"
+    );
+  }
+}
+--- lib/server/commercial-route-pricing-input-adapter-core.ts ---
+/**
+ * Maps explicitly configured route-distance evidence into commercial
+ * pricing inputs.
+ *
+ * This adapter does not calculate routes, convert units, verify distance
+ * evidence, or calculate prices.
+ *
+ * Missing route evidence is never defaulted to zero.
+ */
+
+import {
+  assertCommercialPricingConfiguration,
+  type CommercialPricingConfiguration,
+} from "./commercial-pricing-engine-core.ts";
+
+import {
+  assertCommercialRouteDistanceEvidence,
+  type CommercialRouteDistanceEvidence,
+} from "./commercial-route-distance-input-core.ts";
+
+/**
+ * Identifies a supported route pricing input source.
+ */
+type RouteDistanceSource = {
+  measurement: "distance";
+};
+
+function parseRouteDistanceSource(
+  source: string
+): RouteDistanceSource | null {
+  if (source === "route.distance") {
+    return {
+      measurement: "distance",
+    };
+  }
+
+  if (source.startsWith("route.")) {
+    throw new TypeError(
+      "Unsupported route pricing input source: " + source
+    );
+  }
+
+  return null;
+}
+
+/**
+ * Returns only values mapped from explicitly configured route-distance
+ * evidence.
+ *
+ * The configured pricing input unit must exactly match the evidence unit.
+ * No conversion or normalization is performed.
+ *
+ * Non-route inputs remain the responsibility of their respective adapters.
+ *
+ * Missing evidence is omitted so the commercial pricing engine can reject
+ * a missing required input.
+ */
+
+export function buildCommercialRoutePricingInputValues(
+  configuration: CommercialPricingConfiguration,
+  routeEvidence: CommercialRouteDistanceEvidence | undefined
+): Readonly<Record<string, number>> {
+  assertCommercialPricingConfiguration(configuration);
+
+  if (routeEvidence !== undefined) {
+    assertCommercialRouteDistanceEvidence(routeEvidence);
+  }
+
+  const values: Record<string, number> = {};
+
+  for (const definition of configuration.inputs) {
+    if (definition.source === undefined) {
+      continue;
+    }
+
+    const source = parseRouteDistanceSource(definition.source);
+
+    if (source === null) {
+      continue;
+    }
+
+    if (routeEvidence === undefined) {
+      continue;
+    }
+
+    const distance = routeEvidence.distance;
+
+    if (distance.unit !== definition.unit) {
+      throw new TypeError(
+        "Route distance unit does not match pricing input unit: " +
+          definition.key
+      );
+    }
+
+    values[definition.key] = distance.value;
+  }
+
+  return values;
+}
+
+--- tests/commercial-route-pricing-input-adapter.test.mjs ---
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+
+import {
+  assertCommercialRouteDistanceEvidence,
+} from "../lib/server/commercial-route-distance-input-core.ts";
+
+import {
+  buildCommercialRoutePricingInputValues,
+} from "../lib/server/commercial-route-pricing-input-adapter-core.ts";
+
+import {
+  evaluateCommercialPricing,
+} from "../lib/server/commercial-pricing-engine-core.ts";
+
+const routeEvidence = {
+  schemaVersion: 1,
+  originOperationalPointRef: "pudo:lagos-01",
+  destinationOperationalPointRef: "pudo:abuja-01",
+  distance: {
+    value: 735,
+    unit: "km",
+  },
+  method: "road_network",
+  recordedAt: "2026-11-14T10:00:00.000Z",
+  recordedBy: "staff:uid-1",
+  source: "approved_route_distance_record",
+};
+
+const configuration = {
+  schemaVersion: 1,
+  configurationName: "Route distance adapter test",
+  serviceCode: "standard",
+  pricingModel: "calculated",
+  inputs: [
+    {
+      key: "routeDistance",
+      label: "Route distance",
+      required: true,
+      valueType: "number",
+      source: "route.distance",
+      unit: "km",
+    },
+  ],
+  components: [
+    {
+      key: "distance_component",
+      label: "Distance component",
+      expression: {
+        kind: "input",
+        key: "routeDistance",
+      },
+    },
+  ],
+};
+
+describe("commercial route distance evidence", () => {
+  it("accepts supported distance evidence methods", () => {
+    for (const method of ["road_network", "straight_line", "manual"]) {
+      assert.doesNotThrow(() =>
+        assertCommercialRouteDistanceEvidence({
+          ...routeEvidence,
+          method,
+        })
+      );
+    }
+  });
+
+  it("rejects missing or invalid origin and destination references", () => {
+    for (const invalid of [
+      { ...routeEvidence, originOperationalPointRef: "" },
+      { ...routeEvidence, destinationOperationalPointRef: "" },
+      {
+        ...routeEvidence,
+        originOperationalPointRef: "pudo:same",
+        destinationOperationalPointRef: "pudo:same",
+      },
+      (() => {
+        const value = { ...routeEvidence };
+        delete value.originOperationalPointRef;
+        return value;
+      })(),
+    ]) {
+      assert.throws(() =>
+        assertCommercialRouteDistanceEvidence(invalid)
+      );
+    }
+  });
+
+  it("rejects invalid distance values and units", () => {
+    for (const distance of [
+      { value: 0, unit: "km" },
+      { value: -1, unit: "km" },
+      { value: Number.NaN, unit: "km" },
+      { value: Number.POSITIVE_INFINITY, unit: "km" },
+      { value: 10, unit: "" },
+      { value: 10, unit: " ".repeat(41) },
+    ]) {
+      assert.throws(() =>
+        assertCommercialRouteDistanceEvidence({
+          ...routeEvidence,
+          distance,
+        })
+      );
+    }
+  });
+
+  it("rejects unsupported methods and invalid provenance", () => {
+    for (const invalid of [
+      { ...routeEvidence, method: "estimated" },
+      { ...routeEvidence, recordedAt: "2026-11-14T10:00:00" },
+      { ...routeEvidence, recordedBy: "" },
+      { ...routeEvidence, source: "" },
+      { ...routeEvidence, schemaVersion: 2 },
+      { ...routeEvidence, extraField: true },
+    ]) {
+      assert.throws(() =>
+        assertCommercialRouteDistanceEvidence(invalid)
+      );
+    }
+  });
+});
+
+describe("commercial route pricing input adapter", () => {
+  it("maps explicitly configured route distance evidence", () => {
+    assert.deepEqual(
+      buildCommercialRoutePricingInputValues(
+        configuration,
+        routeEvidence
+      ),
+      { routeDistance: 735 }
+    );
+  });
+
+  it("omits missing route evidence so the engine rejects required inputs", () => {
+    const values = buildCommercialRoutePricingInputValues(
+      configuration,
+      undefined
+    );
+
+    assert.deepEqual(values, {});
+
+    assert.throws(
+      () => evaluateCommercialPricing({
+        definitionId: "definition-1",
+        versionId: "version-1",
+        versionNumber: 1,
+        configuration,
+        values,
+      }),
+      /Required pricing input is missing: routeDistance/
+    );
+  });
+
+  it("rejects unit mismatches without conversion", () => {
+    const wrongUnit = {
+      ...configuration,
+      inputs: [{
+        ...configuration.inputs[0],
+        unit: "miles",
+      }],
+    };
+
+    assert.throws(
+      () => buildCommercialRoutePricingInputValues(
+        wrongUnit,
+        routeEvidence
+      ),
+      /unit does not match/
+    );
+  });
+
+  it("rejects unsupported route input sources", () => {
+    const unsupported = {
+      ...configuration,
+      inputs: [{
+        ...configuration.inputs[0],
+        source: "route.duration",
+      }],
+    };
+
+    assert.throws(
+      () => buildCommercialRoutePricingInputValues(
+        unsupported,
+        undefined
+      ),
+      /Unsupported route pricing input source/
+    );
+  });
+
+  it("ignores unrelated input sources", () => {
+    const mixed = {
+      ...configuration,
+      inputs: [
+        ...configuration.inputs,
+        {
+          key: "parcelWeight",
+          label: "Parcel weight",
+          required: false,
+          valueType: "number",
+          source: "parcel.actual.weight",
+          unit: "kg",
+        },
+      ],
+    };
+
+    assert.deepEqual(
+      buildCommercialRoutePricingInputValues(
+        mixed,
+        routeEvidence
+      ),
+      { routeDistance: 735 }
+    );
+  });
+
+  it("keeps route-based evaluation explicitly non-authoritative", () => {
+    const values = buildCommercialRoutePricingInputValues(
+      configuration,
+      routeEvidence
+    );
+
+    const result = evaluateCommercialPricing({
+      definitionId: "definition-1",
+      versionId: "version-1",
+      versionNumber: 1,
+      configuration,
+      values,
+    });
+
+    assert.equal(result.authority, "non_authoritative");
+    assert.equal(result.components[0].value, 735);
+  });
+});
+
+===== VEHICLE/TRANSPORT BRANCH UNIQUE COMMITS =====
+b2ed1c0 feat: add straight-line distance utility
+ lib/server/straight-line-distance.ts  | 76 +++++++++++++++++++++++++++++++++++
+ tests/straight-line-distance.test.mjs | 54 +++++++++++++++++++++++++
+ 2 files changed, 130 insertions(+)
+
+===== STASH 0: COMPLETE PATCH =====
+diff --git a/app/admin/operational-cost-definitions/page.tsx b/app/admin/operational-cost-definitions/page.tsx
+index eb634e2..67c5672 100644
+--- a/app/admin/operational-cost-definitions/page.tsx
++++ b/app/admin/operational-cost-definitions/page.tsx
+@@ -14,7 +14,35 @@ type InputDefinition = { key: string; label: string; description?: string; value
+ type EvidenceItem = { sourceReference: string; sourceOwner: string; sourceType: string; representedScope: string; observationPeriod: { startDate?: string; endDate?: string; description?: string }; coverage: string; collectionMethod: string; originalValue?: string; originalUnit?: string; originalCurrencyCode?: string; originalPrecision?: number; limitations?: string };
+ type TreatmentClass = "direct" | "shared" | "included" | "exception_related";
+ type ConfigurationState = "not_configured" | "configured" | "no_separate_cost";
+-type CostComponent = { key: string; label: string; description?: string; configurationState?: ConfigurationState; amount?: string | null; currencyCode?: string | null; basis?: string | null; noSeparateCostReason?: string; treatment?: string; treatmentClass?: TreatmentClass; evidenceDescription?: string; evidenceItems?: EvidenceItem[] };
++type TransportArrangement =
++  | "business_owned_vehicle"
++  | "driver_owned_vehicle"
++  | "external_transport_partner";
++
++type TransportAgreementBasis =
++  | "per_trip"
++  | "distance"
++  | "per_parcel"
++  | "fixed"
++  | "time"
++  | "hybrid"
++  | "negotiated";
++type CostComponent = {
++  key: string;
++  label: string;
++  description?: string;
++  configurationState?: ConfigurationState;
++  amount?: string | null;
++  currencyCode?: string | null;
++  basis?: string | null;
++  transportArrangement?: TransportArrangement;
++  agreementBasis?: TransportAgreementBasis;
++  noSeparateCostReason?: string;
++  treatment?: string;
++  treatmentClass?: TreatmentClass;
++  evidenceDescription?: string;
++  evidenceItems?: EvidenceItem[],
++};
+ type DefinitionPayload = { activityCode: string; activityName: string; activityDescription: string; applicability: "general"; inputs: InputDefinition[]; costComponents: CostComponent[] };
+ type WorkflowState = "draft" | "pending_operations_validation" | "pending_finance_review" | "pending_independent_approval" | "changes_requested" | "approved" | "rejected";
+ type Workflow = { state: WorkflowState };
+@@ -224,6 +252,24 @@ export default function OperationalCostDefinitionsPage() {
+     }));
+   }
+ 
++  // function updateComponent(index: number, field: keyof CostComponent, value: string) {
++  //   setForm((current) => ({
++  //     ...current,
++  //     costComponents: current.costComponents.map((item, itemIndex) => {
++  //       if (itemIndex !== index) return item;
++
++  //       const next = { ...item };
++
++  //       if ((field === "amount" || field === "currencyCode") && value.trim() === "") {
++  //         delete next[field];
++  //         return next;
++  //       }
++
++  //       return { ...next, [field]: value } as CostComponent;
++  //     }),
++  //   }));
++  // }
++
+   function updateComponent(index: number, field: keyof CostComponent, value: string) {
+     setForm((current) => ({
+       ...current,
+@@ -232,8 +278,12 @@ export default function OperationalCostDefinitionsPage() {
+ 
+         const next = { ...item };
+ 
+-        if ((field === "amount" || field === "currencyCode") && value.trim() === "") {
+-          delete next[field];
++        if (value.trim() === "") {
++          if (field === "amount") delete next.amount;
++          else if (field === "currencyCode") delete next.currencyCode;
++          else if (field === "transportArrangement") delete next.transportArrangement;
++          else if (field === "agreementBasis") delete next.agreementBasis;
++
+           return next;
+         }
+ 
+@@ -267,9 +317,9 @@ export default function OperationalCostDefinitionsPage() {
+         const item = { ...evidenceItems[evidenceIndex] };
+         if (field === "observationPeriod") return component;
+         if (field === "sourceReference" || field === "sourceOwner" || field === "sourceType" ||
+-            field === "representedScope" || field === "coverage" || field === "collectionMethod" ||
+-            field === "originalValue" || field === "originalUnit" || field === "originalCurrencyCode" ||
+-            field === "limitations") {
++          field === "representedScope" || field === "coverage" || field === "collectionMethod" ||
++          field === "originalValue" || field === "originalUnit" || field === "originalCurrencyCode" ||
++          field === "limitations") {
+           if (value.trim() === "" && ["originalValue", "originalUnit", "originalCurrencyCode", "limitations"].includes(field)) {
+             delete (item as Record<string, unknown>)[field];
+           } else {
+@@ -417,171 +467,235 @@ export default function OperationalCostDefinitionsPage() {
+ 
+         {activationStatus === "pending" ? (
+           <section className="cost-panel">
+-            <div className="cost-panel-heading"><div><span className="section-label">STAFF ONBOARDING</span><h2>Complete your staff activation</h2></div><ShieldCheck size={22}/></div>
++            <div className="cost-panel-heading"><div><span className="section-label">STAFF ONBOARDING</span><h2>Complete your staff activation</h2></div><ShieldCheck size={22} /></div>
+             <p>Your email address is verified and your invitation is ready. Activate your staff account to complete onboarding. This does not assign operational permissions; those are managed separately by an authorized administrator.</p>
+             <div className="cost-form-actions"><button type="button" className="cost-primary-button" onClick={() => void activateStaffAccount()} disabled={activationBusy}>{activationBusy ? "Activating…" : "Activate my staff account"}</button></div>
+           </section>
+         ) : activationStatus === "expired" ? (
+           <section className="cost-panel">
+-            <div className="cost-panel-heading"><div><span className="section-label">STAFF ONBOARDING</span><h2>Invitation expired</h2></div><AlertCircle size={22}/></div>
++            <div className="cost-panel-heading"><div><span className="section-label">STAFF ONBOARDING</span><h2>Invitation expired</h2></div><AlertCircle size={22} /></div>
+             <p>Your staff invitation has expired. Please contact the administrator who invited you and ask them to issue a new invitation.</p>
+           </section>
+         ) : (
+-        <div className="cost-workspace">
+-          <section className="cost-panel cost-list-panel">
+-            <div className="cost-panel-heading">
+-              <div><span className="section-label">01 / REGISTER</span><h2>Activity definitions</h2></div>
+-              <button type="button" className="cost-icon-button" onClick={() => void loadDefinitions(token)} aria-label="Refresh definitions" disabled={loading}>{loading ? <Loader2 size={17} className="cost-spin" /> : <RefreshCw size={17} />}</button>
+-            </div>
+-            {loading ? <div className="cost-empty"><Loader2 size={22} className="cost-spin" /><span>Loading definitions...</span></div> :
+-              listError ? <div className="cost-empty"><AlertCircle size={25} /><strong>Unable to load definitions</strong><p>{listError}</p></div> :
+-              definitions.length === 0 ? <div className="cost-empty"><ClipboardList size={28} /><strong>No definitions yet</strong><p>Start with an evidence-backed draft. No activities or costs are preconfigured.</p></div> :
+-              <div className="cost-definition-list">
+-                {definitions.map((item) => {
+-                  const itemState = item.workflow?.state ?? "draft";
+-                  return <button type="button" key={item.definitionId} className={"cost-definition-item" + (selected?.definitionId === item.definitionId ? " is-selected" : "")}
+-                    onClick={() => { setEditing(false); setCreating(false); void loadDetail(item.definitionId, token); }}>
+-                    <span className="cost-definition-code">{item.currentVersion?.activityCode ?? "ACT"}</span>
+-                    <span className="cost-definition-main"><strong>{item.currentVersion?.activityName ?? "Untitled activity"}</strong><small>Version {item.currentVersionNumber} · {STATE_LABELS[itemState]}</small></span>
+-                    <span className={"cost-state-dot cost-state-" + itemState} />
+-                  </button>;
+-                })}
+-              </div>}
+-          </section>
+-
+-          <section className="cost-panel cost-detail-panel">
+-            {editing ? (
+-              <form onSubmit={saveDraft}>
+-                <div className="cost-panel-heading">
+-                  <div><span className="section-label">02 / {creating ? "NEW DEFINITION" : "NEW VERSION"}</span><h2>{creating ? "Create a draft" : "Revise current version"}</h2></div>
+-                  <button type="button" className="cost-icon-button" onClick={() => { setEditing(false); setCreating(false); }} aria-label="Close editor"><X size={18} /></button>
+-                </div>
+-                <div className="cost-form-grid">
+-                  <label className="cost-field cost-field-wide"><span>Activity catalogue</span>
+-                    <select value={form.activityCode} disabled={!creating} onChange={(event) => {
+-                      const activity = ACTIVITIES.find((item) => item[0] === event.target.value);
+-                      setForm((current) => ({ ...current, activityCode: event.target.value, activityName: activity?.[1] ?? current.activityName }));
+-                    }}>{ACTIVITIES.map((item) => <option key={item[0]} value={item[0]}>{item[0]} — {item[1]}</option>)}</select>
+-                    <small>ACT-01 to ACT-11 only. ACT-12 remains inactive.</small>
+-                  </label>
+-                  <label className="cost-field cost-field-wide"><span>Activity description</span><textarea rows={3} value={form.activityDescription} maxLength={500} onChange={(event) => setForm((current) => ({ ...current, activityDescription: event.target.value }))} placeholder="Describe the validated scope of this activity." /></label>
+-                </div>
+-
+-                <div className="cost-section-heading"><div><h3>Operational inputs</h3><p>Only add inputs supported by validated activity evidence.</p></div><button type="button" className="cost-secondary-button" onClick={() => setForm((current) => ({ ...current, inputs: [...current.inputs, { key: "", label: "", valueType: "string", required: false }] }))}><Plus size={15} /> Add input</button></div>
+-                {form.inputs.length === 0 && <p className="cost-inline-empty">No inputs configured for this version.</p>}
+-                {form.inputs.map((input, index) => <div className="cost-editor-card" key={"input-" + index}>
+-                  <div className="cost-editor-card-heading"><strong>Input {index + 1}</strong><button type="button" onClick={() => setForm((current) => ({ ...current, inputs: current.inputs.filter((_, i) => i !== index) }))}>Remove</button></div>
++          <div className="cost-workspace">
++            <section className="cost-panel cost-list-panel">
++              <div className="cost-panel-heading">
++                <div><span className="section-label">01 / REGISTER</span><h2>Activity definitions</h2></div>
++                <button type="button" className="cost-icon-button" onClick={() => void loadDefinitions(token)} aria-label="Refresh definitions" disabled={loading}>{loading ? <Loader2 size={17} className="cost-spin" /> : <RefreshCw size={17} />}</button>
++              </div>
++              {loading ? <div className="cost-empty"><Loader2 size={22} className="cost-spin" /><span>Loading definitions...</span></div> :
++                listError ? <div className="cost-empty"><AlertCircle size={25} /><strong>Unable to load definitions</strong><p>{listError}</p></div> :
++                  definitions.length === 0 ? <div className="cost-empty"><ClipboardList size={28} /><strong>No definitions yet</strong><p>Start with an evidence-backed draft. No activities or costs are preconfigured.</p></div> :
++                    <div className="cost-definition-list">
++                      {definitions.map((item) => {
++                        const itemState = item.workflow?.state ?? "draft";
++                        return <button type="button" key={item.definitionId} className={"cost-definition-item" + (selected?.definitionId === item.definitionId ? " is-selected" : "")}
++                          onClick={() => { setEditing(false); setCreating(false); void loadDetail(item.definitionId, token); }}>
++                          <span className="cost-definition-code">{item.currentVersion?.activityCode ?? "ACT"}</span>
++                          <span className="cost-definition-main"><strong>{item.currentVersion?.activityName ?? "Untitled activity"}</strong><small>Version {item.currentVersionNumber} · {STATE_LABELS[itemState]}</small></span>
++                          <span className={"cost-state-dot cost-state-" + itemState} />
++                        </button>;
++                      })}
++                    </div>}
++            </section>
++
++            <section className="cost-panel cost-detail-panel">
++              {editing ? (
++                <form onSubmit={saveDraft}>
++                  <div className="cost-panel-heading">
++                    <div><span className="section-label">02 / {creating ? "NEW DEFINITION" : "NEW VERSION"}</span><h2>{creating ? "Create a draft" : "Revise current version"}</h2></div>
++                    <button type="button" className="cost-icon-button" onClick={() => { setEditing(false); setCreating(false); }} aria-label="Close editor"><X size={18} /></button>
++                  </div>
+                   <div className="cost-form-grid">
+-                    <label className="cost-field"><span>Stable key</span><input value={input.key} maxLength={64} onChange={(event) => updateInput(index, "key", event.target.value)} placeholder="e.g. workQuantity" /></label>
+-                    <label className="cost-field"><span>Label</span><input value={input.label} maxLength={120} onChange={(event) => updateInput(index, "label", event.target.value)} placeholder="Input name" /></label>
+-                    <label className="cost-field"><span>Value type</span><select value={input.valueType} onChange={(event) => updateInput(index, "valueType", event.target.value as InputType)}><option value="string">Text</option><option value="number">Number</option><option value="boolean">Yes / No</option><option value="date">Date</option></select></label>
+-                    <label className="cost-field"><span>Source</span><input value={input.source ?? ""} maxLength={200} onChange={(event) => updateInput(index, "source", event.target.value)} placeholder="Authoritative source" /></label>
+-                    <label className="cost-field"><span>Unit</span><input value={input.unit ?? ""} maxLength={80} onChange={(event) => updateInput(index, "unit", event.target.value)} placeholder="Only if established" /></label>
+-                    <label className="cost-field"><span>Precision</span><input type="number" min="0" step="1" value={input.precision ?? ""} disabled={input.valueType !== "number"} onChange={(event) => updateInput(index, "precision", event.target.value === "" ? undefined : Number(event.target.value))} /></label>
+-                    <label className="cost-field"><span>Description</span><input value={input.description ?? ""} maxLength={500} onChange={(event) => updateInput(index, "description", event.target.value)} placeholder="Explain the input." /></label>
+-                    <label className="cost-field"><span>Approved conversion</span><input value={input.conversion ?? ""} maxLength={200} onChange={(event) => updateInput(index, "conversion", event.target.value)} placeholder="Leave blank if none." /></label>
+-                    <label className="cost-checkbox"><input type="checkbox" checked={input.required} onChange={(event) => updateInput(index, "required", event.target.checked)} /> Required input</label>
++                    <label className="cost-field cost-field-wide"><span>Activity catalogue</span>
++                      <select value={form.activityCode} disabled={!creating} onChange={(event) => {
++                        const activity = ACTIVITIES.find((item) => item[0] === event.target.value);
++                        // setForm((current) => ({ ...current, activityCode: event.target.value, activityName: activity?.[1] ?? current.activityName }));
++                        setForm((current) => ({
++                          ...current,
++                          activityCode: event.target.value,
++                          activityName: activity?.[1] ?? current.activityName,
++                          costComponents: event.target.value === "ACT-04"
++                            ? current.costComponents
++                            : current.costComponents.map((component) => {
++                              const next = { ...component };
++                              delete next.transportArrangement;
++                              delete next.agreementBasis;
++                              return next;
++                            }),
++                        }));
++                      }}>{ACTIVITIES.map((item) => <option key={item[0]} value={item[0]}>{item[0]} — {item[1]}</option>)}</select>
++                      <small>ACT-01 to ACT-11 only. ACT-12 remains inactive.</small>
++                    </label>
++                    <label className="cost-field cost-field-wide"><span>Activity description</span><textarea rows={3} value={form.activityDescription} maxLength={500} onChange={(event) => setForm((current) => ({ ...current, activityDescription: event.target.value }))} placeholder="Describe the validated scope of this activity." /></label>
+                   </div>
+-                </div>)}
+ 
+-                <div className="cost-section-heading"><div><h3>Cost components</h3><p>Do not enter amounts, currencies or bases without source evidence.</p></div><button type="button" className="cost-secondary-button" onClick={() => setForm((current) => ({ ...current, costComponents: [...current.costComponents, { key: "", label: "", configurationState: "not_configured", amount: null }] }))}><Plus size={15} /> Add component</button></div>
+-                {form.costComponents.length === 0 && <p className="cost-inline-empty">No cost components yet. An incomplete draft can be saved but cannot be submitted.</p>}
+-                {form.costComponents.map((component, index) => <div className="cost-editor-card" key={"component-" + index}>
+-                  <div className="cost-editor-card-heading"><strong>Cost component {index + 1}</strong><button type="button" onClick={() => setForm((current) => ({ ...current, costComponents: current.costComponents.filter((_, i) => i !== index) }))}>Remove</button></div>
+-                  <div className="cost-form-grid">
+-                    <label className="cost-field"><span>Stable key</span><input value={component.key} maxLength={64} onChange={(event) => updateComponent(index, "key", event.target.value)} placeholder="e.g. partnerService" /></label>
+-                    <label className="cost-field"><span>Component label</span><input value={component.label} maxLength={120} onChange={(event) => updateComponent(index, "label", event.target.value)} placeholder="Cost description" /></label>
+-                    <label className="cost-field"><span>Configuration state</span><select value={configurationStateOf(component)} onChange={(event) => updateConfigurationState(index, event.target.value as ConfigurationState)}><option value="not_configured">Not configured</option><option value="configured">Configured</option><option value="no_separate_cost">No separate cost</option></select></label>
+-                    {configurationStateOf(component) === "configured" ? <>
+-                      <label className="cost-field"><span>Amount (decimal)</span><input inputMode="decimal" value={component.amount ?? ""} maxLength={40} onChange={(event) => updateComponent(index, "amount", event.target.value)} placeholder="Enter a supported amount" /></label>
+-                      <label className="cost-field"><span>Currency code</span><input value={component.currencyCode ?? ""} maxLength={3} onChange={(event) => updateComponent(index, "currencyCode", event.target.value.toUpperCase())} placeholder="Explicit ISO code" /></label>
+-                      <label className="cost-field"><span>Basis / unit</span><input value={component.basis ?? ""} maxLength={120} onChange={(event) => updateComponent(index, "basis", event.target.value)} placeholder="e.g. per parcel, kilometre, trip" /></label>
+-                    </> : configurationStateOf(component) === "no_separate_cost" ? <>
+-                      <label className="cost-field cost-field-wide"><span>Reason no separate cost applies</span><textarea rows={2} value={component.noSeparateCostReason ?? ""} maxLength={1000} onChange={(event) => updateComponent(index, "noSeparateCostReason", event.target.value)} placeholder="Explain the supported scope and why no separate payment applies." /></label>
+-                      <p className="cost-inline-empty">This is not a zero amount or a free customer service. Supporting evidence is required before submission.</p>
+-                    </> : <p className="cost-inline-empty">Cost is unknown or not yet configured. It is not treated as zero and cannot be submitted for approval.</p>}
+-                    <label className="cost-field"><span>Legacy treatment note</span><input value={component.treatment ?? ""} maxLength={80} onChange={(event) => updateComponent(index, "treatment", event.target.value)} placeholder="Historical free-text value" /></label>
+-                    <label className="cost-field"><span>Finance treatment classification</span><select value={component.treatmentClass ?? ""} onChange={(event) => updateComponent(index, "treatmentClass", event.target.value)}><option value="">Not classified</option><option value="direct">Direct</option><option value="shared">Shared</option><option value="included">Included</option><option value="exception_related">Exception-related</option></select></label>
+-                    <label className="cost-field cost-field-wide"><span>Legacy evidence description</span><textarea rows={3} value={component.evidenceDescription ?? ""} maxLength={1000} onChange={(event) => updateComponent(index, "evidenceDescription", event.target.value)} placeholder="Historical narrative evidence note. This does not satisfy the new structured-evidence submission requirement." /></label>
+-                    <div className="cost-field-wide">
+-                      <div className="cost-section-heading"><div><h4>Structured evidence</h4><p>Each source is recorded separately. Do not invent missing source details.</p></div><button type="button" className="cost-secondary-button" onClick={() => setForm((current) => ({ ...current, costComponents: current.costComponents.map((item, itemIndex) => itemIndex === index ? { ...item, evidenceItems: [...(item.evidenceItems ?? []), { sourceReference: "", sourceOwner: "", sourceType: "", representedScope: "", observationPeriod: {}, coverage: "", collectionMethod: "" }] } : item) }))}><Plus size={14} /> Add evidence</button></div>
+-                      {(component.evidenceItems ?? []).map((evidence, evidenceIndex) => <div className="cost-editor-card" key={"evidence-" + index + "-" + evidenceIndex}>
+-                        <div className="cost-editor-card-heading"><strong>Evidence source {evidenceIndex + 1}</strong><button type="button" onClick={() => setForm((current) => ({ ...current, costComponents: current.costComponents.map((item, itemIndex) => itemIndex === index ? { ...item, evidenceItems: (item.evidenceItems ?? []).filter((_, i) => i !== evidenceIndex) } : item) }))}>Remove</button></div>
+-                        <div className="cost-form-grid">
+-                          <label className="cost-field"><span>Source reference</span><input value={evidence.sourceReference} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "sourceReference", event.target.value)} /></label>
+-                          <label className="cost-field"><span>Source owner</span><input value={evidence.sourceOwner} maxLength={200} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "sourceOwner", event.target.value)} /></label>
+-                          <label className="cost-field"><span>Source type</span><input value={evidence.sourceType} maxLength={120} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "sourceType", event.target.value)} /></label>
+-                          <label className="cost-field"><span>Represented scope</span><input value={evidence.representedScope} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "representedScope", event.target.value)} /></label>
+-                          <label className="cost-field"><span>Observation start</span><input type="date" value={evidence.observationPeriod?.startDate ?? ""} onChange={(event) => updateEvidencePeriod(index, evidenceIndex, "startDate", event.target.value)} /></label>
+-                          <label className="cost-field"><span>Observation end</span><input type="date" value={evidence.observationPeriod?.endDate ?? ""} onChange={(event) => updateEvidencePeriod(index, evidenceIndex, "endDate", event.target.value)} /></label>
+-                          <label className="cost-field cost-field-wide"><span>Period description (if dates unavailable)</span><input value={evidence.observationPeriod?.description ?? ""} maxLength={300} onChange={(event) => updateEvidencePeriod(index, evidenceIndex, "description", event.target.value)} /></label>
+-                          <label className="cost-field"><span>Coverage / population</span><input value={evidence.coverage} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "coverage", event.target.value)} /></label>
+-                          <label className="cost-field"><span>Collection method</span><input value={evidence.collectionMethod} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "collectionMethod", event.target.value)} /></label>
+-                          <label className="cost-field"><span>Original value (optional)</span><input value={evidence.originalValue ?? ""} maxLength={80} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "originalValue", event.target.value)} /></label>
+-                          <label className="cost-field"><span>Original unit</span><input value={evidence.originalUnit ?? ""} maxLength={80} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "originalUnit", event.target.value)} /></label>
+-                          <label className="cost-field"><span>Original currency (if monetary)</span><input value={evidence.originalCurrencyCode ?? ""} maxLength={3} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "originalCurrencyCode", event.target.value.toUpperCase())} /></label>
+-                          <label className="cost-field"><span>Original precision</span><input type="number" min="0" step="1" value={evidence.originalPrecision ?? ""} onChange={(event) => setForm((current) => ({ ...current, costComponents: current.costComponents.map((item, itemIndex) => { if (itemIndex !== index) return item; const items = [...(item.evidenceItems ?? [])]; const next = { ...items[evidenceIndex] }; if (event.target.value === "") delete next.originalPrecision; else next.originalPrecision = Number(event.target.value); items[evidenceIndex] = next; return { ...item, evidenceItems: items }; }) }))} /></label>
+-                          <label className="cost-field cost-field-wide"><span>Known limitations</span><textarea rows={2} value={evidence.limitations ?? ""} maxLength={1000} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "limitations", event.target.value)} /></label>
+-                        </div>
+-                      </div>)}
+-                      {(component.evidenceItems ?? []).length === 0 && <p className="cost-inline-empty">No structured evidence sources added. This component cannot be submitted for review until evidence is recorded.</p>}
++                  <div className="cost-section-heading"><div><h3>Operational inputs</h3><p>Only add inputs supported by validated activity evidence.</p></div><button type="button" className="cost-secondary-button" onClick={() => setForm((current) => ({ ...current, inputs: [...current.inputs, { key: "", label: "", valueType: "string", required: false }] }))}><Plus size={15} /> Add input</button></div>
++                  {form.inputs.length === 0 && <p className="cost-inline-empty">No inputs configured for this version.</p>}
++                  {form.inputs.map((input, index) => <div className="cost-editor-card" key={"input-" + index}>
++                    <div className="cost-editor-card-heading"><strong>Input {index + 1}</strong><button type="button" onClick={() => setForm((current) => ({ ...current, inputs: current.inputs.filter((_, i) => i !== index) }))}>Remove</button></div>
++                    <div className="cost-form-grid">
++
++                      <label className="cost-field"><span>Stable key</span><input value={input.key} maxLength={64} onChange={(event) => updateInput(index, "key", event.target.value)} placeholder="e.g. workQuantity" /></label>
++                      <label className="cost-field"><span>Label</span><input value={input.label} maxLength={120} onChange={(event) => updateInput(index, "label", event.target.value)} placeholder="Input name" /></label>
++                      <label className="cost-field"><span>Value type</span><select value={input.valueType} onChange={(event) => updateInput(index, "valueType", event.target.value as InputType)}><option value="string">Text</option><option value="number">Number</option><option value="boolean">Yes / No</option><option value="date">Date</option></select></label>
++                      <label className="cost-field"><span>Source</span><input value={input.source ?? ""} maxLength={200} onChange={(event) => updateInput(index, "source", event.target.value)} placeholder="Authoritative source" /></label>
++                      <label className="cost-field"><span>Unit</span><input value={input.unit ?? ""} maxLength={80} onChange={(event) => updateInput(index, "unit", event.target.value)} placeholder="Only if established" /></label>
++                      <label className="cost-field"><span>Precision</span><input type="number" min="0" step="1" value={input.precision ?? ""} disabled={input.valueType !== "number"} onChange={(event) => updateInput(index, "precision", event.target.value === "" ? undefined : Number(event.target.value))} /></label>
++                      <label className="cost-field"><span>Description</span><input value={input.description ?? ""} maxLength={500} onChange={(event) => updateInput(index, "description", event.target.value)} placeholder="Explain the input." /></label>
++                      <label className="cost-field"><span>Approved conversion</span><input value={input.conversion ?? ""} maxLength={200} onChange={(event) => updateInput(index, "conversion", event.target.value)} placeholder="Leave blank if none." /></label>
++                      <label className="cost-checkbox"><input type="checkbox" checked={input.required} onChange={(event) => updateInput(index, "required", event.target.checked)} /> Required input</label>
+                     </div>
+-                    <label className="cost-field cost-field-wide"><span>Component description</span><input value={component.description ?? ""} maxLength={500} onChange={(event) => updateComponent(index, "description", event.target.value)} placeholder="Optional scope or exclusions." /></label>
++                  </div>)}
++
++                  <div className="cost-section-heading"><div><h3>Cost components</h3><p>Do not enter amounts, currencies or bases without source evidence.</p></div><button type="button" className="cost-secondary-button" onClick={() => setForm((current) => ({ ...current, costComponents: [...current.costComponents, { key: "", label: "", configurationState: "not_configured", amount: null }] }))}><Plus size={15} /> Add component</button></div>
++                  {form.costComponents.length === 0 && <p className="cost-inline-empty">No cost components yet. An incomplete draft can be saved but cannot be submitted.</p>}
++                  {form.costComponents.map((component, index) => <div className="cost-editor-card" key={"component-" + index}>
++                    <div className="cost-editor-card-heading"><strong>Cost component {index + 1}</strong><button type="button" onClick={() => setForm((current) => ({ ...current, costComponents: current.costComponents.filter((_, i) => i !== index) }))}>Remove</button></div>
++                    <div className="cost-form-grid">
++                      <label className="cost-field"><span>Stable key</span><input value={component.key} maxLength={64} onChange={(event) => updateComponent(index, "key", event.target.value)} placeholder="e.g. partnerService" /></label>
++                      <label className="cost-field"><span>Component label</span><input value={component.label} maxLength={120} onChange={(event) => updateComponent(index, "label", event.target.value)} placeholder="Cost description" /></label>
++                      <label className="cost-field"><span>Configuration state</span>
++                        <select value={configurationStateOf(component)} onChange={(event) => updateConfigurationState(index, event.target.value as ConfigurationState)}><option value="not_configured">Not configured</option><option value="configured">Configured</option><option value="no_separate_cost">No separate cost</option></select></label>
++
++                      {form.activityCode === "ACT-04" && (
++                        <>
++                          <label className="cost-field">
++                            <span>Transport arrangement</span>
++                            <select
++                              value={component.transportArrangement ?? ""}
++                              onChange={(event) =>
++                                updateComponent(index, "transportArrangement", event.target.value)
++                              }
++                            >
++                              <option value="">Not specified</option>
++                              <option value="business_owned_vehicle">Business-owned vehicle</option>
++                              <option value="driver_owned_vehicle">Driver-owned vehicle</option>
++                              <option value="external_transport_partner">External transport partner</option>
++                            </select>
++                          </label>
++
++                          <label className="cost-field">
++                            <span>Agreement basis</span>
++                            <select
++                              value={component.agreementBasis ?? ""}
++                              onChange={(event) =>
++                                updateComponent(index, "agreementBasis", event.target.value)
++                              }
++                            >
++                              <option value="">Not specified</option>
++                              <option value="per_trip">Per trip</option>
++                              <option value="distance">Distance</option>
++                              <option value="per_parcel">Per parcel</option>
++                              <option value="fixed">Fixed</option>
++                              <option value="time">Time</option>
++                              <option value="hybrid">Hybrid</option>
++                              <option value="negotiated">Negotiated</option>
++                            </select>
++                          </label>
++                        </>
++                      )}
++                      {configurationStateOf(component) === "configured" ? <>
++                        <label className="cost-field"><span>Amount (decimal)</span><input inputMode="decimal" value={component.amount ?? ""} maxLength={40} onChange={(event) => updateComponent(index, "amount", event.target.value)} placeholder="Enter a supported amount" /></label>
++                        <label className="cost-field"><span>Currency code</span><input value={component.currencyCode ?? ""} maxLength={3} onChange={(event) => updateComponent(index, "currencyCode", event.target.value.toUpperCase())} placeholder="Explicit ISO code" /></label>
++                        <label className="cost-field"><span>Basis / unit</span><input value={component.basis ?? ""} maxLength={120} onChange={(event) => updateComponent(index, "basis", event.target.value)} placeholder="e.g. per parcel, kilometre, trip" /></label>
++                      </> : configurationStateOf(component) === "no_separate_cost" ? <>
++                        <label className="cost-field cost-field-wide"><span>Reason no separate cost applies</span><textarea rows={2} value={component.noSeparateCostReason ?? ""} maxLength={1000} onChange={(event) => updateComponent(index, "noSeparateCostReason", event.target.value)} placeholder="Explain the supported scope and why no separate payment applies." /></label>
++                        <p className="cost-inline-empty">This is not a zero amount or a free customer service. Supporting evidence is required before submission.</p>
++                      </> : <p className="cost-inline-empty">Cost is unknown or not yet configured. It is not treated as zero and cannot be submitted for approval.</p>}
++                      <label className="cost-field"><span>Legacy treatment note</span><input value={component.treatment ?? ""} maxLength={80} onChange={(event) => updateComponent(index, "treatment", event.target.value)} placeholder="Historical free-text value" /></label>
++                      <label className="cost-field"><span>Finance treatment classification</span><select value={component.treatmentClass ?? ""} onChange={(event) => updateComponent(index, "treatmentClass", event.target.value)}><option value="">Not classified</option><option value="direct">Direct</option><option value="shared">Shared</option><option value="included">Included</option><option value="exception_related">Exception-related</option></select></label>
++                      <label className="cost-field cost-field-wide"><span>Legacy evidence description</span><textarea rows={3} value={component.evidenceDescription ?? ""} maxLength={1000} onChange={(event) => updateComponent(index, "evidenceDescription", event.target.value)} placeholder="Historical narrative evidence note. This does not satisfy the new structured-evidence submission requirement." /></label>
++                      <div className="cost-field-wide">
++                        <div className="cost-section-heading"><div><h4>Structured evidence</h4><p>Each source is recorded separately. Do not invent missing source details.</p></div><button type="button" className="cost-secondary-button" onClick={() => setForm((current) => ({ ...current, costComponents: current.costComponents.map((item, itemIndex) => itemIndex === index ? { ...item, evidenceItems: [...(item.evidenceItems ?? []), { sourceReference: "", sourceOwner: "", sourceType: "", representedScope: "", observationPeriod: {}, coverage: "", collectionMethod: "" }] } : item) }))}><Plus size={14} /> Add evidence</button></div>
++                        {(component.evidenceItems ?? []).map((evidence, evidenceIndex) => <div className="cost-editor-card" key={"evidence-" + index + "-" + evidenceIndex}>
++                          <div className="cost-editor-card-heading"><strong>Evidence source {evidenceIndex + 1}</strong><button type="button" onClick={() => setForm((current) => ({ ...current, costComponents: current.costComponents.map((item, itemIndex) => itemIndex === index ? { ...item, evidenceItems: (item.evidenceItems ?? []).filter((_, i) => i !== evidenceIndex) } : item) }))}>Remove</button></div>
++                          <div className="cost-form-grid">
++                            <label className="cost-field"><span>Source reference</span><input value={evidence.sourceReference} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "sourceReference", event.target.value)} /></label>
++                            <label className="cost-field"><span>Source owner</span><input value={evidence.sourceOwner} maxLength={200} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "sourceOwner", event.target.value)} /></label>
++                            <label className="cost-field"><span>Source type</span><input value={evidence.sourceType} maxLength={120} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "sourceType", event.target.value)} /></label>
++                            <label className="cost-field"><span>Represented scope</span><input value={evidence.representedScope} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "representedScope", event.target.value)} /></label>
++                            <label className="cost-field"><span>Observation start</span><input type="date" value={evidence.observationPeriod?.startDate ?? ""} onChange={(event) => updateEvidencePeriod(index, evidenceIndex, "startDate", event.target.value)} /></label>
++                            <label className="cost-field"><span>Observation end</span><input type="date" value={evidence.observationPeriod?.endDate ?? ""} onChange={(event) => updateEvidencePeriod(index, evidenceIndex, "endDate", event.target.value)} /></label>
++                            <label className="cost-field cost-field-wide"><span>Period description (if dates unavailable)</span><input value={evidence.observationPeriod?.description ?? ""} maxLength={300} onChange={(event) => updateEvidencePeriod(index, evidenceIndex, "description", event.target.value)} /></label>
++                            <label className="cost-field"><span>Coverage / population</span><input value={evidence.coverage} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "coverage", event.target.value)} /></label>
++                            <label className="cost-field"><span>Collection method</span><input value={evidence.collectionMethod} maxLength={500} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "collectionMethod", event.target.value)} /></label>
++                            <label className="cost-field"><span>Original value (optional)</span><input value={evidence.originalValue ?? ""} maxLength={80} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "originalValue", event.target.value)} /></label>
++                            <label className="cost-field"><span>Original unit</span><input value={evidence.originalUnit ?? ""} maxLength={80} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "originalUnit", event.target.value)} /></label>
++                            <label className="cost-field"><span>Original currency (if monetary)</span><input value={evidence.originalCurrencyCode ?? ""} maxLength={3} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "originalCurrencyCode", event.target.value.toUpperCase())} /></label>
++                            <label className="cost-field"><span>Original precision</span><input type="number" min="0" step="1" value={evidence.originalPrecision ?? ""} onChange={(event) => setForm((current) => ({ ...current, costComponents: current.costComponents.map((item, itemIndex) => { if (itemIndex !== index) return item; const items = [...(item.evidenceItems ?? [])]; const next = { ...items[evidenceIndex] }; if (event.target.value === "") delete next.originalPrecision; else next.originalPrecision = Number(event.target.value); items[evidenceIndex] = next; return { ...item, evidenceItems: items }; }) }))} /></label>
++                            <label className="cost-field cost-field-wide"><span>Known limitations</span><textarea rows={2} value={evidence.limitations ?? ""} maxLength={1000} onChange={(event) => updateEvidenceItem(index, evidenceIndex, "limitations", event.target.value)} /></label>
++                          </div>
++                        </div>)}
++                        {(component.evidenceItems ?? []).length === 0 && <p className="cost-inline-empty">No structured evidence sources added. This component cannot be submitted for review until evidence is recorded.</p>}
++                      </div>
++                      <label className="cost-field cost-field-wide"><span>Component description</span><input value={component.description ?? ""} maxLength={500} onChange={(event) => updateComponent(index, "description", event.target.value)} placeholder="Optional scope or exclusions." /></label>
++                    </div>
++                  </div>)}
++                  <div className="cost-form-actions">
++                    <button type="button" className="cost-secondary-button" onClick={() => { setEditing(false); setCreating(false); }}>Cancel</button>
++                    <button type="submit" className="cost-primary-button" disabled={saving}>{saving ? <Loader2 size={16} className="cost-spin" /> : <Save size={16} />} Save draft version</button>
+                   </div>
+-                </div>)}
+-                <div className="cost-form-actions">
+-                  <button type="button" className="cost-secondary-button" onClick={() => { setEditing(false); setCreating(false); }}>Cancel</button>
+-                  <button type="submit" className="cost-primary-button" disabled={saving}>{saving ? <Loader2 size={16} className="cost-spin" /> : <Save size={16} />} Save draft version</button>
+-                </div>
+-              </form>
+-            ) : selected && selectedVersion ? (
+-              <div>
+-                <div className="cost-panel-heading">
+-                  <div><span className="section-label">02 / DEFINITION DETAIL</span><h2>{selectedVersion.activityName}</h2><p className="cost-subtitle">{selectedVersion.activityCode} · Version {selectedVersion.versionNumber} · General applicability</p></div>
+-                  <span className={"cost-state-badge cost-state-" + state}>{STATE_LABELS[state]}</span>
+-                </div>
+-                <p className="cost-description">{selectedVersion.activityDescription || "No activity description recorded."}</p>
+-                <div className="cost-detail-meta">
+-                  <div><span>Created by</span><strong>{selectedVersion.createdBy ?? "—"}</strong></div>
+-                  <div><span>Created</span><strong>{formatDate(selectedVersion.createdAt)}</strong></div>
+-                  <div><span>Current version</span><strong>{selected.currentVersionNumber}</strong></div>
+-                  <div><span>Approved version</span><strong>{selected.approvedVersionNumber ?? "None"}</strong></div>
+-                </div>
+-                <div className="cost-detail-section"><h3>Operational inputs</h3>
+-                  {selectedVersion.inputs?.length ? selectedVersion.inputs.map((input) => <div className="cost-readonly-row" key={input.key}><strong>{input.label}</strong><span>{input.key} · {input.valueType} · {input.required ? "Required" : "Optional"}</span><small>{[input.source, input.unit, input.description, input.conversion].filter(Boolean).join(" · ") || "No source details recorded."}</small></div>) : <p className="cost-inline-empty">No operational inputs configured.</p>}
+-                </div>
+-                <div className="cost-detail-section"><h3>Cost components</h3>
+-                  {selectedVersion.costComponents?.length ? selectedVersion.costComponents.map((component) => {
+-                    const componentState = configurationStateOf(component);
+-                    const stateLabel = componentState === "no_separate_cost" ? "No separate cost" : componentState === "configured" ? "Configured" : "Not configured";
+-                    const amountLabel = componentState === "configured" && component.amount != null
+-                      ? component.amount + " " + (component.currencyCode ?? "")
+-                      : stateLabel;
+-                    return <div className="cost-readonly-row" key={component.key}><strong>{component.label}</strong><span>{stateLabel} · {amountLabel} · {component.basis ?? "No basis"} · {component.treatmentClass?.replace(/_/g, " ") ?? "Treatment not classified"}</span>{component.noSeparateCostReason && <small>Reason: {component.noSeparateCostReason}</small>}<small>{component.evidenceDescription || "No legacy evidence description recorded."}</small>{component.evidenceItems?.map((item, itemIndex) => <small key={component.key + "-evidence-" + itemIndex}>Source {itemIndex + 1}: {item.sourceReference} · {item.sourceOwner} · {item.sourceType} · {item.representedScope} · {item.observationPeriod?.startDate ?? item.observationPeriod?.description ?? "Period not recorded"}{item.observationPeriod?.endDate ? " to " + item.observationPeriod.endDate : ""} · Coverage: {item.coverage} · Method: {item.collectionMethod}{item.limitations ? " · Limitations: " + item.limitations : ""}</small>)}</div>;
+-                  }) : <p className="cost-inline-empty">No cost components configured.</p>}
+-                </div>
+-                <div className="cost-workflow-actions">
+-                  {canRevise && <button type="button" className="cost-secondary-button" onClick={startRevision}><FilePlus2 size={15} /> Create new version</button>}
+-                  {state === "draft" && <button type="button" className="cost-primary-button" onClick={() => void runAction("submit")} disabled={acting}><Send size={15} /> Submit for Operations validation</button>}
+-                  {state === "pending_operations_validation" && <button type="button" className="cost-primary-button" onClick={() => void runAction("validate")} disabled={acting}>Validate for Finance</button>}
+-                  {state === "pending_finance_review" && <button type="button" className="cost-primary-button" onClick={() => void runAction("finance_review")} disabled={acting}>Complete Finance review</button>}
+-                  {state === "pending_independent_approval" && <button type="button" className="cost-primary-button" onClick={() => void runAction("approve")} disabled={acting}><CheckCircle2 size={15} /> Approve version</button>}
+-                </div>
+-                {(state === "pending_operations_validation" || state === "pending_finance_review" || state === "pending_independent_approval") && <div className="cost-decision-box">
+-                  <label className="cost-field"><span>Reason (required for changes requested or rejection)</span><textarea rows={2} value={reason} onChange={(event) => setReason(event.target.value)} maxLength={1000} placeholder="Record the decision reason." /></label>
+-                  <div className="cost-decision-actions">
+-                    {(state === "pending_operations_validation" || state === "pending_finance_review") && <button type="button" className="cost-secondary-button" onClick={() => void runAction("request_changes")} disabled={acting}>Request changes</button>}
+-                    {state === "pending_independent_approval" && <button type="button" className="cost-danger-button" onClick={() => void runAction("reject")} disabled={acting}>Reject version</button>}
++                </form>
++              ) : selected && selectedVersion ? (
++                <div>
++                  <div className="cost-panel-heading">
++                    <div><span className="section-label">02 / DEFINITION DETAIL</span><h2>{selectedVersion.activityName}</h2><p className="cost-subtitle">{selectedVersion.activityCode} · Version {selectedVersion.versionNumber} · General applicability</p></div>
++                    <span className={"cost-state-badge cost-state-" + state}>{STATE_LABELS[state]}</span>
++                  </div>
++                  <p className="cost-description">{selectedVersion.activityDescription || "No activity description recorded."}</p>
++                  <div className="cost-detail-meta">
++                    <div><span>Created by</span><strong>{selectedVersion.createdBy ?? "—"}</strong></div>
++                    <div><span>Created</span><strong>{formatDate(selectedVersion.createdAt)}</strong></div>
++                    <div><span>Current version</span><strong>{selected.currentVersionNumber}</strong></div>
++                    <div><span>Approved version</span><strong>{selected.approvedVersionNumber ?? "None"}</strong></div>
++                  </div>
++                  <div className="cost-detail-section"><h3>Operational inputs</h3>
++                    {selectedVersion.inputs?.length ? selectedVersion.inputs.map((input) => <div className="cost-readonly-row" key={input.key}><strong>{input.label}</strong><span>{input.key} · {input.valueType} · {input.required ? "Required" : "Optional"}</span><small>{[input.source, input.unit, input.description, input.conversion].filter(Boolean).join(" · ") || "No source details recorded."}</small></div>) : <p className="cost-inline-empty">No operational inputs configured.</p>}
++                  </div>
++                  <div className="cost-detail-section"><h3>Cost components</h3>
++                    {selectedVersion.costComponents?.length ? selectedVersion.costComponents.map((component) => {
++                      const componentState = configurationStateOf(component);
++                      const stateLabel = componentState === "no_separate_cost" ? "No separate cost" : componentState === "configured" ? "Configured" : "Not configured";
++                      const amountLabel = componentState === "configured" && component.amount != null
++                        ? component.amount + " " + (component.currencyCode ?? "")
++                        : stateLabel;
++                      return <div className="cost-readonly-row" key={component.key}>
++                        <strong>{component.label}</strong>
++                        {(component.transportArrangement || component.agreementBasis) && (
++                          <small>
++                            Transport arrangement:{" "}
++                            {component.transportArrangement?.replace(/_/g, " ") ?? "Not specified"}
++                            {" · "}
++                            Agreement basis:{" "}
++                            {component.agreementBasis?.replace(/_/g, " ") ?? "Not specified"}
++                          </small>
++                        )}
++                        <span>{stateLabel} · {amountLabel} · {component.basis ?? "No basis"} · {component.treatmentClass?.replace(/_/g, " ") ?? "Treatment not classified"}</span>{component.noSeparateCostReason && <small>Reason: {component.noSeparateCostReason}</small>}<small>{component.evidenceDescription || "No legacy evidence description recorded."}</small>{component.evidenceItems?.map((item, itemIndex) => <small key={component.key + "-evidence-" + itemIndex}>Source {itemIndex + 1}: {item.sourceReference} · {item.sourceOwner} · {item.sourceType} · {item.representedScope} · {item.observationPeriod?.startDate ?? item.observationPeriod?.description ?? "Period not recorded"}{item.observationPeriod?.endDate ? " to " + item.observationPeriod.endDate : ""} · Coverage: {item.coverage} · Method: {item.collectionMethod}{item.limitations ? " · Limitations: " + item.limitations : ""}</small>)}</div>;
++                    }) : <p className="cost-inline-empty">No cost components configured.</p>}
+                   </div>
+-                </div>}
+-                <div className="cost-detail-section"><h3>Approval history</h3>
+-                  {selectedVersion.events?.length ? <div className="cost-event-list">{selectedVersion.events.map((event) => <div className="cost-event" key={event.eventId}><span className="cost-event-marker" /><div><strong>{event.action.replace(/_/g, " ")}</strong><small>{event.actorUid} · {formatDate(event.timestamp)}</small>{event.reason && <p>{event.reason}</p>}</div></div>)}</div> : <p className="cost-inline-empty">No workflow decisions recorded for this version.</p>}
++                  <div className="cost-workflow-actions">
++                    {canRevise && <button type="button" className="cost-secondary-button" onClick={startRevision}><FilePlus2 size={15} /> Create new version</button>}
++                    {state === "draft" && <button type="button" className="cost-primary-button" onClick={() => void runAction("submit")} disabled={acting}><Send size={15} /> Submit for Operations validation</button>}
++                    {state === "pending_operations_validation" && <button type="button" className="cost-primary-button" onClick={() => void runAction("validate")} disabled={acting}>Validate for Finance</button>}
++                    {state === "pending_finance_review" && <button type="button" className="cost-primary-button" onClick={() => void runAction("finance_review")} disabled={acting}>Complete Finance review</button>}
++                    {state === "pending_independent_approval" && <button type="button" className="cost-primary-button" onClick={() => void runAction("approve")} disabled={acting}><CheckCircle2 size={15} /> Approve version</button>}
++                  </div>
++                  {(state === "pending_operations_validation" || state === "pending_finance_review" || state === "pending_independent_approval") && <div className="cost-decision-box">
++                    <label className="cost-field"><span>Reason (required for changes requested or rejection)</span><textarea rows={2} value={reason} onChange={(event) => setReason(event.target.value)} maxLength={1000} placeholder="Record the decision reason." /></label>
++                    <div className="cost-decision-actions">
++                      {(state === "pending_operations_validation" || state === "pending_finance_review") && <button type="button" className="cost-secondary-button" onClick={() => void runAction("request_changes")} disabled={acting}>Request changes</button>}
++                      {state === "pending_independent_approval" && <button type="button" className="cost-danger-button" onClick={() => void runAction("reject")} disabled={acting}>Reject version</button>}
++                    </div>
++                  </div>}
++                  <div className="cost-detail-section"><h3>Approval history</h3>
++                    {selectedVersion.events?.length ? <div className="cost-event-list">{selectedVersion.events.map((event) => <div className="cost-event" key={event.eventId}><span className="cost-event-marker" /><div><strong>{event.action.replace(/_/g, " ")}</strong><small>{event.actorUid} · {formatDate(event.timestamp)}</small>{event.reason && <p>{event.reason}</p>}</div></div>)}</div> : <p className="cost-inline-empty">No workflow decisions recorded for this version.</p>}
++                  </div>
++                  <div className="cost-detail-section"><h3>Version history</h3><div className="cost-version-list">{selected.versions.map((version) => <div className="cost-version-row" key={version.versionId}><span>Version {version.versionNumber}</span><strong>{STATE_LABELS[stateOf(version)]}</strong><small>{formatDate(version.createdAt)}</small></div>)}</div></div>
+                 </div>
+-                <div className="cost-detail-section"><h3>Version history</h3><div className="cost-version-list">{selected.versions.map((version) => <div className="cost-version-row" key={version.versionId}><span>Version {version.versionNumber}</span><strong>{STATE_LABELS[stateOf(version)]}</strong><small>{formatDate(version.createdAt)}</small></div>)}</div></div>
+-              </div>
+-            ) : <div className="cost-empty cost-detail-empty"><ClipboardList size={34} /><strong>Select an activity definition</strong><p>Review immutable versions and workflow decisions, or create a new internal draft.</p></div>}
+-          </section>
+-        </div>
++              ) : <div className="cost-empty cost-detail-empty"><ClipboardList size={34} /><strong>Select an activity definition</strong><p>Review immutable versions and workflow decisions, or create a new internal draft.</p></div>}
++            </section>
++          </div>
+         )}
+         <p className="cost-footer-note">Access is enforced by existing staff action permissions. Admin access alone does not grant view, proposal, validation, Finance or approval authority. Permission assignments remain outside this interface.</p>
+       </div>
+diff --git a/lib/server/operational-cost-definition-store-core.ts b/lib/server/operational-cost-definition-store-core.ts
+index 1a16115..2dad9c9 100644
+--- a/lib/server/operational-cost-definition-store-core.ts
++++ b/lib/server/operational-cost-definition-store-core.ts
+@@ -62,6 +62,19 @@ export type OperationalCostConfigurationState =
+   | "configured"
+   | "no_separate_cost";
+ 
++export type OperationalTransportArrangement =
++  | "business_owned_vehicle"
++  | "driver_owned_vehicle"
++  | "external_transport_partner";
++
++export type OperationalTransportAgreementBasis =
++  | "per_trip"
++  | "distance"
++  | "per_parcel"
++  | "fixed"
++  | "time"
++  | "hybrid"
++  | "negotiated";
+ export interface OperationalCostComponentInput {
+   key: string;
+   label: string;
+@@ -75,6 +88,8 @@ export interface OperationalCostComponentInput {
+   evidenceDescription?: string;
+   treatmentClass?: OperationalCostTreatmentClass;
+   evidenceItems?: OperationalCostEvidenceItem[];
++  transportArrangement?: OperationalTransportArrangement;
++  agreementBasis?: OperationalTransportAgreementBasis;
+ }
+ 
+ export interface OperationalCostDefinitionInput {
+@@ -111,16 +126,16 @@ interface DefinitionVersionData {
+ 
+ export type ReviseOperationalCostDefinitionResult =
+   | {
+-      outcome: "updated";
+-      versionId: string;
+-      versionNumber: number;
+-    }
++    outcome: "updated";
++    versionId: string;
++    versionNumber: number;
++  }
+   | { outcome: "not_found" }
+   | {
+-      outcome: "stale_version";
+-      currentVersionId: string;
+-      currentVersionNumber: number;
+-    };
++    outcome: "stale_version";
++    currentVersionId: string;
++    currentVersionNumber: number;
++  };
+ 
+ const INPUT_TYPES = new Set<OperationalCostInputType>([
+   "string",
+@@ -188,7 +203,14 @@ function assertDefinitionInput(
+   assertPlainMap(value, "An operational cost definition");
+   assertOnlyKeys(
+     value,
+-    ["activityCode", "activityName", "activityDescription", "applicability", "inputs", "costComponents"],
++    [
++      "activityCode",
++      "activityName",
++      "activityDescription",
++      "applicability",
++      "inputs",
++      "costComponents",
++    ],
+     "An operational cost definition"
+   );
+ 
+@@ -260,10 +282,36 @@ function assertDefinitionInput(
+     assertPlainMap(component, "Each operational cost component");
+     assertOnlyKeys(
+       component,
+-      ["key", "label", "description", "configurationState", "amount", "currencyCode", "basis", "noSeparateCostReason", "treatment", "evidenceDescription", "treatmentClass", "evidenceItems"],
++      [
++        "key",
++        "label",
++        "description",
++        "configurationState",
++        "amount",
++        "currencyCode",
++        "basis",
++        "noSeparateCostReason",
++        "treatment",
++        "evidenceDescription",
++        "treatmentClass",
++        "evidenceItems",
++        "transportArrangement",
++        "agreementBasis",
++      ],
+       "An operational cost component"
+     );
+ 
++    if (value.activityCode !== "ACT-04" && (component.transportArrangement !== undefined || component.agreementBasis !== undefined)) {
++      throw new TypeError("Transport metadata is only supported for ACT-04 cost components");
++    }
++
++    if (component.transportArrangement !== undefined && !["business_owned_vehicle", "driver_owned_vehicle", "external_transport_partner",].includes(component.transportArrangement)) {
++      throw new TypeError("Transport arrangement is unsupported");
++    }
++
++    if (component.agreementBasis !== undefined && !["per_trip", "distance", "per_parcel", "fixed", "time", "hybrid", "negotiated",].includes(component.agreementBasis)) {
++      throw new TypeError("Transport agreement basis is unsupported");
++    }
+     if (
+       typeof component.key !== "string" ||
+       !/^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(component.key)
+@@ -298,15 +346,15 @@ function assertDefinitionInput(
+ 
+     if (state === "not_configured") {
+       if (component.amount !== null ||
+-          (component.currencyCode !== undefined && component.currencyCode !== null) ||
+-          (component.basis !== undefined && component.basis !== null) ||
+-          component.noSeparateCostReason !== undefined) {
++        (component.currencyCode !== undefined && component.currencyCode !== null) ||
++        (component.basis !== undefined && component.basis !== null) ||
++        component.noSeparateCostReason !== undefined) {
+         throw new TypeError("A not-configured cost component must have a null amount, no currency or basis, and no no-separate-cost reason");
+       }
+     } else if (state === "no_separate_cost") {
+       if (component.amount !== null ||
+-          (component.currencyCode !== undefined && component.currencyCode !== null) ||
+-          (component.basis !== undefined && component.basis !== null)) {
++        (component.currencyCode !== undefined && component.currencyCode !== null) ||
++        (component.basis !== undefined && component.basis !== null)) {
+         throw new TypeError("A no-separate-cost component must have a null amount, no currency and no basis");
+       }
+       // Drafts may record the intended state before the explanation is ready.
+@@ -315,13 +363,13 @@ function assertDefinitionInput(
+       // Drafts may be saved progressively. Validate supplied values, but leave
+       // completeness (amount, currency and basis) to the submission gate.
+       if (component.amount !== undefined && component.amount !== null &&
+-          (typeof component.amount !== "string" ||
+-           component.amount.length > 40 ||
+-           !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(component.amount))) {
++        (typeof component.amount !== "string" ||
++          component.amount.length > 40 ||
++          !/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(component.amount))) {
+         throw new TypeError("A configured cost amount must be a non-negative decimal string");
+       }
+       if (component.currencyCode !== undefined && component.currencyCode !== null &&
+-          (typeof component.currencyCode !== "string" || !/^[A-Z]{3}$/.test(component.currencyCode))) {
++        (typeof component.currencyCode !== "string" || !/^[A-Z]{3}$/.test(component.currencyCode))) {
+         throw new TypeError("Cost component currency code must be a three-letter uppercase code");
+       }
+       if (component.noSeparateCostReason !== undefined) {
+@@ -350,8 +398,8 @@ function assertDefinitionInput(
+         throw new TypeError("Legacy cost component amount is invalid");
+       }
+       if ((component.currencyCode !== undefined && component.currencyCode !== null) ||
+-          (component.basis !== undefined && component.basis !== null) ||
+-          component.noSeparateCostReason !== undefined) {
++        (component.basis !== undefined && component.basis !== null) ||
++        component.noSeparateCostReason !== undefined) {
+         throw new TypeError("An unconfigured legacy cost component cannot include currency, basis or a no-separate-cost reason");
+       }
+     }
+@@ -391,7 +439,7 @@ function assertEvidenceItem(value: unknown): asserts value is OperationalCostEvi
+   };
+   if (startDate !== undefined || endDate !== undefined) {
+     if (typeof startDate !== "string" || typeof endDate !== "string" ||
+-        !validDate(startDate) || !validDate(endDate) || startDate > endDate) {
++      !validDate(startDate) || !validDate(endDate) || startDate > endDate) {
+       throw new TypeError("Evidence observation dates must be valid ordered YYYY-MM-DD dates");
+     }
+   } else if (typeof description !== "string" || !description.trim()) {
+@@ -402,17 +450,17 @@ function assertEvidenceItem(value: unknown): asserts value is OperationalCostEvi
+   assertOptionalString(value.originalUnit, "Evidence original unit", 80);
+   assertOptionalString(value.originalCurrencyCode, "Evidence original currency code", 3);
+   if (value.originalCurrencyCode !== undefined &&
+-      (typeof value.originalCurrencyCode !== "string" || !/^[A-Z]{3}$/.test(value.originalCurrencyCode))) {
++    (typeof value.originalCurrencyCode !== "string" || !/^[A-Z]{3}$/.test(value.originalCurrencyCode))) {
+     throw new TypeError("Evidence original currency code must be a three-letter uppercase code");
+   }
+   if (value.originalPrecision !== undefined &&
+-      (typeof value.originalPrecision !== "number" ||
+-       !Number.isSafeInteger(value.originalPrecision) || value.originalPrecision < 0)) {
++    (typeof value.originalPrecision !== "number" ||
++      !Number.isSafeInteger(value.originalPrecision) || value.originalPrecision < 0)) {
+     throw new TypeError("Evidence original precision must be a non-negative safe integer");
+   }
+   if (value.originalValue !== undefined &&
+-      (typeof value.originalUnit !== "string" || !value.originalUnit.trim() ||
+-       value.originalPrecision === undefined)) {
++    (typeof value.originalUnit !== "string" || !value.originalUnit.trim() ||
++      value.originalPrecision === undefined)) {
+     throw new TypeError("Evidence original value requires its original unit and precision");
+   }
+ }
+diff --git a/lib/server/staff-permission-grants-core.ts b/lib/server/staff-permission-grants-core.ts
+index 3de135b..4408446 100644
+--- a/lib/server/staff-permission-grants-core.ts
++++ b/lib/server/staff-permission-grants-core.ts
+@@ -16,7 +16,7 @@ function expiryMillis(value: unknown): number | null {
+   if (value == null) return null;
+   if (value instanceof Date) return value.getTime();
+   if (typeof value === "object" && "toDate" in value &&
+-      typeof (value as { toDate?: unknown }).toDate === "function") {
++    typeof (value as { toDate?: unknown }).toDate === "function") {
+     return (value as { toDate(): Date }).toDate().getTime();
+   }
+   return Number.NaN;
+@@ -41,45 +41,65 @@ async function validGrantLineage(
+   grantId: string,
+   expectedTargetUid: string,
+   permissionId: string,
++  expectedRootGrantId: string,
+   now: number,
+   visited = new Set<string>(),
+ ): Promise<boolean> {
+   if (visited.has(grantId)) return false;
+   visited.add(grantId);
+-  const snapshot = await transaction.get(db.collection("staffActionPermissionGrants").doc(grantId));
++
++  const snapshot = await transaction.get(
++    db.collection("staffActionPermissionGrants").doc(grantId),
++  );
+   if (!snapshot.exists) return false;
++
+   const grant = snapshot.data() as Grant;
+   if (grant.targetUid !== expectedTargetUid ||
+-      grant.permissionId !== permissionId ||
+-      grant.status !== "active" ||
+-      !isUnexpired(grant.expiresAt, now)) return false;
++    grant.permissionId !== permissionId ||
++    grant.rootGrantId !== expectedRootGrantId ||
++    grant.status !== "active" ||
++    !isUnexpired(grant.expiresAt, now)) return false;
+ 
+-  if (typeof grant.parentGrantId !== "string" || !grant.parentGrantId) {
+-    return grant.source === "administrator" && grant.rootGrantId === grantId &&
+-      typeof grant.grantorUid === "string" && grant.grantorUid.startsWith("admin:");
++  if (grant.parentGrantId === null) {
++    return grantId === expectedRootGrantId &&
++      grant.source === "administrator" &&
++      typeof grant.grantorUid === "string" &&
++      grant.grantorUid.startsWith("admin:");
+   }
+ 
+-  if (typeof grant.grantorUid !== "string" || !grant.grantorUid ||
+-      !/^[A-Za-z0-9_-]{1,128}$/.test(grant.parentGrantId)) return false;
++  if (typeof grant.parentGrantId !== "string" ||
++    !/^[A-Za-z0-9_-]{1,128}$/.test(grant.parentGrantId) ||
++    typeof grant.grantorUid !== "string" ||
++    !grant.grantorUid) return false;
+ 
+   const parentSnapshot = await transaction.get(
+     db.collection("staffActionPermissionGrants").doc(grant.parentGrantId),
+   );
+   if (!parentSnapshot.exists) return false;
++
+   const parent = parentSnapshot.data() as Grant;
+   if (parent.targetUid !== grant.grantorUid ||
+-      parent.permissionId !== permissionId ||
+-      parent.delegable !== true ||
+-      parent.status !== "active" ||
+-      !isUnexpired(parent.expiresAt, now)) return false;
++    parent.permissionId !== permissionId ||
++    parent.rootGrantId !== expectedRootGrantId ||
++    parent.delegable !== true ||
++    parent.status !== "active" ||
++    !isUnexpired(parent.expiresAt, now)) return false;
+ 
+   const childExpiry = expiryMillis(grant.expiresAt);
+   const parentExpiry = expiryMillis(parent.expiresAt);
+   if (parentExpiry !== null &&
+-      (childExpiry === null || !Number.isFinite(childExpiry) || childExpiry > parentExpiry)) return false;
++    (childExpiry === null || !Number.isFinite(childExpiry) ||
++      childExpiry > parentExpiry)) return false;
+ 
+   return validGrantLineage(
+-    transaction, db, grant.parentGrantId, grant.grantorUid, permissionId, now, visited,
++    transaction,
++    db,
++    grant.parentGrantId,
++    grant.grantorUid,
++    permissionId,
++    expectedRootGrantId,
++    now,
++    visited,
+   );
+ }
+ 
+@@ -107,7 +127,13 @@ export async function hasStaffActionPermissionInTransaction(
+   }
+ 
+   for (const grant of grants) {
+-    if (await validGrantLineage(transaction, db, grant.id, uid, permissionId, now)) return true;
++    const rootGrantId = grant.data().rootGrantId;
++    if (typeof rootGrantId !== "string" ||
++      !/^[A-Za-z0-9_-]{1,128}$/.test(rootGrantId)) continue;
++
++    if (await validGrantLineage(
++      transaction, db, grant.id, uid, permissionId, rootGrantId, now,
++    )) return true;
+   }
+   return false;
+ }
+@@ -134,8 +160,14 @@ export async function findDelegableStaffActionGrantInTransaction(
+   for (const document of snapshot.docs) {
+     const grant = document.data();
+     if (grant.permissionId !== permissionId || grant.delegable !== true ||
+-        grant.status !== "active") continue;
+-    if (await validGrantLineage(transaction, db, document.id, uid, permissionId, Date.now())) {
++      grant.status !== "active") continue;
++    const rootGrantId = grant.rootGrantId;
++    if (typeof rootGrantId !== "string" ||
++      !/^[A-Za-z0-9_-]{1,128}$/.test(rootGrantId)) continue;
++
++    if (await validGrantLineage(
++      transaction, db, document.id, uid, permissionId, rootGrantId, Date.now(),
++    )) {
+       return { grantId: document.id, grant };
+     }
+   }
+diff --git a/tests/operational-cost-definition-store.test.mjs b/tests/operational-cost-definition-store.test.mjs
+index c588770..ebe12af 100644
+--- a/tests/operational-cost-definition-store.test.mjs
++++ b/tests/operational-cost-definition-store.test.mjs
+@@ -496,5 +496,103 @@ describe(
+         /missing current version/
+       );
+     });
++
++    it("persists structured transport metadata on ACT-04 components", async () => {
++      const transportDefinition = {
++        ...validDefinition,
++        activityCode: "ACT-04",
++        activityName: "Synthetic transport activity",
++        costComponents: [{
++          ...validDefinition.costComponents[0],
++          transportArrangement: "external_transport_partner",
++          agreementBasis: "per_trip",
++        }],
++      };
++
++      const created = await createDefinition(transportDefinition);
++      const version = await db
++        .collection("operationalCostDefinitions")
++        .doc(created.definitionId)
++        .collection("versions")
++        .doc(created.versionId)
++        .get();
++
++      assert.equal(
++        version.data().costComponents[0].transportArrangement,
++        "external_transport_partner"
++      );
++      assert.equal(
++        version.data().costComponents[0].agreementBasis,
++        "per_trip"
++      );
++    });
++
++    it("allows ACT-04 drafts with unspecified transport metadata", async () => {
++      const transportDefinition = {
++        ...validDefinition,
++        activityCode: "ACT-04",
++        activityName: "Transport draft",
++      };
++
++      const created = await createDefinition(transportDefinition);
++      const version = await db
++        .collection("operationalCostDefinitions")
++        .doc(created.definitionId)
++        .collection("versions")
++        .doc(created.versionId)
++        .get();
++
++      assert.equal(
++        version.data().costComponents[0].transportArrangement,
++        undefined
++      );
++      assert.equal(
++        version.data().costComponents[0].agreementBasis,
++        undefined
++      );
++    });
++
++    it("rejects unsupported transport arrangements and agreement bases", async () => {
++      const base = {
++        ...validDefinition,
++        activityCode: "ACT-04",
++        activityName: "Invalid transport draft",
++      };
++
++      await assert.rejects(
++        store.createDefinition("transport-test-actor", {
++          ...base,
++          costComponents: [{
++            ...base.costComponents[0],
++            transportArrangement: "unverified_vehicle_type",
++          }],
++        }),
++        /Transport arrangement is unsupported/
++      );
++
++      await assert.rejects(
++        store.createDefinition("transport-test-actor", {
++          ...base,
++          costComponents: [{
++            ...base.costComponents[0],
++            agreementBasis: "per_kilometre_by_default",
++          }],
++        }),
++        /Transport agreement basis is unsupported/
++      );
++    });
++
++    it("rejects transport metadata on non-ACT-04 activities", async () => {
++      await assert.rejects(
++        store.createDefinition("transport-test-actor", {
++          ...validDefinition,
++          costComponents: [{
++            ...validDefinition.costComponents[0],
++            transportArrangement: "driver_owned_vehicle",
++          }],
++        }),
++        /Transport metadata is only supported for ACT-04/
++      );
++    });
+   }
+ );
+diff --git a/tests/operational-cost-definition-workflow.test.mjs b/tests/operational-cost-definition-workflow.test.mjs
+index 5710f80..ae728dd 100644
+--- a/tests/operational-cost-definition-workflow.test.mjs
++++ b/tests/operational-cost-definition-workflow.test.mjs
+@@ -241,4 +241,88 @@ describe("operational cost approval workflow", { skip: !enabled }, () => {
+     const old = await db.collection("operationalCostDefinitions").doc(d.definitionId).collection("versions").doc(d.versionId).collection("approval").doc("workflow").get();
+     assert.equal(old.data().state, "changes_requested");
+   });
++
++  it("preserves ACT-04 transport metadata without bypassing submission evidence requirements", async () => {
++    const act04 = {
++      ...definition,
++      activityCode: "ACT-04",
++      activityName: "Synthetic transport activity",
++      costComponents: [{
++        ...definition.costComponents[0],
++        key: "vehicle_transport",
++        label: "Vehicle transport",
++        transportArrangement: "driver_owned_vehicle",
++        agreementBasis: "per_trip",
++      }],
++    };
++
++    const proposer = `proposer-${randomUUID()}`;
++    const created = await definitions.createDefinition(proposer, act04);
++    ids.add(created.definitionId);
++    await grant(proposer, permissions[0]);
++
++    await workflow.transition({
++      definitionId: created.definitionId,
++      versionId: created.versionId,
++      actorUid: proposer,
++      action: "submit",
++    });
++
++    const versionRef = db.collection("operationalCostDefinitions")
++      .doc(created.definitionId)
++      .collection("versions")
++      .doc(created.versionId);
++
++    const [version, workflowState] = await Promise.all([
++      versionRef.get(),
++      versionRef.collection("approval").doc("workflow").get(),
++    ]);
++
++    assert.equal(workflowState.data().state, "pending_operations_validation");
++    assert.equal(
++      version.data().costComponents[0].transportArrangement,
++      "driver_owned_vehicle"
++    );
++    assert.equal(
++      version.data().costComponents[0].agreementBasis,
++      "per_trip"
++    );
++
++    const incompleteProposer = `proposer-${randomUUID()}`;
++    const incomplete = await definitions.createDefinition(incompleteProposer, {
++      ...act04,
++      costComponents: [{
++        ...act04.costComponents[0],
++        configurationState: "configured",
++        amount: null,
++        currencyCode: null,
++        basis: null,
++        evidenceItems: [],
++      }],
++    });
++
++    ids.add(incomplete.definitionId);
++    await grant(incompleteProposer, permissions[0]);
++
++    await assert.rejects(
++      workflow.transition({
++        definitionId: incomplete.definitionId,
++        versionId: incomplete.versionId,
++        actorUid: incompleteProposer,
++        action: "submit",
++      }),
++      /amount, explicit currency, basis, structured evidence and treatment classification/
++    );
++
++    const blockedState = await db.collection("operationalCostDefinitions")
++      .doc(incomplete.definitionId)
++      .collection("versions")
++      .doc(incomplete.versionId)
++      .collection("approval")
++      .doc("workflow")
++      .get();
++
++    assert.equal(blockedState.exists, false);
++
++  });
+ });
+diff --git a/tests/staff-management-store.test.mjs b/tests/staff-management-store.test.mjs
+index bfcc739..14a4959 100644
+--- a/tests/staff-management-store.test.mjs
++++ b/tests/staff-management-store.test.mjs
+@@ -1,166 +1,266 @@
+ import assert from "node:assert/strict";
+ import { randomUUID } from "node:crypto";
+-import { after,before,describe,it } from "node:test";
+-import { deleteApp,initializeApp } from "firebase-admin/app";
+-import { FieldValue,getFirestore } from "firebase-admin/firestore";
++import { after, before, describe, it } from "node:test";
++import { deleteApp, initializeApp } from "firebase-admin/app";
++import { FieldValue, getFirestore } from "firebase-admin/firestore";
+ import { createStaffManagementStore } from "../lib/server/staff-management-core.ts";
+ import { createOperationalCostDefinitionStore } from "../lib/server/operational-cost-definition-store-core.ts";
+-const enabled=Boolean(process.env.FIRESTORE_EMULATOR_HOST);
+-describe("staff invitation and permission lifecycle",{skip:!enabled},()=>{
+- let app,db,store,costStore;const prefix=randomUUID(),actor=`perm-admin-${prefix}`,uid=`staff-${prefix}`,activeUid=`active-staff-${prefix}`,workspaceUid=`workspace-staff-${prefix}`,delegatorUid=`delegator-${prefix}`,delegateeUid=`delegatee-${prefix}`,thirdUid=`third-${prefix}`,invites=[];
+- before(()=>{app=initializeApp({projectId:"demo-verilyft-staff-management"},`staff-management-${prefix}`);db=getFirestore(app);store=createStaffManagementStore({db,serverTimestamp:()=>FieldValue.serverTimestamp()});costStore=createOperationalCostDefinitionStore({db,serverTimestamp:()=>FieldValue.serverTimestamp()});});
+- after(async()=>{
+-  for(const id of invites)await db.collection("staffInvitations").doc(id).delete();
+-  const staffUids=[uid,activeUid,workspaceUid,delegatorUid,delegateeUid,thirdUid];
+-  for(const staffUid of staffUids){
+-   const perms=await db.collection("staffActionPermissions").doc(staffUid).collection("permissions").listDocuments();
+-   await Promise.all(perms.map(d=>d.delete()));
+-   await db.collection("staffActionPermissions").doc(staffUid).delete();
+-   await db.collection("staffDirectory").doc(staffUid).delete();
+-  }
+-  const grants=await db.collection("staffActionPermissionGrants").get();
+-  await Promise.all(grants.docs.filter(d=>staffUids.includes(d.data().targetUid)).map(d=>d.ref.delete()));
+-  const audit=await db.collection("staffManagementAudit").get();
+-  await Promise.all(audit.docs.filter(d=>d.data().actorUid===actor||staffUids.includes(d.data().targetUid)).map(d=>d.ref.delete()));
+-  if(app)await deleteApp(app);
+- });
+- it("stores only a token hash and requires an explicit future expiry",async()=>{
+-  const expiry=new Date(Date.now()+3600000).toISOString();
+-  const created=await store.createInvitation({email:"Invited.Staff@example.com",expiresAt:expiry,reason:"Launch operations staff",actorUid:actor});invites.push(created.invitationId);
+-  const snap=await db.collection("staffInvitations").doc(created.invitationId).get();
+-  assert.equal(snap.data().email,"invited.staff@example.com");assert.equal(snap.data().status,"pending");assert.notEqual(snap.data().tokenHash,created.token);assert.equal("token" in snap.data(),false);assert.equal(snap.data().expiresAt.toDate().toISOString(),expiry);
+-  const listing=await store.listStaff();const listedInvite=listing.invitations.find(item=>item.invitationId===created.invitationId);assert.ok(listedInvite);assert.equal("tokenHash" in listedInvite,false);assert.equal("token" in listedInvite,false);
+-  await assert.rejects(store.createInvitation({email:"staff@example.com",expiresAt:new Date(Date.now()-1000).toISOString(),reason:"expired",actorUid:actor}),TypeError);
+- });
+- it("prevents duplicate pending invitations and invitations for active staff",async()=>{
+-  const invite=await store.createInvitation({email:"staff.duplicate@example.com",expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Duplicate invitation test",actorUid:actor});invites.push(invite.invitationId);
+-  await assert.rejects(
+-   store.createInvitation({email:"staff.duplicate@example.com",expiresAt:new Date(Date.now()+7200000).toISOString(),reason:"Second invitation",actorUid:actor}),
+-   /pending invitation already exists/
+-  );
+-  await store.revokeInvitation(invite.invitationId,actor,"Close duplicate test");
+-  const replacement=await store.createInvitation({email:"staff.duplicate@example.com",expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Replacement invitation test",actorUid:actor});invites.push(replacement.invitationId);
+-  await store.revokeInvitation(replacement.invitationId,actor,"Close replacement test");
+-  await db.collection("staffDirectory").doc(activeUid).set({email:"staff.already-active@example.com",status:"active"});
+-  await assert.rejects(
+-   store.createInvitation({email:"staff.already-active@example.com",expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Active account test",actorUid:actor}),
+-   /already belongs to an active staff account/
+-  );
+- });
+-
+- it("activates only the matching invited identity and grants no permissions",async()=>{
+-  const invite=await store.createInvitation({email:"staff.activate@example.com",expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Activation test",actorUid:actor});invites.push(invite.invitationId);
+-  assert.deepEqual(await store.activateInvitation({token:invite.token,uid,email:"other@example.com"}),{outcome:"email_mismatch"});
+-  assert.deepEqual(await store.activateInvitation({token:invite.token,uid,email:"staff.activate@example.com"}),{outcome:"activated"});
+-  assert.equal((await db.collection("staffDirectory").doc(uid).get()).data().status,"active");
+-  assert.equal((await db.collection("staffActionPermissions").doc(uid).collection("permissions").get()).empty,true);
+-  assert.deepEqual(await store.activateInvitation({token:invite.token,uid,email:"staff.activate@example.com"}),{outcome:"already_active"});
+- });
+- it("detects and activates a pending invitation from the verified staff workspace identity",async()=>{
+-  const email="staff.workspace-activation@example.com";
+-  const invite=await store.createInvitation({email,expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Workspace activation test",actorUid:actor});invites.push(invite.invitationId);
+-  assert.deepEqual(await store.getInvitationStatus({uid:workspaceUid,email}),{status:"pending"});
+-  assert.deepEqual(await store.activatePendingInvitation({uid:workspaceUid,email}),{outcome:"activated"});
+-  assert.deepEqual(await store.getInvitationStatus({uid:workspaceUid,email}),{status:"active"});
+-  assert.deepEqual(await store.activatePendingInvitation({uid:workspaceUid,email}),{outcome:"already_active"});
+-  assert.equal((await db.collection("staffActionPermissions").doc(workspaceUid).collection("permissions").get()).empty,true);
+- });
+- it("assigns, expires, suspends and revokes only approved permissions with audit events",async()=>{
+-  await db.collection("staffDirectory").doc(uid).set({email:"staff.activate@example.com",status:"active",updatedAt:FieldValue.serverTimestamp()});
+-  const id="operational_cost_definition.view";
+-  await store.setPermission({targetUid:uid,actorUid:actor,permissionId:id,status:"active",reason:"View cost definitions"});
+-  assert.equal(await costStore.hasPermission(uid,id),true);
+-  const ref=db.collection("staffActionPermissions").doc(uid).collection("permissions").doc(id);
+-  const grantQuery=await db.collection("staffActionPermissionGrants").where("targetUid","==",uid).get();
+-  const rootGrant=grantQuery.docs.find(document=>document.data().permissionId===id);
+-  await ref.update({expiresAt:new Date(Date.now()-1000)});
+-  await rootGrant.ref.update({expiresAt:new Date(Date.now()-1000)});
+-  assert.equal(await costStore.hasPermission(uid,id),false);
+-  await store.setPermission({targetUid:uid,actorUid:actor,permissionId:id,status:"active",reason:"Renew access",expiresAt:new Date(Date.now()+3600000).toISOString()});
+-  assert.equal(await costStore.hasPermission(uid,id),true);
+-  await store.setPermission({targetUid:uid,actorUid:actor,permissionId:id,status:"suspended",reason:"Temporary suspension"});assert.equal(await costStore.hasPermission(uid,id),false);
+-  await store.setPermission({targetUid:uid,actorUid:actor,permissionId:id,status:"revoked",reason:"Role ended"});assert.equal(await costStore.hasPermission(uid,id),false);
+-  await assert.rejects(store.setPermission({targetUid:actor,actorUid:actor,permissionId:id,status:"active",reason:"Self grant"}),/cannot assign or change their own/);
+-  await assert.rejects(store.setPermission({targetUid:uid,actorUid:actor,permissionId:"unknown.permission",status:"active",reason:"Invalid catalogue"}),TypeError);
+-  const events=await db.collection("staffManagementAudit").where("permissionId","==",id).get();assert.equal(events.size,4);assert.ok(events.docs.every(d=>d.data().actorUid===actor&&d.data().reason));
+- });
+- it("enforces activity-specific delegation lineage and upstream revocation",async()=>{
+-  for(const staffUid of [delegatorUid,delegateeUid,thirdUid]){
+-   await db.collection("staffDirectory").doc(staffUid).set({email:`${staffUid}@example.test`,status:"active"});
+-  }
+-//   const id="pudo_location.register";
+-  const id="pudo_location.verify";
+-  const rootExpiry=new Date(Date.now()+2*3600000);
+-  const root=await store.setPermission({targetUid:delegatorUid,actorUid:actor,permissionId:id,status:"active",reason:"Authorise PUDO registration delegation",expiresAt:rootExpiry.toISOString(),delegable:true});
+-  assert.equal(root.delegable,true);
+-  await assert.rejects(
+-   store.delegatePermission({targetUid:thirdUid,actorUid:delegatorUid,permissionId:id,reason:"Attempt to exceed authority",expiresAt:new Date(Date.now()+3*3600000).toISOString()}),
+-   /cannot outlive/
+-  );
+-  await assert.rejects(
+-   store.delegatePermission({targetUid:thirdUid,actorUid:delegatorUid,permissionId:"operational_cost_definition.view",reason:"Attempt to escalate into another activity"}),
+-   /explicitly delegable/
+-  );
+-  const first=await store.delegatePermission({targetUid:delegateeUid,actorUid:delegatorUid,permissionId:id,reason:"Delegate registration activity",expiresAt:new Date(Date.now()+3600000).toISOString(),allowFurtherDelegation:true});
+-  assert.equal(first.outcome,"delegated");
+-  assert.equal(await costStore.hasPermission(delegateeUid,id),true);
+-  const second=await store.delegatePermission({targetUid:thirdUid,actorUid:delegateeUid,permissionId:id,reason:"Sub-delegate registration activity",allowFurtherDelegation:false});
+-  assert.equal(second.outcome,"delegated");
+-  assert.equal(second.expiresAt,first.expiresAt);
+-  assert.equal(await costStore.hasPermission(thirdUid,id),true);
+-  await assert.rejects(
+-   store.delegatePermission({targetUid:delegateeUid,actorUid:delegateeUid,permissionId:id,reason:"Self delegation"}),
+-   /themselves/
+-  );
+-  await store.setPermission({targetUid:delegatorUid,actorUid:actor,permissionId:id,status:"revoked",reason:"Revoke upstream authority"});
+-  assert.equal(await costStore.hasPermission(delegatorUid,id),false);
+-  assert.equal(await costStore.hasPermission(delegateeUid,id),false);
+-  assert.equal(await costStore.hasPermission(thirdUid,id),false);
+-  const descendants=await db.collection("staffActionPermissionGrants").where("rootGrantId","==",root.grantId).get();
+-  assert.equal(descendants.size,3);
+-  assert.ok(descendants.docs.filter(d=>d.id!==root.grantId).every(d=>d.data().status==="active"));
+-  await assert.rejects(
+-   store.delegatePermission({targetUid:thirdUid,actorUid:delegateeUid,permissionId:id,reason:"Attempt after upstream revocation"}),
+-   /explicitly delegable/
+-  );
+- });
+- it("lets a grantor revoke a delegation and invalidates its descendants",async()=>{
+-  for(const staffUid of [delegatorUid,delegateeUid,thirdUid]){
+-   await db.collection("staffDirectory").doc(staffUid).set({email:`${staffUid}@example.test`,status:"active"});
+-  }
+-  const id="operational_cost_definition.view";
+-  await store.setPermission({targetUid:delegatorUid,actorUid:actor,permissionId:id,status:"active",reason:"Delegation revocation test",delegable:true});
+-  const first=await store.delegatePermission({targetUid:delegateeUid,actorUid:delegatorUid,permissionId:id,reason:"Grant first level",allowFurtherDelegation:true});
+-  const second=await store.delegatePermission({targetUid:thirdUid,actorUid:delegateeUid,permissionId:id,reason:"Grant second level"});
+-  assert.equal(await costStore.hasPermission(thirdUid,id),true);
+-  await assert.rejects(
+-   store.revokeDelegatedPermission({grantId:first.grantId,actorUid:delegateeUid,reason:"Not the grantor"}),
+-   /personally issued/
+-  );
+-  assert.deepEqual(
+-   await store.revokeDelegatedPermission({grantId:first.grantId,actorUid:delegatorUid,reason:"Delegation no longer required"}),
+-   {outcome:"revoked"}
+-  );
+-  assert.equal(await costStore.hasPermission(delegateeUid,id),false);
+-  assert.equal(await costStore.hasPermission(thirdUid,id),false);
+-  const secondGrant=await db.collection("staffActionPermissionGrants").doc(second.grantId).get();
+-  assert.equal(secondGrant.data().status,"active");
+-  const events=await db.collection("staffManagementAudit").where("grantId","==",first.grantId).get();
+-  assert.equal(events.docs.filter(document=>document.data().action==="permission.delegation_revoked").length,1);
+- });
+- it("does not allow delegation from an ordinary non-delegable assignment",async()=>{
+-  await db.collection("staffDirectory").doc(workspaceUid).set({email:"nondelegable@example.test",status:"active"});
+-  await db.collection("staffDirectory").doc(thirdUid).set({email:"recipient@example.test",status:"active"});
+-  await store.setPermission({targetUid:workspaceUid,actorUid:actor,permissionId:"pudo_location.register",status:"active",reason:"Registration activity without delegation"});
+-  await assert.rejects(
+-   store.delegatePermission({targetUid:thirdUid,actorUid:workspaceUid,permissionId:"pudo_location.register",reason:"Should be denied"}),
+-   /explicitly delegable/
+-  );
+- });
+- it("revokes only pending invitations and records the reason",async()=>{
+-  const invite=await store.createInvitation({email:"staff.revoke@example.com",expiresAt:new Date(Date.now()+3600000).toISOString(),reason:"Revocation test",actorUid:actor});invites.push(invite.invitationId);
+-  assert.deepEqual(await store.revokeInvitation(invite.invitationId,actor,"No longer required"),{outcome:"revoked"});
+-  assert.deepEqual(await store.revokeInvitation(invite.invitationId,actor,"Repeat"),{outcome:"not_pending"});
+-  assert.equal((await db.collection("staffInvitations").doc(invite.invitationId).get()).data().status,"revoked");
+- });
++const enabled = Boolean(process.env.FIRESTORE_EMULATOR_HOST);
++describe("staff invitation and permission lifecycle", { skip: !enabled }, () => {
++  let app, db, store, costStore; const prefix = randomUUID(), actor = `perm-admin-${prefix}`, uid = `staff-${prefix}`, activeUid = `active-staff-${prefix}`, workspaceUid = `workspace-staff-${prefix}`, delegatorUid = `delegator-${prefix}`, delegateeUid = `delegatee-${prefix}`, thirdUid = `third-${prefix}`, invites = [];
++  before(() => { app = initializeApp({ projectId: "demo-verilyft-staff-management" }, `staff-management-${prefix}`); db = getFirestore(app); store = createStaffManagementStore({ db, serverTimestamp: () => FieldValue.serverTimestamp() }); costStore = createOperationalCostDefinitionStore({ db, serverTimestamp: () => FieldValue.serverTimestamp() }); });
++  after(async () => {
++    for (const id of invites) await db.collection("staffInvitations").doc(id).delete();
++    const staffUids = [uid, activeUid, workspaceUid, delegatorUid, delegateeUid, thirdUid];
++    for (const staffUid of staffUids) {
++      const perms = await db.collection("staffActionPermissions").doc(staffUid).collection("permissions").listDocuments();
++      await Promise.all(perms.map(d => d.delete()));
++      await db.collection("staffActionPermissions").doc(staffUid).delete();
++      await db.collection("staffDirectory").doc(staffUid).delete();
++    }
++    const grants = await db.collection("staffActionPermissionGrants").get();
++    await Promise.all(grants.docs.filter(d => staffUids.includes(d.data().targetUid)).map(d => d.ref.delete()));
++    const audit = await db.collection("staffManagementAudit").get();
++    await Promise.all(audit.docs.filter(d => d.data().actorUid === actor || staffUids.includes(d.data().targetUid)).map(d => d.ref.delete()));
++    if (app) await deleteApp(app);
++  });
++  it("stores only a token hash and requires an explicit future expiry", async () => {
++    const expiry = new Date(Date.now() + 3600000).toISOString();
++    const created = await store.createInvitation({ email: "Invited.Staff@example.com", expiresAt: expiry, reason: "Launch operations staff", actorUid: actor }); invites.push(created.invitationId);
++    const snap = await db.collection("staffInvitations").doc(created.invitationId).get();
++    assert.equal(snap.data().email, "invited.staff@example.com"); assert.equal(snap.data().status, "pending"); assert.notEqual(snap.data().tokenHash, created.token); assert.equal("token" in snap.data(), false); assert.equal(snap.data().expiresAt.toDate().toISOString(), expiry);
++    const listing = await store.listStaff(); const listedInvite = listing.invitations.find(item => item.invitationId === created.invitationId); assert.ok(listedInvite); assert.equal("tokenHash" in listedInvite, false); assert.equal("token" in listedInvite, false);
++    await assert.rejects(store.createInvitation({ email: "staff@example.com", expiresAt: new Date(Date.now() - 1000).toISOString(), reason: "expired", actorUid: actor }), TypeError);
++  });
++  it("prevents duplicate pending invitations and invitations for active staff", async () => {
++    const invite = await store.createInvitation({ email: "staff.duplicate@example.com", expiresAt: new Date(Date.now() + 3600000).toISOString(), reason: "Duplicate invitation test", actorUid: actor }); invites.push(invite.invitationId);
++    await assert.rejects(
++      store.createInvitation({ email: "staff.duplicate@example.com", expiresAt: new Date(Date.now() + 7200000).toISOString(), reason: "Second invitation", actorUid: actor }),
++      /pending invitation already exists/
++    );
++    await store.revokeInvitation(invite.invitationId, actor, "Close duplicate test");
++    const replacement = await store.createInvitation({ email: "staff.duplicate@example.com", expiresAt: new Date(Date.now() + 3600000).toISOString(), reason: "Replacement invitation test", actorUid: actor }); invites.push(replacement.invitationId);
++    await store.revokeInvitation(replacement.invitationId, actor, "Close replacement test");
++    await db.collection("staffDirectory").doc(activeUid).set({ email: "staff.already-active@example.com", status: "active" });
++    await assert.rejects(
++      store.createInvitation({ email: "staff.already-active@example.com", expiresAt: new Date(Date.now() + 3600000).toISOString(), reason: "Active account test", actorUid: actor }),
++      /already belongs to an active staff account/
++    );
++  });
++
++  it("activates only the matching invited identity and grants no permissions", async () => {
++    const invite = await store.createInvitation({ email: "staff.activate@example.com", expiresAt: new Date(Date.now() + 3600000).toISOString(), reason: "Activation test", actorUid: actor }); invites.push(invite.invitationId);
++    assert.deepEqual(await store.activateInvitation({ token: invite.token, uid, email: "other@example.com" }), { outcome: "email_mismatch" });
++    assert.deepEqual(await store.activateInvitation({ token: invite.token, uid, email: "staff.activate@example.com" }), { outcome: "activated" });
++    assert.equal((await db.collection("staffDirectory").doc(uid).get()).data().status, "active");
++    assert.equal((await db.collection("staffActionPermissions").doc(uid).collection("permissions").get()).empty, true);
++    assert.deepEqual(await store.activateInvitation({ token: invite.token, uid, email: "staff.activate@example.com" }), { outcome: "already_active" });
++  });
++  it("detects and activates a pending invitation from the verified staff workspace identity", async () => {
++    const email = "staff.workspace-activation@example.com";
++    const invite = await store.createInvitation({ email, expiresAt: new Date(Date.now() + 3600000).toISOString(), reason: "Workspace activation test", actorUid: actor }); invites.push(invite.invitationId);
++    assert.deepEqual(await store.getInvitationStatus({ uid: workspaceUid, email }), { status: "pending" });
++    assert.deepEqual(await store.activatePendingInvitation({ uid: workspaceUid, email }), { outcome: "activated" });
++    assert.deepEqual(await store.getInvitationStatus({ uid: workspaceUid, email }), { status: "active" });
++    assert.deepEqual(await store.activatePendingInvitation({ uid: workspaceUid, email }), { outcome: "already_active" });
++    assert.equal((await db.collection("staffActionPermissions").doc(workspaceUid).collection("permissions").get()).empty, true);
++  });
++  it("assigns, expires, suspends and revokes only approved permissions with audit events", async () => {
++    await db.collection("staffDirectory").doc(uid).set({ email: "staff.activate@example.com", status: "active", updatedAt: FieldValue.serverTimestamp() });
++    const id = "operational_cost_definition.view";
++    await store.setPermission({ targetUid: uid, actorUid: actor, permissionId: id, status: "active", reason: "View cost definitions" });
++    assert.equal(await costStore.hasPermission(uid, id), true);
++    const ref = db.collection("staffActionPermissions").doc(uid).collection("permissions").doc(id);
++    const grantQuery = await db.collection("staffActionPermissionGrants").where("targetUid", "==", uid).get();
++    const rootGrant = grantQuery.docs.find(document => document.data().permissionId === id);
++    await ref.update({ expiresAt: new Date(Date.now() - 1000) });
++    await rootGrant.ref.update({ expiresAt: new Date(Date.now() - 1000) });
++    assert.equal(await costStore.hasPermission(uid, id), false);
++    await store.setPermission({ targetUid: uid, actorUid: actor, permissionId: id, status: "active", reason: "Renew access", expiresAt: new Date(Date.now() + 3600000).toISOString() });
++    assert.equal(await costStore.hasPermission(uid, id), true);
++    await store.setPermission({ targetUid: uid, actorUid: actor, permissionId: id, status: "suspended", reason: "Temporary suspension" }); assert.equal(await costStore.hasPermission(uid, id), false);
++    await store.setPermission({ targetUid: uid, actorUid: actor, permissionId: id, status: "revoked", reason: "Role ended" }); assert.equal(await costStore.hasPermission(uid, id), false);
++    await assert.rejects(store.setPermission({ targetUid: actor, actorUid: actor, permissionId: id, status: "active", reason: "Self grant" }), /cannot assign or change their own/);
++    await assert.rejects(store.setPermission({ targetUid: uid, actorUid: actor, permissionId: "unknown.permission", status: "active", reason: "Invalid catalogue" }), TypeError);
++    const events = await db.collection("staffManagementAudit").where("permissionId", "==", id).get(); assert.equal(events.size, 4); assert.ok(events.docs.every(d => d.data().actorUid === actor && d.data().reason));
++  });
++  it("enforces activity-specific delegation lineage and upstream revocation", async () => {
++    for (const staffUid of [delegatorUid, delegateeUid, thirdUid]) {
++      await db.collection("staffDirectory").doc(staffUid).set({ email: `${staffUid}@example.test`, status: "active" });
++    }
++
++    const id = "pudo_location.verify";
++    const rootExpiry = new Date(Date.now() + 2 * 3600000);
++
++    const root = await store.setPermission({
++      targetUid: delegatorUid,
++      actorUid: actor,
++      permissionId: id,
++      status: "active",
++      reason: "Authorise PUDO registration delegation",
++      expiresAt: rootExpiry.toISOString(),
++      delegable: true
++    });
++
++    assert.equal(root.delegable, true);
++
++    await assert.rejects(
++      store.delegatePermission({
++        targetUid: thirdUid,
++        actorUid: delegatorUid,
++        permissionId: id,
++        reason: "Attempt to exceed authority",
++        expiresAt: new Date(Date.now() + 3 * 3600000).toISOString()
++      }),
++      /cannot outlive/
++    );
++
++    await assert.rejects(
++      store.delegatePermission({
++        targetUid: thirdUid,
++        actorUid: delegatorUid,
++        permissionId: "operational_cost_definition.view",
++        reason: "Attempt to escalate into another activity"
++      }),
++      /explicitly delegable/
++    );
++
++    const first = await store.delegatePermission({
++      targetUid: delegateeUid,
++      actorUid: delegatorUid,
++      permissionId: id,
++      reason: "Delegate registration activity",
++      expiresAt: new Date(Date.now() + 3600000).toISOString(),
++      allowFurtherDelegation: true
++    });
++
++    assert.equal(first.outcome, "delegated");
++    assert.equal(await costStore.hasPermission(delegateeUid, id), true);
++
++    const second = await store.delegatePermission({
++      targetUid: thirdUid,
++      actorUid: delegateeUid,
++      permissionId: id,
++      reason: "Sub-delegate registration activity",
++      allowFurtherDelegation: false
++    });
++
++    assert.equal(second.outcome, "delegated");
++    assert.equal(second.expiresAt, first.expiresAt);
++    assert.equal(await costStore.hasPermission(thirdUid, id), true);
++
++    // Verify that every grant belongs to the same root lineage.
++    const rootRef = db.collection("staffActionPermissionGrants").doc(root.grantId);
++    const firstRef = db.collection("staffActionPermissionGrants").doc(first.grantId);
++    const secondRef = db.collection("staffActionPermissionGrants").doc(second.grantId);
++    const firstData = (await firstRef.get()).data();
++
++    // The root grant must identify itself as the lineage root.
++    await rootRef.update({ rootGrantId: "incorrect-root-id" });
++    assert.equal(await costStore.hasPermission(thirdUid, id), false);
++    await rootRef.update({ rootGrantId: root.grantId });
++
++    // A child cannot declare a different lineage root.
++    await secondRef.update({ rootGrantId: "different-child-root" });
++    assert.equal(await costStore.hasPermission(thirdUid, id), false);
++    await secondRef.update({ rootGrantId: root.grantId });
++
++    // Every intermediate grant must remain active.
++    await firstRef.update({ status: "revoked" });
++    assert.equal(await costStore.hasPermission(thirdUid, id), false);
++    await firstRef.update({ status: firstData.status });
++
++    // An expired intermediate grant cannot support descendants.
++    await firstRef.update({ expiresAt: new Date(Date.now() - 1000) });
++    assert.equal(await costStore.hasPermission(thirdUid, id), false);
++    await firstRef.update({ expiresAt: firstData.expiresAt });
++
++    // A non-delegable intermediate grant cannot support descendants.
++    await firstRef.update({ delegable: false });
++    assert.equal(await costStore.hasPermission(thirdUid, id), false);
++    await firstRef.update({ delegable: firstData.delegable });
++
++    // Restoring the valid lineage restores permission.
++    assert.equal(await costStore.hasPermission(thirdUid, id), true);
++
++    // Self-delegation must be rejected.
++    await assert.rejects(
++      store.delegatePermission({
++        targetUid: delegateeUid,
++        actorUid: delegateeUid,
++        permissionId: id,
++        reason: "Self delegation"
++      }),
++      /themselves/
++    );
++
++    // Revoking the root invalidates every descendant.
++    await store.setPermission({
++      targetUid: delegatorUid,
++      actorUid: actor,
++      permissionId: id,
++      status: "revoked",
++      reason: "Revoke upstream authority"
++    });
++
++    assert.equal(await costStore.hasPermission(delegatorUid, id), false);
++    assert.equal(await costStore.hasPermission(delegateeUid, id), false);
++    assert.equal(await costStore.hasPermission(thirdUid, id), false);
++
++    const descendants = await db.collection("staffActionPermissionGrants")
++      .where("rootGrantId", "==", root.grantId).get();
++
++    assert.equal(descendants.size, 3);
++    assert.ok(descendants.docs.filter(d => d.id !== root.grantId)
++      .every(d => d.data().status === "active"));
++
++    await assert.rejects(
++      store.delegatePermission({
++        targetUid: thirdUid,
++        actorUid: delegateeUid,
++        permissionId: id,
++        reason: "Attempt after upstream revocation"
++      }),
++      /explicitly delegable/
++    );
++  });
++  it("lets a grantor revoke a delegation and invalidates its descendants", async () => {
++    for (const staffUid of [delegatorUid, delegateeUid, thirdUid]) {
++      await db.collection("staffDirectory").doc(staffUid).set({ email: `${staffUid}@example.test`, status: "active" });
++    }
++    const id = "operational_cost_definition.view";
++    await store.setPermission({ targetUid: delegatorUid, actorUid: actor, permissionId: id, status: "active", reason: "Delegation revocation test", delegable: true });
++    const first = await store.delegatePermission({ targetUid: delegateeUid, actorUid: delegatorUid, permissionId: id, reason: "Grant first level", allowFurtherDelegation: true });
++    const second = await store.delegatePermission({ targetUid: thirdUid, actorUid: delegateeUid, permissionId: id, reason: "Grant second level" });
++    assert.equal(await costStore.hasPermission(thirdUid, id), true);
++    await assert.rejects(
++      store.revokeDelegatedPermission({ grantId: first.grantId, actorUid: delegateeUid, reason: "Not the grantor" }),
++      /personally issued/
++    );
++    assert.deepEqual(
++      await store.revokeDelegatedPermission({ grantId: first.grantId, actorUid: delegatorUid, reason: "Delegation no longer required" }),
++      { outcome: "revoked" }
++    );
++    assert.equal(await costStore.hasPermission(delegateeUid, id), false);
++    assert.equal(await costStore.hasPermission(thirdUid, id), false);
++    const secondGrant = await db.collection("staffActionPermissionGrants").doc(second.grantId).get();
++    assert.equal(secondGrant.data().status, "active");
++    const events = await db.collection("staffManagementAudit").where("grantId", "==", first.grantId).get();
++    assert.equal(events.docs.filter(document => document.data().action === "permission.delegation_revoked").length, 1);
++  });
++  it("does not allow delegation from an ordinary non-delegable assignment", async () => {
++    await db.collection("staffDirectory").doc(workspaceUid).set({ email: "nondelegable@example.test", status: "active" });
++    await db.collection("staffDirectory").doc(thirdUid).set({ email: "recipient@example.test", status: "active" });
++    await store.setPermission({ targetUid: workspaceUid, actorUid: actor, permissionId: "pudo_location.register", status: "active", reason: "Registration activity without delegation" });
++    await assert.rejects(
++      store.delegatePermission({ targetUid: thirdUid, actorUid: workspaceUid, permissionId: "pudo_location.register", reason: "Should be denied" }),
++      /explicitly delegable/
++    );
++  });
++  it("revokes only pending invitations and records the reason", async () => {
++    const invite = await store.createInvitation({ email: "staff.revoke@example.com", expiresAt: new Date(Date.now() + 3600000).toISOString(), reason: "Revocation test", actorUid: actor }); invites.push(invite.invitationId);
++    assert.deepEqual(await store.revokeInvitation(invite.invitationId, actor, "No longer required"), { outcome: "revoked" });
++    assert.deepEqual(await store.revokeInvitation(invite.invitationId, actor, "Repeat"), { outcome: "not_pending" });
++    assert.equal((await db.collection("staffInvitations").doc(invite.invitationId).get()).data().status, "revoked");
++  });
+ });
+\ No newline at end of file
+
+===== STASH 1: COMPLETE PATCH =====
+diff --git a/app/staff/accept-invitation/page.tsx b/app/staff/accept-invitation/page.tsx
+index 51639b6..5560648 100644
+--- a/app/staff/accept-invitation/page.tsx
++++ b/app/staff/accept-invitation/page.tsx
+@@ -1,38 +1,70 @@
+ "use client";
+ import Link from "next/link";
+-import { Suspense,useState } from "react";
++import { Suspense, useState } from "react";
+ import { useSearchParams } from "next/navigation";
+-import { GoogleAuthProvider,createUserWithEmailAndPassword,reload,sendEmailVerification,signInWithEmailAndPassword,signInWithPopup,signOut } from "firebase/auth";
++import { GoogleAuthProvider, createUserWithEmailAndPassword, reload, sendEmailVerification, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+ import { auth } from "@/lib/firebase";
+-function AcceptStaffInvitationContent(){
+- const token=useSearchParams().get("token")??"";
+- const [email,setEmail]=useState(""),[password,setPassword]=useState(""),[mode,setMode]=useState<"register"|"sign-in">("register"),[message,setMessage]=useState(""),[error,setError]=useState(""),[busy,setBusy]=useState(false);
+- async function run(action:()=>Promise<void>){setBusy(true);setError("");setMessage("");try{await action();}catch(cause){setError(cause instanceof Error?cause.message:"The request could not be completed.");}finally{setBusy(false);}}
+- async function authenticate(){
+-  if(!token)throw new Error("This invitation link is missing its token.");
+-  if(mode==="register"){const credential=await createUserWithEmailAndPassword(auth,email.trim(),password);await sendEmailVerification(credential.user);await signOut(auth);setMessage("Account created. Verify the email address from your inbox, then return and sign in to activate staff access.");}
+-  else{await signInWithEmailAndPassword(auth,email.trim(),password);setMessage("Signed in. If your email is verified, activate your invitation below.");}
+- }
+- async function googleSignIn(){if(!token)throw new Error("This invitation link is missing its token.");await signInWithPopup(auth,new GoogleAuthProvider());setMessage("Google sign-in completed. Activate your invitation below.");}
+- async function refreshVerification(){if(!auth.currentUser)throw new Error("Sign in with the invited account first.");await reload(auth.currentUser);setMessage(auth.currentUser.emailVerified?"Email verified. You can activate staff access.":"Email is not verified yet. Open the verification email and try again.");}
+- async function activate(){
+-  const user=auth.currentUser;if(!user)throw new Error("Sign in with the invited account first.");await reload(user);if(!user.emailVerified)throw new Error("Verify your email address before activating staff access.");
+-  const response=await fetch("/api/staff/invitations/activate",{method:"POST",headers:{Authorization:`Bearer ${await user.getIdToken(true)}`,"Content-Type":"application/json"},body:JSON.stringify({token})});
+-  const result=await response.json();if(!response.ok)throw new Error(result.error??"Activation failed.");setMessage(result.message);
+- }
+- return <main className="admin-page"><div className="admin-shell cost-admin-shell"><div className="cost-page-topline"><Link href="/" className="cost-secondary-button">VeriLyft home</Link><span className="section-label">STAFF INVITATION</span></div>
+- <div className="cost-page-heading"><div><h1>Join the <em>team.</em></h1><p>Use the email address that received this invitation. A verified matching email is required. Activation does not automatically assign operational permissions.</p></div></div>
+- {!token&&<div className="cost-feedback cost-feedback-error">Invitation token is missing. Open the complete link from your invitation email.</div>}{message&&<div className="cost-feedback cost-feedback-success">{message}</div>}{error&&<div className="cost-feedback cost-feedback-error">{error}</div>}
+- <section className="cost-panel"><div className="cost-panel-heading"><h2>{mode==="register"?"Create your staff account":"Sign in to activate"}</h2></div>
+- <form className="cost-form-grid" onSubmit={event=>{event.preventDefault();void run(authenticate);}}>
+-  <label className="cost-field cost-field-wide">Invited email address<input type="email" required autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)}/></label>
+-  <label className="cost-field cost-field-wide">Password<input type="password" required minLength={6} autoComplete={mode==="register"?"new-password":"current-password"} value={password} onChange={e=>setPassword(e.target.value)}/></label>
+-  <div className="cost-form-actions cost-field-wide"><button className="cost-primary-button" type="submit" disabled={busy||!token}>{mode==="register"?"Create account and verify email":"Sign in"}</button><button className="cost-secondary-button" type="button" onClick={()=>setMode(mode==="register"?"sign-in":"register")}>{mode==="register"?"I already have an account":"Create a new account"}</button></div>
+- </form>
+- <div className="cost-form-actions"><button className="cost-secondary-button" type="button" disabled={busy||!token} onClick={()=>void run(googleSignIn)}>Continue with Google</button><button className="cost-secondary-button" type="button" disabled={busy||!auth.currentUser} onClick={()=>void run(refreshVerification)}>Refresh email verification</button><button className="cost-primary-button" type="button" disabled={busy||!auth.currentUser||!token} onClick={()=>void run(activate)}>Activate staff access</button></div>
+- </section></div></main>;
++function AcceptStaffInvitationContent() {
++    const token = useSearchParams().get("token") ?? "";
++    const [email, setEmail] = useState(""), [password, setPassword] = useState(""), [mode, setMode] = useState<"register" | "sign-in">("register"), [message, setMessage] = useState(""), [error, setError] = useState(""), [busy, setBusy] = useState(false);
++    async function run(action: () => Promise<void>) { setBusy(true); setError(""); setMessage(""); try { await action(); } catch (cause) { setError(cause instanceof Error ? cause.message : "The request could not be completed."); } finally { setBusy(false); } }
++    async function authenticate() {
++        if (!token) throw new Error("This invitation link is missing its token.");
++        if (mode === "register") { const credential = await createUserWithEmailAndPassword(auth, email.trim(), password); await sendEmailVerification(credential.user); await signOut(auth); setMessage("Account created. Verify the email address from your inbox, then return and sign in to activate staff access."); }
++        else { await signInWithEmailAndPassword(auth, email.trim(), password); setMessage("Signed in. If your email is verified, activate your invitation below."); }
++    }
++    async function googleSignIn() { if (!token) throw new Error("This invitation link is missing its token."); await signInWithPopup(auth, new GoogleAuthProvider()); setMessage("Google sign-in completed. Activate your invitation below."); }
++    async function refreshVerification() { if (!auth.currentUser) throw new Error("Sign in with the invited account first."); await reload(auth.currentUser); setMessage(auth.currentUser.emailVerified ? "Email verified. You can activate staff access." : "Email is not verified yet. Open the verification email and try again."); }
++    async function activate() {
++        const user = auth.currentUser; if (!user) throw new Error("Sign in with the invited account first."); await reload(user); if (!user.emailVerified) throw new Error("Verify your email address before activating staff access.");
++        const response = await fetch("/api/staff/invitations/activate", { method: "POST", headers: { Authorization: `Bearer ${await user.getIdToken(true)}`, "Content-Type": "application/json" }, body: JSON.stringify({ token }) });
++        const result = await response.json(); if (!response.ok) throw new Error(result.error ?? "Activation failed."); setMessage(result.message);
++    }
++    return <main className="admin-page"><div className="admin-shell cost-admin-shell"><div className="cost-page-topline"><Link href="/" className="cost-secondary-button">VeriLyft home</Link><span className="section-label">STAFF INVITATION</span></div>
++        <div className="cost-page-heading"><div><h1>Join the <em>team.</em></h1><p>Use the email address that received this invitation. A verified matching email is required. Activation does not automatically assign operational permissions.</p></div></div>
++        {!token && <div className="cost-feedback cost-feedback-error">Invitation token is missing. Open the complete link from your invitation email.</div>}{message && <div className="cost-feedback cost-feedback-success">{message}</div>}{error && <div className="cost-feedback cost-feedback-error">{error}</div>}
++        <section className="cost-panel"><div className="cost-panel-heading"><h2>{mode === "register" ? "Create your staff account" : "Sign in to activate"}</h2></div>
++            <form className="cost-form-grid" onSubmit={event => { event.preventDefault(); void run(authenticate); }}>
++                <label className="cost-field cost-field-wide">Invited email address<input type="email" required autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} /></label>
++                <label className="cost-field cost-field-wide">Password<input type="password" required minLength={6} autoComplete={mode === "register" ? "new-password" : "current-password"} value={password} onChange={e => setPassword(e.target.value)} /></label>
++                <div className="cost-form-actions cost-field-wide"><button className="cost-primary-button" type="submit" disabled={busy || !token}>{mode === "register" ? "Create account and verify email" : "Sign in"}</button><button className="cost-secondary-button" type="button" onClick={() => setMode(mode === "register" ? "sign-in" : "register")}>{mode === "register" ? "I already have an account" : "Create a new account"}</button></div>
++            </form>
++            {/* <div className="cost-form-actions"><button className="cost-secondary-button" type="button" disabled={busy || !token} onClick={() => void run(googleSignIn)}>Continue with Google</button><button className="cost-secondary-button" type="button" disabled={busy || !auth.currentUser} onClick={() => void run(refreshVerification)}>Refresh email verification</button><button className="cost-primary-button" type="button" disabled={busy || !auth.currentUser || !token} onClick={() => void run(activate)}>Activate staff access</button></div> */}
++            <div className="cost-form-actions">
++                <button
++                    className="cost-secondary-button"
++                    type="button"
++                    disabled={busy || !token}
++                    onClick={() => void run(googleSignIn)}
++                >
++                    Continue with Google
++                </button>
++            </div>
++
++            {auth.currentUser && (
++                <div className="cost-form-actions">
++                    <button
++                        className="cost-secondary-button"
++                        type="button"
++                        disabled={busy}
++                        onClick={() => void run(refreshVerification)}
++                    >
++                        Refresh email verification
++                    </button>
++
++                    <button
++                        className="cost-primary-button"
++                        type="button"
++                        disabled={busy || !token}
++                        onClick={() => void run(activate)}
++                    >
++                        Activate staff access
++                    </button>
++                </div>
++            )}
++        </section></div></main>;
+ }
+ 
+-export default function AcceptStaffInvitationPage(){
+- return <Suspense fallback={<main className="admin-page"><div className="admin-shell cost-admin-shell">Loading invitation…</div></main>}><AcceptStaffInvitationContent/></Suspense>;
++export default function AcceptStaffInvitationPage() {
++    return <Suspense fallback={<main className="admin-page"><div className="admin-shell cost-admin-shell">Loading invitation…</div></main>}><AcceptStaffInvitationContent /></Suspense>;
+ }
+
+===== STASH METADATA =====
+stash@{0}: On feat/m1-parcel-based-pricing: preserve pudoless local work before PUDO activation sync
+stash@{1}: On main: local staff invitation page changes
+
+===== CURRENT MAIN FILE BASELINE =====
+app/admin/commercial-pricing-definitions/page.tsx
+app/admin/operational-cost-definitions/page.tsx
+app/api/admin/commercial-pricing-definitions/[definitionId]/route.ts
+app/api/admin/commercial-pricing-definitions/route.ts
+app/api/admin/operational-cost-definitions/[definitionId]/route.ts
+app/api/admin/operational-cost-definitions/[definitionId]/workflow/route.ts
+app/api/admin/operational-cost-definitions/route.ts
+app/api/staff/pudo-locations/[locationId]/activation/route.ts
+app/api/staff/pudo-locations/[locationId]/route.ts
+app/api/staff/pudo-locations/route.ts
+app/staff/pudo-locations/[locationId]/page.tsx
+app/staff/pudo-locations/page.tsx
+docs/sdd/ADMIN_PORTAL.md
+docs/sdd/ADMIN_REQUIREMENTS.md
+docs/sdd/ADMIN_REQUIREMENTS_AUDIT.md
+docs/sdd/CURRENT_IMPLEMENTATION_STATUS.md
+docs/sdd/DECISIONS.md
+docs/sdd/IMPLEMENTATION_SOURCE_TRACEABILITY.md
+docs/sdd/ISSUES.md
+docs/sdd/PLATFORM_ACTORS_AND_RESPONSIBILITIES.md
+docs/sdd/PLATFORM_API_PERSISTENCE_AND_INTEGRATION_BOUNDARY_CONTRACT.md
+docs/sdd/PLATFORM_BOOKING_PARTY_AUTHORITY_DECISIONS.md
+docs/sdd/PLATFORM_CONSOLIDATED_IMPLEMENTATION_BACKLOG.md
+docs/sdd/PLATFORM_CONSOLIDATED_OWNER_DECISION_PACKAGE.md
+docs/sdd/PLATFORM_CROSS_DOMAIN_ACCEPTANCE_MATRIX.md
+docs/sdd/PLATFORM_DB01_DB02_DB05_PHYSICAL_PERSISTENCE_API_SECURITY_DESIGN.md
+docs/sdd/PLATFORM_DB01_DB02_DB05_RELATIONSHIP_DECISION_PACKAGE.md
+docs/sdd/PLATFORM_DB01_DB12_TECHNICAL_CONTRACT_AND_ACCEPTANCE_SPECIFICATION.md
+docs/sdd/PLATFORM_DECISION_DOCUMENT_RECONCILIATION.md
+docs/sdd/PLATFORM_DOMAIN_BOUNDARY_AND_IDENTITY_DECISION_MATRIX.md
+docs/sdd/PLATFORM_DOMAIN_LIFECYCLES_AND_CONTRACTS.md
+docs/sdd/PLATFORM_LIFECYCLE_EVENT_AND_STATE_CONTRACT_MATRIX.md
+docs/sdd/PLATFORM_M1_ACTIVITY_BASED_PRICING_CONFIGURATION.md
+docs/sdd/PLATFORM_M1_PARCEL_BASED_PRICING_INPUT_CONTRACT.md
+docs/sdd/PLATFORM_M2_COMMERCIAL_PRICING_OWNER_DECISIONS.md
+docs/sdd/PLATFORM_M2_CONFIGURABLE_ACTIVITY_COST_FOUNDATION_DECISION.md
+docs/sdd/PLATFORM_M2_COST_EVIDENCE_STAGE0_TECHNICAL_CONTRACT.md
+docs/sdd/PLATFORM_M2_IMPLEMENTATION_READINESS_AND_STAGED_PLAN.md
+docs/sdd/PLATFORM_M2_PRE_IMPLEMENTATION_REVIEW_PACKAGE.md
+docs/sdd/PLATFORM_M2_PRICING_AND_QUOTATION_READINESS_SPECIFICATION.md
+docs/sdd/PLATFORM_M2_SERVICE_COST_AND_INPUT_EVIDENCE_WORKBOOK.md
+docs/sdd/PLATFORM_M2_SHARED_PRICING_AUTHORITY_READINESS_REVIEW.md
+docs/sdd/PLATFORM_MUTATION_AUTHORIZATION_AND_RECOVERY_MATRIX.md
+docs/sdd/PLATFORM_OPERATIONAL_ACTIVITY_CATALOGUE_AND_COST_INPUT_DEFINITION.md
+docs/sdd/PLATFORM_OPERATIONAL_ACTIVITY_COST_CONFIGURATION_TECHNICAL_CONTRACT.md
+docs/sdd/PLATFORM_OPERATIONAL_COST_DEFINITION_APPROVAL_FOUNDATION.md
+docs/sdd/PLATFORM_OWNER_DECISION_REGISTER.md
+docs/sdd/PLATFORM_P0_ACCEPTANCE_EVIDENCE_CATALOGUE.md
+docs/sdd/PLATFORM_P0_TEST_SPECIFICATION_READINESS.md
+docs/sdd/PLATFORM_PRODUCTION_READINESS_AND_OPERATIONAL_EVIDENCE_CONTRACT.md
+docs/sdd/PLATFORM_PUDO2_VERIFICATION_AND_OPERATIONS_APPROVAL_CONTRACT.md
+docs/sdd/PLATFORM_PUDO_FINAL_IMPLEMENTATION_READINESS.md
+docs/sdd/PLATFORM_PUDO_LOCATION_REGISTRATION_AND_VERIFICATION_WORKFLOW.md
+docs/sdd/PLATFORM_PUDO_LOCATION_REGISTRY_AND_CAPABILITY_FOUNDATION.md
+docs/sdd/PLATFORM_PUDO_LOCATION_VERIFICATION_CHECKLIST_AND_EVIDENCE.md
+docs/sdd/PLATFORM_REQUIREMENT_DEPENDENCY_TRACEABILITY.md
+docs/sdd/PLATFORM_REQUIREMENT_PRIORITY_MATRIX.md
+docs/sdd/PLATFORM_REVIEW_3_ACTION_CAPABILITY_CROSSWALK.md
+docs/sdd/PLATFORM_REVIEW_3_COMPLETENESS_AUDIT.md
+docs/sdd/PLATFORM_REVIEW_3_LIFECYCLE_TRANSITION_AND_RECOVERY_CROSSWALK.md
+docs/sdd/PLATFORM_REVIEW_3_OWNER_INPUT_TRIAGE.md
+docs/sdd/PLATFORM_REVIEW_3_RESOURCE_ENTITLEMENT_AND_PROJECTION_LINEAGE_CROSSWALK.md
+docs/sdd/PLATFORM_REVIEW_5_IMPLEMENTATION_READINESS.md
+docs/sdd/PLATFORM_SHARED_WORKFLOWS.md
+docs/sdd/PLATFORM_SHIPPER_JOURNEY_AND_PORTAL_EXPERIENCE.md
+docs/sdd/PLATFORM_SHIPPER_PORTAL_PRODUCT_SCOPE.md
+docs/sdd/PLATFORM_STAFF_MANAGEMENT_IMPLEMENTATION.md
+docs/sdd/PLATFORM_STAFF_PERMISSION_DECISIONS.md
+docs/sdd/PLATFORM_STAFF_PERMISSION_MATRIX.md
+docs/sdd/PLATFORM_TECHNICAL_CONTRACT_RECONCILIATION.md
+docs/sdd/PLATFORM_TECHNICAL_DESIGN_COHERENCE_AND_DEPENDENCY_MATRIX.md
+docs/sdd/PROGRESS.md
+docs/sdd/README.md
+docs/sdd/SDD_COMPLETENESS_AUDIT.md
+docs/sdd/SESSION_HANDOFF.md
+docs/sdd/SPEC.md
+lib/server/commercial-pricing-engine-core.ts
+lib/server/commercial-pricing-request-auth.ts
+lib/server/commercial-pricing-store-core.ts
+lib/server/commercial-pricing-store.ts
+lib/server/operational-cost-definition-request-auth.ts
+lib/server/operational-cost-definition-store-core.ts
+lib/server/operational-cost-definition-store.ts
+lib/server/operational-cost-definition-workflow-store-core.ts
+lib/server/operational-cost-definition-workflow-store.ts
+lib/server/pudo-location-activation-store-core.ts
+lib/server/pudo-location-activation-store.ts
+lib/server/pudo-location-store-core.ts
+lib/server/pudo-location-store.ts
+lib/server/pudo-location-verification-store-core.ts
+lib/server/pudo-location-verification-store.ts
+tests/commercial-pricing-activity-configuration.test.mjs
+tests/commercial-pricing-engine.test.mjs
+tests/commercial-pricing-store.test.mjs
+tests/operational-cost-definition-store.test.mjs
+tests/operational-cost-definition-workflow.test.mjs
+tests/pudo-location-activation-store.test.mjs
+tests/pudo-location-store.test.mjs
+tests/pudo-location-verification-store.test.mjs
