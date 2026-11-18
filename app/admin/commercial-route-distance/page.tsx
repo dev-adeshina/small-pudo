@@ -140,10 +140,25 @@ export default function CommercialRouteDistancePage() {
 
   useEffect(() => {
     if (!token || !origin || !destination || origin === destination) return;
-    void loadEvidence(token, origin, destination).catch((cause) => {
-      setError(cause instanceof Error ? cause.message : "Unable to load route-distance history.");
-    });
-  }, [token, origin, destination, loadEvidence]);
+    let active = true;
+    const query = new URLSearchParams({ origin, destination });
+    void (async () => {
+      try {
+        const response = await fetch("/api/admin/commercial-route-distance/evidence?" + query.toString(), {
+          headers: headers(token),
+          cache: "no-store",
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error ?? "Unable to load route-distance history.");
+        if (active) setEvidence(Array.isArray(data.evidence) ? data.evidence as Evidence[] : []);
+      } catch (cause) {
+        if (active) {
+          setError(cause instanceof Error ? cause.message : "Unable to load route-distance history.");
+        }
+      }
+    })();
+    return () => { active = false; };
+  }, [token, origin, destination]);
 
   async function refresh() {
     if (!token) return;
