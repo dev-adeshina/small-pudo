@@ -121,7 +121,6 @@ export function createCommercialRouteDistanceStore({
 
       const snapshot = await candidates
         .where("lifecycle", "==", "active")
-        .orderBy("name", "asc")
         .limit(limit)
         .get();
 
@@ -139,7 +138,8 @@ export function createCommercialRouteDistanceStore({
             : null,
         };
       }));
-      return locations.filter((location) => location !== null);
+      return locations.filter((location) => location !== null)
+        .sort((left, right) => left.name.localeCompare(right.name));
     },
 
     async listEvidence(
@@ -167,7 +167,6 @@ export function createCommercialRouteDistanceStore({
       const snapshot = await evidenceCollection
         .where("originOperationalPointRef", "==", originOperationalPointRef)
         .where("destinationOperationalPointRef", "==", destinationOperationalPointRef)
-        .orderBy("createdAt", "desc")
         .limit(limit)
         .get();
 
@@ -176,7 +175,7 @@ export function createCommercialRouteDistanceStore({
         const evidence = data.evidence as CommercialRouteDistanceEvidence;
         assertCommercialRouteDistanceEvidence(evidence);
         return { evidenceId: document.id, ...evidence };
-      });
+      }).sort((left, right) => Date.parse(right.recordedAt) - Date.parse(left.recordedAt));
     },
 
     async recordEvidence(actorUid: string, input: RecordCommercialRouteDistanceInput) {
