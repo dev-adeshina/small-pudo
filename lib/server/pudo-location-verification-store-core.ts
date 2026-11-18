@@ -225,9 +225,12 @@ export function createPudoLocationVerificationStore({
         throw new TypeError("List limit must be between 1 and 100.");
       }
 
+      // Keep this query on the lifecycle field only. Combining the
+      // lifecycle filter with submittedAt ordering requires a composite
+      // Firestore index; sorting the bounded result set in memory avoids
+      // making the verification queue depend on a separately deployed index.
       const snapshot = await candidates
         .where("lifecycle", "==", "submitted")
-        .orderBy("submittedAt", "desc")
         .limit(limit)
         .get();
 
@@ -245,11 +248,28 @@ export function createPudoLocationVerificationStore({
       }));
 
 
-      return queue.filter((item) =>
+      const pendingQueue = queue.filter((item) =>
         !["approved_to_activate", "not_approved"].includes(
           String(item.verification?.status ?? "pending_inspection"),
         )
       );
+
+      pendingQueue.sort((left, right) => {
+        const timestamp = (value: unknown): number => {
+          if (value && typeof value === "object" && "toMillis" in value &&
+              typeof value.toMillis === "function") {
+            return value.toMillis();
+          }
+          if (value instanceof Date) return value.getTime();
+          const parsed = Date.parse(String(value ?? ""));
+          return Number.isFinite(parsed) ? parsed : 0;
+        };
+
+        return timestamp(right.candidate.submittedAt) -
+          timestamp(left.candidate.submittedAt);
+      });
+
+      return pendingQueue;
     },
 
     async getVerification(actorUid: string, locationId: string) {
