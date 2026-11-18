@@ -502,6 +502,7 @@ export default function CommercialPricingDefinitionsPage() {
         <Link href="/" className="admin-logo"><Image src="/logo.svg" width={60} height={20} alt="VeriLyft" priority /></Link>
         <div className="admin-header-right">
           <Link href="/admin/operational-cost-definitions" className="admin-action">Operational costs</Link>
+          <Link href="/admin/commercial-route-distance" className="admin-action">Route distances</Link>
           <span className="admin-email">{email}</span>
           <button type="button" className="admin-logout" onClick={logout} aria-label="Sign out"><LogOut size={17} /></button>
         </div>
