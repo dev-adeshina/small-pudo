@@ -22,7 +22,6 @@ export interface RecordCommercialRouteDistanceInput {
   supportingReference?: string;
 }
 
-const IDENTIFIER = /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$/;
 const LOCATION_ID = /^[A-Za-z0-9_-]{1,128}$/;
 
 function assertActor(uid: string): void {
@@ -44,7 +43,11 @@ function assertSource(value: unknown): asserts value is string {
 }
 
 function assertMeasurementDate(value: unknown): asserts value is string {
-  if (typeof value !== "string" || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value) || Number.isNaN(Date.parse(value + "T00:00:00Z"))) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    throw new TypeError("A valid measurement date is required.");
+  }
+  const parsed = new Date(value + "T00:00:00Z");
+  if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) {
     throw new TypeError("A valid measurement date is required.");
   }
 }
