@@ -17,6 +17,14 @@ interface CommercialPricingStoreDependencies {
 interface CommercialPricingLineageData {
   currentVersionId?: unknown;
   currentVersionNumber?: unknown;
+  approvedVersionId?: unknown;
+  approvedVersionNumber?: unknown;
+  approvedAt?: unknown;
+  approvedBy?: unknown;
+  publishedVersionId?: unknown;
+  publishedVersionNumber?: unknown;
+  publishedAt?: unknown;
+  publishedBy?: unknown;
   createdAt?: unknown;
   createdBy?: unknown;
   updatedAt?: unknown;
@@ -437,16 +445,16 @@ export function createCommercialPricingStore({
             "Commercial pricing definition points to a missing current version"
           );
         }
-        
 
-        // const currentVersion =
-        //   currentVersionDocument.data() as CommercialPricingVersionData;
 
-        // if (currentVersion.versionNumber !== currentVersionNumber) {
-        //   throw new Error(
-        //     "Commercial pricing version number does not match its lineage"
-        //   );
-        // }
+        const currentVersion =
+          currentVersionDocument.data() as CommercialPricingVersionData;
+
+        if (currentVersion.versionNumber !== currentVersionNumber) {
+          throw new Error(
+            "Commercial pricing version number does not match its lineage"
+          );
+        }
 
         const currentWorkflowRef = currentVersionRef
           .collection("approval")
@@ -480,6 +488,10 @@ export function createCommercialPricingStore({
         transaction.update(definitionRef, {
           currentVersionId: nextVersionRef.id,
           currentVersionNumber: nextVersionNumber,
+          approvedVersionId: null,
+          approvedVersionNumber: null,
+          approvedAt: null,
+          approvedBy: null,
           updatedAt: serverTimestamp(),
           updatedBy: actorUid,
         });
@@ -730,13 +742,16 @@ export function createCommercialPricingStore({
           versionDocument.data() as CommercialPricingVersionData;
 
         if (
+          lineage.currentVersionId !== versionId ||
+          lineage.currentVersionNumber !== version.versionNumber ||
           lineage.approvedVersionId !== versionId ||
+          lineage.approvedVersionNumber !== version.versionNumber ||
           workflowDocument.data()?.state !== "approved" ||
           typeof version.versionNumber !== "number" ||
-          lineage.approvedVersionNumber !== version.versionNumber
+          !Number.isSafeInteger(version.versionNumber)
         ) {
           throw new Error(
-            "Only the currently approved commercial pricing version may be published"
+            "Only the current approved commercial pricing version may be published"
           );
         }
 
