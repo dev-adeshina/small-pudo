@@ -2353,3 +2353,188 @@ tests/operational-cost-definition-workflow.test.mjs
 tests/pudo-location-activation-store.test.mjs
 tests/pudo-location-store.test.mjs
 tests/pudo-location-verification-store.test.mjs
+
+===== LOCAL-ONLY STRAIGHT-LINE DISTANCE COMMIT =====
+commit b2ed1c0c5c83efc241d250c2d07f26855f0d6770
+Author:     dev-adeshina <shina.oladoja@outlook.com>
+AuthorDate: Thu Nov 12 17:42:33 2026 +0100
+Commit:     dev-adeshina <shina.oladoja@outlook.com>
+CommitDate: Thu Nov 12 17:42:33 2026 +0100
+
+    feat: add straight-line distance utility
+
+ lib/server/straight-line-distance.ts  | 76 +++++++++++++++++++++++++++++++++++
+ tests/straight-line-distance.test.mjs | 54 +++++++++++++++++++++++++
+ 2 files changed, 130 insertions(+)
+diff --git a/lib/server/straight-line-distance.ts b/lib/server/straight-line-distance.ts
+new file mode 100644
+index 0000000..1cea83c
+--- /dev/null
++++ b/lib/server/straight-line-distance.ts
+@@ -0,0 +1,76 @@
++export interface Wgs84Coordinate {
++  latitude: number;
++  longitude: number;
++}
++
++export interface StraightLineDistanceEvidence {
++  measurementCategory: "straight_line";
++  method: "haversine";
++  coordinateReferenceSystem: "WGS84";
++  unit: "metres";
++  distanceMeters: number;
++}
++
++const EARTH_MEAN_RADIUS_METERS = 6_371_008.8;
++
++function validateCoordinate(
++  coordinate: Wgs84Coordinate,
++  label: string,
++): void {
++  if (
++    !coordinate ||
++    typeof coordinate.latitude !== "number" ||
++    !Number.isFinite(coordinate.latitude) ||
++    coordinate.latitude < -90 ||
++    coordinate.latitude > 90
++  ) {
++    throw new TypeError(`${label} latitude must be between -90 and 90.`);
++  }
++
++  if (
++    typeof coordinate.longitude !== "number" ||
++    !Number.isFinite(coordinate.longitude) ||
++    coordinate.longitude < -180 ||
++    coordinate.longitude > 180
++  ) {
++    throw new TypeError(`${label} longitude must be between -180 and 180.`);
++  }
++}
++
++function toRadians(degrees: number): number {
++  return (degrees * Math.PI) / 180;
++}
++
++export function calculateStraightLineDistance(
++  from: Wgs84Coordinate,
++  to: Wgs84Coordinate,
++): StraightLineDistanceEvidence {
++  validateCoordinate(from, "Origin");
++  validateCoordinate(to, "Destination");
++
++  const latitudeDifference = toRadians(to.latitude - from.latitude);
++  const longitudeDifference = toRadians(to.longitude - from.longitude);
++
++  const fromLatitude = toRadians(from.latitude);
++  const toLatitude = toRadians(to.latitude);
++
++  const haversine =
++    Math.sin(latitudeDifference / 2) ** 2 +
++    Math.cos(fromLatitude) *
++      Math.cos(toLatitude) *
++      Math.sin(longitudeDifference / 2) ** 2;
++
++  const centralAngle =
++    2 * Math.atan2(
++      Math.sqrt(Math.min(1, haversine)),
++      Math.sqrt(Math.max(0, 1 - haversine)),
++    );
++
++  return {
++    measurementCategory: "straight_line",
++    method: "haversine",
++    coordinateReferenceSystem: "WGS84",
++    unit: "metres",
++    distanceMeters: EARTH_MEAN_RADIUS_METERS * centralAngle,
++  };
++}
+diff --git a/tests/straight-line-distance.test.mjs b/tests/straight-line-distance.test.mjs
+new file mode 100644
+index 0000000..7325506
+--- /dev/null
++++ b/tests/straight-line-distance.test.mjs
+@@ -0,0 +1,54 @@
++import test from "node:test";
++import assert from "node:assert/strict";
++import { calculateStraightLineDistance } from "../lib/server/straight-line-distance.ts";
++
++test("same coordinates produce zero distance", () => {
++  const result = calculateStraightLineDistance(
++    { latitude: 6.5244, longitude: 3.3792 },
++    { latitude: 6.5244, longitude: 3.3792 },
++  );
++
++  assert.equal(result.distanceMeters, 0);
++  assert.equal(result.measurementCategory, "straight_line");
++  assert.equal(result.method, "haversine");
++  assert.equal(result.coordinateReferenceSystem, "WGS84");
++  assert.equal(result.unit, "metres");
++});
++
++test("one degree along the equator is approximately 111.2 km", () => {
++  const result = calculateStraightLineDistance(
++    { latitude: 0, longitude: 0 },
++    { latitude: 0, longitude: 1 },
++  );
++
++  assert.ok(result.distanceMeters > 111_000);
++  assert.ok(result.distanceMeters < 111_300);
++});
++
++test("distance is symmetrical", () => {
++  const a = { latitude: 6.5244, longitude: 3.3792 };
++  const b = { latitude: 9.0765, longitude: 7.3986 };
++
++  const forward = calculateStraightLineDistance(a, b);
++  const reverse = calculateStraightLineDistance(b, a);
++
++  assert.ok(Math.abs(forward.distanceMeters - reverse.distanceMeters) < 1e-8);
++});
++
++test("invalid coordinates are rejected", () => {
++  assert.throws(
++    () => calculateStraightLineDistance(
++      { latitude: 91, longitude: 3 },
++      { latitude: 6, longitude: 3 },
++    ),
++    /Origin latitude/,
++  );
++
++  assert.throws(
++    () => calculateStraightLineDistance(
++      { latitude: 6, longitude: 3 },
++      { latitude: 6, longitude: 181 },
++    ),
++    /Destination longitude/,
++  );
++});
+
+===== ROUTE WORKTREE FILE COMPARISON =====
+--- lib/server/commercial-route-distance-input-core.ts ---
+IDENTICAL to active pricing branch
+--- lib/server/commercial-route-pricing-input-adapter-core.ts ---
+DIFFERENT — inspect before cleanup
+--- /dev/fd/63	2026-11-18 11:00:26.055810964 +0100
++++ /home/sina/Workspace/pudoless-m1-chunk3-part2/lib/server/commercial-route-pricing-input-adapter-core.ts	2026-11-14 18:31:45.068602457 +0100
+@@ -68,10 +68,6 @@
+ 
+   const values: Record<string, number> = {};
+ 
+-  if (routeEvidence === undefined) {
+-    return values;
+-  }
+-
+   for (const definition of configuration.inputs) {
+     if (definition.source === undefined) {
+       continue;
+@@ -83,6 +79,10 @@
+       continue;
+     }
+ 
++    if (routeEvidence === undefined) {
++      continue;
++    }
++
+     const distance = routeEvidence.distance;
+ 
+     if (distance.unit !== definition.unit) {
