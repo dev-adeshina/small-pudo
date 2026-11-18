@@ -139,10 +139,7 @@ export default function CommercialRouteDistancePage() {
   }, [loadLocations, router]);
 
   useEffect(() => {
-    if (!token || !origin || !destination || origin === destination) {
-      setEvidence([]);
-      return;
-    }
+    if (!token || !origin || !destination || origin === destination) return;
     void loadEvidence(token, origin, destination).catch((cause) => {
       setError(cause instanceof Error ? cause.message : "Unable to load route-distance history.");
     });
@@ -245,12 +242,12 @@ export default function CommercialRouteDistancePage() {
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
               <label className="block text-sm font-medium">Origin PUDO
-                <select className="mt-2 w-full rounded-lg border p-3" value={origin} onChange={(event) => setOrigin(event.target.value)}>
+                <select className="mt-2 w-full rounded-lg border p-3" value={origin} onChange={(event) => { setEvidence([]); setOrigin(event.target.value); }}>
                   {locations.map((location) => <option key={location.locationId} value={location.locationId}>{location.name} — {location.address}</option>)}
                 </select>
               </label>
               <label className="block text-sm font-medium">Destination PUDO
-                <select className="mt-2 w-full rounded-lg border p-3" value={destination} onChange={(event) => setDestination(event.target.value)}>
+                <select className="mt-2 w-full rounded-lg border p-3" value={destination} onChange={(event) => { setEvidence([]); setDestination(event.target.value); }}>
                   {locations.map((location) => <option key={location.locationId} value={location.locationId} disabled={location.locationId === origin}>{location.name} — {location.address}</option>)}
                 </select>
               </label>
