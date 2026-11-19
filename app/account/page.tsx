@@ -359,6 +359,11 @@ export default function CustomerAccountPage() {
               Prepare a shipment
               <ArrowUpRight size={16} />
             </Link>
+            <Link href="/account/quotes" className="customer-primary-action" style={{ marginTop: 10 }}>
+              <FileText size={17} />
+              View quotations
+              <ArrowUpRight size={16} />
+            </Link>
           </div>
 
           <aside className="customer-welcome-note">
