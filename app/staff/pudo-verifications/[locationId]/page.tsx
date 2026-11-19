@@ -354,6 +354,37 @@ export default function PudoVerificationDetailPage() {
   }
 
 
+  async function handleActivation() {
+    setSaving(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const token = await getToken();
+      const response = await fetch(
+        `/api/staff/pudo-locations/${encodeURIComponent(locationId)}/activation`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
+        },
+      );
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to activate PUDO location.");
+      }
+
+      await loadVerification();
+      setMessage("PUDO location successfully activated.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to activate PUDO location.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+
   if (!user && loading) {
     return (
       <main className="admin-page">
@@ -525,6 +556,37 @@ export default function PudoVerificationDetailPage() {
           )}
         </section>
 
+
+
+        {status === "approved_to_activate" && (
+          <section className="cost-panel">
+            <h2>PUDO location activation</h2>
+
+            {candidate.lifecycle === "active" ? (
+              <p>This PUDO location is active. Activation has already been completed.</p>
+            ) : candidate.lifecycle === "submitted" ? (
+              <>
+                <p>
+                  Verification approval has been recorded. Activation is a separate
+                  authorised action and will change the candidate lifecycle to active.
+                  Only staff with the PUDO activation permission can complete this step.
+                </p>
+                <button
+                  className="cost-primary-button"
+                  type="button"
+                  onClick={handleActivation}
+                  disabled={saving}
+                >
+                  {saving ? "Activating location…" : "Activate PUDO location"}
+                </button>
+              </>
+            ) : (
+              <p>
+                Activation is unavailable for the current candidate lifecycle: {candidate.lifecycle || "Unknown"}.
+              </p>
+            )}
+          </section>
+        )}
 
 
         {canInspect && (
