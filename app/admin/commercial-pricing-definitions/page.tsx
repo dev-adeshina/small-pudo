@@ -62,14 +62,14 @@ type Configuration = {
   components: PricingComponent[];
   activityPricing: { schemaVersion: 1; activities: Activity[] };
 };
-type Version = Omit<Configuration, "activityPricing"> & { activityPricing?: { schemaVersion: 1; activities: Activity[] }; versionId: string; versionNumber: number; createdAt?: unknown };
+type Version = Omit<Configuration, "activityPricing"> & { activityPricing?: { schemaVersion: 1; activities: Activity[] }; versionId: string; versionNumber: number; createdAt?: unknown; approvalWorkflow?: { state: "draft" | "pending_approval" | "changes_requested" | "approved" | "rejected"; proposerUid?: string; approverUid?: string; reason?: string | null } };
 type Summary = {
   definitionId: string;
   currentVersionId: string;
   currentVersionNumber: number;
   currentVersion: Version;
 };
-type Detail = { definitionId: string; currentVersionId: string; currentVersionNumber: number; versions: Version[] };
+type Detail = { definitionId: string; currentVersionId: string; currentVersionNumber: number; publishedVersionId?: string | null; publishedVersionNumber?: number | null; versions: Version[] };
 
 const CATALOGUE = [
   ["ACT-01", "Origin PUDO presentation and receipt"],
@@ -293,6 +293,52 @@ export default function CommercialPricingDefinitionsPage() {
     catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to load configuration."); }
   }
 
+  async function runApprovalAction(action: "submit" | "approve" | "request_changes" | "reject") {
+    if (!selected || !selectedVersion || saving) return;
+    let reason: string | undefined;
+    if (action === "request_changes" || action === "reject") {
+      reason = window.prompt(action === "reject" ? "Reason for rejection" : "Changes required");
+      if (!reason?.trim()) return;
+    }
+    setSaving(true);
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch(
+        "/api/admin/commercial-pricing-definitions/" + encodeURIComponent(selected.definitionId) + "/workflow",
+        { method: "POST", headers: requestHeaders(token), body: JSON.stringify({ versionId: selectedVersion.versionId, action, ...(reason ? { reason } : {}) }) }
+      );
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Unable to update approval workflow.");
+      setNotice("Pricing version status: " + data.state.replaceAll("_", " ") + ".");
+      await loadDefinitions(token);
+      await loadDetail(selected.definitionId, token);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to update approval workflow.");
+    } finally { setSaving(false); }
+  }
+
+  async function publishSelectedVersion() {
+    if (!selected || !selectedVersion || saving) return;
+    if (!window.confirm("Publish this approved pricing version? Only this published version can be selected by the quotation service.")) return;
+    setSaving(true);
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch(
+        "/api/admin/commercial-pricing-definitions/" + encodeURIComponent(selected.definitionId) + "/publish",
+        { method: "POST", headers: requestHeaders(token), body: JSON.stringify({ versionId: selectedVersion.versionId }) }
+      );
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Unable to publish pricing version.");
+      setNotice("Pricing version " + data.versionNumber + " published.");
+      await loadDefinitions(token);
+      await loadDetail(selected.definitionId, token);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to publish pricing version.");
+    } finally { setSaving(false); }
+  }
+
   function updateActivity(index: number, field: "applicability" | "treatment", value: Applicability | Treatment) {
     setForm((current) => ({
       ...current,
@@ -509,8 +555,8 @@ export default function CommercialPricingDefinitionsPage() {
       </header>
       <div className="admin-shell cost-admin-shell">
         <div className="cost-page-topline">
-          <div><span className="section-label">M1 / EXECUTION 2</span><h1>Activity-based pricing configuration</h1>
-            <p>Configure how each operational activity relates to a service. This is a draft configuration foundation, not an approved price.</p></div>
+          <div><span className="section-label">M1 / EXECUTION 6</span><h1>Commercial pricing approval & publication</h1>
+            <p>Configure service pricing, submit versions for independent approval, and publish approved versions for controlled quotation use.</p></div>
           <button className="cost-primary-button" type="button" onClick={startCreate}>New service configuration</button>
         </div>
         {error && <div className="cost-alert"><strong>Unable to continue</strong><span>{error}</span></div>}
@@ -990,13 +1036,28 @@ export default function CommercialPricingDefinitionsPage() {
               <button className="cost-secondary-button" type="button" onClick={() => { setEditing(false); setCreating(false); }}>Cancel</button>
             </div>
           </form>
-          <p className="cost-footer-note">Saving creates an immutable draft version only. It does not select a pricing model, add rates or formulas, approve or publish a price, activate a service, or permit quotation issuance.</p>
+          <p className="cost-footer-note">Saving creates an immutable draft version. It does not approve or publish pricing, establish service eligibility, or permit quotation issuance until all required commercial and operational gates are satisfied.</p>
         </section>}
         {selected && !editing && <section className="cost-panel" style={{ marginTop: 22 }}>
           <div className="cost-panel-heading"><div><span className="section-label">03 / VERSION DETAIL</span><h2>{selectedVersion?.configurationName}</h2></div>
-            <button className="cost-primary-button" type="button" onClick={() => { if (selectedVersion) setForm(configurationFromVersion(selectedVersion)); setEditing(true); setCreating(false); }}>Revise draft</button>
+            <button className="cost-primary-button" type="button" disabled={saving || selectedVersion?.approvalWorkflow?.state === "pending_approval"} onClick={() => { if (selectedVersion) setForm(configurationFromVersion(selectedVersion)); setEditing(true); setCreating(false); }}>Revise version</button>
           </div>
           <p>Service: {selectedVersion?.serviceCode} · Version {selected.currentVersionNumber}</p>
+          <p>Approval status: <strong>{(selectedVersion?.approvalWorkflow?.state ?? "draft").replaceAll("_", " ")}</strong>
+            {selected.publishedVersionId === selectedVersion?.versionId ? " · Published" : ""}</p>
+          {selectedVersion?.approvalWorkflow?.reason && <p>Decision reason: {selectedVersion.approvalWorkflow.reason}</p>}
+          <div className="cost-form-actions" style={{ flexWrap: "wrap", marginBottom: 18 }}>
+            {(selectedVersion?.approvalWorkflow?.state === "draft" || selectedVersion?.approvalWorkflow?.state === "changes_requested" || selectedVersion?.approvalWorkflow?.state === "rejected") &&
+              <button className="cost-primary-button" type="button" disabled={saving} onClick={() => void runApprovalAction("submit")}>Submit for approval</button>}
+            {selectedVersion?.approvalWorkflow?.state === "pending_approval" && <>
+              <button className="cost-primary-button" type="button" disabled={saving} onClick={() => void runApprovalAction("approve")}>Approve</button>
+              <button className="cost-secondary-button" type="button" disabled={saving} onClick={() => void runApprovalAction("request_changes")}>Request changes</button>
+              <button className="cost-secondary-button" type="button" disabled={saving} onClick={() => void runApprovalAction("reject")}>Reject</button>
+            </>}
+            {selectedVersion?.approvalWorkflow?.state === "approved" && selected.publishedVersionId !== selectedVersion.versionId &&
+              <button className="cost-primary-button" type="button" disabled={saving} onClick={() => void publishSelectedVersion()}>Publish approved version</button>}
+          </div>
+          <p className="cost-footer-note">Approval and publication are separately permission-controlled. The proposer cannot approve their own version. Publication does not override service eligibility or missing commercial terms.</p>
           <p>Activity assignments: {(selectedVersion?.activityPricing?.activities ?? []).filter((item) => item.applicability !== "undetermined").length} of 11 decided.</p>
           <div className="cost-version-list">{(selectedVersion?.activityPricing?.activities ?? CATALOGUE.map(([activityCode, activityName]) => ({ activityCode, activityName, applicability: "undetermined" as const, treatment: "undetermined" as const }))).map((item) => <div className="cost-version-row" key={item.activityCode}>
             <strong>{item.activityCode} — {item.activityName}</strong><span>{APPLICABILITY_LABELS[item.applicability]}</span><small>{TREATMENT_LABELS[item.treatment]}</small>
