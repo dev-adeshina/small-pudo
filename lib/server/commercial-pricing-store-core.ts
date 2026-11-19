@@ -322,9 +322,13 @@ export function createCommercialPricingStore({
         .orderBy("versionNumber", "asc")
         .get();
 
-      const versions = versionsSnapshot.docs.map((version) => ({
-        versionId: version.id,
-        ...version.data(),
+      const versions = await Promise.all(versionsSnapshot.docs.map(async (version) => {
+        const workflow = await version.ref.collection("approval").doc("workflow").get();
+        return {
+          versionId: version.id,
+          ...version.data(),
+          approvalWorkflow: workflow.exists ? workflow.data() : { state: "draft" },
+        };
       }));
 
       return {
