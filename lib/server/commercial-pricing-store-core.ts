@@ -759,6 +759,14 @@ export function createCommercialPricingStore({
           );
         }
 
+        if (lineage.publishedVersionId === versionId && lineage.publishedVersionNumber === version.versionNumber) {
+          return {
+            outcome: "published",
+            versionId,
+            versionNumber: version.versionNumber,
+          } as const;
+        }
+
         const authorized = await hasStaffActionPermissionInTransaction(
           transaction,
           db,
