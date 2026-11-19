@@ -166,8 +166,13 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         .where("bookingPartyUid", "==", bookingPartyUid)
         .limit(100)
         .get();
-      const rows = await Promise.all(snapshot.docs.map(async (document) => {
+      const rows = (await Promise.all(snapshot.docs.map(async (document) => {
         const lineage = document.data();
+        // A lineage record is not customer-visible until an authorised
+        // issuance transition has set one of the issued lifecycle states.
+        if (!["issued", "accepted", "rejected", "expired"].includes(String(lineage.status))) {
+          return null;
+        }
         const versionId = lineage.currentVersionId;
         if (typeof versionId !== "string") throw new Error("Quote lineage has an invalid current version reference");
         const version = await document.ref.collection("versions").doc(versionId).get();
@@ -178,7 +183,7 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         const status = lineage.status === "issued" && expiresAt && expiresAt <= now()
           ? "expired" : lineage.status ?? "legacy";
         return { quoteId: document.id, ...lineage, status, currentVersion: { versionId, ...version.data() }, versions };
-      }));
+      }))).filter((row) => row !== null);
       return rows.sort((a, b) => {
         const left = dateValue(a.issuedAt ?? a.createdAt)?.getTime() ?? 0;
         const right = dateValue(b.issuedAt ?? b.createdAt)?.getTime() ?? 0;
@@ -193,6 +198,7 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
       const quoteDocument = await quoteRef.get();
       if (!quoteDocument.exists || quoteDocument.data()?.bookingPartyUid !== bookingPartyUid) return null;
       const lineage = quoteDocument.data() as QuoteLineageData;
+      if (!["issued", "accepted", "rejected", "expired"].includes(String(lineage.status))) return null;
       const versionsSnapshot = await quoteRef.collection("versions").orderBy("sequence", "asc").get();
       const versions = versionsSnapshot.docs.map((version) => ({ versionId: version.id, ...version.data() }));
       const expiresAt = dateValue(lineage.validUntil);
