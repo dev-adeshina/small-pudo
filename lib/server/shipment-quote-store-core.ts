@@ -172,10 +172,12 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         if (typeof versionId !== "string") throw new Error("Quote lineage has an invalid current version reference");
         const version = await document.ref.collection("versions").doc(versionId).get();
         if (!version.exists) throw new Error("Quote lineage points to a missing current version");
+        const versionsSnapshot = await document.ref.collection("versions").orderBy("sequence", "asc").get();
+        const versions = versionsSnapshot.docs.map((item) => ({ versionId: item.id, ...item.data() }));
         const expiresAt = dateValue(lineage.validUntil);
         const status = lineage.status === "issued" && expiresAt && expiresAt <= now()
           ? "expired" : lineage.status ?? "legacy";
-        return { quoteId: document.id, ...lineage, status, currentVersion: { versionId, ...version.data() } };
+        return { quoteId: document.id, ...lineage, status, currentVersion: { versionId, ...version.data() }, versions };
       }));
       return rows.sort((a, b) => {
         const left = dateValue(a.issuedAt ?? a.createdAt)?.getTime() ?? 0;
@@ -271,6 +273,74 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         });
         transaction.create(eventRef, { action: "rejected", versionId: expectedCurrentVersionId, actorUid: bookingPartyUid, reason: reason!.trim(), timestamp });
         return { outcome: "rejected", rejectedVersionId: expectedCurrentVersionId } as const;
+      });
+    },
+
+    async reviseIssuedQuote(input: {
+      quoteId: string;
+      expectedCurrentVersionId: string;
+      snapshot: ShipmentQuoteSnapshot;
+      validUntil: Date;
+      handoverWindowMinutes: number;
+      issuedBy: string;
+    }): Promise<ReviseShipmentQuoteResult> {
+      const { quoteId, expectedCurrentVersionId, snapshot, validUntil, handoverWindowMinutes, issuedBy } = input;
+      assertIdentifier(quoteId, "Quote ID");
+      assertIdentifier(expectedCurrentVersionId, "Expected quote version ID");
+      assertBookingPartyUid(issuedBy);
+      assertSnapshot(snapshot);
+      assertQuoteTerms(validUntil, handoverWindowMinutes, now());
+
+      const quoteRef = db.collection("shipmentQuotes").doc(quoteId);
+      const currentVersionRef = quoteRef.collection("versions").doc(expectedCurrentVersionId);
+      const nextVersionRef = quoteRef.collection("versions").doc();
+      const eventRef = quoteRef.collection("events").doc();
+
+      return db.runTransaction(async (transaction) => {
+        const [quoteDocument, currentVersionDocument] = await Promise.all([
+          transaction.get(quoteRef),
+          transaction.get(currentVersionRef),
+        ]);
+        if (!quoteDocument.exists || !currentVersionDocument.exists) return { outcome: "not_found" } as const;
+        const lineage = quoteDocument.data() as QuoteLineageData;
+        if (lineage.acceptedVersionId || lineage.bookingId || lineage.status === "accepted") {
+          return { outcome: "already_accepted" } as const;
+        }
+        if (lineage.currentVersionId !== expectedCurrentVersionId) {
+          return { outcome: "stale_version", currentVersionId: typeof lineage.currentVersionId === "string" ? lineage.currentVersionId : "" } as const;
+        }
+        const currentVersion = currentVersionDocument.data() as QuoteVersionData;
+        if (typeof currentVersion.sequence !== "number" || !Number.isSafeInteger(currentVersion.sequence) || currentVersion.sequence < 1) {
+          throw new Error("Quote version sequence is invalid");
+        }
+        const sequence = currentVersion.sequence + 1;
+        if (!Number.isSafeInteger(sequence)) throw new Error("Next quote version sequence is out of range");
+        const timestamp = serverTimestamp();
+        transaction.create(nextVersionRef, {
+          sequence,
+          snapshot: { ...snapshot },
+          validUntil,
+          handoverWindowMinutes,
+          createdAt: timestamp,
+          createdBy: issuedBy,
+        });
+        transaction.update(quoteRef, {
+          currentVersionId: nextVersionRef.id,
+          status: "issued",
+          validUntil,
+          handoverWindowMinutes,
+          issuedAt: timestamp,
+          issuedBy,
+          updatedAt: timestamp,
+        });
+        transaction.create(eventRef, {
+          action: "reissued",
+          previousVersionId: expectedCurrentVersionId,
+          versionId: nextVersionRef.id,
+          actorUid: issuedBy,
+          timestamp,
+        });
+        return { outcome: "updated", versionId: nextVersionRef.id, sequence } as const;
       });
     },
 
