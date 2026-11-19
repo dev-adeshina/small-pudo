@@ -1,8 +1,4 @@
 import type { FieldValue, Firestore, Transaction } from "firebase-admin/firestore";
-import { hasStaffActionPermissionInTransaction } from "./staff-permission-grants-core.ts";
-
-const PERMISSION = "pudo_location.verify";
-
 export type PudoVerificationStatus =
   | "pending_inspection"
   | "inspection_recorded"
@@ -182,26 +178,11 @@ export function createPudoLocationVerificationStore({
   const candidates = db.collection("pudoLocations");
   const verifications = db.collection("pudoLocationVerifications");
 
-  async function requirePermission(
-    actorUid: string,
-    transaction?: Transaction,
-  ): Promise<void> {
+  function requireStaffIdentity(actorUid: string): void {
+    // Verification is part of ordinary staff operations. The route layer
+    // already requires an authenticated staff session with a verified email.
+    // Activation remains separately permission-gated by pudo_location.activate.
     assertActor(actorUid);
-
-    const allowed = transaction
-      ? await hasStaffActionPermissionInTransaction(
-        transaction,
-        db,
-        actorUid,
-        PERMISSION,
-      )
-      : await db.runTransaction((tx) =>
-        hasStaffActionPermissionInTransaction(tx, db, actorUid, PERMISSION),
-      );
-
-    if (!allowed) {
-      throw new Error("You are not authorised to verify PUDO locations.");
-    }
   }
 
   async function requireSubmittedCandidate(
@@ -219,7 +200,7 @@ export function createPudoLocationVerificationStore({
 
   return {
     async listQueue(actorUid: string, limit = 50) {
-      await requirePermission(actorUid);
+      requireStaffIdentity(actorUid);
 
       if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) {
         throw new TypeError("List limit must be between 1 and 100.");
@@ -273,7 +254,7 @@ export function createPudoLocationVerificationStore({
     },
 
     async getVerification(actorUid: string, locationId: string) {
-      await requirePermission(actorUid);
+      requireStaffIdentity(actorUid);
       assertLocationId(locationId);
 
       const candidateSnapshot = await candidates.doc(locationId).get();
@@ -326,7 +307,7 @@ export function createPudoLocationVerificationStore({
       const eventRef = verificationRef.collection("auditEvents").doc();
 
       return db.runTransaction(async (transaction) => {
-        await requirePermission(actorUid, transaction);
+        requireStaffIdentity(actorUid);
         await requireSubmittedCandidate(transaction, locationId);
 
         const currentSnapshot = await transaction.get(verificationRef);
@@ -386,7 +367,7 @@ export function createPudoLocationVerificationStore({
       const eventRef = verificationRef.collection("auditEvents").doc();
 
       return db.runTransaction(async (transaction) => {
-        await requirePermission(actorUid, transaction);
+        requireStaffIdentity(actorUid);
         await requireSubmittedCandidate(transaction, locationId);
 
         const verificationSnapshot = await transaction.get(verificationRef);
