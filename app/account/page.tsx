@@ -11,6 +11,7 @@ import {
   ArrowUpRight,
   CheckCircle2,
   Clock3,
+  FileText,
   LogOut,
   Package,
   ShieldCheck,
