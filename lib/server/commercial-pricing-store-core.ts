@@ -1,4 +1,5 @@
 import type { FieldValue, Firestore } from "firebase-admin/firestore";
+import { assertCommercialPricingConfiguration } from "./commercial-pricing-engine-core";
 
 // import { hasStaffActionPermission } from "./staff-permission-grants-core.ts";
 import {
@@ -578,6 +579,26 @@ export function createCommercialPricingStore({
             : { state: "draft" }
         ) as CommercialPricingWorkflowDocument;
 
+        if (action === "submit") {
+          const configuration = Object.fromEntries(
+            Object.entries(version).filter(([key]) =>
+              key !== "versionNumber" && key !== "createdAt" && key !== "createdBy"
+            )
+          );
+          assertCommercialPricingConfiguration(configuration);
+          const pricingConfiguration = configuration as {
+            pricingModel?: unknown;
+            components?: unknown[];
+          };
+          if (
+            !pricingConfiguration.pricingModel ||
+            !Array.isArray(pricingConfiguration.components) ||
+            pricingConfiguration.components.length === 0
+          ) {
+            throw new Error("A pricing model and at least one complete pricing component are required before submission");
+          }
+        }
+
         const permission =
           action === "submit"
             ? "commercial_pricing.propose"
@@ -744,6 +765,24 @@ export function createCommercialPricingStore({
 
         const version =
           versionDocument.data() as CommercialPricingVersionData;
+
+        const configuration = Object.fromEntries(
+          Object.entries(version).filter(([key]) =>
+            key !== "versionNumber" && key !== "createdAt" && key !== "createdBy"
+          )
+        );
+        assertCommercialPricingConfiguration(configuration);
+        const pricingConfiguration = configuration as {
+          pricingModel?: unknown;
+          components?: unknown[];
+        };
+        if (
+          !pricingConfiguration.pricingModel ||
+          !Array.isArray(pricingConfiguration.components) ||
+          pricingConfiguration.components.length === 0
+        ) {
+          throw new Error("Only a complete pricing configuration with a selected model and pricing components can be published");
+        }
 
         if (
           lineage.currentVersionId !== versionId ||
