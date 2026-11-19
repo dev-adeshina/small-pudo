@@ -93,6 +93,26 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 }
 
+export async function DELETE(request: Request, context: RouteContext) {
+  const auth = await authorizeStaffWorkspace(request);
+
+  if (!auth.ok) {
+    return response({ error: auth.error }, auth.status);
+  }
+
+  try {
+    const locationId = await getLocationId(context);
+    const candidate = await pudoLocationStore.withdrawCandidate(auth.uid, locationId);
+    return response({ candidate });
+  } catch (error) {
+    console.error("PUDO candidate removal failed:", error);
+    return response(
+      { error: error instanceof Error ? error.message : "Unable to remove candidate." },
+      storeErrorStatus(error, 400),
+    );
+  }
+}
+
 export async function POST(request: Request, context: RouteContext) {
   const auth = await authorizeStaffWorkspace(request);
 
