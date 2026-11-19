@@ -330,9 +330,16 @@ export default function PudoLocationEditorPage() {
           <section className="cost-panel">
             <strong>Submitted — awaiting verification</strong>
             <p>
-              Submission does not activate this location or make it available
+              This candidate is read-only while it awaits verification.
+              Submission does not activate the location or make it available
               for customer selection or operations.
             </p>
+            <Link
+              className="cost-primary-button"
+              href={`/staff/pudo-verifications/${encodeURIComponent(locationId)}`}
+            >
+              Inspect and verify candidate
+            </Link>
           </section>
         )}
 

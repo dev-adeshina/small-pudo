@@ -5,8 +5,10 @@ import { commercialRouteDistanceStore } from "@/lib/server/commercial-route-dist
 
 function errorResponse(error: unknown) {
   const message = error instanceof Error ? error.message : "The route-distance request could not be completed.";
-  const status = error instanceof TypeError ? 400 : 400;
-  return NextResponse.json({ error: message }, { status });
+  const status = error instanceof TypeError ? 400 :
+    /not authorised/i.test(message) ? 403 :
+    /not active|must be active/i.test(message) ? 409 : 500;
+  return NextResponse.json({ error: status === 500 ? "The route-distance request could not be completed." : message }, { status });
 }
 
 export async function GET(request: Request) {

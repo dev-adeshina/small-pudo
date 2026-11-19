@@ -9,7 +9,7 @@ type Candidate = {
     locationId: string;
     name?: string;
     address?: string;
-    lifecycle?: "draft" | "submitted";
+    lifecycle?: "draft" | "submitted" | "active";
     updatedAt?: unknown;
 };
 
@@ -18,6 +18,7 @@ export default function PudoLocationsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [user, setUser] = useState<User | null>(null);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
 
     useEffect(() => {
         return onAuthStateChanged(auth, (currentUser) => {
@@ -68,6 +69,40 @@ export default function PudoLocationsPage() {
         };
     }, [user]);
 
+    async function handleDelete(candidate: Candidate) {
+        const label = candidate.name || "this PUDO candidate";
+        const confirmed = window.confirm(
+            `Remove ${label}? It will disappear from the candidate registry. Its verification and audit history will be retained. Active locations cannot be removed.`,
+        );
+        if (!confirmed || !user) return;
+
+        setDeletingId(candidate.locationId);
+        setError("");
+
+        try {
+            const token = await user.getIdToken();
+            const result = await fetch(
+                `/api/staff/pudo-locations/${encodeURIComponent(candidate.locationId)}`,
+                {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${token}` },
+                    cache: "no-store",
+                },
+            );
+            const data = await result.json();
+            if (!result.ok) {
+                throw new Error(data.error || "Unable to remove candidate.");
+            }
+            setCandidates((current) =>
+                current.filter((item) => item.locationId !== candidate.locationId),
+            );
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Unable to remove candidate.");
+        } finally {
+            setDeletingId(null);
+        }
+    }
+
     if (!user && loading) {
         return <main className="admin-page"><p>Loading staff session…</p></main>;
     }
@@ -90,9 +125,14 @@ export default function PudoLocationsPage() {
                         <h1 className="cost-page-heading">PUDO location candidates</h1>
                         <p>Register and maintain proposed PUDO locations.</p>
                     </div>
-                    <Link className="admin-action" href="/staff/pudo-locations/new">
-                        Register a location
-                    </Link>
+                    <div className="cost-form-grid">
+                        <Link className="admin-action" href="/staff/pudo-verifications">
+                            Verification queue
+                        </Link>
+                        <Link className="admin-action" href="/staff/pudo-locations/new">
+                            Register a location
+                        </Link>
+                    </div>
                 </header>
 
                 <section className="cost-panel">
@@ -119,17 +159,38 @@ export default function PudoLocationsPage() {
                                         <p>
                                             Status:{" "}
                                             <strong>
-                                                {candidate.lifecycle === "submitted" ? "Submitted" : "Draft"}
+                                                {candidate.lifecycle === "submitted" ? "Submitted" : candidate.lifecycle === "active" ? "Active" : "Draft"}
                                             </strong>
                                         </p>
                                     </div>
 
-                                    <Link
-                                        className="admin-action"
-                                        href={`/staff/pudo-locations/${candidate.locationId}`}
-                                    >
-                                        {candidate.lifecycle === "submitted" ? "View candidate" : "Open draft"}
-                                    </Link>
+                                    <div className="cost-form-grid">
+                                        {candidate.lifecycle === "submitted" && (
+                                            <Link
+                                                className="cost-primary-button"
+                                                href={`/staff/pudo-verifications/${encodeURIComponent(candidate.locationId)}`}
+                                            >
+                                                Inspect candidate
+                                            </Link>
+                                        )}
+                                        <Link
+                                            className="admin-action"
+                                            href={`/staff/pudo-locations/${candidate.locationId}`}
+                                        >
+                                            {candidate.lifecycle === "submitted" ? "View candidate details" : "Open draft"}
+                                        </Link>
+                                        {candidate.lifecycle !== "active" && (
+                                            <button
+                                                className="admin-action"
+                                                type="button"
+                                                onClick={() => void handleDelete(candidate)}
+                                                disabled={deletingId !== null}
+                                                aria-label={`Delete ${candidate.name || "PUDO candidate"}`}
+                                            >
+                                                {deletingId === candidate.locationId ? "Removing…" : "Delete record"}
+                                            </button>
+                                        )}
+                                    </div>
                                 </article>
                             ))}
                         </div>

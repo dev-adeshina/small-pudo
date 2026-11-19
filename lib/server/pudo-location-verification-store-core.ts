@@ -1,8 +1,4 @@
 import type { FieldValue, Firestore, Transaction } from "firebase-admin/firestore";
-import { hasStaffActionPermissionInTransaction } from "./staff-permission-grants-core.ts";
-
-const PERMISSION = "pudo_location.verify";
-
 export type PudoVerificationStatus =
   | "pending_inspection"
   | "inspection_recorded"
@@ -182,26 +178,11 @@ export function createPudoLocationVerificationStore({
   const candidates = db.collection("pudoLocations");
   const verifications = db.collection("pudoLocationVerifications");
 
-  async function requirePermission(
-    actorUid: string,
-    transaction?: Transaction,
-  ): Promise<void> {
+  function requireStaffIdentity(actorUid: string): void {
+    // Verification is part of ordinary staff operations. The route layer
+    // already requires an authenticated staff session with a verified email.
+    // Activation remains separately permission-gated by pudo_location.activate.
     assertActor(actorUid);
-
-    const allowed = transaction
-      ? await hasStaffActionPermissionInTransaction(
-        transaction,
-        db,
-        actorUid,
-        PERMISSION,
-      )
-      : await db.runTransaction((tx) =>
-        hasStaffActionPermissionInTransaction(tx, db, actorUid, PERMISSION),
-      );
-
-    if (!allowed) {
-      throw new Error("You are not authorised to verify PUDO locations.");
-    }
   }
 
   async function requireSubmittedCandidate(
@@ -219,15 +200,18 @@ export function createPudoLocationVerificationStore({
 
   return {
     async listQueue(actorUid: string, limit = 50) {
-      await requirePermission(actorUid);
+      requireStaffIdentity(actorUid);
 
       if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) {
         throw new TypeError("List limit must be between 1 and 100.");
       }
 
+      // Keep this query on the lifecycle field only. Combining the
+      // lifecycle filter with submittedAt ordering requires a composite
+      // Firestore index; sorting the bounded result set in memory avoids
+      // making the verification queue depend on a separately deployed index.
       const snapshot = await candidates
         .where("lifecycle", "==", "submitted")
-        .orderBy("submittedAt", "desc")
         .limit(limit)
         .get();
 
@@ -245,22 +229,44 @@ export function createPudoLocationVerificationStore({
       }));
 
 
-      return queue.filter((item) =>
+      const pendingQueue = queue.filter((item) =>
         !["approved_to_activate", "not_approved"].includes(
           String(item.verification?.status ?? "pending_inspection"),
         )
       );
+
+      pendingQueue.sort((left, right) => {
+        const timestamp = (value: unknown): number => {
+          if (value && typeof value === "object" && "toMillis" in value &&
+              typeof value.toMillis === "function") {
+            return value.toMillis();
+          }
+          if (value instanceof Date) return value.getTime();
+          const parsed = Date.parse(String(value ?? ""));
+          return Number.isFinite(parsed) ? parsed : 0;
+        };
+
+        return timestamp(right.candidate.submittedAt) -
+          timestamp(left.candidate.submittedAt);
+      });
+
+      return pendingQueue;
     },
 
     async getVerification(actorUid: string, locationId: string) {
-      await requirePermission(actorUid);
+      requireStaffIdentity(actorUid);
       assertLocationId(locationId);
 
       const candidateSnapshot = await candidates.doc(locationId).get();
 
+      const candidateLifecycle = candidateSnapshot.data()?.lifecycle;
+
+      // Keep the verification detail page available after activation so the
+      // post-activation refresh can show the completed state. Inspection and
+      // decision writes still require a submitted candidate.
       if (
         !candidateSnapshot.exists ||
-        candidateSnapshot.data()?.lifecycle !== "submitted"
+        (candidateLifecycle !== "submitted" && candidateLifecycle !== "active")
       ) {
         return null;
       }
@@ -306,7 +312,7 @@ export function createPudoLocationVerificationStore({
       const eventRef = verificationRef.collection("auditEvents").doc();
 
       return db.runTransaction(async (transaction) => {
-        await requirePermission(actorUid, transaction);
+        requireStaffIdentity(actorUid);
         await requireSubmittedCandidate(transaction, locationId);
 
         const currentSnapshot = await transaction.get(verificationRef);
@@ -366,7 +372,7 @@ export function createPudoLocationVerificationStore({
       const eventRef = verificationRef.collection("auditEvents").doc();
 
       return db.runTransaction(async (transaction) => {
-        await requirePermission(actorUid, transaction);
+        requireStaffIdentity(actorUid);
         await requireSubmittedCandidate(transaction, locationId);
 
         const verificationSnapshot = await transaction.get(verificationRef);

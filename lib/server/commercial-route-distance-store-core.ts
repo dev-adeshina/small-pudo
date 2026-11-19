@@ -18,9 +18,10 @@ export interface RecordCommercialRouteDistanceInput {
   method: CommercialRouteDistanceMethod;
   distance?: { value: number; unit: string };
   source?: string;
+  measuredOn?: string;
+  supportingReference?: string;
 }
 
-const IDENTIFIER = /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$/;
 const LOCATION_ID = /^[A-Za-z0-9_-]{1,128}$/;
 
 function assertActor(uid: string): void {
@@ -36,8 +37,24 @@ function assertLocationId(value: string, label: string): void {
 }
 
 function assertSource(value: unknown): asserts value is string {
-  if (typeof value !== "string" || !value.trim() || value.trim().length > 80) {
-    throw new TypeError("A measurement source of at most 80 characters is required.");
+  if (typeof value !== "string" || !value.trim() || value.trim().length > 120) {
+    throw new TypeError("A measurement source of at most 120 characters is required.");
+  }
+}
+
+function assertMeasurementDate(value: unknown): asserts value is string {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    throw new TypeError("A valid measurement date is required.");
+  }
+  const parsed = new Date(value + "T00:00:00Z");
+  if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) {
+    throw new TypeError("A valid measurement date is required.");
+  }
+}
+
+function assertSupportingReference(value: unknown): asserts value is string | undefined {
+  if (value !== undefined && (typeof value !== "string" || !value.trim() || value.trim().length > 200)) {
+    throw new TypeError("Supporting reference must be 1–200 characters when supplied.");
   }
 }
 
@@ -52,8 +69,7 @@ function assertManualDistance(value: unknown): asserts value is { value: number;
     !Number.isFinite(distance.value) ||
     distance.value <= 0 ||
     typeof distance.unit !== "string" ||
-    !distance.unit.trim() ||
-    distance.unit.length > 40
+    !["m", "km", "mi"].includes(distance.unit)
   ) {
     throw new TypeError("Distance must contain a positive finite value and a valid unit.");
   }
@@ -184,7 +200,7 @@ export function createCommercialRouteDistanceStore({
         throw new TypeError("A route-distance measurement is required.");
       }
       if (Object.keys(input).some((key) =>
-        !["originOperationalPointRef", "destinationOperationalPointRef", "method", "distance", "source"].includes(key)
+        !["originOperationalPointRef", "destinationOperationalPointRef", "method", "distance", "source", "measuredOn", "supportingReference"].includes(key)
       )) {
         throw new TypeError("Route-distance measurement contains an unsupported field.");
       }
@@ -201,6 +217,7 @@ export function createCommercialRouteDistanceStore({
 
       let distance: { value: number; unit: string };
       let source: string;
+      let coordinatesUsed: CommercialRouteDistanceEvidence["coordinatesUsed"];
 
       if (method === "straight_line") {
         if (input.distance !== undefined) {
@@ -227,10 +244,18 @@ export function createCommercialRouteDistanceStore({
         );
         distance = { value: calculated.distanceMeters, unit: calculated.unit };
         source = "WGS84 coordinates; Haversine calculation";
+        coordinatesUsed = {
+          origin: { latitude: fromGeo.latitude as number, longitude: fromGeo.longitude as number },
+          destination: { latitude: toGeo.latitude as number, longitude: toGeo.longitude as number },
+          coordinateReferenceSystem: "WGS84",
+          calculation: "Haversine",
+        };
       } else {
         assertManualDistance(input.distance);
         assertSource(input.source);
-        distance = { value: input.distance.value, unit: input.distance.unit.trim() };
+        assertMeasurementDate(input.measuredOn);
+        assertSupportingReference(input.supportingReference);
+        distance = { value: input.distance.value, unit: input.distance.unit };
         source = input.source.trim();
       }
 
@@ -243,6 +268,9 @@ export function createCommercialRouteDistanceStore({
         recordedAt: new Date().toISOString(),
         recordedBy: actorUid,
         source,
+        ...(method === "straight_line" ? {} : { measuredOn: input.measuredOn }),
+        ...(input.supportingReference ? { supportingReference: input.supportingReference.trim() } : {}),
+        ...(coordinatesUsed ? { coordinatesUsed } : {}),
       };
       assertCommercialRouteDistanceEvidence(evidence);
 
