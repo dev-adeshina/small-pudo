@@ -297,8 +297,9 @@ export default function CommercialPricingDefinitionsPage() {
     if (!selected || !selectedVersion || saving) return;
     let reason: string | undefined;
     if (action === "request_changes" || action === "reject") {
-      reason = window.prompt(action === "reject" ? "Reason for rejection" : "Changes required");
-      if (!reason?.trim()) return;
+      const enteredReason = window.prompt(action === "reject" ? "Reason for rejection" : "Changes required");
+      if (!enteredReason?.trim()) return;
+      reason = enteredReason.trim();
     }
     setSaving(true);
     setError("");
