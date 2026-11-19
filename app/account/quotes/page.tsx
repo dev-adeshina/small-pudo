@@ -193,6 +193,16 @@ export default function CustomerQuotesPage() {
                   </div>
                   {pricing.total !== undefined && <p><strong>Total: {displayValue(pricing.total)} {displayValue(pricing.unit ?? pricing.currency)}</strong></p>}
                   {status === "accepted" && <p><CheckCircle2 size={16} /> Accepted version: {quote.acceptedVersionId ?? "—"} · Handover deadline: {formatDate(quote.handoverDeadlineAt)}</p>}
+                  {(quote.versions?.length ?? 0) > 1 && <div className="cost-field cost-field-wide">
+                    <strong>Quotation version history</strong>
+                    <div className="cost-version-list">
+                      {quote.versions?.map((item) => <div className="cost-version-row" key={item.versionId}>
+                        <strong>Version {item.sequence ?? "—"}</strong>
+                        <span>{formatDate(item.validUntil)}</span>
+                        <small>{item.versionId === quote.currentVersionId ? "Current version" : item.versionId === quote.acceptedVersionId ? "Accepted version" : "Previous version"}</small>
+                      </div>)}
+                    </div>
+                  </div>}
                   {canDecide && <div className="cost-form-actions" style={{ flexWrap: "wrap" }}>
                     <button className="cost-primary-button" type="button" disabled={busyId === quote.quoteId} onClick={() => void decide(quote, "accept")}>{busyId === quote.quoteId ? "Saving..." : "Accept quotation"}</button>
                     <button className="cost-secondary-button" type="button" disabled={busyId === quote.quoteId} onClick={() => void decide(quote, "reject")}>Reject quotation</button>
