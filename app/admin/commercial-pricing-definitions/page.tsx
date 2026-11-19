@@ -1047,7 +1047,7 @@ export default function CommercialPricingDefinitionsPage() {
             {selected.publishedVersionId === selectedVersion?.versionId ? " · Published" : ""}</p>
           {selectedVersion?.approvalWorkflow?.reason && <p>Decision reason: {selectedVersion.approvalWorkflow.reason}</p>}
           <div className="cost-form-actions" style={{ flexWrap: "wrap", marginBottom: 18 }}>
-            {(selectedVersion?.approvalWorkflow?.state === "draft" || false) &&
+            {selectedVersion?.approvalWorkflow?.state === "draft" &&
               <button className="cost-primary-button" type="button" disabled={saving} onClick={() => void runApprovalAction("submit")}>Submit for approval</button>}
             {selectedVersion?.approvalWorkflow?.state === "pending_approval" && <>
               <button className="cost-primary-button" type="button" disabled={saving} onClick={() => void runApprovalAction("approve")}>Approve</button>
