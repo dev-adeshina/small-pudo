@@ -338,7 +338,7 @@ export default function PudoLocationEditorPage() {
               className="cost-primary-button"
               href={`/staff/pudo-verifications/${encodeURIComponent(locationId)}`}
             >
-              Open verification
+              Inspect and verify candidate
             </Link>
           </section>
         )}
