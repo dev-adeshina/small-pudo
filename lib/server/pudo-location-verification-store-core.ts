@@ -259,9 +259,14 @@ export function createPudoLocationVerificationStore({
 
       const candidateSnapshot = await candidates.doc(locationId).get();
 
+      const candidateLifecycle = candidateSnapshot.data()?.lifecycle;
+
+      // Keep the verification detail page available after activation so the
+      // post-activation refresh can show the completed state. Inspection and
+      // decision writes still require a submitted candidate.
       if (
         !candidateSnapshot.exists ||
-        candidateSnapshot.data()?.lifecycle !== "submitted"
+        (candidateLifecycle !== "submitted" && candidateLifecycle !== "active")
       ) {
         return null;
       }
