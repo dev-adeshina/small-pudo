@@ -166,7 +166,7 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         .where("bookingPartyUid", "==", bookingPartyUid)
         .limit(100)
         .get();
-      const rows = (await Promise.all(snapshot.docs.map(async (document) => {
+      const rows: Array<Record<string, unknown>> = (await Promise.all(snapshot.docs.map(async (document) => {
         const lineage = document.data();
         // A lineage record is not customer-visible until an authorised
         // issuance transition has set one of the issued lifecycle states.
@@ -183,7 +183,7 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         const status = lineage.status === "issued" && expiresAt && expiresAt <= now()
           ? "expired" : lineage.status ?? "legacy";
         return { quoteId: document.id, ...lineage, status, currentVersion: { versionId, ...version.data() }, versions };
-      }))).filter((row) => row !== null);
+      }))).filter((row): row is Record<string, unknown> => row !== null);
       return rows.sort((a, b) => {
         const left = dateValue(a.issuedAt ?? a.createdAt)?.getTime() ?? 0;
         const right = dateValue(b.issuedAt ?? b.createdAt)?.getTime() ?? 0;
