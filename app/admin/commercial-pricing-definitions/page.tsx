@@ -1058,6 +1058,16 @@ export default function CommercialPricingDefinitionsPage() {
               <button className="cost-primary-button" type="button" disabled={saving} onClick={() => void publishSelectedVersion()}>Publish approved version</button>}
           </div>
           <p className="cost-footer-note">Approval and publication are separately permission-controlled. The proposer cannot approve their own version. Publication does not override service eligibility or missing commercial terms.</p>
+          <div className="cost-field cost-field-wide">
+            <strong>Immutable version history</strong>
+            <div className="cost-version-list">
+              {selected.versions.map((version) => <div className="cost-version-row" key={version.versionId}>
+                <strong>Version {version.versionNumber}</strong>
+                <span>{(version.approvalWorkflow?.state ?? "draft").replaceAll("_", " ")}</span>
+                <small>{selected.publishedVersionId === version.versionId ? "Published version" : version.versionId === selected.currentVersionId ? "Current version" : "Superseded version"}</small>
+              </div>)}
+            </div>
+          </div>
           <p>Activity assignments: {(selectedVersion?.activityPricing?.activities ?? []).filter((item) => item.applicability !== "undetermined").length} of 11 decided.</p>
           <div className="cost-version-list">{(selectedVersion?.activityPricing?.activities ?? CATALOGUE.map(([activityCode, activityName]) => ({ activityCode, activityName, applicability: "undetermined" as const, treatment: "undetermined" as const }))).map((item) => <div className="cost-version-row" key={item.activityCode}>
             <strong>{item.activityCode} — {item.activityName}</strong><span>{APPLICABILITY_LABELS[item.applicability]}</span><small>{TREATMENT_LABELS[item.treatment]}</small>
