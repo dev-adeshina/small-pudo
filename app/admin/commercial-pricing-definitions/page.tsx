@@ -1072,7 +1072,7 @@ export default function CommercialPricingDefinitionsPage() {
           <div className="cost-version-list">{(selectedVersion?.activityPricing?.activities ?? CATALOGUE.map(([activityCode, activityName]) => ({ activityCode, activityName, applicability: "undetermined" as const, treatment: "undetermined" as const }))).map((item) => <div className="cost-version-row" key={item.activityCode}>
             <strong>{item.activityCode} — {item.activityName}</strong><span>{APPLICABILITY_LABELS[item.applicability]}</span><small>{TREATMENT_LABELS[item.treatment]}</small>
           </div>)}</div>
-          <p className="cost-footer-note">No commercial approval or publication state is represented here. All service eligibility and quote-readiness gates remain separate.</p>
+          <p className="cost-footer-note">Approval and publication are recorded above. Service eligibility and quotation readiness remain separate gates.</p>
         </section>}
       </div>
     </main>
