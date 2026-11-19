@@ -798,14 +798,6 @@ export function createCommercialPricingStore({
           );
         }
 
-        if (lineage.publishedVersionId === versionId && lineage.publishedVersionNumber === version.versionNumber) {
-          return {
-            outcome: "published",
-            versionId,
-            versionNumber: version.versionNumber,
-          } as const;
-        }
-
         const authorized = await hasStaffActionPermissionInTransaction(
           transaction,
           db,
@@ -817,6 +809,14 @@ export function createCommercialPricingStore({
           throw new Error(
             "The actor does not have the required active publication permission"
           );
+        }
+
+        if (lineage.publishedVersionId === versionId && lineage.publishedVersionNumber === version.versionNumber) {
+          return {
+            outcome: "published",
+            versionId,
+            versionNumber: version.versionNumber,
+          } as const;
         }
 
         const timestamp = serverTimestamp();
