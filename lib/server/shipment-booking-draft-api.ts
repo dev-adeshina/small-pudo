@@ -2,6 +2,7 @@ interface ShipmentBookingDraftInput {
   origin: string;
   destination: string;
   parcelDescription: string;
+  declaredMeasurements?: Partial<Record<"weight" | "length" | "width" | "height", { value: number; unit: string }>>;
 }
 
 
