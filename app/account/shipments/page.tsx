@@ -24,6 +24,7 @@ interface ShipmentDraft {
   origin: string;
   destination: string;
   parcelDescription: string;
+  declaredMeasurements?: Partial<Record<"weight" | "length" | "width" | "height", { value: number; unit: string }>>;
   status: "draft";
   createdAt?: string | null;
   updatedAt?: string | null;
@@ -35,6 +36,14 @@ const emptyForm = {
   origin: "",
   destination: "",
   parcelDescription: "",
+  weight: "",
+  weightUnit: "",
+  length: "",
+  lengthUnit: "",
+  width: "",
+  widthUnit: "",
+  height: "",
+  heightUnit: "",
 };
 
 function formatDraftDate(value: string | null | undefined) {
@@ -144,6 +153,14 @@ export default function ShipmentDraftsPage() {
       origin: draft.origin,
       destination: draft.destination,
       parcelDescription: draft.parcelDescription,
+      weight: draft.declaredMeasurements?.weight ? String(draft.declaredMeasurements.weight.value) : "",
+      weightUnit: draft.declaredMeasurements?.weight?.unit ?? "",
+      length: draft.declaredMeasurements?.length ? String(draft.declaredMeasurements.length.value) : "",
+      lengthUnit: draft.declaredMeasurements?.length?.unit ?? "",
+      width: draft.declaredMeasurements?.width ? String(draft.declaredMeasurements.width.value) : "",
+      widthUnit: draft.declaredMeasurements?.width?.unit ?? "",
+      height: draft.declaredMeasurements?.height ? String(draft.declaredMeasurements.height.value) : "",
+      heightUnit: draft.declaredMeasurements?.height?.unit ?? "",
     });
     setNotice("");
     setError("");
@@ -165,7 +182,16 @@ export default function ShipmentDraftsPage() {
 
     const currentEditingId = editingId;
     const wasEditing = currentEditingId !== null;
-    const submittedForm = { ...form };
+    const submittedForm = {
+      origin: form.origin,
+      destination: form.destination,
+      parcelDescription: form.parcelDescription,
+      declaredMeasurements: Object.fromEntries(
+        (["weight", "length", "width", "height"] as const)
+          .filter((name) => form[name] !== "" || form[`${name}Unit`] !== "")
+          .map((name) => [name, { value: Number(form[name]), unit: form[`${name}Unit`] }])
+      ),
+    };
 
     setSaving(true);
     setError("");
@@ -326,6 +352,35 @@ export default function ShipmentDraftsPage() {
               />
               <small>{form.parcelDescription.length}/1,000 characters</small>
             </label>
+
+            <fieldset className="shipment-form-wide" style={{ border: 0, padding: 0, margin: 0 }}>
+              <legend>Declared parcel measurements (optional)</legend>
+              <p className="customer-panel-description">Enter only measurements you know. Each value must include its unit; actual intake measurements remain separate.</p>
+              <div className="shipment-measurement-grid">
+                {(["weight", "length", "width", "height"] as const).map((name) => (
+                  <label key={name}>
+                    <span>{name[0].toUpperCase() + name.slice(1)}</span>
+                    <input
+                      type="number"
+                      min="0.001"
+                      step="any"
+                      value={form[name]}
+                      onChange={(event) => setForm({ ...form, [name]: event.target.value })}
+                      disabled={saving}
+                      placeholder="Value"
+                    />
+                    <input
+                      value={form[`${name}Unit`]}
+                      onChange={(event) => setForm({ ...form, [`${name}Unit`]: event.target.value })}
+                      maxLength={40}
+                      disabled={saving}
+                      placeholder="Unit (e.g. kg, cm)"
+                      aria-label={`${name} unit`}
+                    />
+                  </label>
+                ))}
+              </div>
+            </fieldset>
 
             <div className="shipment-form-actions shipment-form-wide">
               <button type="submit" className="customer-primary-action" disabled={saving}>
