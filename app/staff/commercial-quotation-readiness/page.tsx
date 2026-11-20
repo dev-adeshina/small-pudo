@@ -27,6 +27,8 @@ export default function CommercialQuotationReadinessPage() {
   const [routeReason, setRouteReason] = useState("");
 
   const [serviceCode, setServiceCode] = useState<ServiceCode>("standard");
+  const [eligibilityOriginType, setEligibilityOriginType] = useState<"address" | "pudo">("pudo");
+  const [eligibilityDestinationType, setEligibilityDestinationType] = useState<"address" | "pudo">("pudo");
   const [originPudoLocationId, setOriginPudoLocationId] = useState("");
   const [destinationPudoLocationId, setDestinationPudoLocationId] = useState("");
   const [eligibilityOutcome, setEligibilityOutcome] = useState<"eligible" | "conditionally_eligible" | "not_eligible" | "revoked">("eligible");
@@ -135,8 +137,9 @@ export default function CommercialQuotationReadinessPage() {
           <form className="space-y-4" onSubmit={(event) => {
             event.preventDefault();
             void post("/api/staff/commercial-quotation-readiness/eligibility", {
-              serviceCode, originType: "pudo", destinationType: "pudo",
-              originPudoLocationId, destinationPudoLocationId,
+              serviceCode, originType: eligibilityOriginType, destinationType: eligibilityDestinationType,
+              ...(eligibilityOriginType === "pudo" ? { originPudoLocationId } : {}),
+              ...(eligibilityDestinationType === "pudo" ? { destinationPudoLocationId } : {}),
               outcome: eligibilityOutcome, evidenceReferences: lines(evidenceReferences),
               conditions: lines(conditions), reason: eligibilityReason,
               ...(eligibilityValidUntil ? { validUntil: new Date(eligibilityValidUntil).toISOString() } : {}),
@@ -145,15 +148,17 @@ export default function CommercialQuotationReadinessPage() {
             <div className="grid gap-4 md:grid-cols-2">
               <label className="block text-sm font-medium">Service<select className="mt-2 w-full rounded-lg border p-3" value={serviceCode} onChange={(event) => setServiceCode(event.target.value as ServiceCode)}><option value="standard">Standard</option><option value="express">Express</option><option value="scheduled">Scheduled</option></select></label>
               <label className="block text-sm font-medium">Outcome<select className="mt-2 w-full rounded-lg border p-3" value={eligibilityOutcome} onChange={(event) => setEligibilityOutcome(event.target.value as typeof eligibilityOutcome)}><option value="eligible">Eligible</option><option value="conditionally_eligible">Conditionally eligible</option><option value="not_eligible">Not eligible</option><option value="revoked">Revoke</option></select></label>
-              <label className="block text-sm font-medium">Origin PUDO ID<input className="mt-2 w-full rounded-lg border p-3" value={originPudoLocationId} onChange={(event) => setOriginPudoLocationId(event.target.value)} required /></label>
-              <label className="block text-sm font-medium">Destination PUDO ID<input className="mt-2 w-full rounded-lg border p-3" value={destinationPudoLocationId} onChange={(event) => setDestinationPudoLocationId(event.target.value)} required /></label>
+              <label className="block text-sm font-medium">Origin endpoint<select className="mt-2 w-full rounded-lg border p-3" value={eligibilityOriginType} onChange={(event) => setEligibilityOriginType(event.target.value as "address" | "pudo")}><option value="address">Address</option><option value="pudo">PUDO</option></select></label>
+              <label className="block text-sm font-medium">Destination endpoint<select className="mt-2 w-full rounded-lg border p-3" value={eligibilityDestinationType} onChange={(event) => setEligibilityDestinationType(event.target.value as "address" | "pudo")}><option value="address">Address</option><option value="pudo">PUDO</option></select></label>
+              {eligibilityOriginType === "pudo" && <label className="block text-sm font-medium">Origin PUDO ID<input className="mt-2 w-full rounded-lg border p-3" value={originPudoLocationId} onChange={(event) => setOriginPudoLocationId(event.target.value)} required /></label>}
+              {eligibilityDestinationType === "pudo" && <label className="block text-sm font-medium">Destination PUDO ID<input className="mt-2 w-full rounded-lg border p-3" value={destinationPudoLocationId} onChange={(event) => setDestinationPudoLocationId(event.target.value)} required /></label>}
             </div>
             <label className="block text-sm font-medium">Evidence document paths (one Firestore document path per line)<textarea className="mt-2 w-full rounded-lg border p-3" value={evidenceReferences} onChange={(event) => setEvidenceReferences(event.target.value)} required rows={4} placeholder={"pudoLocationVerifications/LOCATION_ID\npudoLocationActivations/LOCATION_ID"} /></label>
             <label className="block text-sm font-medium">Conditions (one per line; required for conditional eligibility)<textarea className="mt-2 w-full rounded-lg border p-3" value={conditions} onChange={(event) => setConditions(event.target.value)} rows={3} /></label>
             <label className="block text-sm font-medium">Decision reason<textarea className="mt-2 w-full rounded-lg border p-3" value={eligibilityReason} onChange={(event) => setEligibilityReason(event.target.value)} required maxLength={2000} /></label>
             <label className="block text-sm font-medium">Validity end (optional)<input className="mt-2 w-full rounded-lg border p-3" type="datetime-local" value={eligibilityValidUntil} onChange={(event) => setEligibilityValidUntil(event.target.value)} /></label>
             <button className="cost-primary-button" disabled={busy}>{busy ? "Saving..." : "Record DEC-047 decision"}</button>
-            <p className="text-sm text-gray-600">This implementation records eligibility for the exact PUDO pair. Address endpoint combinations remain unavailable until authoritative address-to-operational-point mapping exists. Requires <code>commercial_service_eligibility.approve</code>.</p>
+            <p className="text-sm text-gray-600">Positive eligibility can currently be recorded only for exact active PUDO-to-PUDO pairs with both physical verification and activation records. Address endpoint combinations may be explicitly marked not eligible or revoked, but remain unavailable until authoritative address-to-operational-point mapping exists. Requires <code>commercial_service_eligibility.approve</code>.</p>
           </form>
         </section>
 
