@@ -396,22 +396,44 @@ export function createCommercialQuotationReadinessStore({
               routeEvidenceReferences[0].split("/")[1] !== routeReviewReferences[0].split("/")[1]) {
             throw new TypeError("Positive PUDO-to-PUDO eligibility requires exactly one matching route measurement and independent route review reference.");
           }
-          const locationIds = [originPudoLocationId, destinationPudoLocationId].filter((value): value is string => Boolean(value));
-          for (const locationId of locationIds) {
-            const [candidate, activation] = await Promise.all([
+          const endpointRequirements = [
+            { locationId: originPudoLocationId, actions: originRequiredActions },
+            { locationId: destinationPudoLocationId, actions: destinationRequiredActions },
+          ];
+          for (const endpoint of endpointRequirements) {
+            const locationId = endpoint.locationId!;
+            const capabilityId = locationId + "__" + serviceCode;
+            const capabilityPath = "pudoLocationServiceCapabilities/" + capabilityId;
+            const [candidate, activation, verification, capability] = await Promise.all([
               transaction.get(locations.doc(locationId)),
               transaction.get(activations.doc(locationId)),
+              transaction.get(verifications.doc(locationId)),
+              transaction.get(capabilities.doc(capabilityId)),
             ]);
             if (!candidate.exists || candidate.data()?.lifecycle !== "active" ||
-                !activation.exists || activation.data()?.status !== "active") {
-              throw new TypeError("Every exact PUDO endpoint must be active before eligibility can be approved.");
+                !activation.exists || activation.data()?.status !== "active" ||
+                !verification.exists || verification.data()?.status !== "approved_to_activate") {
+              throw new TypeError("Every exact PUDO endpoint must be active and physically verified before eligibility can be approved.");
+            }
+            if (!capability.exists || capability.data()?.status !== "active" ||
+                capability.data()?.locationId !== locationId ||
+                capability.data()?.serviceCode !== serviceCode ||
+                !Array.isArray(capability.data()?.supportedActions) ||
+                endpoint.actions.length === 0 ||
+                endpoint.actions.some((action) => !capability.data()?.supportedActions.includes(action))) {
+              throw new TypeError("The PUDO endpoint does not have current approved capability for every required service action.");
+            }
+            const capabilityExpiry = dateMillis(capability.data()?.validUntil);
+            if (capabilityExpiry === null || capabilityExpiry <= now().getTime()) {
+              throw new TypeError("PUDO endpoint service capability approval is missing or expired.");
             }
             const requiredLocationEvidence = [
               "pudoLocationVerifications/" + locationId,
               "pudoLocationActivations/" + locationId,
+              capabilityPath,
             ];
             if (requiredLocationEvidence.some((reference) => !evidenceReferences.includes(reference))) {
-              throw new TypeError("Eligibility must reference the physical verification and activation records for every exact PUDO endpoint.");
+              throw new TypeError("Eligibility must reference the physical verification, activation and service capability records for every exact PUDO endpoint.");
             }
           }
         }
