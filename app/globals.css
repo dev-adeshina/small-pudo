@@ -7405,3 +7405,46 @@ footer {
   outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
+
+
+/* Staff account onboarding status */
+.staff-sidebar-status {
+  margin-left: auto;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #f1f2f3;
+  color: #68717c;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.staff-sidebar-status.is-pending,
+.staff-sidebar-status.is-expired {
+  background: #fff2d8;
+  color: #80520a;
+}
+.staff-sidebar-status.is-active {
+  background: #e7f5ec;
+  color: #23623c;
+}
+.staff-sidebar-status.is-unknown {
+  background: #f1f2f3;
+  color: #68717c;
+}
+.staff-activation-panel {
+  margin: 0 0 24px;
+  border-color: #e7d8a9;
+  background: linear-gradient(135deg, #fffdf6 0%, #fff 72%);
+}
+.staff-activation-panel > p {
+  max-width: 760px;
+  color: var(--muted);
+  font-size: .9rem;
+  line-height: 1.7;
+}
+@media (max-width: 700px) {
+  .staff-sidebar-status {
+    margin-left: 2px;
+  }
+}
