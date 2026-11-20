@@ -124,9 +124,6 @@ export default function PudoLocationsPage() {
                         <p>Register and maintain proposed PUDO locations.</p>
                     </div>
                     <div className="cost-form-grid">
-                        <Link className="admin-action" href="/staff/pudo-verifications">
-                            Verification queue
-                        </Link>
                         <Link className="admin-action" href="/staff/pudo-locations/new">
                             Register a location
                         </Link>
