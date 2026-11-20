@@ -23,6 +23,7 @@ const ENDPOINTS = new Set<CommercialEndpointType>(["address", "pudo"]);
 const ID = /^[A-Za-z0-9_-]{1,128}$/;
 const ROUTE_REVIEW_PERMISSION = "commercial_route_distance.approve";
 const ELIGIBILITY_PERMISSION = "commercial_service_eligibility.approve";
+const CAPABILITY_PERMISSION = "pudo_location.capability_approve";
 
 function assertActor(value: string): void {
   if (typeof value !== "string" || !ID.test(value)) throw new TypeError("A valid authenticated staff identity is required.");
@@ -78,6 +79,8 @@ export function createCommercialQuotationReadinessStore({
   const routeReviews = db.collection("commercialRouteDistanceReviews");
   const eligibility = db.collection("commercialServiceEndpointEligibility");
   const activations = db.collection("pudoLocationActivations");
+  const verifications = db.collection("pudoLocationVerifications");
+  const capabilities = db.collection("pudoLocationServiceCapabilities");
   const locations = db.collection("pudoLocations");
   const pricingDefinitions = db.collection("commercialPricingDefinitions");
   const commercialTerms = db.collection("commercialServiceCommercialApprovals");
@@ -193,6 +196,101 @@ export function createCommercialQuotationReadinessStore({
       }));
       return reviewed.filter((item): item is NonNullable<typeof item> => item !== null)
         .sort((a, b) => Date.parse(String(b.evidence.measuredOn)) - Date.parse(String(a.evidence.measuredOn)))[0] ?? null;
+    },
+
+    async recordPudoServiceCapability(input: {
+      actorUid: string;
+      locationId: string;
+      serviceCode: CommercialServiceCode;
+      supportedActions: string[];
+      evidenceReferences: string[];
+      validUntil: Date;
+      reason: string;
+    }) {
+      const { actorUid, locationId, serviceCode, supportedActions, evidenceReferences, validUntil, reason } = input;
+      assertActor(actorUid);
+      assertId(locationId, "PUDO location ID");
+      if (!SERVICES.has(serviceCode)) throw new TypeError("Unsupported service code.");
+      if (!Array.isArray(supportedActions) || supportedActions.length === 0 || supportedActions.length > 30 ||
+          supportedActions.some((action) => typeof action !== "string" || !action.trim() || action.length > 120) ||
+          new Set(supportedActions).size !== supportedActions.length) {
+        throw new TypeError("At least one unique, explicit supported endpoint action is required.");
+      }
+      if (!Array.isArray(evidenceReferences) || evidenceReferences.length > 50 ||
+          evidenceReferences.some((reference) => typeof reference !== "string" || !reference.trim() || reference.length > 300)) {
+        throw new TypeError("Capability evidence references must be a list of valid Firestore document paths.");
+      }
+      if (!(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) || validUntil <= now()) {
+        throw new TypeError("PUDO service capability approval requires an explicit future validity end.");
+      }
+      assertText(reason, "A PUDO service capability approval reason");
+      const capabilityId = locationId + "__" + serviceCode;
+      const capabilityRef = capabilities.doc(capabilityId);
+      const eventRef = capabilityRef.collection("events").doc();
+
+      return db.runTransaction(async (transaction) => {
+        await requirePermission(transaction, actorUid, CAPABILITY_PERMISSION, "approve PUDO service endpoint capabilities");
+        const [candidate, activation, verification] = await Promise.all([
+          transaction.get(locations.doc(locationId)),
+          transaction.get(activations.doc(locationId)),
+          transaction.get(verifications.doc(locationId)),
+        ]);
+        if (!candidate.exists || candidate.data()?.lifecycle !== "active" ||
+            !activation.exists || activation.data()?.status !== "active" ||
+            !verification.exists || verification.data()?.status !== "approved_to_activate") {
+          throw new TypeError("PUDO service capabilities require an actively activated and physically verified location.");
+        }
+        const requiredLocationRefs = [
+          "pudoLocationVerifications/" + locationId,
+          "pudoLocationActivations/" + locationId,
+        ];
+        if (requiredLocationRefs.some((reference) => !evidenceReferences.includes(reference))) {
+          throw new TypeError("PUDO service capability evidence must include the location's physical verification and activation records.");
+        }
+        for (const reference of evidenceReferences) {
+          const segments = reference.split("/");
+          if (segments.length < 2 || segments.length % 2 !== 0 || !segments.every((segment) => ID.test(segment))) {
+            throw new TypeError("Each capability evidence reference must be a Firestore document path.");
+          }
+          const evidenceDocument = await transaction.get(db.doc(reference));
+          if (!evidenceDocument.exists) throw new TypeError("A capability evidence reference does not exist: " + reference);
+          const evidenceData = evidenceDocument.data()!;
+          if ([evidenceData.createdBy, evidenceData.recordedBy, evidenceData.inspectorUid, evidenceData.decisionMakerUid, evidenceData.activatedBy, evidenceData.reviewedBy, evidenceData.approvedBy].some((evidenceActor) => evidenceActor === actorUid)) {
+            throw new TypeError("Capability approval must be independent of the referenced evidence creators and operational actors.");
+          }
+          if (["revoked", "inactive", "expired", "not_approved"].includes(String(evidenceData.status ?? ""))) {
+            throw new TypeError("A capability evidence reference is not in an active state: " + reference);
+          }
+          const expiry = dateMillis(evidenceData.validUntil ?? evidenceData.expiresAt);
+          if (expiry !== null && expiry <= now().getTime()) throw new TypeError("A capability evidence reference has expired: " + reference);
+        }
+        const timestamp = serverTimestamp();
+        transaction.set(capabilityRef, {
+          schemaVersion: 1,
+          locationId,
+          serviceCode,
+          status: "active",
+          supportedActions: [...supportedActions].map((action) => action.trim()),
+          evidenceReferences: [...evidenceReferences],
+          validUntil,
+          reason: reason.trim(),
+          approvedBy: actorUid,
+          approvedAt: timestamp,
+          updatedAt: timestamp,
+        });
+        transaction.create(eventRef, {
+          action: "approved",
+          actorUid,
+          locationId,
+          serviceCode,
+          supportedActions: [...supportedActions],
+          evidenceReferences: [...evidenceReferences],
+          validUntil,
+          reason: reason.trim(),
+          timestamp,
+        });
+        return { capabilityId, locationId, serviceCode, status: "active" };
+      });
     },
 
     async recordEligibilityDecision(input: {
