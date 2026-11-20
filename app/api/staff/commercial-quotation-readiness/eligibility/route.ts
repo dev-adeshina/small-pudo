@@ -23,6 +23,8 @@ export async function POST(request: Request) {
       serviceCode: input.serviceCode as "standard" | "express" | "scheduled",
       originType: input.originType as "address" | "pudo",
       destinationType: input.destinationType as "address" | "pudo",
+      originPudoLocationId: input.originPudoLocationId as string | undefined,
+      destinationPudoLocationId: input.destinationPudoLocationId as string | undefined,
       outcome: input.outcome as "eligible" | "conditionally_eligible" | "not_eligible" | "revoked",
       evidenceReferences: input.evidenceReferences as string[],
       conditions: input.conditions as string[] | undefined,
