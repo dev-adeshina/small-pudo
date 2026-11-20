@@ -415,15 +415,16 @@ export function createCommercialQuotationReadinessStore({
                 !verification.exists || verification.data()?.status !== "approved_to_activate") {
               throw new TypeError("Every exact PUDO endpoint must be active and physically verified before eligibility can be approved.");
             }
-            if (!capability.exists || capability.data()?.status !== "active" ||
-                capability.data()?.locationId !== locationId ||
-                capability.data()?.serviceCode !== serviceCode ||
-                !Array.isArray(capability.data()?.supportedActions) ||
+            const capabilityData = capability.data();
+            if (!capability.exists || !capabilityData || capabilityData.status !== "active" ||
+                capabilityData.locationId !== locationId ||
+                capabilityData.serviceCode !== serviceCode ||
+                !Array.isArray(capabilityData.supportedActions) ||
                 endpoint.actions.length === 0 ||
-                endpoint.actions.some((action) => !capability.data()?.supportedActions.includes(action))) {
+                endpoint.actions.some((action) => !capabilityData.supportedActions.includes(action))) {
               throw new TypeError("The PUDO endpoint does not have current approved capability for every required service action.");
             }
-            const capabilityExpiry = dateMillis(capability.data()?.validUntil);
+            const capabilityExpiry = dateMillis(capabilityData.validUntil);
             if (capabilityExpiry === null || capabilityExpiry <= now().getTime()) {
               throw new TypeError("PUDO endpoint service capability approval is missing or expired.");
             }
