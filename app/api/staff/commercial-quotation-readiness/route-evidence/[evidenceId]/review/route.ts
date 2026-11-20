@@ -32,6 +32,9 @@ export async function POST(request: Request, context: Context) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
     if (/not authorised/i.test(message)) return NextResponse.json({ error: message }, { status: 403 });
+    if (/must be performed by someone other than the evidence recorder|cannot be approved as operational road-route evidence/i.test(message)) {
+      return NextResponse.json({ error: message }, { status: 409 });
+    }
     if (/not found/i.test(message)) return NextResponse.json({ error: message }, { status: 404 });
     if (error instanceof TypeError) return NextResponse.json({ error: message }, { status: 400 });
     console.error("Route evidence review failed:", error);
