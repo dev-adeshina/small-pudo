@@ -86,6 +86,10 @@ export default function ShipmentDraftsPage() {
   const [loadError, setLoadError] = useState("");
   const [notice, setNotice] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [quoteServiceByDraft, setQuoteServiceByDraft] = useState<Record<string, "standard" | "express" | "scheduled">>({});
+  const [requestingQuoteId, setRequestingQuoteId] = useState<string | null>(null);
+  const [quoteRequestError, setQuoteRequestError] = useState("");
+  const [quoteRequestNotice, setQuoteRequestNotice] = useState("");
   const [form, setForm] = useState(emptyForm);
 
   const loadDrafts = useCallback(async (currentUser: User) => {
@@ -274,6 +278,32 @@ export default function ShipmentDraftsPage() {
     }
   }
 
+  async function requestQuote(draftId: string) {
+    if (!user || requestingQuoteId) return;
+    const serviceCode = quoteServiceByDraft[draftId] ?? "standard";
+    setRequestingQuoteId(draftId);
+    setQuoteRequestError("");
+    setQuoteRequestNotice("");
+    try {
+      const idToken = await user.getIdToken();
+      const response = await fetch("/api/account/shipment-quotes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${idToken}` },
+        body: JSON.stringify({ draftId, serviceCode }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data?.success) {
+        throw new Error(typeof data?.error === "string" ? data.error : "A quotation could not be issued for this shipment.");
+      }
+      setQuoteRequestNotice("Your quotation has been issued.");
+      router.push("/account/quotes");
+    } catch (requestError) {
+      setQuoteRequestError(requestError instanceof Error ? requestError.message : "A quotation could not be issued.");
+    } finally {
+      setRequestingQuoteId(null);
+    }
+  }
+
   if (checkingAuth || !user) {
     return (
       <main className="customer-loading">
@@ -320,12 +350,11 @@ export default function ShipmentDraftsPage() {
         </div>
 
         <div className="shipment-policy-note" role="note">
-          <strong>Booking preparation only</strong>
+          <strong>Prepare first, request a quotation when available</strong>
           <p>
-            Service selection and quotations are not available here until
-            eligible services and their approved pricing and handover rules
-            are configured. Your draft will not create a payment obligation
-            or a custody record.
+            Saving a draft does not create a booking, payment obligation or custody record.
+            Quotation requests are checked against current service eligibility, route evidence
+            and approved commercial terms before a quote can be issued.
           </p>
         </div>
 
@@ -493,6 +522,9 @@ export default function ShipmentDraftsPage() {
             <MapPin size={22} />
           </div>
 
+          {quoteRequestError && <p className="customer-error" role="alert">{quoteRequestError}</p>}
+          {quoteRequestNotice && <p className="shipment-success" role="status">{quoteRequestNotice}</p>}
+
           {loading ? (
             <div className="customer-state" aria-live="polite">
               <p>Loading your drafts...</p>
@@ -524,14 +556,40 @@ export default function ShipmentDraftsPage() {
                     <p>{draft.parcelDescription}</p>
                     <small>{formatDraftDate(draft.updatedAt ?? draft.createdAt)}</small>
                   </div>
-                  <button
-                    type="button"
-                    className="customer-secondary-action"
-                    onClick={() => startEditing(draft)}
-                    disabled={saving}
-                  >
-                    Edit draft <ArrowUpRight size={15} />
-                  </button>
+                  <div className="shipment-form-actions">
+                    <button
+                      type="button"
+                      className="customer-secondary-action"
+                      onClick={() => startEditing(draft)}
+                      disabled={saving || requestingQuoteId !== null}
+                    >
+                      Edit draft <ArrowUpRight size={15} />
+                    </button>
+                    <label>
+                      <span className="sr-only">Quotation service</span>
+                      <select
+                        aria-label={`Quotation service for draft ${draft.id}`}
+                        value={quoteServiceByDraft[draft.id] ?? "standard"}
+                        onChange={(event) => setQuoteServiceByDraft({
+                          ...quoteServiceByDraft,
+                          [draft.id]: event.target.value as "standard" | "express" | "scheduled",
+                        })}
+                        disabled={requestingQuoteId !== null}
+                      >
+                        <option value="standard">Standard</option>
+                        <option value="express">Express</option>
+                        <option value="scheduled">Scheduled</option>
+                      </select>
+                    </label>
+                    <button
+                      type="button"
+                      className="customer-primary-action"
+                      onClick={() => void requestQuote(draft.id)}
+                      disabled={requestingQuoteId !== null}
+                    >
+                      {requestingQuoteId === draft.id ? "Checking..." : "Request quotation"}
+                    </button>
+                  </div>
                 </article>
               ))}
             </div>
