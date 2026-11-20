@@ -27,8 +27,8 @@ export default function CommercialQuotationReadinessPage() {
   const [routeReason, setRouteReason] = useState("");
   const [routeValidUntil, setRouteValidUntil] = useState("");
 
-  const [serviceCode, setServiceCode] = useState<ServiceCode>("standard");
-  const [termsServiceCode, setTermsServiceCode] = useState<ServiceCode>("standard");
+  const [serviceCode, setServiceCode] = useState<ServiceCode | "">("");
+  const [termsServiceCode, setTermsServiceCode] = useState<ServiceCode | "">("");
   const [eligibilityOriginType, setEligibilityOriginType] = useState<"address" | "pudo">("pudo");
   const [eligibilityDestinationType, setEligibilityDestinationType] = useState<"address" | "pudo">("pudo");
   const [originPudoLocationId, setOriginPudoLocationId] = useState("");
@@ -161,7 +161,7 @@ export default function CommercialQuotationReadinessPage() {
             }, "DEC-047 eligibility decision recorded.");
           }}>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="block text-sm font-medium">Service<select className="mt-2 w-full rounded-lg border p-3" value={serviceCode} onChange={(event) => setServiceCode(event.target.value as ServiceCode)}><option value="standard">Standard</option><option value="express">Express</option><option value="scheduled">Scheduled</option></select></label>
+              <label className="block text-sm font-medium">Service<select className="mt-2 w-full rounded-lg border p-3" value={serviceCode} onChange={(event) => setServiceCode(event.target.value as ServiceCode | "")} required><option value="">Select service</option><option value="standard">Standard</option><option value="express">Express</option><option value="scheduled">Scheduled</option></select></label>
               <label className="block text-sm font-medium">Outcome<select className="mt-2 w-full rounded-lg border p-3" value={eligibilityOutcome} onChange={(event) => setEligibilityOutcome(event.target.value as typeof eligibilityOutcome)} required><option value="">Select eligibility outcome</option><option value="eligible">Eligible</option><option value="conditionally_eligible">Conditionally eligible</option><option value="not_eligible">Not eligible</option><option value="revoked">Revoke</option></select></label>
               <label className="block text-sm font-medium">Origin endpoint<select className="mt-2 w-full rounded-lg border p-3" value={eligibilityOriginType} onChange={(event) => setEligibilityOriginType(event.target.value as "address" | "pudo")}><option value="address">Address</option><option value="pudo">PUDO</option></select></label>
               <label className="block text-sm font-medium">Destination endpoint<select className="mt-2 w-full rounded-lg border p-3" value={eligibilityDestinationType} onChange={(event) => setEligibilityDestinationType(event.target.value as "address" | "pudo")}><option value="address">Address</option><option value="pudo">PUDO</option></select></label>
@@ -191,7 +191,7 @@ export default function CommercialQuotationReadinessPage() {
             }, "DEC-048 commercial terms approval recorded.");
           }}>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="block text-sm font-medium">Service<select className="mt-2 w-full rounded-lg border p-3" value={termsServiceCode} onChange={(event) => setTermsServiceCode(event.target.value as ServiceCode)}><option value="standard">Standard</option><option value="express">Express</option><option value="scheduled">Scheduled</option></select></label>
+              <label className="block text-sm font-medium">Service<select className="mt-2 w-full rounded-lg border p-3" value={termsServiceCode} onChange={(event) => setTermsServiceCode(event.target.value as ServiceCode | "")} required><option value="">Select service</option><option value="standard">Standard</option><option value="express">Express</option><option value="scheduled">Scheduled</option></select></label>
               <label className="block text-sm font-medium">Currency<input className="mt-2 w-full rounded-lg border p-3" value={currency} onChange={(event) => setCurrency(event.target.value)} required maxLength={12} /></label>
               <label className="block text-sm font-medium">Pricing definition ID<input className="mt-2 w-full rounded-lg border p-3" value={pricingDefinitionId} onChange={(event) => setPricingDefinitionId(event.target.value)} required /></label>
               <label className="block text-sm font-medium">Approved pricing version ID<input className="mt-2 w-full rounded-lg border p-3" value={pricingVersionId} onChange={(event) => setPricingVersionId(event.target.value)} required /></label>
