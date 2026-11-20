@@ -14,6 +14,7 @@ const permissions=[
     "pudo_location.register",
     "pudo_location.verify",
     "pudo_location.activate",
+  "pudo_location.capability_approve",
     "commercial_pricing.view",
     "commercial_pricing.propose",
     "commercial_pricing.approve",
