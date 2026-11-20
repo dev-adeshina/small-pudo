@@ -550,6 +550,7 @@ export default function CommercialPricingDefinitionsPage() {
         <div className="admin-header-right">
           <Link href="/admin/operational-cost-definitions" className="admin-action">Operational costs</Link>
           <Link href="/admin/commercial-route-distance" className="admin-action">Route distances</Link>
+          <Link href="/staff/commercial-quotation-readiness" className="admin-action">Quotation readiness</Link>
           <span className="admin-email">{email}</span>
           <button type="button" className="admin-logout" onClick={logout} aria-label="Sign out"><LogOut size={17} /></button>
         </div>
