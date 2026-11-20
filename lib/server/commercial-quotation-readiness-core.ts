@@ -193,6 +193,21 @@ export function createCommercialQuotationReadinessStore({
       const eventRef = recordRef.collection("events").doc();
       return db.runTransaction(async (transaction) => {
         await requirePermission(transaction, actorUid, ELIGIBILITY_PERMISSION, "approve service and endpoint eligibility");
+        for (const reference of evidenceReferences) {
+          if (!/^[A-Za-z0-9_-]+\\/[A-Za-z0-9_-]+(?:\\/[A-Za-z0-9_-]+\\/[A-Za-z0-9_-]+)*$/.test(reference)) {
+            throw new TypeError("Each eligibility evidence reference must be a Firestore document path.");
+          }
+          const evidenceDocument = await transaction.get(db.doc(reference));
+          if (!evidenceDocument.exists) throw new TypeError("An eligibility evidence reference does not exist: " + reference);
+          const evidenceData = evidenceDocument.data()!;
+          if (["revoked", "inactive", "expired", "not_approved"].includes(String(evidenceData.status ?? ""))) {
+            throw new TypeError("An eligibility evidence reference is not in an active state: " + reference);
+          }
+          const evidenceExpiry = dateMillis(evidenceData.validUntil ?? evidenceData.expiresAt);
+          if (evidenceExpiry !== null && evidenceExpiry <= now().getTime()) {
+            throw new TypeError("An eligibility evidence reference has expired: " + reference);
+          }
+        }
         const timestamp = serverTimestamp();
         transaction.set(recordRef, {
           schemaVersion: 1, serviceCode, originType, destinationType, outcome,
@@ -229,6 +244,24 @@ export function createCommercialQuotationReadinessStore({
       const record = await eligibility.doc(keyFor(serviceCode, originType, destinationType)).get();
       if (!record.exists) return { eligible: false as const, outcome: "pending_verification" as const, reason: "No DEC-047 eligibility decision has been recorded." };
       const data = record.data()!;
+      if (!Array.isArray(data.evidenceReferences) || data.evidenceReferences.length === 0) {
+        return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision has no attributable evidence references." };
+      }
+      for (const reference of data.evidenceReferences as string[]) {
+        if (typeof reference !== "string" || !/^[A-Za-z0-9_-]+\\/[A-Za-z0-9_-]+(?:\\/[A-Za-z0-9_-]+\\/[A-Za-z0-9_-]+)*$/.test(reference)) {
+          return { eligible: false as const, outcome: "pending_verification" as const, reason: "An eligibility evidence reference is malformed." };
+        }
+        const evidenceDocument = await db.doc(reference).get();
+        if (!evidenceDocument.exists) return { eligible: false as const, outcome: "pending_verification" as const, reason: "An eligibility evidence record is no longer available." };
+        const evidenceData = evidenceDocument.data()!;
+        if (["revoked", "inactive", "expired", "not_approved"].includes(String(evidenceData.status ?? ""))) {
+          return { eligible: false as const, outcome: "pending_verification" as const, reason: "An eligibility evidence record is no longer current." };
+        }
+        const evidenceExpiry = dateMillis(evidenceData.validUntil ?? evidenceData.expiresAt);
+        if (evidenceExpiry !== null && evidenceExpiry <= now().getTime()) {
+          return { eligible: false as const, outcome: "pending_verification" as const, reason: "An eligibility evidence record has expired." };
+        }
+      }
       if (data.outcome === "revoked" || data.outcome === "not_eligible") {
         return { eligible: false as const, outcome: data.outcome as CommercialEligibilityOutcome, reason: String(data.reason ?? "The service and endpoint combination is unavailable.") };
       }
@@ -267,11 +300,19 @@ export function createCommercialQuotationReadinessStore({
       const definition = await pricingDefinitions.doc(data.pricingDefinitionId).get();
       if (!definition.exists) return null;
       const lineage = definition.data()!;
-      if (lineage.publishedVersionId !== data.pricingVersionId || lineage.approvedVersionId !== data.pricingVersionId) return null;
+      if (lineage.currentVersionId !== data.pricingVersionId ||
+          lineage.publishedVersionId !== data.pricingVersionId ||
+          lineage.approvedVersionId !== data.pricingVersionId ||
+          lineage.currentVersionNumber !== lineage.publishedVersionNumber ||
+          lineage.currentVersionNumber !== lineage.approvedVersionNumber) return null;
       const workflow = await definition.ref.collection("versions").doc(data.pricingVersionId).collection("approval").doc("workflow").get();
       if (!workflow.exists || workflow.data()?.state !== "approved") return null;
       const version = await definition.ref.collection("versions").doc(data.pricingVersionId).get();
-      if (!version.exists || version.data()?.serviceCode !== serviceCode) return null;
+      if (!version.exists || version.data()?.serviceCode !== serviceCode ||
+          version.data()?.versionNumber !== lineage.currentVersionNumber ||
+          !version.data()?.pricingModel ||
+          !Array.isArray(version.data()?.components) ||
+          version.data()!.components.length === 0) return null;
       return {
         ...data,
         pricingVersionNumber: version.data()?.versionNumber,
