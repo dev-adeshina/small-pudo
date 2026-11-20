@@ -348,11 +348,13 @@ export function createCommercialQuotationReadinessStore({
           !Number.isSafeInteger(data.handoverWindowMinutes) || data.handoverWindowMinutes < 1 ||
           typeof data.approvedBy !== "string" || !data.approvedBy ||
           !data.approvedAt ||
-          typeof data.roundingPolicy !== "string" || !data.roundingPolicy.trim() ||
-          typeof data.taxTreatment !== "string" || !data.taxTreatment.trim() ||
-          typeof data.surchargeTreatment !== "string" || !data.surchargeTreatment.trim() ||
-          typeof data.discountTreatment !== "string" || !data.discountTreatment.trim() ||
-          typeof data.feeTreatment !== "string" || !data.feeTreatment.trim()) return null;
+          !["none", "half_up", "half_even", "ceil", "floor"].includes(String(data.roundingMode)) ||
+          !Number.isSafeInteger(data.decimalPlaces) || data.decimalPlaces < 0 || data.decimalPlaces > 6 ||
+          data.roundingStage !== "total_only" ||
+          !["included_in_components", "not_applicable"].includes(String(data.taxTreatment)) ||
+          !["included_in_components", "not_applicable"].includes(String(data.surchargeTreatment)) ||
+          !["included_in_components", "not_applicable"].includes(String(data.discountTreatment)) ||
+          !["included_in_components", "not_applicable"].includes(String(data.feeTreatment))) return null;
       const definition = await pricingDefinitions.doc(data.pricingDefinitionId).get();
       if (!definition.exists) return null;
       const lineage = definition.data()!;
