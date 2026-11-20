@@ -6,6 +6,8 @@ export interface ShipmentBookingDraftMeasurement {
 export interface ShipmentBookingDraftInput {
   origin: string;
   destination: string;
+  originPudoLocationId?: string;
+  destinationPudoLocationId?: string;
   parcelDescription: string;
   declaredMeasurements?: Partial<Record<"weight" | "length" | "width" | "height", ShipmentBookingDraftMeasurement>>;
 }
@@ -15,6 +17,7 @@ export type ShipmentBookingDraftValidation =
   | { success: false; error: string };
 
 const MEASUREMENT_NAMES = ["weight", "length", "width", "height"] as const;
+const LOCATION_ID = /^[A-Za-z0-9_-]{1,128}$/;
 
 export function validateShipmentBookingDraft(
   body: unknown
@@ -25,7 +28,7 @@ export function validateShipmentBookingDraft(
 
   const candidate = body as Record<string, unknown>;
   if (Object.keys(candidate).some((key) =>
-    !["origin", "destination", "parcelDescription", "declaredMeasurements"].includes(key)
+    !["origin", "destination", "originPudoLocationId", "destinationPudoLocationId", "parcelDescription", "declaredMeasurements"].includes(key)
   )) {
     return { success: false, error: "The shipment draft contains an unsupported field." };
   }
@@ -34,6 +37,10 @@ export function validateShipmentBookingDraft(
   const destination = typeof candidate.destination === "string" ? candidate.destination.trim() : "";
   const parcelDescription = typeof candidate.parcelDescription === "string"
     ? candidate.parcelDescription.trim() : "";
+  const originPudoLocationId = candidate.originPudoLocationId === undefined || candidate.originPudoLocationId === ""
+    ? undefined : candidate.originPudoLocationId;
+  const destinationPudoLocationId = candidate.destinationPudoLocationId === undefined || candidate.destinationPudoLocationId === ""
+    ? undefined : candidate.destinationPudoLocationId;
 
   if (!origin || !destination || !parcelDescription) {
     return { success: false, error: "Origin, destination and parcel description are required." };
@@ -43,6 +50,17 @@ export function validateShipmentBookingDraft(
   }
   if (parcelDescription.length > 1000) {
     return { success: false, error: "Parcel description must be 1,000 characters or fewer." };
+  }
+  for (const [value, label] of [
+    [originPudoLocationId, "Origin"],
+    [destinationPudoLocationId, "Destination"],
+  ] as const) {
+    if (value !== undefined && (typeof value !== "string" || !LOCATION_ID.test(value))) {
+      return { success: false, error: `${label} PUDO reference is invalid.` };
+    }
+  }
+  if (originPudoLocationId && originPudoLocationId === destinationPudoLocationId) {
+    return { success: false, error: "Origin and destination PUDO locations must be different." };
   }
 
   let declaredMeasurements: ShipmentBookingDraftInput["declaredMeasurements"];
@@ -79,6 +97,8 @@ export function validateShipmentBookingDraft(
     data: {
       origin,
       destination,
+      ...(originPudoLocationId ? { originPudoLocationId } : {}),
+      ...(destinationPudoLocationId ? { destinationPudoLocationId } : {}),
       parcelDescription,
       ...(declaredMeasurements ? { declaredMeasurements } : {}),
     },
