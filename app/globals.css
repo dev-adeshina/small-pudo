@@ -7373,3 +7373,35 @@ footer {
   .staff-dashboard-section > .admin-panel-heading { padding: 18px; }
   .staff-dashboard-card { padding: 18px; }
 }
+
+/* Button elements styled as actions must read as controls, not navigation rows. */
+.staff-workspace-content button.admin-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 17px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: .84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.staff-workspace-content button.admin-action:hover:not(:disabled) {
+  border-color: var(--ink);
+  background: var(--bg);
+  transform: translateY(-1px);
+}
+.staff-workspace-content button.admin-action:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+.staff-workspace-content button:focus-visible,
+.staff-workspace-content a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
