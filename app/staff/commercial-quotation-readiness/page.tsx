@@ -130,8 +130,8 @@ export default function CommercialQuotationReadinessPage() {
       <header className="admin-header">
         <Link href="/staff/commercial-pricing-definitions" className="admin-logo">VeriLyft</Link>
         <div className="admin-header-right">
-          <Link href="/staff/commercial-pricing-definitions" className="admin-action">Pricing definitions</Link>
-          <Link href="/staff/commercial-route-distance" className="admin-action">Route evidence</Link>
+          
+          
           <span className="admin-email">{email}</span>
         </div>
       </header>
