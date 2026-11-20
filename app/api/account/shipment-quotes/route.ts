@@ -146,45 +146,75 @@ export async function POST(request: Request) {
     const issuedAt = new Date();
     const validUntil = new Date(issuedAt.getTime() + Number(terms.quoteValidityMinutes) * 60_000);
     const snapshot = {
-      schemaVersion: 1, serviceCode, draftId: input.draftId,
-      origin: draft.origin, destination: draft.destination,
+      schemaVersion: 1,
+      serviceCode,
+      draftId: input.draftId,
+      origin: draft.origin,
+      destination: draft.destination,
       originPudoLocationId: draft.originPudoLocationId ?? null,
       destinationPudoLocationId: draft.destinationPudoLocationId ?? null,
       parcelDescription: draft.parcelDescription,
       parcelInput: draft.parcelInput ?? null,
       eligibility: {
         outcome: eligibility.outcome,
-        recordId: eligibility.recordId,
-        evidenceReferences: eligibility.evidenceReferences,
-        serviceCoverageEvidenceReferences: eligibility.serviceCoverageEvidenceReferences,
-        operatingAvailabilityEvidenceReferences: eligibility.operatingAvailabilityEvidenceReferences,
-        capacityEvidenceReferences: eligibility.capacityEvidenceReferences,
-        originRequiredActions: eligibility.originRequiredActions,
-        destinationRequiredActions: eligibility.destinationRequiredActions,
-        capabilityEvidence: eligibility.capabilityEvidence,
-        decidedBy: eligibility.decidedBy,
-        decidedAt: eligibility.decidedAt,
         validUntil: eligibility.validUntil,
-        conditions: eligibility.conditions,
       },
-      routeEvidence: routeRecord ? { evidenceId: routeRecord.evidenceId, evidence: routeRecord.evidence, review: routeRecord.review } : null,
+      routeEvidence: routeRecord ? {
+        distance: routeRecord.evidence.distance,
+        method: routeRecord.evidence.method,
+      } : null,
       pricing: {
-        definitionId: evaluation.definitionId, versionId: evaluation.versionId, versionNumber: evaluation.versionNumber,
-        components: evaluation.components, rawTotal: evaluation.total, total: roundedTotal, currency: terms.currency,
+        definitionId: evaluation.definitionId,
+        versionId: evaluation.versionId,
+        versionNumber: evaluation.versionNumber,
+        components: evaluation.components,
+        rawTotal: evaluation.total,
+        total: roundedTotal,
+        currency: terms.currency,
         rounding: { mode: terms.roundingMode, decimalPlaces: terms.decimalPlaces, stage: terms.roundingStage },
-        inputValues: values, calculationPrimitiveAuthority: evaluation.authority,
+        inputValues: values,
         authority: "approved_DEC-048_terms_and_exact_pricing_version",
         approvedTerms: {
-          approvedBy: terms.approvedBy, approvedAt: terms.approvedAt,
-          roundingMode: terms.roundingMode, decimalPlaces: terms.decimalPlaces, roundingStage: terms.roundingStage,
+          roundingMode: terms.roundingMode,
+          decimalPlaces: terms.decimalPlaces,
+          roundingStage: terms.roundingStage,
           taxTreatment: terms.taxTreatment,
-          surchargeTreatment: terms.surchargeTreatment, discountTreatment: terms.discountTreatment,
+          surchargeTreatment: terms.surchargeTreatment,
+          discountTreatment: terms.discountTreatment,
           feeTreatment: terms.feeTreatment,
         },
       },
-      quoteTerms: { validUntil, quoteValidityMinutes: terms.quoteValidityMinutes, handoverWindowMinutes: terms.handoverWindowMinutes },
+      quoteTerms: {
+        validUntil,
+        quoteValidityMinutes: terms.quoteValidityMinutes,
+        handoverWindowMinutes: terms.handoverWindowMinutes,
+      },
       issuedFromDraftAt: issuedAt,
     };
+    const internalEvidence = {
+      schemaVersion: 1,
+      eligibility,
+      routeEvidence: routeRecord,
+      pricing: {
+        definitionId: evaluation.definitionId,
+        versionId: evaluation.versionId,
+        versionNumber: evaluation.versionNumber,
+        configuration,
+        inputValues: values,
+        evaluation,
+        approvedTerms: terms,
+      },
+      draft: {
+        draftId: input.draftId,
+        bookingPartyUid: customer.uid,
+        origin: draft.origin,
+        destination: draft.destination,
+        originPudoLocationId: draft.originPudoLocationId ?? null,
+        destinationPudoLocationId: draft.destinationPudoLocationId ?? null,
+        parcelInput: draft.parcelInput ?? null,
+      },
+    };
+
     if (typeof input.quoteId === "string" && typeof input.expectedCurrentVersionId === "string") {
       const existingQuote = await shipmentQuoteStore.getCustomerQuote(customer.uid, input.quoteId);
       if (!existingQuote) return NextResponse.json({ error: "Quotation not found." }, { status: 404 });
@@ -201,6 +231,7 @@ export async function POST(request: Request) {
         quoteId: input.quoteId,
         expectedCurrentVersionId: input.expectedCurrentVersionId,
         snapshot,
+        internalEvidence,
         validUntil,
         handoverWindowMinutes: Number(terms.handoverWindowMinutes),
         issuedBy: customer.uid,
@@ -212,7 +243,7 @@ export async function POST(request: Request) {
     }
 
     const quote = await shipmentQuoteStore.issueQuote({
-      bookingPartyUid: customer.uid, snapshot, validUntil,
+      bookingPartyUid: customer.uid, snapshot, internalEvidence, validUntil,
       handoverWindowMinutes: Number(terms.handoverWindowMinutes),
       issuedBy: customer.uid,
     });
