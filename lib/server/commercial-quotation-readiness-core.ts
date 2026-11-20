@@ -269,12 +269,14 @@ export function createCommercialQuotationReadinessStore({
                 .some((evidenceActor) => evidenceActor === actorUid)) {
             throw new TypeError("Service eligibility approval must be independent of the referenced evidence creators and operational actors.");
           }
-          if (["revoked", "inactive", "expired", "not_approved"].includes(String(evidenceData.status ?? ""))) {
-            throw new TypeError("An eligibility evidence reference is not in an active state: " + reference);
-          }
-          const evidenceExpiry = dateMillis(evidenceData.validUntil ?? evidenceData.expiresAt);
-          if (evidenceExpiry !== null && evidenceExpiry <= now().getTime()) {
-            throw new TypeError("An eligibility evidence reference has expired: " + reference);
+          if (outcome === "eligible" || outcome === "conditionally_eligible") {
+            if (["revoked", "inactive", "expired", "not_approved"].includes(String(evidenceData.status ?? ""))) {
+              throw new TypeError("An eligibility evidence reference is not in an active state: " + reference);
+            }
+            const evidenceExpiry = dateMillis(evidenceData.validUntil ?? evidenceData.expiresAt);
+            if (evidenceExpiry !== null && evidenceExpiry <= now().getTime()) {
+              throw new TypeError("An eligibility evidence reference has expired: " + reference);
+            }
           }
         }
         const timestamp = serverTimestamp();
