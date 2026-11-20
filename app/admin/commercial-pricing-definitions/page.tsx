@@ -1045,6 +1045,8 @@ export default function CommercialPricingDefinitionsPage() {
             <button className="cost-primary-button" type="button" disabled={saving || selectedVersion?.approvalWorkflow?.state === "pending_approval"} onClick={() => { if (selectedVersion) setForm(configurationFromVersion(selectedVersion)); setEditing(true); setCreating(false); }}>Revise version</button>
           </div>
           <p>Service: {selectedVersion?.serviceCode} · Version {selected.currentVersionNumber}</p>
+          <p className="text-xs text-gray-500">Pricing definition ID: {selected.definitionId}</p>
+          <p className="text-xs text-gray-500">Current version ID: {selected.currentVersionId}</p>
           <p>Approval status: <strong>{(selectedVersion?.approvalWorkflow?.state ?? "draft").replaceAll("_", " ")}</strong>
             {selected.publishedVersionId === selectedVersion?.versionId ? " · Published" : ""}</p>
           {selectedVersion?.approvalWorkflow?.reason && <p>Decision reason: {selectedVersion.approvalWorkflow.reason}</p>}
@@ -1066,7 +1068,7 @@ export default function CommercialPricingDefinitionsPage() {
               {selected.versions.map((version) => <div className="cost-version-row" key={version.versionId}>
                 <strong>Version {version.versionNumber}</strong>
                 <span>{(version.approvalWorkflow?.state ?? "draft").replaceAll("_", " ")}</span>
-                <small>{selected.publishedVersionId === version.versionId ? "Published version" : version.versionId === selected.currentVersionId ? "Current version" : "Superseded version"}</small>
+                <small>{selected.publishedVersionId === version.versionId ? "Published version" : version.versionId === selected.currentVersionId ? "Current version" : "Superseded version"} · ID: {version.versionId}</small>
               </div>)}
             </div>
           </div>
