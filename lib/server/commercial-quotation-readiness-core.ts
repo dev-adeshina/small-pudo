@@ -247,6 +247,16 @@ export function createCommercialQuotationReadinessStore({
       const eventRef = recordRef.collection("events").doc();
       return db.runTransaction(async (transaction) => {
         await requirePermission(transaction, actorUid, ELIGIBILITY_PERMISSION, "approve service and endpoint eligibility");
+        if (outcome === "conditionally_eligible") {
+          for (const conditionReference of conditions) {
+            const segments = conditionReference.split("/");
+            if (segments.length < 2 || segments.length % 2 !== 0 ||
+                !segments.every((segment) => ID.test(segment)) ||
+                !evidenceReferences.includes(conditionReference)) {
+              throw new TypeError("Each conditional eligibility requirement must be a current Firestore evidence document path included in the decision evidence.");
+            }
+          }
+        }
         if (outcome === "eligible" || outcome === "conditionally_eligible") {
           const locationIds = [originPudoLocationId, destinationPudoLocationId].filter((value): value is string => Boolean(value));
           for (const locationId of locationIds) {
@@ -310,9 +320,8 @@ export function createCommercialQuotationReadinessStore({
       destinationType: CommercialEndpointType;
       originPudoLocationId?: string;
       destinationPudoLocationId?: string;
-      satisfiedConditions?: string[];
     }) {
-      const { serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId, satisfiedConditions = [] } = input;
+      const { serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId } = input;
       if (!SERVICES.has(serviceCode) || !ENDPOINTS.has(originType) || !ENDPOINTS.has(destinationType)) {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The requested service or endpoint combination is unsupported." };
       }
@@ -382,11 +391,15 @@ export function createCommercialQuotationReadinessStore({
       }
       const requiredConditions = Array.isArray(data.conditions) ? data.conditions as string[] : [];
       if (data.outcome === "conditionally_eligible" &&
-          (requiredConditions.length === 0 || requiredConditions.some((condition) => typeof condition !== "string" || !condition.trim()))) {
-        return { eligible: false as const, outcome: "conditionally_eligible" as const, reason: "The conditional eligibility record has no valid conditions." };
-      }
-      if (data.outcome === "conditionally_eligible" && requiredConditions.some((condition) => !satisfiedConditions.includes(condition))) {
-        return { eligible: false as const, outcome: "conditionally_eligible" as const, reason: "One or more eligibility conditions are not satisfied.", conditions: requiredConditions };
+          (requiredConditions.length === 0 ||
+           requiredConditions.some((condition) =>
+             typeof condition !== "string" ||
+             !evidenceReferences.includes(condition) ||
+             condition.split("/").length < 2 ||
+             condition.split("/").length % 2 !== 0 ||
+             !condition.split("/").every((segment) => ID.test(segment))
+           ))) {
+        return { eligible: false as const, outcome: "conditionally_eligible" as const, reason: "The conditional eligibility record has no valid current evidence references.", conditions: requiredConditions };
       }
       return { eligible: true as const, outcome: data.outcome as CommercialEligibilityOutcome, recordId: record.id, evidenceReferences: data.evidenceReferences ?? [], conditions: requiredConditions };
     },
