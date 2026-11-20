@@ -11,6 +11,7 @@ import {
   ArrowUpRight,
   CheckCircle2,
   Clock3,
+  FileText,
   LogOut,
   Package,
   ShieldCheck,
@@ -357,6 +358,11 @@ export default function CustomerAccountPage() {
             <Link href="/account/shipments" className="customer-primary-action">
               <Package size={17} />
               Prepare a shipment
+              <ArrowUpRight size={16} />
+            </Link>
+            <Link href="/account/quotes" className="customer-primary-action" style={{ marginTop: 10 }}>
+              <FileText size={17} />
+              View quotations
               <ArrowUpRight size={16} />
             </Link>
           </div>

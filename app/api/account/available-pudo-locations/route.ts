@@ -1,0 +1,44 @@
+import { NextRequest } from "next/server";
+
+import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { authenticateVerifiedCustomer } from "@/lib/server/customer-auth";
+
+export const runtime = "nodejs";
+
+export async function GET(request: NextRequest) {
+  const customer = await authenticateVerifiedCustomer(
+    request.headers.get("authorization"),
+    (token) => adminAuth.verifyIdToken(token),
+  );
+  if (!customer.success) {
+    return Response.json({ error: customer.error }, { status: customer.status });
+  }
+
+  try {
+    const candidates = await adminDb.collection("pudoLocations")
+      .where("lifecycle", "==", "active")
+      .limit(100)
+      .get();
+
+    const locations = await Promise.all(candidates.docs.map(async (document) => {
+      const activation = await adminDb.collection("pudoLocationActivations")
+        .doc(document.id).get();
+      if (!activation.exists || activation.data()?.status !== "active") return null;
+      const data = document.data();
+      return {
+        locationId: document.id,
+        name: typeof data.name === "string" ? data.name : "PUDO location",
+        address: typeof data.address === "string" ? data.address : "",
+      };
+    }));
+
+    return Response.json({
+      success: true,
+      locations: locations.filter((location) => location !== null)
+        .sort((left, right) => left.name.localeCompare(right.name)),
+    }, { headers: { "Cache-Control": "private, no-store" } });
+  } catch (error) {
+    console.error("Failed to retrieve active PUDO locations for shipment draft:", error);
+    return Response.json({ error: "Unable to retrieve active PUDO locations right now." }, { status: 500 });
+  }
+}

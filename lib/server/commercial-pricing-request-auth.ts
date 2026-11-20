@@ -3,7 +3,9 @@ import { commercialPricingStore } from "@/lib/server/commercial-pricing-store";
 
 export type CommercialPricingPermission =
   | "commercial_pricing.view"
-  | "commercial_pricing.propose";
+  | "commercial_pricing.propose"
+  | "commercial_pricing.approve"
+  | "commercial_pricing.publish";
 
 export type CommercialPricingRequestAuthorization =
   | { ok: true; uid: string }

@@ -10,8 +10,14 @@ const STAFF_ACTION_PERMISSIONS = [
   "pudo_location.register",
   "pudo_location.verify",
   "pudo_location.activate",
+  "pudo_location.capability_approve",
   "commercial_pricing.view",
   "commercial_pricing.propose",
+  "commercial_pricing.approve",
+  "commercial_pricing.publish",
+  "commercial_route_distance.approve",
+  "commercial_service_eligibility.approve",
+  "commercial_pricing.owner_approve",
 ] as const;
 export type StaffActionPermission = typeof STAFF_ACTION_PERMISSIONS[number];
 export type StaffPermissionStatus = "active" | "suspended" | "revoked";
@@ -156,6 +162,9 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
       const permission=permissionId(input.permissionId);
       if(!["active","suspended","revoked"].includes(String(input.status))) throw new TypeError("Permission status must be active, suspended, or revoked.");
       const status=input.status as StaffPermissionStatus, reason=requiredString(input.reason,"A permission-change reason",1000);
+      if (permission === "commercial_pricing.owner_approve" && input.delegable === true) {
+        throw new TypeError("DEC-048 owner approval authority cannot be delegated.");
+      }
       const delegable=status==="active"&&input.delegable===true;
       let expiry:Date|null=null;
       if(status==="active"&&input.expiresAt!==undefined&&input.expiresAt!==null&&input.expiresAt!==""){

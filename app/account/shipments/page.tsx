@@ -19,11 +19,20 @@ import {
 import { auth } from "@/lib/firebase";
 import { signOutCustomer } from "@/lib/customer-auth";
 
+interface PudoLocationOption {
+  locationId: string;
+  name: string;
+  address: string;
+}
+
 interface ShipmentDraft {
   id: string;
   origin: string;
   destination: string;
+  originPudoLocationId?: string;
+  destinationPudoLocationId?: string;
   parcelDescription: string;
+  declaredMeasurements?: Partial<Record<"weight" | "length" | "width" | "height", { value: number; unit: string }>>;
   status: "draft";
   createdAt?: string | null;
   updatedAt?: string | null;
@@ -34,7 +43,17 @@ const MAX_DRAFTS = 50;
 const emptyForm = {
   origin: "",
   destination: "",
+  originPudoLocationId: "",
+  destinationPudoLocationId: "",
   parcelDescription: "",
+  weight: "",
+  weightUnit: "",
+  length: "",
+  lengthUnit: "",
+  width: "",
+  widthUnit: "",
+  height: "",
+  heightUnit: "",
 };
 
 function formatDraftDate(value: string | null | undefined) {
@@ -59,12 +78,18 @@ export default function ShipmentDraftsPage() {
   const [user, setUser] = useState<User | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [drafts, setDrafts] = useState<ShipmentDraft[]>([]);
+  const [pudoLocations, setPudoLocations] = useState<PudoLocationOption[]>([]);
+  const [pudoLocationsError, setPudoLocationsError] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [loadError, setLoadError] = useState("");
   const [notice, setNotice] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [quoteServiceByDraft, setQuoteServiceByDraft] = useState<Record<string, "standard" | "express" | "scheduled">>({});
+  const [requestingQuoteId, setRequestingQuoteId] = useState<string | null>(null);
+  const [quoteRequestError, setQuoteRequestError] = useState("");
+  const [quoteRequestNotice, setQuoteRequestNotice] = useState("");
   const [form, setForm] = useState(emptyForm);
 
   const loadDrafts = useCallback(async (currentUser: User) => {
@@ -125,6 +150,23 @@ export default function ShipmentDraftsPage() {
       setUser(currentUser);
       setCheckingAuth(false);
       void loadDrafts(currentUser);
+      void (async () => {
+        try {
+          const idToken = await currentUser.getIdToken();
+          const response = await fetch("/api/account/available-pudo-locations", {
+            headers: { Authorization: `Bearer ${idToken}` },
+            cache: "no-store",
+          });
+          const data = await response.json().catch(() => null);
+          if (!response.ok || !data?.success) {
+            throw new Error(data?.error || "Unable to load active PUDO locations.");
+          }
+          setPudoLocations(Array.isArray(data.locations) ? data.locations : []);
+          setPudoLocationsError("");
+        } catch (loadError) {
+          setPudoLocationsError(loadError instanceof Error ? loadError.message : "Unable to load active PUDO locations.");
+        }
+      })();
     });
 
     return () => unsubscribe();
@@ -143,7 +185,17 @@ export default function ShipmentDraftsPage() {
     setForm({
       origin: draft.origin,
       destination: draft.destination,
+      originPudoLocationId: draft.originPudoLocationId ?? "",
+      destinationPudoLocationId: draft.destinationPudoLocationId ?? "",
       parcelDescription: draft.parcelDescription,
+      weight: draft.declaredMeasurements?.weight ? String(draft.declaredMeasurements.weight.value) : "",
+      weightUnit: draft.declaredMeasurements?.weight?.unit ?? "",
+      length: draft.declaredMeasurements?.length ? String(draft.declaredMeasurements.length.value) : "",
+      lengthUnit: draft.declaredMeasurements?.length?.unit ?? "",
+      width: draft.declaredMeasurements?.width ? String(draft.declaredMeasurements.width.value) : "",
+      widthUnit: draft.declaredMeasurements?.width?.unit ?? "",
+      height: draft.declaredMeasurements?.height ? String(draft.declaredMeasurements.height.value) : "",
+      heightUnit: draft.declaredMeasurements?.height?.unit ?? "",
     });
     setNotice("");
     setError("");
@@ -165,7 +217,18 @@ export default function ShipmentDraftsPage() {
 
     const currentEditingId = editingId;
     const wasEditing = currentEditingId !== null;
-    const submittedForm = { ...form };
+    const submittedForm = {
+      origin: form.origin,
+      destination: form.destination,
+      ...(form.originPudoLocationId ? { originPudoLocationId: form.originPudoLocationId } : {}),
+      ...(form.destinationPudoLocationId ? { destinationPudoLocationId: form.destinationPudoLocationId } : {}),
+      parcelDescription: form.parcelDescription,
+      declaredMeasurements: Object.fromEntries(
+        (["weight", "length", "width", "height"] as const)
+          .filter((name) => form[name] !== "" || form[`${name}Unit`] !== "")
+          .map((name) => [name, { value: Number(form[name]), unit: form[`${name}Unit`] }])
+      ),
+    };
 
     setSaving(true);
     setError("");
@@ -215,6 +278,32 @@ export default function ShipmentDraftsPage() {
     }
   }
 
+  async function requestQuote(draftId: string) {
+    if (!user || requestingQuoteId) return;
+    const serviceCode = quoteServiceByDraft[draftId] ?? "standard";
+    setRequestingQuoteId(draftId);
+    setQuoteRequestError("");
+    setQuoteRequestNotice("");
+    try {
+      const idToken = await user.getIdToken();
+      const response = await fetch("/api/account/shipment-quotes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${idToken}` },
+        body: JSON.stringify({ draftId, serviceCode }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data?.success) {
+        throw new Error(typeof data?.error === "string" ? data.error : "A quotation could not be issued for this shipment.");
+      }
+      setQuoteRequestNotice("Your quotation has been issued.");
+      router.push("/account/quotes");
+    } catch (requestError) {
+      setQuoteRequestError(requestError instanceof Error ? requestError.message : "A quotation could not be issued.");
+    } finally {
+      setRequestingQuoteId(null);
+    }
+  }
+
   if (checkingAuth || !user) {
     return (
       <main className="customer-loading">
@@ -261,12 +350,11 @@ export default function ShipmentDraftsPage() {
         </div>
 
         <div className="shipment-policy-note" role="note">
-          <strong>Booking preparation only</strong>
+          <strong>Prepare first, request a quotation when available</strong>
           <p>
-            Service selection and quotations are not available here until
-            eligible services and their approved pricing and handover rules
-            are configured. Your draft will not create a payment obligation
-            or a custody record.
+            Saving a draft does not create a booking, payment obligation or custody record.
+            Quotation requests are checked against current service eligibility, route evidence
+            and approved commercial terms before a quote can be issued.
           </p>
         </div>
 
@@ -313,6 +401,43 @@ export default function ShipmentDraftsPage() {
               <small>{form.destination.length}/180 characters</small>
             </label>
 
+            <label>
+              <span>Origin PUDO (optional)</span>
+              <select
+                value={form.originPudoLocationId}
+                onChange={(event) => setForm({ ...form, originPudoLocationId: event.target.value })}
+                disabled={saving}
+              >
+                <option value="">Address / other endpoint</option>
+                {pudoLocations.map((location) => (
+                  <option key={location.locationId} value={location.locationId}>
+                    {location.name} — {location.address}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              <span>Destination PUDO (optional)</span>
+              <select
+                value={form.destinationPudoLocationId}
+                onChange={(event) => setForm({ ...form, destinationPudoLocationId: event.target.value })}
+                disabled={saving}
+              >
+                <option value="">Address / other endpoint</option>
+                {pudoLocations.map((location) => (
+                  <option key={location.locationId} value={location.locationId}>
+                    {location.name} — {location.address}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {pudoLocationsError && (
+              <p className="customer-panel-description shipment-form-wide" role="status">
+                Active PUDO choices could not be loaded. You can still save address-based draft endpoints.
+              </p>
+            )}
+
             <label className="shipment-form-wide">
               <span>Parcel description</span>
               <textarea
@@ -326,6 +451,35 @@ export default function ShipmentDraftsPage() {
               />
               <small>{form.parcelDescription.length}/1,000 characters</small>
             </label>
+
+            <fieldset className="shipment-form-wide" style={{ border: 0, padding: 0, margin: 0 }}>
+              <legend>Declared parcel measurements (optional)</legend>
+              <p className="customer-panel-description">Enter only measurements you know. Each value must include its unit; actual intake measurements remain separate.</p>
+              <div className="shipment-measurement-grid">
+                {(["weight", "length", "width", "height"] as const).map((name) => (
+                  <label key={name}>
+                    <span>{name[0].toUpperCase() + name.slice(1)}</span>
+                    <input
+                      type="number"
+                      min="0.001"
+                      step="any"
+                      value={form[name]}
+                      onChange={(event) => setForm({ ...form, [name]: event.target.value })}
+                      disabled={saving}
+                      placeholder="Value"
+                    />
+                    <input
+                      value={form[`${name}Unit`]}
+                      onChange={(event) => setForm({ ...form, [`${name}Unit`]: event.target.value })}
+                      maxLength={40}
+                      disabled={saving}
+                      placeholder="Unit (e.g. kg, cm)"
+                      aria-label={`${name} unit`}
+                    />
+                  </label>
+                ))}
+              </div>
+            </fieldset>
 
             <div className="shipment-form-actions shipment-form-wide">
               <button type="submit" className="customer-primary-action" disabled={saving}>
@@ -368,6 +522,9 @@ export default function ShipmentDraftsPage() {
             <MapPin size={22} />
           </div>
 
+          {quoteRequestError && <p className="customer-error" role="alert">{quoteRequestError}</p>}
+          {quoteRequestNotice && <p className="shipment-success" role="status">{quoteRequestNotice}</p>}
+
           {loading ? (
             <div className="customer-state" aria-live="polite">
               <p>Loading your drafts...</p>
@@ -399,14 +556,40 @@ export default function ShipmentDraftsPage() {
                     <p>{draft.parcelDescription}</p>
                     <small>{formatDraftDate(draft.updatedAt ?? draft.createdAt)}</small>
                   </div>
-                  <button
-                    type="button"
-                    className="customer-secondary-action"
-                    onClick={() => startEditing(draft)}
-                    disabled={saving}
-                  >
-                    Edit draft <ArrowUpRight size={15} />
-                  </button>
+                  <div className="shipment-form-actions">
+                    <button
+                      type="button"
+                      className="customer-secondary-action"
+                      onClick={() => startEditing(draft)}
+                      disabled={saving || requestingQuoteId !== null}
+                    >
+                      Edit draft <ArrowUpRight size={15} />
+                    </button>
+                    <label>
+                      <span className="sr-only">Quotation service</span>
+                      <select
+                        aria-label={`Quotation service for draft ${draft.id}`}
+                        value={quoteServiceByDraft[draft.id] ?? "standard"}
+                        onChange={(event) => setQuoteServiceByDraft({
+                          ...quoteServiceByDraft,
+                          [draft.id]: event.target.value as "standard" | "express" | "scheduled",
+                        })}
+                        disabled={requestingQuoteId !== null}
+                      >
+                        <option value="standard">Standard</option>
+                        <option value="express">Express</option>
+                        <option value="scheduled">Scheduled</option>
+                      </select>
+                    </label>
+                    <button
+                      type="button"
+                      className="customer-primary-action"
+                      onClick={() => void requestQuote(draft.id)}
+                      disabled={requestingQuoteId !== null}
+                    >
+                      {requestingQuoteId === draft.id ? "Checking..." : "Request quotation"}
+                    </button>
+                  </div>
                 </article>
               ))}
             </div>

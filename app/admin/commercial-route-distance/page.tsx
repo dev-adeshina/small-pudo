@@ -242,6 +242,7 @@ export default function CommercialRouteDistancePage() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Link className="admin-action" href="/staff/pudo-locations">PUDO location registry</Link>
+            <Link className="admin-action" href="/staff/commercial-quotation-readiness">Quotation readiness</Link>
             <Link className="admin-action" href="/staff/pudo-verifications">Verification queue</Link>
             <button className="cost-secondary-button" type="button" onClick={refresh} disabled={loading}>
               <RefreshCw size={16} /> Refresh
@@ -364,6 +365,7 @@ export default function CommercialRouteDistancePage() {
                       </div>
                       <span className="text-sm text-gray-500">{formatDate(item.recordedAt)}</span>
                     </div>
+                    <p className="mt-2 text-xs text-gray-500">Evidence ID: {item.evidenceId}</p>
                     <p className="mt-2 text-sm">Source: {item.source}</p>
                     {item.measuredOn && <p className="mt-1 text-sm">Measurement date: {formatDate(item.measuredOn + "T00:00:00")}</p>}
                     {item.supportingReference && <p className="mt-1 break-all text-sm">Supporting reference: {item.supportingReference}</p>}

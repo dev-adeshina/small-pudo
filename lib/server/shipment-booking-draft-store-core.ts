@@ -1,4 +1,4 @@
-import type { FieldValue, Firestore } from "firebase-admin/firestore";
+import type { FieldValue, Firestore, Transaction } from "firebase-admin/firestore";
 
 import type { ShipmentBookingDraftRecord } from "./shipment-booking-draft-api";
 import type { ShipmentBookingDraftInput } from "../validations/shipment-booking-draft";
@@ -19,18 +19,58 @@ interface ShipmentBookingDraftStoreDependencies {
   updateDraftOnlyWhileEditable: UpdateDraftGuard;
 }
 
+function declaredMeasurementsFromParcelInput(value: unknown): ShipmentBookingDraftInput["declaredMeasurements"] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  const declared = (value as Record<string, unknown>).declared;
+  if (!declared || typeof declared !== "object" || Array.isArray(declared)) return undefined;
+  const measurements = (declared as Record<string, unknown>).measurements;
+  if (!measurements || typeof measurements !== "object" || Array.isArray(measurements)) return undefined;
+  return measurements as ShipmentBookingDraftInput["declaredMeasurements"];
+}
+
+function parcelInputForDraft(customerUid: string, input: ShipmentBookingDraftInput) {
+  const measurements = input.declaredMeasurements;
+  if (!measurements || Object.keys(measurements).length === 0) return null;
+  return {
+    schemaVersion: 1,
+    declared: {
+      measurements,
+      recordedAt: new Date().toISOString(),
+      recordedBy: customerUid,
+      source: "customer_declared",
+    },
+    handlingCharacteristics: [],
+  };
+}
+
 function toISOString(value: unknown): string | null {
-  if (
-    value &&
-    typeof value === "object" &&
-    "toDate" in value &&
-    typeof value.toDate === "function"
-  ) {
+  if (value && typeof value === "object" && "toDate" in value && typeof value.toDate === "function") {
     const date = value.toDate();
     return date instanceof Date ? date.toISOString() : null;
   }
-
   return null;
+}
+
+async function assertActivePudoReferences(
+  transaction: Transaction,
+  db: Firestore,
+  input: ShipmentBookingDraftInput,
+): Promise<void> {
+  const ids = [...new Set([input.originPudoLocationId, input.destinationPudoLocationId].filter(
+    (value): value is string => Boolean(value),
+  ))];
+  for (const locationId of ids) {
+    const candidateRef = db.collection("pudoLocations").doc(locationId);
+    const activationRef = db.collection("pudoLocationActivations").doc(locationId);
+    const [candidate, activation] = await Promise.all([
+      transaction.get(candidateRef),
+      transaction.get(activationRef),
+    ]);
+    if (!candidate.exists || candidate.data()?.lifecycle !== "active" ||
+        !activation.exists || activation.data()?.status !== "active") {
+      throw new TypeError("The selected PUDO location is not active. Choose an active location or remove the PUDO reference.");
+    }
+  }
 }
 
 /**
@@ -44,22 +84,19 @@ export function createShipmentBookingDraftStore({
 }: ShipmentBookingDraftStoreDependencies) {
   return {
     async listDrafts(customerUid: string): Promise<ShipmentBookingDraftRecord[]> {
-      const snapshot = await db
-        .collection("users")
-        .doc(customerUid)
-        .collection("shipmentBookingDrafts")
-        .orderBy("updatedAt", "desc")
-        .limit(50)
-        .get();
+      const snapshot = await db.collection("users").doc(customerUid)
+        .collection("shipmentBookingDrafts").orderBy("updatedAt", "desc").limit(50).get();
 
       return snapshot.docs.map((document) => {
         const data = document.data();
-
         return {
           id: document.id,
           origin: data.origin,
           destination: data.destination,
+          ...(typeof data.originPudoLocationId === "string" ? { originPudoLocationId: data.originPudoLocationId } : {}),
+          ...(typeof data.destinationPudoLocationId === "string" ? { destinationPudoLocationId: data.destinationPudoLocationId } : {}),
           parcelDescription: data.parcelDescription,
+          declaredMeasurements: declaredMeasurementsFromParcelInput(data.parcelInput),
           status: "draft" as const,
           createdAt: toISOString(data.createdAt),
           updatedAt: toISOString(data.updatedAt),
@@ -71,25 +108,27 @@ export function createShipmentBookingDraftStore({
       customerUid: string,
       input: ShipmentBookingDraftInput
     ): Promise<ShipmentBookingDraftRecord> {
-      const draftRef = db
-        .collection("users")
-        .doc(customerUid)
-        .collection("shipmentBookingDrafts")
-        .doc();
-
-      await draftRef.create({
-        bookingPartyUid: customerUid,
-        ...input,
-        status: "draft",
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
-
-      return {
-        id: draftRef.id,
-        ...input,
-        status: "draft",
+      const draftRef = db.collection("users").doc(customerUid)
+        .collection("shipmentBookingDrafts").doc();
+      const draftFields = {
+        origin: input.origin,
+        destination: input.destination,
+        ...(input.originPudoLocationId ? { originPudoLocationId: input.originPudoLocationId } : {}),
+        ...(input.destinationPudoLocationId ? { destinationPudoLocationId: input.destinationPudoLocationId } : {}),
+        parcelDescription: input.parcelDescription,
       };
+      await db.runTransaction(async (transaction) => {
+        await assertActivePudoReferences(transaction, db, input);
+        transaction.create(draftRef, {
+          bookingPartyUid: customerUid,
+          ...draftFields,
+          parcelInput: parcelInputForDraft(customerUid, input),
+          status: "draft",
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+      });
+      return { id: draftRef.id, ...input, status: "draft" };
     },
 
     async updateDraft(
@@ -97,23 +136,28 @@ export function createShipmentBookingDraftStore({
       draftId: string,
       input: ShipmentBookingDraftInput
     ): Promise<boolean> {
-      const draftRef = db
-        .collection("users")
-        .doc(customerUid)
-        .collection("shipmentBookingDrafts")
-        .doc(draftId);
-
-      return db.runTransaction(async (transaction) =>
-        updateDraftOnlyWhileEditable(
+      const draftRef = db.collection("users").doc(customerUid)
+        .collection("shipmentBookingDrafts").doc(draftId);
+      return db.runTransaction(async (transaction) => {
+        await assertActivePudoReferences(transaction, db, input);
+        return updateDraftOnlyWhileEditable(
           () => transaction.get(draftRef),
           () => {
+            const draftFields = {
+              origin: input.origin,
+              destination: input.destination,
+              ...(input.originPudoLocationId ? { originPudoLocationId: input.originPudoLocationId } : {}),
+              ...(input.destinationPudoLocationId ? { destinationPudoLocationId: input.destinationPudoLocationId } : {}),
+              parcelDescription: input.parcelDescription,
+            };
             transaction.update(draftRef, {
-              ...input,
+              ...draftFields,
+              parcelInput: parcelInputForDraft(customerUid, input),
               updatedAt: serverTimestamp(),
             });
           }
-        )
-      );
+        );
+      });
     },
   };
 }
