@@ -367,7 +367,8 @@ export function createCommercialQuotationReadinessStore({
       if (!Array.isArray(data.evidenceReferences) || data.evidenceReferences.length === 0) {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision has no attributable evidence references." };
       }
-      for (const reference of data.evidenceReferences as string[]) {
+      const evidenceReferences = data.evidenceReferences as string[];
+      for (const reference of evidenceReferences) {
         if (typeof reference !== "string" || !(reference.split("/").length >= 2 && reference.split("/").length % 2 === 0 && reference.split("/").every((segment) => ID.test(segment)))) {
           return { eligible: false as const, outcome: "pending_verification" as const, reason: "An eligibility evidence reference is malformed." };
         }
