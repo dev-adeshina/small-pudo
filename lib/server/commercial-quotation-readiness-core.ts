@@ -462,12 +462,23 @@ export function createCommercialQuotationReadinessStore({
         const timestamp = serverTimestamp();
         transaction.set(recordRef, {
           schemaVersion: 1, serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId, outcome,
-          evidenceReferences: [...evidenceReferences], conditions: [...conditions],
+          evidenceReferences: [...evidenceReferences],
+          serviceCoverageEvidenceReferences: [...serviceCoverageEvidenceReferences],
+          operatingAvailabilityEvidenceReferences: [...operatingAvailabilityEvidenceReferences],
+          capacityEvidenceReferences: [...capacityEvidenceReferences],
+          originRequiredActions: [...originRequiredActions],
+          destinationRequiredActions: [...destinationRequiredActions],
+          conditions: [...conditions],
           reason: reason.trim(), decidedBy: actorUid, decidedAt: timestamp,
           validUntil: validUntil ?? null, updatedAt: timestamp,
         });
         transaction.create(eventRef, {
           action: outcome, actorUid, evidenceReferences: [...evidenceReferences],
+          serviceCoverageEvidenceReferences: [...serviceCoverageEvidenceReferences],
+          operatingAvailabilityEvidenceReferences: [...operatingAvailabilityEvidenceReferences],
+          capacityEvidenceReferences: [...capacityEvidenceReferences],
+          originRequiredActions: [...originRequiredActions],
+          destinationRequiredActions: [...destinationRequiredActions],
           conditions: [...conditions], reason: reason.trim(), timestamp,
         });
         return { recordId, outcome };
