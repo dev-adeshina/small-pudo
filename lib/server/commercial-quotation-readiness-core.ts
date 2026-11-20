@@ -302,11 +302,16 @@ export function createCommercialQuotationReadinessStore({
       destinationPudoLocationId?: string;
       outcome: CommercialEligibilityOutcome;
       evidenceReferences: string[];
+      serviceCoverageEvidenceReferences: string[];
+      operatingAvailabilityEvidenceReferences: string[];
+      capacityEvidenceReferences: string[];
+      originRequiredActions: string[];
+      destinationRequiredActions: string[];
       conditions?: string[];
       reason: string;
       validUntil?: Date;
     }) {
-      const { actorUid, serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId, outcome, evidenceReferences, conditions = [], reason, validUntil } = input;
+      const { actorUid, serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId, outcome, evidenceReferences, serviceCoverageEvidenceReferences, operatingAvailabilityEvidenceReferences, capacityEvidenceReferences, originRequiredActions, destinationRequiredActions, conditions = [], reason, validUntil } = input;
       assertActor(actorUid);
       if (!SERVICES.has(serviceCode) || !ENDPOINTS.has(originType) || !ENDPOINTS.has(destinationType)) throw new TypeError("Unsupported service or endpoint type.");
       if (!["pending_verification", "eligible", "conditionally_eligible", "not_eligible", "revoked"].includes(outcome)) throw new TypeError("Unsupported eligibility outcome.");
@@ -327,10 +332,39 @@ export function createCommercialQuotationReadinessStore({
           conditions.some((item) => typeof item !== "string" || !item.trim() || item.length > 500)) {
         throw new TypeError("Eligibility conditions must be a list of at most 30 valid conditions.");
       }
+      const referenceGroups = [serviceCoverageEvidenceReferences, operatingAvailabilityEvidenceReferences, capacityEvidenceReferences];
+      if (referenceGroups.some((group) => !Array.isArray(group) || group.length > 30 ||
+          group.some((reference) => typeof reference !== "string" || !reference.trim() || reference.length > 300))) {
+        throw new TypeError("Coverage, availability and capacity evidence must be explicit lists of valid document paths.");
+      }
+      for (const actionList of [originRequiredActions, destinationRequiredActions]) {
+        if (!Array.isArray(actionList) || actionList.length > 30 ||
+            actionList.some((action) => typeof action !== "string" || !action.trim() || action.length > 120) ||
+            new Set(actionList).size !== actionList.length) {
+          throw new TypeError("Required endpoint actions must be explicit unique action names.");
+        }
+      }
       assertText(reason, "An eligibility decision reason");
       if (outcome === "eligible" && evidenceReferences.length === 0) throw new TypeError("An eligible outcome requires attributable evidence references.");
       if (outcome === "conditionally_eligible" && (evidenceReferences.length === 0 || conditions.length === 0)) {
         throw new TypeError("Conditional eligibility requires evidence references and explicit conditions.");
+      }
+      if (outcome === "eligible" || outcome === "conditionally_eligible") {
+        if (serviceCoverageEvidenceReferences.length === 0 ||
+            operatingAvailabilityEvidenceReferences.length === 0 ||
+            capacityEvidenceReferences.length === 0 ||
+            originRequiredActions.length === 0 ||
+            destinationRequiredActions.length === 0) {
+          throw new TypeError("Positive eligibility requires service coverage, operating availability, capacity evidence and explicit actions for both PUDO endpoints.");
+        }
+        const requiredEvidence = [
+          ...serviceCoverageEvidenceReferences,
+          ...operatingAvailabilityEvidenceReferences,
+          ...capacityEvidenceReferences,
+        ];
+        if (requiredEvidence.some((reference) => !evidenceReferences.includes(reference))) {
+          throw new TypeError("Every coverage, availability and capacity evidence reference must be included in the decision evidence.");
+        }
       }
       if ((outcome === "eligible" || outcome === "conditionally_eligible") &&
           (!(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) || validUntil <= now())) {
