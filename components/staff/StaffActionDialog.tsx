@@ -22,15 +22,41 @@ export function StaffActionDialog({
 }: StaffActionDialogProps) {
   const [reason, setReason] = useState("");
   const confirmRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) { setReason(""); return; }
+    previousFocusRef.current = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
     confirmRef.current?.focus();
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape" && !busy) onCancel();
+      if (event.key === "Escape" && !busy) {
+        event.preventDefault();
+        onCancel();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        "button:not(:disabled), textarea:not(:disabled), input:not(:disabled), select:not(:disabled), a[href]"
+      );
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     }
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      previousFocusRef.current?.focus();
+    };
   }, [open, busy, onCancel]);
 
   if (!open) return null;
@@ -41,6 +67,7 @@ export function StaffActionDialog({
       onMouseDown={(event) => { if (event.target === event.currentTarget && !busy) onCancel(); }}
     >
       <section
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="staff-action-dialog-title"
@@ -61,7 +88,6 @@ export function StaffActionDialog({
           <label className="mt-5 block text-sm font-medium text-slate-800">
             {reasonLabel}{reasonRequired ? " *" : " (optional)"}
             <textarea
-              autoFocus
               required={reasonRequired}
               maxLength={2000}
               rows={4}
