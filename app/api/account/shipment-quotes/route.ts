@@ -33,10 +33,13 @@ export async function POST(request: Request) {
   }
   if (!body || typeof body !== "object" || Array.isArray(body)) return NextResponse.json({ error: "A valid quotation request is required." }, { status: 400 });
   const input = body as Record<string, unknown>;
-  if (Object.keys(input).some((key) => key !== "draftId" && key !== "serviceCode") ||
+  if (Object.keys(input).some((key) => !["draftId", "serviceCode", "quoteId", "expectedCurrentVersionId"].includes(key)) ||
       typeof input.draftId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(input.draftId) ||
-      !["standard", "express", "scheduled"].includes(String(input.serviceCode))) {
-    return NextResponse.json({ error: "A valid shipment draft and service selection are required." }, { status: 400 });
+      !["standard", "express", "scheduled"].includes(String(input.serviceCode)) ||
+      ((input.quoteId === undefined) !== (input.expectedCurrentVersionId === undefined)) ||
+      (input.quoteId !== undefined && (typeof input.quoteId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(input.quoteId))) ||
+      (input.expectedCurrentVersionId !== undefined && (typeof input.expectedCurrentVersionId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(input.expectedCurrentVersionId)))) {
+    return NextResponse.json({ error: "A valid shipment draft, service selection and optional current quotation version are required." }, { status: 400 });
   }
 
   try {
@@ -121,6 +124,26 @@ export async function POST(request: Request) {
       quoteTerms: { validUntil, quoteValidityMinutes: terms.quoteValidityMinutes, handoverWindowMinutes: terms.handoverWindowMinutes },
       issuedFromDraftAt: issuedAt,
     };
+    if (typeof input.quoteId === "string" && typeof input.expectedCurrentVersionId === "string") {
+      const existingQuote = await shipmentQuoteStore.getCustomerQuote(customer.uid, input.quoteId);
+      if (!existingQuote) return NextResponse.json({ error: "Quotation not found." }, { status: 404 });
+      if (existingQuote.currentVersionId !== input.expectedCurrentVersionId) {
+        return NextResponse.json({ error: "The quotation has changed. Refresh before requesting a new version." }, { status: 409 });
+      }
+      const revised = await shipmentQuoteStore.reviseIssuedQuote({
+        quoteId: input.quoteId,
+        expectedCurrentVersionId: input.expectedCurrentVersionId,
+        snapshot,
+        validUntil,
+        handoverWindowMinutes: Number(terms.handoverWindowMinutes),
+        issuedBy: "system:approved-quotation-reissuance",
+      });
+      if (revised.outcome === "already_accepted") return NextResponse.json({ error: "An accepted quotation cannot be reissued." }, { status: 409 });
+      if (revised.outcome === "stale_version") return NextResponse.json({ error: "The quotation has changed. Refresh before requesting a new version.", currentVersionId: revised.currentVersionId }, { status: 409 });
+      if (revised.outcome === "not_found") return NextResponse.json({ error: "Quotation not found." }, { status: 404 });
+      return NextResponse.json({ success: true, quote: { quoteId: input.quoteId, ...revised } }, { status: 201 });
+    }
+
     const quote = await shipmentQuoteStore.issueQuote({
       bookingPartyUid: customer.uid, snapshot, validUntil,
       handoverWindowMinutes: Number(terms.handoverWindowMinutes),
