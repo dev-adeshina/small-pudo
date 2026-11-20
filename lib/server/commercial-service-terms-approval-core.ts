@@ -52,6 +52,7 @@ export function createCommercialServiceTermsApprovalStore({ db, serverTimestamp 
       assertId(pricingDefinitionId, "Pricing definition ID");
       assertId(pricingVersionId, "Pricing version ID");
       assertText(input.currency, "Currency", 12);
+      if (!/^[A-Za-z]{3}$/.test(input.currency.trim())) throw new TypeError("Currency must be an explicit three-letter ISO currency code.");
       assertMinutes(input.quoteValidityMinutes, "Quote validity");
       assertMinutes(input.handoverWindowMinutes, "Physical handover window");
       if (!["none", "half_up", "half_even", "ceil", "floor"].includes(input.roundingMode)) throw new TypeError("A supported rounding mode must be explicitly approved.");
