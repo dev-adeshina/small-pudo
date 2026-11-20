@@ -111,7 +111,7 @@ export default function StaffDelegationsPage() {
     <main className="admin-page">
       <header className="admin-header">
         <Link href="/" className="admin-logo">VERILyFT / STAFF</Link>
-        <Link href="/admin/operational-cost-definitions" className="admin-action">Staff workspace</Link>
+        <Link href="/staff/operational-cost-definitions" className="admin-action">Staff workspace</Link>
       </header>
       <div className="admin-shell cost-admin-shell">
         <div className="cost-page-topline"><span className="section-label">STAFF / ACTIVITY DELEGATION</span></div>
