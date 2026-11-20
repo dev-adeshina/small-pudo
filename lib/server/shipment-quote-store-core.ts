@@ -345,6 +345,15 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
           handoverWindowMinutes,
           issuedAt: timestamp,
           issuedBy,
+          acceptedVersionId: null,
+          acceptedAt: null,
+          acceptedBy: null,
+          handoverDeadlineAt: null,
+          rejectedVersionId: null,
+          rejectedAt: null,
+          rejectedBy: null,
+          rejectionReason: null,
+          expiredAt: null,
           updatedAt: timestamp,
         });
         transaction.create(eventRef, {
