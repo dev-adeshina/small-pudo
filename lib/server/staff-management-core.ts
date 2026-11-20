@@ -161,6 +161,9 @@ export function createStaffManagementStore({ db, serverTimestamp }: Dependencies
       const permission=permissionId(input.permissionId);
       if(!["active","suspended","revoked"].includes(String(input.status))) throw new TypeError("Permission status must be active, suspended, or revoked.");
       const status=input.status as StaffPermissionStatus, reason=requiredString(input.reason,"A permission-change reason",1000);
+      if (permission === "commercial_pricing.owner_approve" && input.delegable === true) {
+        throw new TypeError("DEC-048 owner approval authority cannot be delegated.");
+      }
       const delegable=status==="active"&&input.delegable===true;
       let expiry:Date|null=null;
       if(status==="active"&&input.expiresAt!==undefined&&input.expiresAt!==null&&input.expiresAt!==""){
