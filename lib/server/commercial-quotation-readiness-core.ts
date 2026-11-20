@@ -274,6 +274,7 @@ export function createCommercialQuotationReadinessStore({
       if (!version.exists || version.data()?.serviceCode !== serviceCode) return null;
       return {
         ...data,
+        pricingVersionNumber: version.data()?.versionNumber,
         pricingConfiguration: Object.fromEntries(Object.entries(version.data()!).filter(([key]) => !["versionNumber", "createdAt", "createdBy"].includes(key))),
         approvedVersion: data.pricingVersionId,
       };
