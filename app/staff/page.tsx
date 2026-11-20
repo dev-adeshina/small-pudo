@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, ClipboardList, FileText, LogOut, MapPinned, MapPin, Route, ShieldCheck, Users } from "lucide-react";
+import { ArrowUpRight, ClipboardList, FileText, LogOut, MapPinned, MapPin, Route, ShieldCheck, Users, UserRoundCheck, AlertCircle } from "lucide-react";
 import { auth } from "@/lib/firebase";
+import { useStaffActivation } from "@/components/staff/StaffActivationProvider";
 
 const workspaces = [
   { title: "Operational cost definitions", description: "Configure activity-level cost evidence and manage the approval workflow.", href: "/staff/operational-cost-definitions", icon: ClipboardList, group: "Commercial" },
@@ -24,6 +25,8 @@ export default function StaffDashboardPage() {
   const [checking, setChecking] = useState(true);
   const [signingOut, setSigningOut] = useState(false);
   const [error, setError] = useState("");
+  const [activationError, setActivationError] = useState("");
+  const { status: activationStatus, activating, activationMessage, activateAccount } = useStaffActivation();
 
   useEffect(() => {
     let active = true;
@@ -52,9 +55,18 @@ export default function StaffDashboardPage() {
     }
   }
 
+  async function handleActivation() {
+    setActivationError("");
+    try {
+      await activateAccount();
+    } catch (cause) {
+      setActivationError(cause instanceof Error ? cause.message : "Staff activation could not be completed. Please try again.");
+    }
+  }
+
   if (checking || !user) return <main className="admin-loading"><span>Checking your staff session...</span></main>;
 
-  const firstName = user.displayName?.trim().split(/\s+/)[0] || user.email?.split("@")[0] || "there";
+  const firstName = user.displayName?.trim().split(/\\s+/)[0] || user.email?.split("@")[0] || "there";
   const groups = ["Commercial", "PUDO operations", "Access"];
 
   return (
@@ -85,6 +97,32 @@ export default function StaffDashboardPage() {
         </section>
 
         {error && <p className="cost-feedback cost-feedback-error" role="alert">{error}</p>}
+        {activationStatus === "pending" && (
+          <section id="staff-account-activation" className="cost-panel staff-activation-panel" aria-labelledby="staff-activation-title">
+            <div className="cost-panel-heading">
+              <div><span className="section-label">STAFF ONBOARDING / ACTION REQUIRED</span><h2 id="staff-activation-title">Activate your staff account</h2></div>
+              <UserRoundCheck size={23} />
+            </div>
+            <p>Your invited account and email are verified. Complete staff activation before an administrator assigns operational permissions. Activation confirms your staff account only; it does not grant any operational permissions.</p>
+            {activationError && <div className="cost-feedback cost-feedback-error" role="alert">{activationError}</div>}
+            <div className="cost-form-actions">
+              <button type="button" className="cost-primary-button" onClick={() => void handleActivation()} disabled={activating}>
+                {activating ? "Activating account…" : "Activate my account"}
+              </button>
+            </div>
+          </section>
+        )}
+        {activationStatus === "expired" && (
+          <section id="staff-account-activation" className="cost-panel staff-activation-panel" aria-labelledby="staff-activation-title">
+            <div className="cost-panel-heading">
+              <div><span className="section-label">STAFF ONBOARDING</span><h2 id="staff-activation-title">Your invitation has expired</h2></div>
+              <AlertCircle size={23} />
+            </div>
+            <p>Contact the administrator who invited you and ask them to issue a new staff invitation. You cannot activate an expired invitation.</p>
+          </section>
+        )}
+        {activationMessage && <div className="cost-feedback cost-feedback-success" role="status">{activationMessage} An administrator can now assign operational permissions separately.</div>}
+        {activationError && activationStatus !== "pending" && <div className="cost-feedback cost-feedback-error" role="alert">{activationError}</div>}
 
         {groups.map((group, index) => {
           const items = workspaces.filter((item) => item.group === group);
