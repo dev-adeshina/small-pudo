@@ -3,11 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { LogOut, RefreshCw, Save } from "lucide-react";
 import { auth } from "@/lib/firebase";
-import { signOut } from "firebase/auth";
 
 type Location = {
   locationId: string;
