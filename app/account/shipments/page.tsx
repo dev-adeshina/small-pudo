@@ -377,7 +377,7 @@ export default function ShipmentDraftsPage() {
               <select
                 value={form.originPudoLocationId}
                 onChange={(event) => setForm({ ...form, originPudoLocationId: event.target.value })}
-                disabled={saving || Boolean(pudoLocationsError)}
+                disabled={saving}
               >
                 <option value="">Address / other endpoint</option>
                 {pudoLocations.map((location) => (
@@ -393,7 +393,7 @@ export default function ShipmentDraftsPage() {
               <select
                 value={form.destinationPudoLocationId}
                 onChange={(event) => setForm({ ...form, destinationPudoLocationId: event.target.value })}
-                disabled={saving || Boolean(pudoLocationsError)}
+                disabled={saving}
               >
                 <option value="">Address / other endpoint</option>
                 {pudoLocations.map((location) => (
