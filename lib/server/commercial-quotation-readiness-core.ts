@@ -577,7 +577,7 @@ export function createCommercialQuotationReadinessStore({
         const capability = await capabilities.doc(capabilityId).get();
         const capabilityData = capability.data();
         const capabilityExpiry = dateMillis(capabilityData?.validUntil);
-        if (!capability.exists || capabilityData?.status !== "active" ||
+        if (!capability.exists || !capabilityData || capabilityData.status !== "active" ||
             capabilityData.locationId !== endpoint.locationId ||
             capabilityData.serviceCode !== serviceCode ||
             capabilityExpiry === null || capabilityExpiry <= now().getTime() ||
