@@ -566,6 +566,7 @@ export function createCommercialQuotationReadinessStore({
           originActions.length === 0 || destinationActions.length === 0) {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision is missing current coverage, availability, capacity or endpoint-action evidence." };
       }
+      const capabilityEvidence: Array<Record<string, unknown>> = [];
       for (const endpoint of [
         { locationId: originPudoLocationId, actions: originActions },
         { locationId: destinationPudoLocationId, actions: destinationActions },
@@ -586,6 +587,7 @@ export function createCommercialQuotationReadinessStore({
             endpoint.actions.some((action) => !capabilityData.supportedActions.includes(action))) {
           return { eligible: false as const, outcome: "pending_verification" as const, reason: "A required PUDO service capability is missing, expired or does not support the required endpoint actions." };
         }
+        capabilityEvidence.push({ capabilityId, ...capabilityData });
       }
       const expiry = dateMillis(data.validUntil);
       if (expiry === null || expiry <= now().getTime()) {
@@ -606,7 +608,22 @@ export function createCommercialQuotationReadinessStore({
            ))) {
         return { eligible: false as const, outcome: "conditionally_eligible" as const, reason: "The conditional eligibility record has no valid current evidence references.", conditions: requiredConditions };
       }
-      return { eligible: true as const, outcome: data.outcome as CommercialEligibilityOutcome, recordId: record.id, evidenceReferences: data.evidenceReferences ?? [], conditions: requiredConditions };
+      return {
+        eligible: true as const,
+        outcome: data.outcome as "eligible" | "conditionally_eligible",
+        recordId: record.id,
+        evidenceReferences,
+        serviceCoverageEvidenceReferences: serviceCoverageRefs,
+        operatingAvailabilityEvidenceReferences: availabilityRefs,
+        capacityEvidenceReferences: capacityRefs,
+        originRequiredActions: originActions,
+        destinationRequiredActions: destinationActions,
+        capabilityEvidence,
+        decidedBy: data.decidedBy,
+        decidedAt: data.decidedAt,
+        validUntil: data.validUntil,
+        conditions: requiredConditions,
+      };
     },
 
     async getApprovedCommercialTerms(serviceCode: CommercialServiceCode) {
