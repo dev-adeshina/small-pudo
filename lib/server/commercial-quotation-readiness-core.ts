@@ -554,6 +554,38 @@ export function createCommercialQuotationReadinessStore({
           return { eligible: false as const, outcome: "pending_verification" as const, reason: "An eligibility evidence record has expired." };
         }
       }
+      const serviceCoverageRefs = Array.isArray(data.serviceCoverageEvidenceReferences) ? data.serviceCoverageEvidenceReferences as string[] : [];
+      const availabilityRefs = Array.isArray(data.operatingAvailabilityEvidenceReferences) ? data.operatingAvailabilityEvidenceReferences as string[] : [];
+      const capacityRefs = Array.isArray(data.capacityEvidenceReferences) ? data.capacityEvidenceReferences as string[] : [];
+      const originActions = Array.isArray(data.originRequiredActions) ? data.originRequiredActions as string[] : [];
+      const destinationActions = Array.isArray(data.destinationRequiredActions) ? data.destinationRequiredActions as string[] : [];
+      const categorizedRefs = [...serviceCoverageRefs, ...availabilityRefs, ...capacityRefs];
+      if (serviceCoverageRefs.length === 0 || availabilityRefs.length === 0 || capacityRefs.length === 0 ||
+          categorizedRefs.some((reference) => !evidenceReferences.includes(reference)) ||
+          originActions.length === 0 || destinationActions.length === 0) {
+        return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision is missing current coverage, availability, capacity or endpoint-action evidence." };
+      }
+      for (const endpoint of [
+        { locationId: originPudoLocationId, actions: originActions },
+        { locationId: destinationPudoLocationId, actions: destinationActions },
+      ]) {
+        const capabilityId = endpoint.locationId + "__" + serviceCode;
+        const capabilityPath = "pudoLocationServiceCapabilities/" + capabilityId;
+        if (!evidenceReferences.includes(capabilityPath)) {
+          return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision does not reference the exact PUDO service capability record." };
+        }
+        const capability = await capabilities.doc(capabilityId).get();
+        const capabilityData = capability.data();
+        const capabilityExpiry = dateMillis(capabilityData?.validUntil);
+        if (!capability.exists || capabilityData?.status !== "active" ||
+            capabilityData.locationId !== endpoint.locationId ||
+            capabilityData.serviceCode !== serviceCode ||
+            capabilityExpiry === null || capabilityExpiry <= now().getTime() ||
+            !Array.isArray(capabilityData.supportedActions) ||
+            endpoint.actions.some((action) => !capabilityData.supportedActions.includes(action))) {
+          return { eligible: false as const, outcome: "pending_verification" as const, reason: "A required PUDO service capability is missing, expired or does not support the required endpoint actions." };
+        }
+      }
       const expiry = dateMillis(data.validUntil);
       if (expiry !== null && expiry <= now().getTime()) {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision has expired." };
