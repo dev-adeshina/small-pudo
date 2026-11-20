@@ -12,6 +12,8 @@ const STAFF_ACTION_PERMISSIONS = [
   "pudo_location.activate",
   "commercial_pricing.view",
   "commercial_pricing.propose",
+  "commercial_pricing.approve",
+  "commercial_pricing.publish",
 ] as const;
 export type StaffActionPermission = typeof STAFF_ACTION_PERMISSIONS[number];
 export type StaffPermissionStatus = "active" | "suspended" | "revoked";
