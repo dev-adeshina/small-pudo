@@ -1,5 +1,6 @@
 import type { FieldValue, Firestore, Transaction } from "firebase-admin/firestore";
 import { hasStaffActionPermissionInTransaction } from "./staff-permission-grants-core.ts";
+import { assertCommercialPricingConfiguration } from "./commercial-pricing-engine-core.ts";
 
 export type CommercialServiceCode = "standard" | "express" | "scheduled";
 
@@ -73,9 +74,16 @@ export function createCommercialServiceTermsApprovalStore({ db, serverTimestamp 
         if (!definition.exists || !version.exists) throw new Error("The selected pricing definition or version was not found.");
         const lineage = definition.data()!;
         const configuration = version.data()!;
+        const pricingConfiguration = Object.fromEntries(Object.entries(configuration).filter(([key]) =>
+          !["versionNumber", "createdAt", "createdBy"].includes(key)
+        ));
+        assertCommercialPricingConfiguration(pricingConfiguration);
         if (lineage.currentVersionId !== pricingVersionId ||
             lineage.approvedVersionId !== pricingVersionId ||
             lineage.publishedVersionId !== pricingVersionId ||
+            lineage.currentVersionNumber !== configuration.versionNumber ||
+            lineage.approvedVersionNumber !== configuration.versionNumber ||
+            lineage.publishedVersionNumber !== configuration.versionNumber ||
             workflow.data()?.state !== "approved" ||
             configuration.serviceCode !== serviceCode ||
             !configuration.pricingModel ||
