@@ -26,11 +26,13 @@ export async function POST(request: Request) {
       currency: input.currency as string,
       quoteValidityMinutes: input.quoteValidityMinutes as number,
       handoverWindowMinutes: input.handoverWindowMinutes as number,
-      roundingPolicy: input.roundingPolicy as string,
-      taxTreatment: input.taxTreatment as string,
-      surchargeTreatment: input.surchargeTreatment as string,
-      discountTreatment: input.discountTreatment as string,
-      feeTreatment: input.feeTreatment as string,
+      roundingMode: input.roundingMode as "none" | "half_up" | "half_even" | "ceil" | "floor",
+      decimalPlaces: input.decimalPlaces as number,
+      roundingStage: input.roundingStage as "total_only",
+      taxTreatment: input.taxTreatment as "included_in_components" | "not_applicable",
+      surchargeTreatment: input.surchargeTreatment as "included_in_components" | "not_applicable",
+      discountTreatment: input.discountTreatment as "included_in_components" | "not_applicable",
+      feeTreatment: input.feeTreatment as "included_in_components" | "not_applicable",
       confirmation: input.confirmation as "DEC-048_TERMS_REVIEWED",
     });
     return NextResponse.json({ result }, { status: 201 });
