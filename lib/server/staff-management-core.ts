@@ -14,6 +14,9 @@ const STAFF_ACTION_PERMISSIONS = [
   "commercial_pricing.propose",
   "commercial_pricing.approve",
   "commercial_pricing.publish",
+  "commercial_route_distance.approve",
+  "commercial_service_eligibility.approve",
+  "commercial_pricing.owner_approve",
 ] as const;
 export type StaffActionPermission = typeof STAFF_ACTION_PERMISSIONS[number];
 export type StaffPermissionStatus = "active" | "suspended" | "revoked";
