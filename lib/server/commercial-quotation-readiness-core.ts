@@ -1,5 +1,6 @@
 import type { FieldValue, Firestore, Transaction } from "firebase-admin/firestore";
 import { hasStaffActionPermissionInTransaction } from "./staff-permission-grants-core.ts";
+import { assertCommercialRouteDistanceEvidence } from "./commercial-route-distance-input-core.ts";
 
 export type CommercialServiceCode = "standard" | "express" | "scheduled";
 export type CommercialEndpointType = "address" | "pudo";
@@ -125,6 +126,7 @@ export function createCommercialQuotationReadinessStore({
         transaction.set(reviewRef, {
           evidenceId,
           decision,
+          evidenceSnapshot: evidence,
           status: decision === "approve" ? "approved" : "revoked",
           reason: reason.trim(),
           reviewedBy: actorUid,
@@ -150,10 +152,18 @@ export function createCommercialQuotationReadinessStore({
         const [review, data] = await Promise.all([routeReviews.doc(doc.id).get(), Promise.resolve(doc.data())]);
         const evidence = data.evidence as Record<string, unknown> | undefined;
         const reviewData = review.data();
-        if (!review.exists || reviewData?.status !== "approved" || !evidence ||
+        if (!review.exists || reviewData?.status !== "approved" || !evidence) return null;
+        try {
+          assertCommercialRouteDistanceEvidence(evidence);
+        } catch {
+          return null;
+        }
+        if (evidence.originOperationalPointRef !== originId ||
+            evidence.destinationOperationalPointRef !== destinationId ||
             evidence.method === "straight_line" ||
             typeof evidence.measuredOn !== "string" ||
-            !Number.isFinite(Date.parse(evidence.measuredOn))) return null;
+            !Number.isFinite(Date.parse(evidence.measuredOn)) ||
+            JSON.stringify(reviewData.evidenceSnapshot) !== JSON.stringify(evidence)) return null;
         const measured = Date.parse(evidence.measuredOn + "T00:00:00Z");
         if (measured > now().getTime()) return null;
         return { evidenceId: doc.id, evidence, review: reviewData };
