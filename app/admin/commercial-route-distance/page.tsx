@@ -365,6 +365,7 @@ export default function CommercialRouteDistancePage() {
                       </div>
                       <span className="text-sm text-gray-500">{formatDate(item.recordedAt)}</span>
                     </div>
+                    <p className="mt-2 text-xs text-gray-500">Evidence ID: {item.evidenceId}</p>
                     <p className="mt-2 text-sm">Source: {item.source}</p>
                     {item.measuredOn && <p className="mt-1 text-sm">Measurement date: {formatDate(item.measuredOn + "T00:00:00")}</p>}
                     {item.supportingReference && <p className="mt-1 break-all text-sm">Supporting reference: {item.supportingReference}</p>}
