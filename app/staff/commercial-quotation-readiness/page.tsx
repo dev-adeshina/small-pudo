@@ -51,6 +51,7 @@ export default function CommercialQuotationReadinessPage() {
   const [discountTreatment, setDiscountTreatment] = useState<"" | "included_in_components" | "not_applicable">("");
   const [feeTreatment, setFeeTreatment] = useState<"" | "included_in_components" | "not_applicable">("");
   const [termsConfirmed, setTermsConfirmed] = useState(false);
+  const [termsRevocationReason, setTermsRevocationReason] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -214,6 +215,19 @@ export default function CommercialQuotationReadinessPage() {
             <button className="cost-primary-button" disabled={busy || !termsConfirmed}>{busy ? "Saving..." : "Approve DEC-048 commercial terms"}</button>
             <p className="text-sm text-gray-600">This requires the separately assigned <code>commercial_pricing.owner_approve</code> permission. It does not create missing prices or pricing expressions; it approves only the selected existing version and the explicit terms entered here.</p>
           </form>
+          <div className="mt-8 border-t pt-6">
+            <h3 className="text-lg font-semibold">Revoke an existing DEC-048 approval</h3>
+            <form className="mt-4 space-y-4" onSubmit={(event) => {
+              event.preventDefault();
+              void post("/api/staff/commercial-quotation-readiness/commercial-terms/revoke", {
+                serviceCode: termsServiceCode,
+                reason: termsRevocationReason,
+              }, "DEC-048 commercial terms approval revoked. New quotation issuance for this service is now unavailable.");
+            }}>
+              <label className="block text-sm font-medium">Reason for revocation<textarea className="mt-2 w-full rounded-lg border p-3" value={termsRevocationReason} onChange={(event) => setTermsRevocationReason(event.target.value)} required maxLength={2000} /></label>
+              <button className="cost-secondary-button" disabled={busy || !termsServiceCode}>Revoke selected service approval</button>
+            </form>
+          </div>
         </section>
       </div>
     </main>
