@@ -70,8 +70,11 @@ export async function POST(request: Request) {
 
     const requiresRoute = configuration.inputs.some((definition) => definition.source === "route.distance");
     let routeRecord: Awaited<ReturnType<typeof commercialQuotationReadinessStore.getUsableRouteEvidence>> = null;
-    if (requiresRoute && originType === "pudo" && destinationType === "pudo") {
+    if (originType === "pudo" && destinationType === "pudo") {
       routeRecord = await commercialQuotationReadinessStore.getUsableRouteEvidence(draft.originPudoLocationId as string, draft.destinationPudoLocationId as string);
+      if (!routeRecord) return NextResponse.json({
+        error: "A valid PUDO-to-PUDO journey requires reviewed route-distance evidence for these exact operational endpoints.",
+      }, { status: 409 });
     }
     if (requiresRoute && !routeRecord) return NextResponse.json({
       error: "The approved pricing configuration requires reviewed route-distance evidence for these exact operational endpoints.",
