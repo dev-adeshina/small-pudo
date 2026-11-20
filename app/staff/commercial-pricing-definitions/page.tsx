@@ -340,7 +340,7 @@ export default function CommercialPricingDefinitionsPage() {
       await loadDetail(selected.definitionId, token);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to publish pricing version.");
-    } finally { setSaving(false); }
+    } finally { setSaving(false); setPendingDialogAction(null); }
   }
 
   function updateActivity(index: number, field: "applicability" | "treatment", value: Applicability | Treatment) {
