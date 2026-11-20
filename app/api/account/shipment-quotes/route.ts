@@ -188,7 +188,7 @@ export async function POST(request: Request) {
         snapshot,
         validUntil,
         handoverWindowMinutes: Number(terms.handoverWindowMinutes),
-        issuedBy: "system:approved-quotation-reissuance",
+        issuedBy: customer.uid,
       });
       if (revised.outcome === "already_accepted") return NextResponse.json({ error: "An accepted quotation cannot be reissued." }, { status: 409 });
       if (revised.outcome === "stale_version") return NextResponse.json({ error: "The quotation has changed. Refresh before requesting a new version.", currentVersionId: revised.currentVersionId }, { status: 409 });
@@ -199,7 +199,7 @@ export async function POST(request: Request) {
     const quote = await shipmentQuoteStore.issueQuote({
       bookingPartyUid: customer.uid, snapshot, validUntil,
       handoverWindowMinutes: Number(terms.handoverWindowMinutes),
-      issuedBy: "system:approved-quotation-issuance",
+      issuedBy: customer.uid,
     });
     return NextResponse.json({ success: true, quote }, { status: 201 });
   } catch (error) {
