@@ -35,8 +35,14 @@ function assertText(value: unknown, label: string, max = 2000): asserts value is
 function assertPermission(allowed: boolean, label: string): void {
   if (!allowed) throw new Error("You are not authorised to " + label + ".");
 }
-function keyFor(service: CommercialServiceCode, origin: CommercialEndpointType, destination: CommercialEndpointType): string {
-  return [service, origin, destination].join("__");
+function keyFor(
+  service: CommercialServiceCode,
+  origin: CommercialEndpointType,
+  destination: CommercialEndpointType,
+  originPudoLocationId?: string,
+  destinationPudoLocationId?: string,
+): string {
+  return [service, origin, destination, originPudoLocationId ?? "address", destinationPudoLocationId ?? "address"].join("__");
 }
 function dateMillis(value: unknown): number | null {
   if (value instanceof Date) return value.getTime();
@@ -161,16 +167,24 @@ export function createCommercialQuotationReadinessStore({
       serviceCode: CommercialServiceCode;
       originType: CommercialEndpointType;
       destinationType: CommercialEndpointType;
+      originPudoLocationId?: string;
+      destinationPudoLocationId?: string;
       outcome: Exclude<CommercialEligibilityOutcome, "pending_verification">;
       evidenceReferences: string[];
       conditions?: string[];
       reason: string;
       validUntil?: Date;
     }) {
-      const { actorUid, serviceCode, originType, destinationType, outcome, evidenceReferences, conditions = [], reason, validUntil } = input;
+      const { actorUid, serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId, outcome, evidenceReferences, conditions = [], reason, validUntil } = input;
       assertActor(actorUid);
       if (!SERVICES.has(serviceCode) || !ENDPOINTS.has(originType) || !ENDPOINTS.has(destinationType)) throw new TypeError("Unsupported service or endpoint type.");
       if (!["eligible", "conditionally_eligible", "not_eligible", "revoked"].includes(outcome)) throw new TypeError("Unsupported eligibility outcome.");
+      if (originType === "address" || destinationType === "address") {
+        throw new TypeError("Address endpoint eligibility requires authoritative address-to-operational-point mapping, which is not yet available.");
+      }
+      assertId(originPudoLocationId ?? "", "Origin PUDO location ID");
+      assertId(destinationPudoLocationId ?? "", "Destination PUDO location ID");
+      if (originPudoLocationId === destinationPudoLocationId) throw new TypeError("Origin and destination PUDO locations must be different.");
       if (!Array.isArray(evidenceReferences) || evidenceReferences.length > 50 ||
           evidenceReferences.some((item) => typeof item !== "string" || !item.trim() || item.length > 300)) {
         throw new TypeError("Eligibility evidence references must be a list of at most 50 valid references.");
@@ -188,11 +202,23 @@ export function createCommercialQuotationReadinessStore({
         throw new TypeError("Eligibility validity must be a future date.");
       }
 
-      const recordId = keyFor(serviceCode, originType, destinationType);
+      const recordId = keyFor(serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId);
       const recordRef = eligibility.doc(recordId);
       const eventRef = recordRef.collection("events").doc();
       return db.runTransaction(async (transaction) => {
         await requirePermission(transaction, actorUid, ELIGIBILITY_PERMISSION, "approve service and endpoint eligibility");
+        const [originCandidate, originActivation, destinationCandidate, destinationActivation] = await Promise.all([
+          transaction.get(locations.doc(originPudoLocationId!)),
+          transaction.get(activations.doc(originPudoLocationId!)),
+          transaction.get(locations.doc(destinationPudoLocationId!)),
+          transaction.get(activations.doc(destinationPudoLocationId!)),
+        ]);
+        if (!originCandidate.exists || originCandidate.data()?.lifecycle !== "active" ||
+            !originActivation.exists || originActivation.data()?.status !== "active" ||
+            !destinationCandidate.exists || destinationCandidate.data()?.lifecycle !== "active" ||
+            !destinationActivation.exists || destinationActivation.data()?.status !== "active") {
+          throw new TypeError("Both exact PUDO endpoints must be active before eligibility can be approved.");
+        }
         for (const reference of evidenceReferences) {
           if (!(reference.split("/").length >= 2 && reference.split("/").length % 2 === 0 && reference.split("/").every((segment) => ID.test(segment)))) {
             throw new TypeError("Each eligibility evidence reference must be a Firestore document path.");
@@ -210,7 +236,7 @@ export function createCommercialQuotationReadinessStore({
         }
         const timestamp = serverTimestamp();
         transaction.set(recordRef, {
-          schemaVersion: 1, serviceCode, originType, destinationType, outcome,
+          schemaVersion: 1, serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId, outcome,
           evidenceReferences: [...evidenceReferences], conditions: [...conditions],
           reason: reason.trim(), decidedBy: actorUid, decidedAt: timestamp,
           validUntil: validUntil ?? null, updatedAt: timestamp,
@@ -235,13 +261,16 @@ export function createCommercialQuotationReadinessStore({
       if (!SERVICES.has(serviceCode) || !ENDPOINTS.has(originType) || !ENDPOINTS.has(destinationType)) {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The requested service or endpoint combination is unsupported." };
       }
+      if (originType === "address" || destinationType === "address") {
+        return { eligible: false as const, outcome: "pending_verification" as const, reason: "Address endpoint eligibility requires an authoritative address-to-operational-point mapping." };
+      }
       if (originType === "pudo" && (!originPudoLocationId || !(await isActivePudo(originPudoLocationId)))) {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The origin PUDO is not active." };
       }
       if (destinationType === "pudo" && (!destinationPudoLocationId || !(await isActivePudo(destinationPudoLocationId)))) {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The destination PUDO is not active." };
       }
-      const record = await eligibility.doc(keyFor(serviceCode, originType, destinationType)).get();
+      const record = await eligibility.doc(keyFor(serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId)).get();
       if (!record.exists) return { eligible: false as const, outcome: "pending_verification" as const, reason: "No DEC-047 eligibility decision has been recorded." };
       const data = record.data()!;
       if (!Array.isArray(data.evidenceReferences) || data.evidenceReferences.length === 0) {
