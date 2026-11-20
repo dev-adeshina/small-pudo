@@ -265,7 +265,7 @@ export function createCommercialQuotationReadinessStore({
           if (!evidenceDocument.exists) throw new TypeError("An eligibility evidence reference does not exist: " + reference);
           const evidenceData = evidenceDocument.data()!;
           if ((outcome === "eligible" || outcome === "conditionally_eligible") &&
-              [evidenceData.createdBy, evidenceData.recordedBy, evidenceData.inspectorUid, evidenceData.decisionMakerUid, evidenceData.activatedBy]
+              [evidenceData.createdBy, evidenceData.recordedBy, evidenceData.inspectorUid, evidenceData.decisionMakerUid, evidenceData.activatedBy, evidenceData.reviewedBy, evidenceData.approvedBy]
                 .some((evidenceActor) => evidenceActor === actorUid)) {
             throw new TypeError("Service eligibility approval must be independent of the referenced evidence creators and operational actors.");
           }
