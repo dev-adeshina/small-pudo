@@ -228,7 +228,7 @@ export default function CommercialQuotationReadinessPage() {
         </section>
 
         <section className="cost-panel">
-          <div className="cost-panel-heading"><div><span className="section-label">03 / DEC-048</span><h2>Approve service commercial terms</h2></div></div>
+          <div className="cost-panel-heading"><div><span className="section-label">04 / DEC-048</span><h2>Approve service commercial terms</h2></div></div>
           <form className="space-y-4" onSubmit={(event) => {
             event.preventDefault();
             void post("/api/staff/commercial-quotation-readiness/commercial-terms", {
