@@ -74,10 +74,14 @@ export function createCommercialServiceTermsApprovalStore({ db, serverTimestamp 
         if (!definition.exists || !version.exists) throw new Error("The selected pricing definition or version was not found.");
         const lineage = definition.data()!;
         const configuration = version.data()!;
+        const workflowData = workflow.data();
         const pricingConfiguration = Object.fromEntries(Object.entries(configuration).filter(([key]) =>
           !["versionNumber", "createdAt", "createdBy"].includes(key)
         ));
         assertCommercialPricingConfiguration(pricingConfiguration);
+        if (configuration.createdBy === actorUid || workflowData?.proposerUid === actorUid) {
+          throw new Error("DEC-048 owner approval must be independent of the pricing configuration proposer.");
+        }
         if (lineage.currentVersionId !== pricingVersionId ||
             lineage.approvedVersionId !== pricingVersionId ||
             lineage.publishedVersionId !== pricingVersionId ||
