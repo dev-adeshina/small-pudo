@@ -213,7 +213,7 @@ export function createCommercialQuotationReadinessStore({
       if (!SERVICES.has(serviceCode)) throw new TypeError("Unsupported service code.");
       if (!Array.isArray(supportedActions) || supportedActions.length === 0 || supportedActions.length > 30 ||
           supportedActions.some((action) => typeof action !== "string" || !action.trim() || action.length > 120) ||
-          new Set(supportedActions).size !== supportedActions.length) {
+          new Set(supportedActions.map((action) => action.trim())).size !== supportedActions.length) {
         throw new TypeError("At least one unique, explicit supported endpoint action is required.");
       }
       if (!Array.isArray(evidenceReferences) || evidenceReferences.length > 50 ||
