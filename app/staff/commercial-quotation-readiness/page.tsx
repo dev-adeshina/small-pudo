@@ -37,8 +37,8 @@ export default function CommercialQuotationReadinessPage() {
 
   const [pricingDefinitionId, setPricingDefinitionId] = useState("");
   const [pricingVersionId, setPricingVersionId] = useState("");
-  const [currency, setCurrency] = useState("NGN");
-  const [quoteValidityMinutes, setQuoteValidityMinutes] = useState("1440");
+  const [currency, setCurrency] = useState("");
+  const [quoteValidityMinutes, setQuoteValidityMinutes] = useState("");
   const [handoverWindowMinutes, setHandoverWindowMinutes] = useState("");
   const [roundingPolicy, setRoundingPolicy] = useState("");
   const [taxTreatment, setTaxTreatment] = useState("");
