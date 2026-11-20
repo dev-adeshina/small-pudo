@@ -258,6 +258,12 @@ export function createCommercialQuotationReadinessStore({
           }
         }
         if (outcome === "eligible" || outcome === "conditionally_eligible") {
+          const routeEvidenceReferences = evidenceReferences.filter((reference) => reference.startsWith("commercialRouteDistanceEvidence/"));
+          const routeReviewReferences = evidenceReferences.filter((reference) => reference.startsWith("commercialRouteDistanceReviews/"));
+          if (routeEvidenceReferences.length !== 1 || routeReviewReferences.length !== 1 ||
+              routeEvidenceReferences[0].split("/")[1] !== routeReviewReferences[0].split("/")[1]) {
+            throw new TypeError("Positive PUDO-to-PUDO eligibility requires exactly one matching route measurement and independent route review reference.");
+          }
           const locationIds = [originPudoLocationId, destinationPudoLocationId].filter((value): value is string => Boolean(value));
           for (const locationId of locationIds) {
             const [candidate, activation] = await Promise.all([
