@@ -13,7 +13,6 @@ import {
   Clock3,
   LogOut,
   Truck,
-  ShoppingBag,
   Tags,
   ClipboardList,
 } from "lucide-react";
@@ -303,22 +302,6 @@ export default function AdminDashboard() {
                 <span>
                   <Package size={18} />
                   Manage orders
-                </span>
-                <ArrowUpRight size={17} />
-              </Link>
-
-              <Link href="/admin/customers" className="admin-action">
-                <span>
-                  <Users size={18} />
-                  View customers
-                </span>
-                <ArrowUpRight size={17} />
-              </Link>
-
-              <Link href="/admin/services" className="admin-action">
-                <span>
-                  <ShoppingBag size={18} />
-                  Manage services
                 </span>
                 <ArrowUpRight size={17} />
               </Link>
