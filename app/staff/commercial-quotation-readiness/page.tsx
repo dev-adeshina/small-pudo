@@ -34,6 +34,17 @@ export default function CommercialQuotationReadinessPage() {
   const [originPudoLocationId, setOriginPudoLocationId] = useState("");
   const [destinationPudoLocationId, setDestinationPudoLocationId] = useState("");
   const [eligibilityOutcome, setEligibilityOutcome] = useState<"" | "pending_verification" | "eligible" | "conditionally_eligible" | "not_eligible" | "revoked">("");
+  const [serviceCoverageReferences, setServiceCoverageReferences] = useState("");
+  const [availabilityReferences, setAvailabilityReferences] = useState("");
+  const [capacityReferences, setCapacityReferences] = useState("");
+  const [originRequiredActions, setOriginRequiredActions] = useState("");
+  const [destinationRequiredActions, setDestinationRequiredActions] = useState("");
+  const [capabilityLocationId, setCapabilityLocationId] = useState("");
+  const [capabilityServiceCode, setCapabilityServiceCode] = useState<ServiceCode | "">("");
+  const [capabilityActions, setCapabilityActions] = useState("");
+  const [capabilityEvidenceReferences, setCapabilityEvidenceReferences] = useState("");
+  const [capabilityValidUntil, setCapabilityValidUntil] = useState("");
+  const [capabilityReason, setCapabilityReason] = useState("");
   const [evidenceReferences, setEvidenceReferences] = useState("");
   const [conditions, setConditions] = useState("");
   const [eligibilityReason, setEligibilityReason] = useState("");
@@ -157,6 +168,11 @@ export default function CommercialQuotationReadinessPage() {
               ...(eligibilityOriginType === "pudo" ? { originPudoLocationId } : {}),
               ...(eligibilityDestinationType === "pudo" ? { destinationPudoLocationId } : {}),
               outcome: eligibilityOutcome, evidenceReferences: lines(evidenceReferences),
+              serviceCoverageEvidenceReferences: lines(serviceCoverageReferences),
+              operatingAvailabilityEvidenceReferences: lines(availabilityReferences),
+              capacityEvidenceReferences: lines(capacityReferences),
+              originRequiredActions: lines(originRequiredActions),
+              destinationRequiredActions: lines(destinationRequiredActions),
               conditions: lines(conditions), reason: eligibilityReason,
               ...(eligibilityValidUntil ? { validUntil: new Date(eligibilityValidUntil).toISOString() } : {}),
             }, "DEC-047 eligibility decision recorded.");
