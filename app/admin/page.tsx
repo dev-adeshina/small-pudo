@@ -327,14 +327,6 @@ export default function AdminDashboard() {
                 <ArrowUpRight size={17} />
               </Link>
 
-              <Link href="/staff/operational-cost-definitions" className="admin-action">
-                <span>
-                  <ClipboardList size={18} />
-                  Operational cost definitions
-                </span>
-                <ArrowUpRight size={17} />
-              </Link>
-
               <Link href="/admin/staff" className="admin-action">
                 <span>
                   <Users size={18} />
