@@ -18,6 +18,9 @@ const permissions=[
     "commercial_pricing.propose",
     "commercial_pricing.approve",
     "commercial_pricing.publish",
+    "commercial_route_distance.approve",
+    "commercial_service_eligibility.approve",
+    "commercial_pricing.owner_approve",
 ] as const;
 type Staff={uid:string;email:string;status:string;permissions:Array<{permissionId:string;status:string;effectiveActive?:boolean;reason?:string;expiresAt?:string|null}>};
 type Invite={invitationId:string;email:string;status:string;expiresAt:string|null};
