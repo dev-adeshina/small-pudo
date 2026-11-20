@@ -226,7 +226,7 @@ export default function CommercialRouteDistancePage() {
       <header className="admin-header">
         <Link href="/" className="admin-logo"><Image src="/logo.svg" width={60} height={20} alt="VeriLyft" priority /></Link>
         <div className="admin-header-right">
-          <Link href="/staff/commercial-pricing-definitions" className="admin-action">Activity pricing</Link>
+          
           <span className="admin-email">{email}</span>
           <button type="button" className="admin-logout" onClick={logout} aria-label="Sign out"><LogOut size={17} /></button>
         </div>
@@ -240,9 +240,9 @@ export default function CommercialRouteDistancePage() {
             <p>Record directed distance measurements between active PUDO locations. Evidence is retained as an immutable history and is not an operational dispatch record or a price.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Link className="admin-action" href="/staff/pudo-locations">PUDO location registry</Link>
-            <Link className="admin-action" href="/staff/commercial-quotation-readiness">Quotation readiness</Link>
-            <Link className="admin-action" href="/staff/pudo-verifications">Verification queue</Link>
+            
+            
+            
             <button className="cost-secondary-button" type="button" onClick={refresh} disabled={loading}>
               <RefreshCw size={16} /> Refresh
             </button>
