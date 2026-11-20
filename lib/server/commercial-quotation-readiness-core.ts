@@ -588,8 +588,8 @@ export function createCommercialQuotationReadinessStore({
         }
       }
       const expiry = dateMillis(data.validUntil);
-      if (expiry !== null && expiry <= now().getTime()) {
-        return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision has expired." };
+      if (expiry === null || expiry <= now().getTime()) {
+        return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision is missing a current validity end or has expired." };
       }
       if (data.outcome !== "eligible" && data.outcome !== "conditionally_eligible") {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision is not usable." };
