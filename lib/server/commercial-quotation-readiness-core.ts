@@ -119,6 +119,9 @@ export function createCommercialQuotationReadinessStore({
         if (!evidence || typeof evidence !== "object") throw new Error("Route-distance evidence is malformed.");
         assertCommercialRouteDistanceEvidence(evidence);
         if (decision === "approve") {
+          if (evidence.recordedBy === actorUid) {
+            throw new Error("Route evidence approval must be performed by someone other than the evidence recorder.");
+          }
           if (evidence.method === "straight_line") {
             throw new Error("Straight-line measurements cannot be approved as operational road-route evidence.");
           }
@@ -261,6 +264,11 @@ export function createCommercialQuotationReadinessStore({
           const evidenceDocument = await transaction.get(db.doc(reference));
           if (!evidenceDocument.exists) throw new TypeError("An eligibility evidence reference does not exist: " + reference);
           const evidenceData = evidenceDocument.data()!;
+          if ((outcome === "eligible" || outcome === "conditionally_eligible") &&
+              [evidenceData.createdBy, evidenceData.recordedBy, evidenceData.inspectorUid, evidenceData.decisionMakerUid, evidenceData.activatedBy]
+                .some((evidenceActor) => evidenceActor === actorUid)) {
+            throw new TypeError("Service eligibility approval must be independent of the referenced evidence creators and operational actors.");
+          }
           if (["revoked", "inactive", "expired", "not_approved"].includes(String(evidenceData.status ?? ""))) {
             throw new TypeError("An eligibility evidence reference is not in an active state: " + reference);
           }
