@@ -192,7 +192,7 @@ export function createCommercialQuotationReadinessStore({
       destinationType: CommercialEndpointType;
       originPudoLocationId?: string;
       destinationPudoLocationId?: string;
-      outcome: Exclude<CommercialEligibilityOutcome, "pending_verification">;
+      outcome: CommercialEligibilityOutcome;
       evidenceReferences: string[];
       conditions?: string[];
       reason: string;
@@ -201,9 +201,9 @@ export function createCommercialQuotationReadinessStore({
       const { actorUid, serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId, outcome, evidenceReferences, conditions = [], reason, validUntil } = input;
       assertActor(actorUid);
       if (!SERVICES.has(serviceCode) || !ENDPOINTS.has(originType) || !ENDPOINTS.has(destinationType)) throw new TypeError("Unsupported service or endpoint type.");
-      if (!["eligible", "conditionally_eligible", "not_eligible", "revoked"].includes(outcome)) throw new TypeError("Unsupported eligibility outcome.");
+      if (!["pending_verification", "eligible", "conditionally_eligible", "not_eligible", "revoked"].includes(outcome)) throw new TypeError("Unsupported eligibility outcome.");
       const hasAddressEndpoint = originType === "address" || destinationType === "address";
-      if (hasAddressEndpoint && outcome !== "not_eligible" && outcome !== "revoked") {
+      if (hasAddressEndpoint && outcome !== "not_eligible" && outcome !== "revoked" && outcome !== "pending_verification") {
         throw new TypeError("Address endpoint eligibility cannot be approved until authoritative address-to-operational-point mapping exists.");
       }
       if (originType === "pudo") assertId(originPudoLocationId ?? "", "Origin PUDO location ID");
@@ -321,6 +321,9 @@ export function createCommercialQuotationReadinessStore({
       const record = await eligibility.doc(keyFor(serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId)).get();
       if (!record.exists) return { eligible: false as const, outcome: "pending_verification" as const, reason: "No DEC-047 eligibility decision has been recorded." };
       const data = record.data()!;
+      if (data.outcome === "pending_verification") {
+        return { eligible: false as const, outcome: "pending_verification" as const, reason: String(data.reason ?? "The service and endpoint combination remains pending verification.") };
+      }
       if (data.outcome === "revoked" || data.outcome === "not_eligible") {
         return { eligible: false as const, outcome: data.outcome as CommercialEligibilityOutcome, reason: String(data.reason ?? "The service and endpoint combination is unavailable.") };
       }
