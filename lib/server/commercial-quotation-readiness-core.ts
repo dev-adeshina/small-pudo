@@ -364,7 +364,7 @@ export function createCommercialQuotationReadinessStore({
       if (data.status !== "approved" || data.serviceCode !== serviceCode ||
           typeof data.pricingDefinitionId !== "string" || !ID.test(data.pricingDefinitionId) ||
           typeof data.pricingVersionId !== "string" || !ID.test(data.pricingVersionId) ||
-          typeof data.currency !== "string" || !data.currency.trim() ||
+          typeof data.currency !== "string" || !/^[A-Z]{3}$/.test(data.currency) ||
           !Number.isSafeInteger(data.quoteValidityMinutes) || data.quoteValidityMinutes < 1 ||
           !Number.isSafeInteger(data.handoverWindowMinutes) || data.handoverWindowMinutes < 1 ||
           typeof data.approvedBy !== "string" || !data.approvedBy ||
