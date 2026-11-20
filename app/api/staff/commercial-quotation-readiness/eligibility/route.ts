@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       destinationType: input.destinationType as "address" | "pudo",
       originPudoLocationId: input.originPudoLocationId as string | undefined,
       destinationPudoLocationId: input.destinationPudoLocationId as string | undefined,
-      outcome: input.outcome as "eligible" | "conditionally_eligible" | "not_eligible" | "revoked",
+      outcome: input.outcome as "pending_verification" | "eligible" | "conditionally_eligible" | "not_eligible" | "revoked",
       evidenceReferences: input.evidenceReferences as string[],
       conditions: input.conditions as string[] | undefined,
       reason: input.reason as string,
