@@ -130,6 +130,12 @@ export async function POST(request: Request) {
       if (existingQuote.currentVersionId !== input.expectedCurrentVersionId) {
         return NextResponse.json({ error: "The quotation has changed. Refresh before requesting a new version." }, { status: 409 });
       }
+      const versions = Array.isArray(existingQuote.versions) ? existingQuote.versions as Array<Record<string, unknown>> : [];
+      const currentVersion = versions.find((version) => version.versionId === input.expectedCurrentVersionId);
+      const previousSnapshot = currentVersion?.snapshot as Record<string, unknown> | undefined;
+      if (!previousSnapshot || previousSnapshot.draftId !== input.draftId || previousSnapshot.serviceCode !== serviceCode) {
+        return NextResponse.json({ error: "A quotation can only be reissued for its original shipment draft and service." }, { status: 409 });
+      }
       const revised = await shipmentQuoteStore.reviseIssuedQuote({
         quoteId: input.quoteId,
         expectedCurrentVersionId: input.expectedCurrentVersionId,
