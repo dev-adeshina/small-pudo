@@ -14,8 +14,9 @@ const workspaces = [
   { number: "03", title: "Route distance evidence", description: "Record and review supported operational route-distance measurements.", href: "/staff/commercial-route-distance", icon: Route, group: "Commercial" },
   { number: "04", title: "Quotation readiness", description: "Manage service capability, endpoint eligibility and quotation-readiness evidence.", href: "/staff/commercial-quotation-readiness", icon: ShieldCheck, group: "Commercial" },
   { number: "05", title: "PUDO locations", description: "Review and manage PUDO location candidates and their records.", href: "/staff/pudo-locations", icon: MapPin, group: "PUDO operations" },
-  { number: "06", title: "PUDO verification queue", description: "Review inspection evidence and record location verification decisions.", href: "/staff/pudo-verifications", icon: MapPinned, group: "PUDO operations" },
-  { number: "07", title: "Staff delegations", description: "Delegate only activities you are explicitly authorised to delegate.", href: "/staff/delegations", icon: Users, group: "Access" },
+  { number: "06", title: "Register a PUDO location", description: "Create a PUDO location candidate draft and submit it separately for verification.", href: "/staff/pudo-locations/new", icon: MapPin, group: "PUDO operations" },
+  { number: "07", title: "PUDO verification queue", description: "Review inspection evidence and record location verification decisions.", href: "/staff/pudo-verifications", icon: MapPinned, group: "PUDO operations" },
+  { number: "08", title: "Staff delegations", description: "Delegate only activities you are explicitly authorised to delegate.", href: "/staff/delegations", icon: Users, group: "Access" },
 ];
 
 export default function StaffDashboardPage() {
