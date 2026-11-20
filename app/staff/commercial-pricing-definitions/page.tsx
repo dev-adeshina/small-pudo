@@ -7,6 +7,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
 import { LogOut } from "lucide-react";
+import { StaffActionDialog } from "@/components/staff/StaffActionDialog";
 
 type ServiceCode = "standard" | "express" | "scheduled";
 type Applicability = "applicable" | "not_applicable" | "undetermined";
@@ -207,6 +208,7 @@ export default function CommercialPricingDefinitionsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [pendingDialogAction, setPendingDialogAction] = useState<"request_changes" | "reject" | "publish" | null>(null);
   const selectedVersion = selected
     ? selected.versions.find((version) => version.versionId === selected.currentVersionId)
     ?? selected.versions[selected.versions.length - 1]
@@ -292,13 +294,11 @@ export default function CommercialPricingDefinitionsPage() {
     catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to load configuration."); }
   }
 
-  async function runApprovalAction(action: "submit" | "approve" | "request_changes" | "reject") {
+  async function runApprovalAction(action: "submit" | "approve" | "request_changes" | "reject", reason?: string) {
     if (!selected || !selectedVersion || saving) return;
-    let reason: string | undefined;
-    if (action === "request_changes" || action === "reject") {
-      const enteredReason = window.prompt(action === "reject" ? "Reason for rejection" : "Changes required");
-      if (!enteredReason?.trim()) return;
-      reason = enteredReason.trim();
+    if ((action === "request_changes" || action === "reject") && !reason?.trim()) {
+      setPendingDialogAction(action);
+      return;
     }
     setSaving(true);
     setError("");
@@ -315,12 +315,16 @@ export default function CommercialPricingDefinitionsPage() {
       await loadDetail(selected.definitionId, token);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to update approval workflow.");
-    } finally { setSaving(false); }
+    } finally { setSaving(false); setPendingDialogAction(null); }
   }
 
   async function publishSelectedVersion() {
     if (!selected || !selectedVersion || saving) return;
-    if (!window.confirm("Publish this approved pricing version? Only this published version can be selected by the quotation service.")) return;
+    setPendingDialogAction("publish");
+  }
+
+  async function confirmPublish() {
+    if (!selected || !selectedVersion || saving) return;
     setSaving(true);
     setError("");
     setNotice("");
@@ -1078,6 +1082,21 @@ export default function CommercialPricingDefinitionsPage() {
           <p className="cost-footer-note">Approval and publication are recorded above. Service eligibility and quotation readiness remain separate gates.</p>
         </section>}
       </div>
-    </main>
+          <StaffActionDialog
+        open={pendingDialogAction !== null}
+        title={pendingDialogAction === "publish" ? "Publish approved pricing version?" : pendingDialogAction === "reject" ? "Reject pricing version?" : "Request changes to pricing version?"}
+        description={pendingDialogAction === "publish" ? "Only this approved version will become selectable by the quotation service. Publication does not itself issue customer quotations." : pendingDialogAction === "reject" ? "This decision will be recorded against the version and attributed to your account." : "Explain the changes required so the proposer can revise the version."}
+        confirmLabel={pendingDialogAction === "publish" ? "Publish version" : pendingDialogAction === "reject" ? "Reject version" : "Request changes"}
+        reasonLabel={pendingDialogAction === "reject" ? "Reason for rejection" : pendingDialogAction === "request_changes" ? "Changes required" : undefined}
+        reasonRequired={pendingDialogAction !== "publish"}
+        danger={pendingDialogAction === "reject"}
+        busy={saving}
+        onCancel={() => setPendingDialogAction(null)}
+        onConfirm={async (reason) => {
+          if (pendingDialogAction === "publish") await confirmPublish();
+          else if (pendingDialogAction) await runApprovalAction(pendingDialogAction, reason);
+        }}
+      />
+</main>
   );
 }
