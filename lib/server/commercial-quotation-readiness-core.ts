@@ -300,6 +300,9 @@ export function createCommercialQuotationReadinessStore({
       const record = await eligibility.doc(keyFor(serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId)).get();
       if (!record.exists) return { eligible: false as const, outcome: "pending_verification" as const, reason: "No DEC-047 eligibility decision has been recorded." };
       const data = record.data()!;
+      if (data.outcome === "revoked" || data.outcome === "not_eligible") {
+        return { eligible: false as const, outcome: data.outcome as CommercialEligibilityOutcome, reason: String(data.reason ?? "The service and endpoint combination is unavailable.") };
+      }
       if (!Array.isArray(data.evidenceReferences) || data.evidenceReferences.length === 0) {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision has no attributable evidence references." };
       }
@@ -317,9 +320,6 @@ export function createCommercialQuotationReadinessStore({
         if (evidenceExpiry !== null && evidenceExpiry <= now().getTime()) {
           return { eligible: false as const, outcome: "pending_verification" as const, reason: "An eligibility evidence record has expired." };
         }
-      }
-      if (data.outcome === "revoked" || data.outcome === "not_eligible") {
-        return { eligible: false as const, outcome: data.outcome as CommercialEligibilityOutcome, reason: String(data.reason ?? "The service and endpoint combination is unavailable.") };
       }
       const expiry = dateMillis(data.validUntil);
       if (expiry !== null && expiry <= now().getTime()) {
