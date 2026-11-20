@@ -102,7 +102,11 @@ export function createShipmentBookingDraftStore({
         .collection("shipmentBookingDrafts")
         .doc();
 
-      const { declaredMeasurements: _declaredMeasurements, ...draftFields } = input;
+      const draftFields = {
+        origin: input.origin,
+        destination: input.destination,
+        parcelDescription: input.parcelDescription,
+      };
       await draftRef.create({
         bookingPartyUid: customerUid,
         ...draftFields,
@@ -134,7 +138,11 @@ export function createShipmentBookingDraftStore({
         updateDraftOnlyWhileEditable(
           () => transaction.get(draftRef),
           () => {
-            const { declaredMeasurements: _declaredMeasurements, ...draftFields } = input;
+            const draftFields = {
+        origin: input.origin,
+        destination: input.destination,
+        parcelDescription: input.parcelDescription,
+      };
             transaction.update(draftRef, {
               ...draftFields,
               parcelInput: parcelInputForDraft(customerUid, input),
