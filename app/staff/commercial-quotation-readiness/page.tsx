@@ -95,9 +95,11 @@ export default function CommercialQuotationReadinessPage() {
     setError("");
     setNotice("");
     try {
+      const currentToken = await auth.currentUser?.getIdToken();
+      if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
       const response = await fetch(path, {
         method: "POST",
-        headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+        headers: { Authorization: "Bearer " + currentToken, "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
       const data = await response.json().catch(() => null);
