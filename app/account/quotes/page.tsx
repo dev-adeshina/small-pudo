@@ -102,6 +102,32 @@ export default function CustomerQuotesPage() {
     return () => unsubscribe();
   }, [loadQuotes, router]);
 
+  async function requestNewVersion(quote: ShipmentQuote, draftId: string, serviceCode: "standard" | "express" | "scheduled") {
+    if (!user || !quote.currentVersionId || busyId) return;
+    setBusyId(quote.quoteId);
+    setError("");
+    setNotice("");
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch("/api/account/shipment-quotes", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          draftId, serviceCode, quoteId: quote.quoteId,
+          expectedCurrentVersionId: quote.currentVersionId,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Unable to issue an updated quotation.");
+      setNotice("A new immutable quotation version has been issued.");
+      await loadQuotes(user);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to issue an updated quotation.");
+    } finally {
+      setBusyId("");
+    }
+  }
+
   async function decide(quote: ShipmentQuote, decision: "accept" | "reject") {
     if (!user || !quote.currentVersionId || busyId) return;
     let reason: string | undefined;
@@ -179,6 +205,10 @@ export default function CustomerQuotesPage() {
               const components = Array.isArray(pricing.components) ? pricing.components as Array<Record<string, unknown>> : [];
               const status = quote.status ?? "unknown";
               const canDecide = status === "issued" && quote.currentVersionId;
+              const draftId = typeof snapshot.draftId === "string" ? snapshot.draftId : null;
+              const serviceCode = ["standard", "express", "scheduled"].includes(String(snapshot.serviceCode))
+                ? snapshot.serviceCode as "standard" | "express" | "scheduled" : null;
+              const canReissue = Boolean(draftId && serviceCode && status !== "accepted" && quote.currentVersionId);
               return (
                 <section className="customer-panel" key={quote.quoteId} style={{ marginBottom: 18 }}>
                   <div className="customer-panel-heading">
@@ -203,9 +233,12 @@ export default function CustomerQuotesPage() {
                       </div>)}
                     </div>
                   </div>}
-                  {canDecide && <div className="cost-form-actions" style={{ flexWrap: "wrap" }}>
-                    <button className="cost-primary-button" type="button" disabled={busyId === quote.quoteId} onClick={() => void decide(quote, "accept")}>{busyId === quote.quoteId ? "Saving..." : "Accept quotation"}</button>
-                    <button className="cost-secondary-button" type="button" disabled={busyId === quote.quoteId} onClick={() => void decide(quote, "reject")}>Reject quotation</button>
+                  {(canDecide || canReissue) && <div className="cost-form-actions" style={{ flexWrap: "wrap" }}>
+                    {canDecide && <>
+                      <button className="cost-primary-button" type="button" disabled={busyId === quote.quoteId} onClick={() => void decide(quote, "accept")}>{busyId === quote.quoteId ? "Saving..." : "Accept quotation"}</button>
+                      <button className="cost-secondary-button" type="button" disabled={busyId === quote.quoteId} onClick={() => void decide(quote, "reject")}>Reject quotation</button>
+                    </>}
+                    {canReissue && <button className="cost-secondary-button" type="button" disabled={busyId === quote.quoteId} onClick={() => void requestNewVersion(quote, draftId!, serviceCode!)}>{busyId === quote.quoteId ? "Issuing..." : "Request updated quotation"}</button>}
                   </div>}
                   <p className="cost-footer-note">Quotation acceptance does not record payment or physical parcel handover. Booking confirmation is handled by the separate booking handoff.</p>
                 </section>
