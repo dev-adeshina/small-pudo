@@ -97,6 +97,17 @@ export default function CommercialQuotationReadinessPage() {
     }
   }
 
+  const chargeTreatmentFields: Array<{
+    label: string;
+    value: "" | "included_in_components" | "not_applicable";
+    setValue: (value: "" | "included_in_components" | "not_applicable") => void;
+  }> = [
+    { label: "Tax treatment", value: taxTreatment, setValue: setTaxTreatment },
+    { label: "Surcharge treatment", value: surchargeTreatment, setValue: setSurchargeTreatment },
+    { label: "Discount treatment", value: discountTreatment, setValue: setDiscountTreatment },
+    { label: "Fee treatment", value: feeTreatment, setValue: setFeeTreatment },
+  ];
+
   if (checking) return <main className="admin-loading"><span>Checking staff access...</span></main>;
 
   return (
@@ -188,14 +199,9 @@ export default function CommercialQuotationReadinessPage() {
               <label className="block text-sm font-medium">Decimal places<input className="mt-2 w-full rounded-lg border p-3" type="number" min="0" max="6" step="1" value={decimalPlaces} onChange={(event) => setDecimalPlaces(event.target.value)} required /></label>
             </div>
             <p className="text-sm text-gray-600">The current implementation applies rounding to the quotation total only. This stage must be acceptable as part of the approved commercial terms.</p>
-            {[
-              ["Tax treatment", taxTreatment, setTaxTreatment],
-              ["Surcharge treatment", surchargeTreatment, setSurchargeTreatment],
-              ["Discount treatment", discountTreatment, setDiscountTreatment],
-              ["Fee treatment", feeTreatment, setFeeTreatment],
-            ].map(([label, value, setter]) => (
-              <label key={String(label)} className="block text-sm font-medium">{String(label)}
-                <select className="mt-2 w-full rounded-lg border p-3" value={String(value)} onChange={(event) => (setter as (value: "included_in_components" | "not_applicable") => void)(event.target.value as "included_in_components" | "not_applicable" | "")} required>
+            {chargeTreatmentFields.map(({ label, value, setValue }) => (
+              <label key={label} className="block text-sm font-medium">{label}
+                <select className="mt-2 w-full rounded-lg border p-3" value={value} onChange={(event) => setValue(event.target.value as typeof value)} required>
                   <option value="">Select explicit treatment</option>
                   <option value="included_in_components">Included in approved pricing components</option>
                   <option value="not_applicable">Not applicable</option>
