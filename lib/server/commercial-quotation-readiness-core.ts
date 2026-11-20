@@ -95,11 +95,17 @@ export function createCommercialQuotationReadinessStore({
   }
 
   return {
-    async reviewRouteEvidence(actorUid: string, evidenceId: string, decision: RouteEvidenceDecision, reason: string) {
+    async reviewRouteEvidence(actorUid: string, evidenceId: string, decision: RouteEvidenceDecision, reason: string, validUntil?: Date) {
       assertActor(actorUid);
       assertId(evidenceId, "Route evidence ID");
       if (decision !== "approve" && decision !== "revoke") throw new TypeError("A valid route evidence decision is required.");
       assertText(reason, "A route evidence review reason");
+      if (decision === "approve" && (!(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) || validUntil <= now())) {
+        throw new TypeError("Route evidence approval requires an explicit future validity end.");
+      }
+      if (validUntil && (!(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) || validUntil <= now())) {
+        throw new TypeError("Route evidence validity must be a future date.");
+      }
       const evidenceRef = routeEvidence.doc(evidenceId);
       const reviewRef = routeReviews.doc(evidenceId);
       const eventRef = reviewRef.collection("events").doc();
@@ -129,6 +135,7 @@ export function createCommercialQuotationReadinessStore({
           decision,
           evidenceSnapshot: evidence,
           status: decision === "approve" ? "approved" : "revoked",
+          validUntil: decision === "approve" ? validUntil : null,
           reason: reason.trim(),
           reviewedBy: actorUid,
           reviewedAt: timestamp,
@@ -154,6 +161,8 @@ export function createCommercialQuotationReadinessStore({
         const evidence = data.evidence as Record<string, unknown> | undefined;
         const reviewData = review.data();
         if (!review.exists || reviewData?.status !== "approved" || !evidence) return null;
+        const reviewExpiry = dateMillis(reviewData.validUntil);
+        if (reviewExpiry === null || reviewExpiry <= now().getTime()) return null;
         try {
           assertCommercialRouteDistanceEvidence(evidence);
         } catch {
