@@ -111,6 +111,7 @@ export function createCommercialQuotationReadinessStore({
         const row = evidenceSnapshot.data()!;
         const evidence = row.evidence as Record<string, unknown> | undefined;
         if (!evidence || typeof evidence !== "object") throw new Error("Route-distance evidence is malformed.");
+        assertCommercialRouteDistanceEvidence(evidence);
         if (decision === "approve") {
           if (evidence.method === "straight_line") {
             throw new Error("Straight-line measurements cannot be approved as operational road-route evidence.");
