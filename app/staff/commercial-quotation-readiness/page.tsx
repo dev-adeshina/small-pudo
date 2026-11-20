@@ -96,6 +96,14 @@ export default function CommercialQuotationReadinessPage() {
     }
   }
 
+  const commercialTermFields: Array<{ name: string; label: string; value: string; setValue: (value: string) => void }> = [
+    { name: "roundingPolicy", label: "Rounding policy", value: roundingPolicy, setValue: setRoundingPolicy },
+    { name: "taxTreatment", label: "Tax treatment", value: taxTreatment, setValue: setTaxTreatment },
+    { name: "surchargeTreatment", label: "Surcharge treatment", value: surchargeTreatment, setValue: setSurchargeTreatment },
+    { name: "discountTreatment", label: "Discount treatment", value: discountTreatment, setValue: setDiscountTreatment },
+    { name: "feeTreatment", label: "Fee treatment", value: feeTreatment, setValue: setFeeTreatment },
+  ];
+
   if (checking) return <main className="admin-loading"><span>Checking staff access...</span></main>;
 
   return (
@@ -183,15 +191,9 @@ export default function CommercialQuotationReadinessPage() {
               <label className="block text-sm font-medium">Quote validity (minutes)<input className="mt-2 w-full rounded-lg border p-3" type="number" min="1" max="525600" value={quoteValidityMinutes} onChange={(event) => setQuoteValidityMinutes(event.target.value)} required /></label>
               <label className="block text-sm font-medium">Physical handover window (minutes)<input className="mt-2 w-full rounded-lg border p-3" type="number" min="1" max="525600" value={handoverWindowMinutes} onChange={(event) => setHandoverWindowMinutes(event.target.value)} required /></label>
             </div>
-            {[
-              ["roundingPolicy", "Rounding policy", roundingPolicy, setRoundingPolicy],
-              ["taxTreatment", "Tax treatment", taxTreatment, setTaxTreatment],
-              ["surchargeTreatment", "Surcharge treatment", surchargeTreatment, setSurchargeTreatment],
-              ["discountTreatment", "Discount treatment", discountTreatment, setDiscountTreatment],
-              ["feeTreatment", "Fee treatment", feeTreatment, setFeeTreatment],
-            ].map(([name, label, value, setter]) => (
-              <label key={String(name)} className="block text-sm font-medium">{String(label)}
-                <textarea className="mt-2 w-full rounded-lg border p-3" value={String(value)} onChange={(event) => (setter as (value: string) => void)(event.target.value)} required maxLength={500} />
+            {commercialTermFields.map(({ name, label, value, setValue }) => (
+              <label key={name} className="block text-sm font-medium">{label}
+                <textarea className="mt-2 w-full rounded-lg border p-3" value={value} onChange={(event) => setValue(event.target.value)} required maxLength={500} />
               </label>
             ))}
             <label className="flex items-start gap-3 text-sm"><input type="checkbox" checked={termsConfirmed} onChange={(event) => setTermsConfirmed(event.target.checked)} required /><span>I confirm these service-specific commercial terms have been reviewed and approved under DEC-048, including the exact published pricing version, currency, deadlines and treatment of all listed charge categories.</span></label>
