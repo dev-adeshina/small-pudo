@@ -194,7 +194,7 @@ export function createCommercialQuotationReadinessStore({
       return db.runTransaction(async (transaction) => {
         await requirePermission(transaction, actorUid, ELIGIBILITY_PERMISSION, "approve service and endpoint eligibility");
         for (const reference of evidenceReferences) {
-          if (!/^[A-Za-z0-9_-]+\\/[A-Za-z0-9_-]+(?:\\/[A-Za-z0-9_-]+\\/[A-Za-z0-9_-]+)*$/.test(reference)) {
+          if (!(reference.split("/").length >= 2 && reference.split("/").length % 2 === 0 && reference.split("/").every((segment) => ID.test(segment)))) {
             throw new TypeError("Each eligibility evidence reference must be a Firestore document path.");
           }
           const evidenceDocument = await transaction.get(db.doc(reference));
@@ -248,7 +248,7 @@ export function createCommercialQuotationReadinessStore({
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision has no attributable evidence references." };
       }
       for (const reference of data.evidenceReferences as string[]) {
-        if (typeof reference !== "string" || !/^[A-Za-z0-9_-]+\\/[A-Za-z0-9_-]+(?:\\/[A-Za-z0-9_-]+\\/[A-Za-z0-9_-]+)*$/.test(reference)) {
+        if (typeof reference !== "string" || !(reference.split("/").length >= 2 && reference.split("/").length % 2 === 0 && reference.split("/").every((segment) => ID.test(segment)))) {
           return { eligible: false as const, outcome: "pending_verification" as const, reason: "An eligibility evidence reference is malformed." };
         }
         const evidenceDocument = await db.doc(reference).get();
