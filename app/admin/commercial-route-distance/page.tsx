@@ -242,6 +242,7 @@ export default function CommercialRouteDistancePage() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Link className="admin-action" href="/staff/pudo-locations">PUDO location registry</Link>
+            <Link className="admin-action" href="/staff/commercial-quotation-readiness">Quotation readiness</Link>
             <Link className="admin-action" href="/staff/pudo-verifications">Verification queue</Link>
             <button className="cost-secondary-button" type="button" onClick={refresh} disabled={loading}>
               <RefreshCw size={16} /> Refresh
