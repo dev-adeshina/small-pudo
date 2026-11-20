@@ -33,7 +33,7 @@ export default function CommercialQuotationReadinessPage() {
   const [eligibilityDestinationType, setEligibilityDestinationType] = useState<"address" | "pudo">("pudo");
   const [originPudoLocationId, setOriginPudoLocationId] = useState("");
   const [destinationPudoLocationId, setDestinationPudoLocationId] = useState("");
-  const [eligibilityOutcome, setEligibilityOutcome] = useState<"" | "eligible" | "conditionally_eligible" | "not_eligible" | "revoked">("");
+  const [eligibilityOutcome, setEligibilityOutcome] = useState<"" | "pending_verification" | "eligible" | "conditionally_eligible" | "not_eligible" | "revoked">("");
   const [evidenceReferences, setEvidenceReferences] = useState("");
   const [conditions, setConditions] = useState("");
   const [eligibilityReason, setEligibilityReason] = useState("");
@@ -163,7 +163,7 @@ export default function CommercialQuotationReadinessPage() {
           }}>
             <div className="grid gap-4 md:grid-cols-2">
               <label className="block text-sm font-medium">Service<select className="mt-2 w-full rounded-lg border p-3" value={serviceCode} onChange={(event) => setServiceCode(event.target.value as ServiceCode | "")} required><option value="">Select service</option><option value="standard">Standard</option><option value="express">Express</option><option value="scheduled">Scheduled</option></select></label>
-              <label className="block text-sm font-medium">Outcome<select className="mt-2 w-full rounded-lg border p-3" value={eligibilityOutcome} onChange={(event) => setEligibilityOutcome(event.target.value as typeof eligibilityOutcome)} required><option value="">Select eligibility outcome</option><option value="eligible">Eligible</option><option value="conditionally_eligible">Conditionally eligible</option><option value="not_eligible">Not eligible</option><option value="revoked">Revoke</option></select></label>
+              <label className="block text-sm font-medium">Outcome<select className="mt-2 w-full rounded-lg border p-3" value={eligibilityOutcome} onChange={(event) => setEligibilityOutcome(event.target.value as typeof eligibilityOutcome)} required><option value="">Select eligibility outcome</option><option value="pending_verification">Pending verification</option><option value="eligible">Eligible</option><option value="conditionally_eligible">Conditionally eligible</option><option value="not_eligible">Not eligible</option><option value="revoked">Revoke</option></select></label>
               <label className="block text-sm font-medium">Origin endpoint<select className="mt-2 w-full rounded-lg border p-3" value={eligibilityOriginType} onChange={(event) => setEligibilityOriginType(event.target.value as "address" | "pudo")}><option value="address">Address</option><option value="pudo">PUDO</option></select></label>
               <label className="block text-sm font-medium">Destination endpoint<select className="mt-2 w-full rounded-lg border p-3" value={eligibilityDestinationType} onChange={(event) => setEligibilityDestinationType(event.target.value as "address" | "pudo")}><option value="address">Address</option><option value="pudo">PUDO</option></select></label>
               {eligibilityOriginType === "pudo" && <label className="block text-sm font-medium">Origin PUDO ID<input className="mt-2 w-full rounded-lg border p-3" value={originPudoLocationId} onChange={(event) => setOriginPudoLocationId(event.target.value)} required /></label>}
