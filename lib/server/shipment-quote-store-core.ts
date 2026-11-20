@@ -117,13 +117,15 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
     async issueQuote(input: {
       bookingPartyUid: string;
       snapshot: ShipmentQuoteSnapshot;
+      internalEvidence?: ShipmentQuoteSnapshot;
       validUntil: Date;
       handoverWindowMinutes: number;
       issuedBy: string;
     }): Promise<{ quoteId: string; versionId: string; sequence: 1 }> {
-      const { bookingPartyUid, snapshot, validUntil, handoverWindowMinutes, issuedBy } = input;
+      const { bookingPartyUid, snapshot, internalEvidence, validUntil, handoverWindowMinutes, issuedBy } = input;
       assertBookingPartyUid(bookingPartyUid);
       assertSnapshot(snapshot);
+      if (internalEvidence) assertSnapshot(internalEvidence);
       assertBookingPartyUid(issuedBy);
       assertQuoteTerms(validUntil, handoverWindowMinutes, now());
 
@@ -150,6 +152,13 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
           createdAt: timestamp,
           createdBy: issuedBy,
         });
+        if (internalEvidence) {
+          transaction.create(versionRef.collection("internalEvidence").doc("authority"), {
+            evidence: { ...internalEvidence },
+            createdAt: timestamp,
+            createdBy: issuedBy,
+          });
+        }
         transaction.create(quoteRef.collection("events").doc(), {
           action: "issued",
           versionId: versionRef.id,
@@ -294,15 +303,17 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
       quoteId: string;
       expectedCurrentVersionId: string;
       snapshot: ShipmentQuoteSnapshot;
+      internalEvidence?: ShipmentQuoteSnapshot;
       validUntil: Date;
       handoverWindowMinutes: number;
       issuedBy: string;
     }): Promise<ReviseShipmentQuoteResult> {
-      const { quoteId, expectedCurrentVersionId, snapshot, validUntil, handoverWindowMinutes, issuedBy } = input;
+      const { quoteId, expectedCurrentVersionId, snapshot, internalEvidence, validUntil, handoverWindowMinutes, issuedBy } = input;
       assertIdentifier(quoteId, "Quote ID");
       assertIdentifier(expectedCurrentVersionId, "Expected quote version ID");
       assertBookingPartyUid(issuedBy);
       assertSnapshot(snapshot);
+      if (internalEvidence) assertSnapshot(internalEvidence);
       assertQuoteTerms(validUntil, handoverWindowMinutes, now());
 
       const quoteRef = db.collection("shipmentQuotes").doc(quoteId);
@@ -338,6 +349,13 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
           createdAt: timestamp,
           createdBy: issuedBy,
         });
+        if (internalEvidence) {
+          transaction.create(nextVersionRef.collection("internalEvidence").doc("authority"), {
+            evidence: { ...internalEvidence },
+            createdAt: timestamp,
+            createdBy: issuedBy,
+          });
+        }
         transaction.update(quoteRef, {
           currentVersionId: nextVersionRef.id,
           status: "issued",
