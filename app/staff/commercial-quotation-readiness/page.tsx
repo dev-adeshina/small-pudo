@@ -25,6 +25,7 @@ export default function CommercialQuotationReadinessPage() {
   const [routeEvidenceId, setRouteEvidenceId] = useState("");
   const [routeDecision, setRouteDecision] = useState<"" | "approve" | "revoke">("");
   const [routeReason, setRouteReason] = useState("");
+  const [routeValidUntil, setRouteValidUntil] = useState("");
 
   const [serviceCode, setServiceCode] = useState<ServiceCode>("standard");
   const [termsServiceCode, setTermsServiceCode] = useState<ServiceCode>("standard");
@@ -135,13 +136,14 @@ export default function CommercialQuotationReadinessPage() {
           <div className="cost-panel-heading"><div><span className="section-label">01 / ROUTE EVIDENCE</span><h2>Review a recorded route measurement</h2></div></div>
           <form className="space-y-4" onSubmit={(event) => {
             event.preventDefault();
-            void post("/api/staff/commercial-quotation-readiness/route-evidence/" + encodeURIComponent(routeEvidenceId) + "/review", { decision: routeDecision, reason: routeReason }, "Route evidence review recorded.");
+            void post("/api/staff/commercial-quotation-readiness/route-evidence/" + encodeURIComponent(routeEvidenceId) + "/review", { decision: routeDecision, reason: routeReason, ...(routeDecision === "approve" && routeValidUntil ? { validUntil: new Date(routeValidUntil).toISOString() } : {}) }, "Route evidence review recorded.");
           }}>
             <label className="block text-sm font-medium">Route evidence ID<input className="mt-2 w-full rounded-lg border p-3" value={routeEvidenceId} onChange={(event) => setRouteEvidenceId(event.target.value)} required /></label>
             <label className="block text-sm font-medium">Decision<select className="mt-2 w-full rounded-lg border p-3" value={routeDecision} onChange={(event) => setRouteDecision(event.target.value as typeof routeDecision)} required><option value="">Select review decision</option><option value="approve">Approve reviewed measurement</option><option value="revoke">Revoke approval</option></select></label>
             <label className="block text-sm font-medium">Review reason<textarea className="mt-2 w-full rounded-lg border p-3" value={routeReason} onChange={(event) => setRouteReason(event.target.value)} maxLength={2000} required /></label>
+            {routeDecision === "approve" && <label className="block text-sm font-medium">Evidence validity end<input className="mt-2 w-full rounded-lg border p-3" type="datetime-local" value={routeValidUntil} onChange={(event) => setRouteValidUntil(event.target.value)} required /></label>}
             <button className="cost-primary-button" disabled={busy}>{busy ? "Saving..." : "Record route review"}</button>
-            <p className="text-sm text-gray-600">Straight-line evidence cannot be approved as operational road-route evidence. Approval requires the separate <code>commercial_route_distance.approve</code> permission.</p>
+            <p className="text-sm text-gray-600">Straight-line evidence cannot be approved as operational road-route evidence. Approval requires a reviewer-specified validity end and the separate <code>commercial_route_distance.approve</code> permission.</p>
           </form>
         </section>
 
