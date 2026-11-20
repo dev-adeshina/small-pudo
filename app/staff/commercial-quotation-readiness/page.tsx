@@ -43,11 +43,12 @@ export default function CommercialQuotationReadinessPage() {
   const [currency, setCurrency] = useState("");
   const [quoteValidityMinutes, setQuoteValidityMinutes] = useState("");
   const [handoverWindowMinutes, setHandoverWindowMinutes] = useState("");
-  const [roundingPolicy, setRoundingPolicy] = useState("");
-  const [taxTreatment, setTaxTreatment] = useState("");
-  const [surchargeTreatment, setSurchargeTreatment] = useState("");
-  const [discountTreatment, setDiscountTreatment] = useState("");
-  const [feeTreatment, setFeeTreatment] = useState("");
+  const [roundingMode, setRoundingMode] = useState<"" | "none" | "half_up" | "half_even" | "ceil" | "floor">("");
+  const [decimalPlaces, setDecimalPlaces] = useState("");
+  const [taxTreatment, setTaxTreatment] = useState<"" | "included_in_components" | "not_applicable">("");
+  const [surchargeTreatment, setSurchargeTreatment] = useState<"" | "included_in_components" | "not_applicable">("");
+  const [discountTreatment, setDiscountTreatment] = useState<"" | "included_in_components" | "not_applicable">("");
+  const [feeTreatment, setFeeTreatment] = useState<"" | "included_in_components" | "not_applicable">("");
   const [termsConfirmed, setTermsConfirmed] = useState(false);
 
   useEffect(() => {
@@ -95,14 +96,6 @@ export default function CommercialQuotationReadinessPage() {
       setBusy(false);
     }
   }
-
-  const commercialTermFields: Array<{ name: string; label: string; value: string; setValue: (value: string) => void }> = [
-    { name: "roundingPolicy", label: "Rounding policy", value: roundingPolicy, setValue: setRoundingPolicy },
-    { name: "taxTreatment", label: "Tax treatment", value: taxTreatment, setValue: setTaxTreatment },
-    { name: "surchargeTreatment", label: "Surcharge treatment", value: surchargeTreatment, setValue: setSurchargeTreatment },
-    { name: "discountTreatment", label: "Discount treatment", value: discountTreatment, setValue: setDiscountTreatment },
-    { name: "feeTreatment", label: "Fee treatment", value: feeTreatment, setValue: setFeeTreatment },
-  ];
 
   if (checking) return <main className="admin-loading"><span>Checking staff access...</span></main>;
 
@@ -179,7 +172,8 @@ export default function CommercialQuotationReadinessPage() {
               serviceCode: termsServiceCode, pricingDefinitionId, pricingVersionId, currency,
               quoteValidityMinutes: Number(quoteValidityMinutes),
               handoverWindowMinutes: Number(handoverWindowMinutes),
-              roundingPolicy, taxTreatment, surchargeTreatment, discountTreatment, feeTreatment,
+              roundingMode, decimalPlaces: Number(decimalPlaces), roundingStage: "total_only",
+              taxTreatment, surchargeTreatment, discountTreatment, feeTreatment,
               confirmation: termsConfirmed ? "DEC-048_TERMS_REVIEWED" : "",
             }, "DEC-048 commercial terms approval recorded.");
           }}>
@@ -190,10 +184,22 @@ export default function CommercialQuotationReadinessPage() {
               <label className="block text-sm font-medium">Approved pricing version ID<input className="mt-2 w-full rounded-lg border p-3" value={pricingVersionId} onChange={(event) => setPricingVersionId(event.target.value)} required /></label>
               <label className="block text-sm font-medium">Quote validity (minutes)<input className="mt-2 w-full rounded-lg border p-3" type="number" min="1" max="525600" value={quoteValidityMinutes} onChange={(event) => setQuoteValidityMinutes(event.target.value)} required /></label>
               <label className="block text-sm font-medium">Physical handover window (minutes)<input className="mt-2 w-full rounded-lg border p-3" type="number" min="1" max="525600" value={handoverWindowMinutes} onChange={(event) => setHandoverWindowMinutes(event.target.value)} required /></label>
+              <label className="block text-sm font-medium">Rounding mode<select className="mt-2 w-full rounded-lg border p-3" value={roundingMode} onChange={(event) => setRoundingMode(event.target.value as typeof roundingMode)} required><option value="">Select approved rounding mode</option><option value="none">No rounding</option><option value="half_up">Half up</option><option value="half_even">Half even</option><option value="ceil">Round up</option><option value="floor">Round down</option></select></label>
+              <label className="block text-sm font-medium">Decimal places<input className="mt-2 w-full rounded-lg border p-3" type="number" min="0" max="6" step="1" value={decimalPlaces} onChange={(event) => setDecimalPlaces(event.target.value)} required /></label>
             </div>
-            {commercialTermFields.map(({ name, label, value, setValue }) => (
-              <label key={name} className="block text-sm font-medium">{label}
-                <textarea className="mt-2 w-full rounded-lg border p-3" value={value} onChange={(event) => setValue(event.target.value)} required maxLength={500} />
+            <p className="text-sm text-gray-600">The current implementation applies rounding to the quotation total only. This stage must be acceptable as part of the approved commercial terms.</p>
+            {[
+              ["Tax treatment", taxTreatment, setTaxTreatment],
+              ["Surcharge treatment", surchargeTreatment, setSurchargeTreatment],
+              ["Discount treatment", discountTreatment, setDiscountTreatment],
+              ["Fee treatment", feeTreatment, setFeeTreatment],
+            ].map(([label, value, setter]) => (
+              <label key={String(label)} className="block text-sm font-medium">{String(label)}
+                <select className="mt-2 w-full rounded-lg border p-3" value={String(value)} onChange={(event) => (setter as (value: "included_in_components" | "not_applicable") => void)(event.target.value as "included_in_components" | "not_applicable" | "")} required>
+                  <option value="">Select explicit treatment</option>
+                  <option value="included_in_components">Included in approved pricing components</option>
+                  <option value="not_applicable">Not applicable</option>
+                </select>
               </label>
             ))}
             <label className="flex items-start gap-3 text-sm"><input type="checkbox" checked={termsConfirmed} onChange={(event) => setTermsConfirmed(event.target.checked)} required /><span>I confirm these service-specific commercial terms have been reviewed and approved under DEC-048, including the exact published pricing version, currency, deadlines and treatment of all listed charge categories.</span></label>
