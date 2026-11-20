@@ -219,6 +219,15 @@ export function createCommercialQuotationReadinessStore({
             !destinationActivation.exists || destinationActivation.data()?.status !== "active") {
           throw new TypeError("Both exact PUDO endpoints must be active before eligibility can be approved.");
         }
+        const requiredLocationEvidence = [
+          "pudoLocationVerifications/" + originPudoLocationId,
+          "pudoLocationActivations/" + originPudoLocationId,
+          "pudoLocationVerifications/" + destinationPudoLocationId,
+          "pudoLocationActivations/" + destinationPudoLocationId,
+        ];
+        if (requiredLocationEvidence.some((reference) => !evidenceReferences.includes(reference))) {
+          throw new TypeError("Eligibility must reference the physical verification and activation records for both exact PUDO endpoints.");
+        }
         for (const reference of evidenceReferences) {
           if (!(reference.split("/").length >= 2 && reference.split("/").length % 2 === 0 && reference.split("/").every((segment) => ID.test(segment)))) {
             throw new TypeError("Each eligibility evidence reference must be a Firestore document path.");
