@@ -3,11 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowLeft, CheckCircle2, ClipboardList, FilePlus2, Loader2, LogOut, Plus, RefreshCw, Save, Send, ShieldCheck, X } from "lucide-react";
 import { auth } from "@/lib/firebase";
-import { signOut } from "firebase/auth";
 
 type InputType = "string" | "number" | "boolean" | "date";
 type InputDefinition = { key: string; label: string; description?: string; valueType: InputType; required: boolean; source?: string; unit?: string; precision?: number; conversion?: string };
