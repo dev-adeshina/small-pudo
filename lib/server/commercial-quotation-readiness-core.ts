@@ -355,6 +355,10 @@ export function createCommercialQuotationReadinessStore({
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision is not usable." };
       }
       const requiredConditions = Array.isArray(data.conditions) ? data.conditions as string[] : [];
+      if (data.outcome === "conditionally_eligible" &&
+          (requiredConditions.length === 0 || requiredConditions.some((condition) => typeof condition !== "string" || !condition.trim()))) {
+        return { eligible: false as const, outcome: "conditionally_eligible" as const, reason: "The conditional eligibility record has no valid conditions." };
+      }
       if (data.outcome === "conditionally_eligible" && requiredConditions.some((condition) => !satisfiedConditions.includes(condition))) {
         return { eligible: false as const, outcome: "conditionally_eligible" as const, reason: "One or more eligibility conditions are not satisfied.", conditions: requiredConditions };
       }
