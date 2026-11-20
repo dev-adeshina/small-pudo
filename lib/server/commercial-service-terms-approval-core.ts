@@ -91,8 +91,10 @@ export function createCommercialServiceTermsApprovalStore({ db, serverTimestamp 
           !["versionNumber", "createdAt", "createdBy"].includes(key)
         ));
         assertCommercialPricingConfiguration(pricingConfiguration);
-        if (configuration.createdBy === actorUid || workflowData?.proposerUid === actorUid) {
-          throw new Error("DEC-048 owner approval must be independent of the pricing configuration proposer.");
+        if (configuration.createdBy === actorUid ||
+            workflowData?.proposerUid === actorUid ||
+            workflowData?.approverUid === actorUid) {
+          throw new Error("DEC-048 owner approval must be independent of the pricing proposer and pricing approver.");
         }
         if (lineage.currentVersionId !== pricingVersionId ||
             lineage.approvedVersionId !== pricingVersionId ||
