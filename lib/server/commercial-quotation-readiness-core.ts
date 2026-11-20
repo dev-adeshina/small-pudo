@@ -371,6 +371,7 @@ export function createCommercialQuotationReadinessStore({
           !data.approvedAt ||
           !["none", "half_up", "half_even", "ceil", "floor"].includes(String(data.roundingMode)) ||
           !Number.isSafeInteger(data.decimalPlaces) || data.decimalPlaces < 0 || data.decimalPlaces > 6 ||
+          (data.roundingMode === "none" && data.decimalPlaces !== 0) ||
           data.roundingStage !== "total_only" ||
           !["included_in_components", "not_applicable"].includes(String(data.taxTreatment)) ||
           !["included_in_components", "not_applicable"].includes(String(data.surchargeTreatment)) ||
