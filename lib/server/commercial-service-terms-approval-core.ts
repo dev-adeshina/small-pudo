@@ -57,6 +57,7 @@ export function createCommercialServiceTermsApprovalStore({ db, serverTimestamp 
       assertMinutes(input.handoverWindowMinutes, "Physical handover window");
       if (!["none", "half_up", "half_even", "ceil", "floor"].includes(input.roundingMode)) throw new TypeError("A supported rounding mode must be explicitly approved.");
       if (!Number.isSafeInteger(input.decimalPlaces) || input.decimalPlaces < 0 || input.decimalPlaces > 6) throw new TypeError("Decimal places must be an explicitly approved integer from 0 to 6.");
+      if (input.roundingMode === "none" && input.decimalPlaces !== 0) throw new TypeError("No-rounding terms must specify zero decimal places.");
       if (input.roundingStage !== "total_only") throw new TypeError("Only explicitly approved total-only rounding is supported.");
       for (const [label, treatment] of [
         ["Tax treatment", input.taxTreatment],
