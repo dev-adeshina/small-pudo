@@ -60,9 +60,10 @@ export function createShipmentBookingDraftHandlers(dependencies: ShipmentBooking
       return Response.json({ success: true, draft }, { status: 201 });
     } catch (error) {
       console.error("Failed to save shipment booking draft:", error);
-      const message = error instanceof Error && error.message.includes("PUDO")
+      const invalidReference = error instanceof TypeError;
+      const message = invalidReference && error instanceof Error
         ? error.message : "Unable to save your shipment draft right now.";
-      return Response.json({ error: message }, { status: message === error?.toString() ? 400 : 500 });
+      return Response.json({ error: message }, { status: invalidReference ? 400 : 500 });
     }
   }
 
@@ -84,9 +85,10 @@ export function createShipmentBookingDraftHandlers(dependencies: ShipmentBooking
       return Response.json({ success: true, draft: { id: draftId, ...validated.data, status: "draft" } });
     } catch (error) {
       console.error("Failed to update shipment booking draft:", error);
-      const message = error instanceof Error && error.message.includes("PUDO")
+      const invalidReference = error instanceof TypeError;
+      const message = invalidReference && error instanceof Error
         ? error.message : "Unable to update your shipment draft right now.";
-      return Response.json({ error: message }, { status: message === error?.toString() ? 400 : 500 });
+      return Response.json({ error: message }, { status: invalidReference ? 400 : 500 });
     }
   }
 
