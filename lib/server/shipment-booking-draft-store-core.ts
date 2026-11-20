@@ -19,6 +19,30 @@ interface ShipmentBookingDraftStoreDependencies {
   updateDraftOnlyWhileEditable: UpdateDraftGuard;
 }
 
+function declaredMeasurementsFromParcelInput(value: unknown): ShipmentBookingDraftInput["declaredMeasurements"] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  const declared = (value as Record<string, unknown>).declared;
+  if (!declared || typeof declared !== "object" || Array.isArray(declared)) return undefined;
+  const measurements = (declared as Record<string, unknown>).measurements;
+  if (!measurements || typeof measurements !== "object" || Array.isArray(measurements)) return undefined;
+  return measurements as ShipmentBookingDraftInput["declaredMeasurements"];
+}
+
+function parcelInputForDraft(customerUid: string, input: ShipmentBookingDraftInput) {
+  const measurements = input.declaredMeasurements;
+  if (!measurements || Object.keys(measurements).length === 0) return null;
+  return {
+    schemaVersion: 1,
+    declared: {
+      measurements,
+      recordedAt: new Date().toISOString(),
+      recordedBy: customerUid,
+      source: "customer_declared",
+    },
+    handlingCharacteristics: [],
+  };
+}
+
 function toISOString(value: unknown): string | null {
   if (
     value &&
@@ -60,6 +84,7 @@ export function createShipmentBookingDraftStore({
           origin: data.origin,
           destination: data.destination,
           parcelDescription: data.parcelDescription,
+          declaredMeasurements: declaredMeasurementsFromParcelInput(data.parcelInput),
           status: "draft" as const,
           createdAt: toISOString(data.createdAt),
           updatedAt: toISOString(data.updatedAt),
@@ -77,9 +102,11 @@ export function createShipmentBookingDraftStore({
         .collection("shipmentBookingDrafts")
         .doc();
 
+      const { declaredMeasurements: _declaredMeasurements, ...draftFields } = input;
       await draftRef.create({
         bookingPartyUid: customerUid,
-        ...input,
+        ...draftFields,
+        parcelInput: parcelInputForDraft(customerUid, input),
         status: "draft",
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -107,8 +134,10 @@ export function createShipmentBookingDraftStore({
         updateDraftOnlyWhileEditable(
           () => transaction.get(draftRef),
           () => {
+            const { declaredMeasurements: _declaredMeasurements, ...draftFields } = input;
             transaction.update(draftRef, {
-              ...input,
+              ...draftFields,
+              parcelInput: parcelInputForDraft(customerUid, input),
               updatedAt: serverTimestamp(),
             });
           }
