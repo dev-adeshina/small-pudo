@@ -26,6 +26,7 @@ export async function POST(request: Request, context: Context) {
       evidenceId,
       input.decision as "approve" | "revoke",
       input.reason as string,
+      typeof input.validUntil === "string" ? new Date(input.validUntil) : undefined,
     );
     return NextResponse.json({ result });
   } catch (error) {
