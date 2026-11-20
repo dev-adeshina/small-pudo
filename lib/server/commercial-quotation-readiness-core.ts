@@ -53,6 +53,16 @@ function dateMillis(value: unknown): number | null {
   }
   return null;
 }
+function canonicalJson(value: unknown): string {
+  if (Array.isArray(value)) return "[" + value.map(canonicalJson).join(",") + "]";
+  if (value && typeof value === "object") {
+    const entries = Object.entries(value as Record<string, unknown>)
+      .filter(([, item]) => item !== undefined)
+      .sort(([left], [right]) => left.localeCompare(right));
+    return "{" + entries.map(([key, item]) => JSON.stringify(key) + ":" + canonicalJson(item)).join(",") + "}";
+  }
+  return JSON.stringify(value) ?? "null";
+}
 
 /**
  * Operational/commercial evidence gates shared by route review, DEC-047
@@ -176,7 +186,7 @@ export function createCommercialQuotationReadinessStore({
             evidence.method === "straight_line" ||
             typeof evidence.measuredOn !== "string" ||
             !Number.isFinite(Date.parse(evidence.measuredOn)) ||
-            JSON.stringify(reviewData.evidenceSnapshot) !== JSON.stringify(evidence)) return null;
+            canonicalJson(reviewData.evidenceSnapshot) !== canonicalJson(evidence)) return null;
         const measured = Date.parse(evidence.measuredOn + "T00:00:00Z");
         if (measured > now().getTime()) return null;
         return { evidenceId: doc.id, evidence, review: reviewData };
