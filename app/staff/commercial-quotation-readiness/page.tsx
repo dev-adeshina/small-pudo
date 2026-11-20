@@ -160,7 +160,33 @@ export default function CommercialQuotationReadinessPage() {
         </section>
 
         <section className="cost-panel">
-          <div className="cost-panel-heading"><div><span className="section-label">02 / DEC-047</span><h2>Record service and endpoint eligibility</h2></div></div>
+          <div className="cost-panel-heading"><div><span className="section-label">02 / PUDO SERVICE CAPABILITY</span><h2>Approve endpoint actions for a service</h2></div></div>
+          <form className="space-y-4" onSubmit={(event) => {
+            event.preventDefault();
+            void post("/api/staff/commercial-quotation-readiness/pudo-capabilities", {
+              locationId: capabilityLocationId,
+              serviceCode: capabilityServiceCode,
+              supportedActions: lines(capabilityActions),
+              evidenceReferences: lines(capabilityEvidenceReferences),
+              validUntil: capabilityValidUntil ? new Date(capabilityValidUntil).toISOString() : "",
+              reason: capabilityReason,
+            }, "PUDO service endpoint capability approved.");
+          }}>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="block text-sm font-medium">PUDO location ID<input className="mt-2 w-full rounded-lg border p-3" value={capabilityLocationId} onChange={(event) => setCapabilityLocationId(event.target.value)} required /></label>
+              <label className="block text-sm font-medium">Service<select className="mt-2 w-full rounded-lg border p-3" value={capabilityServiceCode} onChange={(event) => setCapabilityServiceCode(event.target.value as ServiceCode | "")} required><option value="">Select service</option><option value="standard">Standard</option><option value="express">Express</option><option value="scheduled">Scheduled</option></select></label>
+            </div>
+            <label className="block text-sm font-medium">Supported endpoint actions (one explicit action per line)<textarea className="mt-2 w-full rounded-lg border p-3" value={capabilityActions} onChange={(event) => setCapabilityActions(event.target.value)} required rows={3} /></label>
+            <label className="block text-sm font-medium">Capability evidence document paths<textarea className="mt-2 w-full rounded-lg border p-3" value={capabilityEvidenceReferences} onChange={(event) => setCapabilityEvidenceReferences(event.target.value)} required rows={4} placeholder={"pudoLocationVerifications/LOCATION_ID\npudoLocationActivations/LOCATION_ID"} /></label>
+            <label className="block text-sm font-medium">Capability validity end<input className="mt-2 w-full rounded-lg border p-3" type="datetime-local" value={capabilityValidUntil} onChange={(event) => setCapabilityValidUntil(event.target.value)} required /></label>
+            <label className="block text-sm font-medium">Approval reason<textarea className="mt-2 w-full rounded-lg border p-3" value={capabilityReason} onChange={(event) => setCapabilityReason(event.target.value)} required maxLength={2000} /></label>
+            <button className="cost-primary-button" disabled={busy}>{busy ? "Saving..." : "Approve PUDO service capability"}</button>
+            <p className="text-sm text-gray-600">This records service-specific actions for one active PUDO location. It requires <code>pudo_location.capability_approve</code> and does not itself activate the location or make a service/endpoint combination eligible.</p>
+          </form>
+        </section>
+
+        <section className="cost-panel">
+          <div className="cost-panel-heading"><div><span className="section-label">03 / DEC-047</span><h2>Record service and endpoint eligibility</h2></div></div>
           <form className="space-y-4" onSubmit={(event) => {
             event.preventDefault();
             void post("/api/staff/commercial-quotation-readiness/eligibility", {
@@ -185,12 +211,19 @@ export default function CommercialQuotationReadinessPage() {
               {eligibilityOriginType === "pudo" && <label className="block text-sm font-medium">Origin PUDO ID<input className="mt-2 w-full rounded-lg border p-3" value={originPudoLocationId} onChange={(event) => setOriginPudoLocationId(event.target.value)} required /></label>}
               {eligibilityDestinationType === "pudo" && <label className="block text-sm font-medium">Destination PUDO ID<input className="mt-2 w-full rounded-lg border p-3" value={destinationPudoLocationId} onChange={(event) => setDestinationPudoLocationId(event.target.value)} required /></label>}
             </div>
-            <label className="block text-sm font-medium">Evidence document paths (one Firestore document path per line)<textarea className="mt-2 w-full rounded-lg border p-3" value={evidenceReferences} onChange={(event) => setEvidenceReferences(event.target.value)} rows={4} placeholder={"pudoLocationVerifications/ORIGIN_ID\npudoLocationActivations/ORIGIN_ID\npudoLocationVerifications/DESTINATION_ID\npudoLocationActivations/DESTINATION_ID\ncommercialRouteDistanceEvidence/EVIDENCE_ID\ncommercialRouteDistanceReviews/EVIDENCE_ID"} /></label>
-            <label className="block text-sm font-medium">Condition evidence document paths (one per line; required for conditional eligibility)<textarea className="mt-2 w-full rounded-lg border p-3" value={conditions} onChange={(event) => setConditions(event.target.value)} rows={3} /></label>
+            <label className="block text-sm font-medium">All decision evidence document paths (one Firestore document path per line)<textarea className="mt-2 w-full rounded-lg border p-3" value={evidenceReferences} onChange={(event) => setEvidenceReferences(event.target.value)} rows={5} placeholder={"pudoLocationVerifications/ORIGIN_ID\npudoLocationActivations/ORIGIN_ID\npudoLocationServiceCapabilities/ORIGIN_ID__standard\npudoLocationVerifications/DESTINATION_ID\npudoLocationActivations/DESTINATION_ID\npudoLocationServiceCapabilities/DESTINATION_ID__standard\ncommercialRouteDistanceEvidence/EVIDENCE_ID\ncommercialRouteDistanceReviews/EVIDENCE_ID"} /></label>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="block text-sm font-medium">Service coverage evidence paths<textarea className="mt-2 w-full rounded-lg border p-3" value={serviceCoverageReferences} onChange={(event) => setServiceCoverageReferences(event.target.value)} rows={3} /></label>
+              <label className="block text-sm font-medium">Operating availability evidence paths<textarea className="mt-2 w-full rounded-lg border p-3" value={availabilityReferences} onChange={(event) => setAvailabilityReferences(event.target.value)} rows={3} /></label>
+              <label className="block text-sm font-medium">Capacity evidence paths<textarea className="mt-2 w-full rounded-lg border p-3" value={capacityReferences} onChange={(event) => setCapacityReferences(event.target.value)} rows={3} /></label>
+              <label className="block text-sm font-medium">Origin required actions<textarea className="mt-2 w-full rounded-lg border p-3" value={originRequiredActions} onChange={(event) => setOriginRequiredActions(event.target.value)} rows={3} /></label>
+              <label className="block text-sm font-medium">Destination required actions<textarea className="mt-2 w-full rounded-lg border p-3" value={destinationRequiredActions} onChange={(event) => setDestinationRequiredActions(event.target.value)} rows={3} /></label>
+              <label className="block text-sm font-medium">Conditional evidence paths (one per line)<textarea className="mt-2 w-full rounded-lg border p-3" value={conditions} onChange={(event) => setConditions(event.target.value)} rows={3} /></label>
+            </div>
             <label className="block text-sm font-medium">Decision reason<textarea className="mt-2 w-full rounded-lg border p-3" value={eligibilityReason} onChange={(event) => setEligibilityReason(event.target.value)} required maxLength={2000} /></label>
             <label className="block text-sm font-medium">Eligibility validity end{(eligibilityOutcome === "eligible" || eligibilityOutcome === "conditionally_eligible") ? " (required)" : " (optional)"}<input className="mt-2 w-full rounded-lg border p-3" type="datetime-local" value={eligibilityValidUntil} onChange={(event) => setEligibilityValidUntil(event.target.value)} required={eligibilityOutcome === "eligible" || eligibilityOutcome === "conditionally_eligible"} /></label>
             <button className="cost-primary-button" disabled={busy}>{busy ? "Saving..." : "Record DEC-047 decision"}</button>
-            <p className="text-sm text-gray-600">Positive eligibility can currently be recorded only for exact active PUDO-to-PUDO pairs with both physical verification and activation records, plus the exact reviewed route measurement and review records. Address endpoint combinations may be explicitly marked not eligible or revoked, but remain unavailable until authoritative address-to-operational-point mapping exists. Requires <code>commercial_service_eligibility.approve</code>.</p>
+            <p className="text-sm text-gray-600">Positive eligibility requires exact active PUDO-to-PUDO endpoints, approved service actions at both locations, service coverage, operating availability, capacity, and the exact reviewed route measurement. All referenced evidence must remain current. Address endpoint combinations may be explicitly marked not eligible or revoked, but remain unavailable until authoritative address-to-operational-point mapping exists. Requires <code>commercial_service_eligibility.approve</code>.</p>
           </form>
         </section>
 
