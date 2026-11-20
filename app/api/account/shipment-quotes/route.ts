@@ -106,6 +106,13 @@ export async function POST(request: Request) {
       if (!routeRecord) return NextResponse.json({
         error: "A valid PUDO-to-PUDO journey requires reviewed route-distance evidence for these exact operational endpoints.",
       }, { status: 409 });
+      const eligibilityEvidence = new Set(eligibility.evidenceReferences);
+      if (!eligibilityEvidence.has("commercialRouteDistanceEvidence/" + routeRecord.evidenceId) ||
+          !eligibilityEvidence.has("commercialRouteDistanceReviews/" + routeRecord.evidenceId)) {
+        return NextResponse.json({
+          error: "The DEC-047 eligibility approval must reference this exact route measurement and its independent review.",
+        }, { status: 409 });
+      }
     }
     if (requiresRoute && !routeRecord) return NextResponse.json({
       error: "The approved pricing configuration requires reviewed route-distance evidence for these exact operational endpoints.",
