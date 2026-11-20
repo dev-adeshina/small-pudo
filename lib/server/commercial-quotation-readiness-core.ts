@@ -309,6 +309,15 @@ export function createCommercialQuotationReadinessStore({
       if (originType === "address" || destinationType === "address") {
         const addressRecord = await eligibility.doc(keyFor(serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId)).get();
         const addressData = addressRecord.data();
+        if (addressRecord.exists && (
+          addressData?.serviceCode !== serviceCode ||
+          addressData?.originType !== originType ||
+          addressData?.destinationType !== destinationType ||
+          addressData?.originPudoLocationId !== originPudoLocationId ||
+          addressData?.destinationPudoLocationId !== destinationPudoLocationId
+        )) {
+          return { eligible: false as const, outcome: "pending_verification" as const, reason: "The stored address eligibility decision does not match the requested endpoints." };
+        }
         if (addressRecord.exists && (addressData?.outcome === "not_eligible" || addressData?.outcome === "revoked")) {
           return { eligible: false as const, outcome: addressData.outcome as CommercialEligibilityOutcome, reason: String(addressData.reason ?? "The service and endpoint combination is unavailable.") };
         }
@@ -323,6 +332,13 @@ export function createCommercialQuotationReadinessStore({
       const record = await eligibility.doc(keyFor(serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId)).get();
       if (!record.exists) return { eligible: false as const, outcome: "pending_verification" as const, reason: "No DEC-047 eligibility decision has been recorded." };
       const data = record.data()!;
+      if (data.serviceCode !== serviceCode ||
+          data.originType !== originType ||
+          data.destinationType !== destinationType ||
+          data.originPudoLocationId !== originPudoLocationId ||
+          data.destinationPudoLocationId !== destinationPudoLocationId) {
+        return { eligible: false as const, outcome: "pending_verification" as const, reason: "The stored eligibility decision does not match the requested service and exact endpoints." };
+      }
       if (data.outcome === "pending_verification") {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: String(data.reason ?? "The service and endpoint combination remains pending verification.") };
       }
