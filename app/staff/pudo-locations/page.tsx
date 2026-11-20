@@ -176,7 +176,7 @@ export default function PudoLocationsPage() {
                                         </Link>
                                         {candidate.lifecycle !== "active" && (
                                             <button
-                                                className="admin-action"
+                                                className="cost-danger-button"
                                                 type="button"
                                                 onClick={() => setDeleteTarget(candidate)}
                                                 disabled={deletingId !== null}
