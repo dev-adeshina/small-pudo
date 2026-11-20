@@ -45,7 +45,7 @@ function AcceptStaffInvitationContent() {
       setMessage("Your email is not verified yet. Open the verification email, then return here and sign in again.");
       return;
     }
-    router.replace("/admin/operational-cost-definitions");
+    router.replace("/staff");
   }
 
   async function authenticate() {
