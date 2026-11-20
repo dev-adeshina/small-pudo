@@ -179,12 +179,15 @@ export function createCommercialQuotationReadinessStore({
       assertActor(actorUid);
       if (!SERVICES.has(serviceCode) || !ENDPOINTS.has(originType) || !ENDPOINTS.has(destinationType)) throw new TypeError("Unsupported service or endpoint type.");
       if (!["eligible", "conditionally_eligible", "not_eligible", "revoked"].includes(outcome)) throw new TypeError("Unsupported eligibility outcome.");
-      if (originType === "address" || destinationType === "address") {
-        throw new TypeError("Address endpoint eligibility requires authoritative address-to-operational-point mapping, which is not yet available.");
+      const hasAddressEndpoint = originType === "address" || destinationType === "address";
+      if (hasAddressEndpoint && outcome !== "not_eligible" && outcome !== "revoked") {
+        throw new TypeError("Address endpoint eligibility cannot be approved until authoritative address-to-operational-point mapping exists.");
       }
-      assertId(originPudoLocationId ?? "", "Origin PUDO location ID");
-      assertId(destinationPudoLocationId ?? "", "Destination PUDO location ID");
-      if (originPudoLocationId === destinationPudoLocationId) throw new TypeError("Origin and destination PUDO locations must be different.");
+      if (originType === "pudo") assertId(originPudoLocationId ?? "", "Origin PUDO location ID");
+      else if (originPudoLocationId !== undefined) throw new TypeError("An address origin cannot include a PUDO location ID.");
+      if (destinationType === "pudo") assertId(destinationPudoLocationId ?? "", "Destination PUDO location ID");
+      else if (destinationPudoLocationId !== undefined) throw new TypeError("An address destination cannot include a PUDO location ID.");
+      if (originPudoLocationId && originPudoLocationId === destinationPudoLocationId) throw new TypeError("Origin and destination PUDO locations must be different.");
       if (!Array.isArray(evidenceReferences) || evidenceReferences.length > 50 ||
           evidenceReferences.some((item) => typeof item !== "string" || !item.trim() || item.length > 300)) {
         throw new TypeError("Eligibility evidence references must be a list of at most 50 valid references.");
@@ -207,26 +210,25 @@ export function createCommercialQuotationReadinessStore({
       const eventRef = recordRef.collection("events").doc();
       return db.runTransaction(async (transaction) => {
         await requirePermission(transaction, actorUid, ELIGIBILITY_PERMISSION, "approve service and endpoint eligibility");
-        const [originCandidate, originActivation, destinationCandidate, destinationActivation] = await Promise.all([
-          transaction.get(locations.doc(originPudoLocationId!)),
-          transaction.get(activations.doc(originPudoLocationId!)),
-          transaction.get(locations.doc(destinationPudoLocationId!)),
-          transaction.get(activations.doc(destinationPudoLocationId!)),
-        ]);
-        if (!originCandidate.exists || originCandidate.data()?.lifecycle !== "active" ||
-            !originActivation.exists || originActivation.data()?.status !== "active" ||
-            !destinationCandidate.exists || destinationCandidate.data()?.lifecycle !== "active" ||
-            !destinationActivation.exists || destinationActivation.data()?.status !== "active") {
-          throw new TypeError("Both exact PUDO endpoints must be active before eligibility can be approved.");
-        }
-        const requiredLocationEvidence = [
-          "pudoLocationVerifications/" + originPudoLocationId,
-          "pudoLocationActivations/" + originPudoLocationId,
-          "pudoLocationVerifications/" + destinationPudoLocationId,
-          "pudoLocationActivations/" + destinationPudoLocationId,
-        ];
-        if (requiredLocationEvidence.some((reference) => !evidenceReferences.includes(reference))) {
-          throw new TypeError("Eligibility must reference the physical verification and activation records for both exact PUDO endpoints.");
+        if (outcome === "eligible" || outcome === "conditionally_eligible") {
+          const locationIds = [originPudoLocationId, destinationPudoLocationId].filter((value): value is string => Boolean(value));
+          for (const locationId of locationIds) {
+            const [candidate, activation] = await Promise.all([
+              transaction.get(locations.doc(locationId)),
+              transaction.get(activations.doc(locationId)),
+            ]);
+            if (!candidate.exists || candidate.data()?.lifecycle !== "active" ||
+                !activation.exists || activation.data()?.status !== "active") {
+              throw new TypeError("Every exact PUDO endpoint must be active before eligibility can be approved.");
+            }
+            const requiredLocationEvidence = [
+              "pudoLocationVerifications/" + locationId,
+              "pudoLocationActivations/" + locationId,
+            ];
+            if (requiredLocationEvidence.some((reference) => !evidenceReferences.includes(reference))) {
+              throw new TypeError("Eligibility must reference the physical verification and activation records for every exact PUDO endpoint.");
+            }
+          }
         }
         for (const reference of evidenceReferences) {
           if (!(reference.split("/").length >= 2 && reference.split("/").length % 2 === 0 && reference.split("/").every((segment) => ID.test(segment)))) {
@@ -271,6 +273,11 @@ export function createCommercialQuotationReadinessStore({
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The requested service or endpoint combination is unsupported." };
       }
       if (originType === "address" || destinationType === "address") {
+        const addressRecord = await eligibility.doc(keyFor(serviceCode, originType, destinationType, originPudoLocationId, destinationPudoLocationId)).get();
+        const addressData = addressRecord.data();
+        if (addressRecord.exists && (addressData?.outcome === "not_eligible" || addressData?.outcome === "revoked")) {
+          return { eligible: false as const, outcome: addressData.outcome as CommercialEligibilityOutcome, reason: String(addressData.reason ?? "The service and endpoint combination is unavailable.") };
+        }
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "Address endpoint eligibility requires an authoritative address-to-operational-point mapping." };
       }
       if (originType === "pudo" && (!originPudoLocationId || !(await isActivePudo(originPudoLocationId)))) {
