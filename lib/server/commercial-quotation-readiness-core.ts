@@ -256,7 +256,14 @@ export function createCommercialQuotationReadinessStore({
           typeof data.pricingVersionId !== "string" || !ID.test(data.pricingVersionId) ||
           typeof data.currency !== "string" || !data.currency.trim() ||
           !Number.isSafeInteger(data.quoteValidityMinutes) || data.quoteValidityMinutes < 1 ||
-          !Number.isSafeInteger(data.handoverWindowMinutes) || data.handoverWindowMinutes < 1) return null;
+          !Number.isSafeInteger(data.handoverWindowMinutes) || data.handoverWindowMinutes < 1 ||
+          typeof data.approvedBy !== "string" || !data.approvedBy ||
+          !data.approvedAt ||
+          typeof data.roundingPolicy !== "string" || !data.roundingPolicy.trim() ||
+          typeof data.taxTreatment !== "string" || !data.taxTreatment.trim() ||
+          typeof data.surchargeTreatment !== "string" || !data.surchargeTreatment.trim() ||
+          typeof data.discountTreatment !== "string" || !data.discountTreatment.trim() ||
+          typeof data.feeTreatment !== "string" || !data.feeTreatment.trim()) return null;
       const definition = await pricingDefinitions.doc(data.pricingDefinitionId).get();
       if (!definition.exists) return null;
       const lineage = definition.data()!;
