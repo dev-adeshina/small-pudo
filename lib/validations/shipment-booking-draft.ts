@@ -37,10 +37,8 @@ export function validateShipmentBookingDraft(
   const destination = typeof candidate.destination === "string" ? candidate.destination.trim() : "";
   const parcelDescription = typeof candidate.parcelDescription === "string"
     ? candidate.parcelDescription.trim() : "";
-  const originPudoLocationId = candidate.originPudoLocationId === undefined || candidate.originPudoLocationId === ""
-    ? undefined : candidate.originPudoLocationId;
-  const destinationPudoLocationId = candidate.destinationPudoLocationId === undefined || candidate.destinationPudoLocationId === ""
-    ? undefined : candidate.destinationPudoLocationId;
+  const rawOriginPudoLocationId = candidate.originPudoLocationId;
+  const rawDestinationPudoLocationId = candidate.destinationPudoLocationId;
 
   if (!origin || !destination || !parcelDescription) {
     return { success: false, error: "Origin, destination and parcel description are required." };
@@ -52,13 +50,18 @@ export function validateShipmentBookingDraft(
     return { success: false, error: "Parcel description must be 1,000 characters or fewer." };
   }
   for (const [value, label] of [
-    [originPudoLocationId, "Origin"],
-    [destinationPudoLocationId, "Destination"],
+    [rawOriginPudoLocationId, "Origin"],
+    [rawDestinationPudoLocationId, "Destination"],
   ] as const) {
     if (value !== undefined && (typeof value !== "string" || !LOCATION_ID.test(value))) {
       return { success: false, error: `${label} PUDO reference is invalid.` };
     }
   }
+  const originPudoLocationId = typeof rawOriginPudoLocationId === "string" && rawOriginPudoLocationId !== ""
+    ? rawOriginPudoLocationId : undefined;
+  const destinationPudoLocationId = typeof rawDestinationPudoLocationId === "string" && rawDestinationPudoLocationId !== ""
+    ? rawDestinationPudoLocationId : undefined;
+
   if (originPudoLocationId && originPudoLocationId === destinationPudoLocationId) {
     return { success: false, error: "Origin and destination PUDO locations must be different." };
   }
