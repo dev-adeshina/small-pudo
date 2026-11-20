@@ -12,6 +12,31 @@ import type { CommercialParcelInput } from "@/lib/server/commercial-parcel-input
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function roundCommercialTotal(value: number, mode: unknown, decimalPlaces: unknown): number {
+  if (!Number.isFinite(value) || value < 0) throw new TypeError("The evaluated quotation total must be a finite non-negative amount.");
+  if (!["none", "half_up", "half_even", "ceil", "floor"].includes(String(mode))) throw new TypeError("The approved rounding mode is unavailable.");
+  if (typeof decimalPlaces !== "number" || !Number.isSafeInteger(decimalPlaces) || decimalPlaces < 0 || decimalPlaces > 6) {
+    throw new TypeError("The approved decimal precision is unavailable.");
+  }
+  if (mode === "none") return value;
+  const factor = 10 ** decimalPlaces;
+  const scaled = value * factor;
+  if (!Number.isFinite(scaled)) throw new TypeError("The rounded quotation total is outside the supported numeric range.");
+  let rounded: number;
+  if (mode === "ceil") rounded = Math.ceil(scaled);
+  else if (mode === "floor") rounded = Math.floor(scaled);
+  else if (mode === "half_even") {
+    const lower = Math.floor(scaled);
+    const fraction = scaled - lower;
+    rounded = Math.abs(fraction - 0.5) < 1e-10 ? (lower % 2 === 0 ? lower : lower + 1) : Math.round(scaled);
+  } else {
+    rounded = Math.floor(scaled + 0.5 + Number.EPSILON * Math.max(1, Math.abs(scaled)));
+  }
+  const result = rounded / factor;
+  if (!Number.isFinite(result)) throw new TypeError("The rounded quotation total is invalid.");
+  return result;
+}
+
 export async function GET(request: Request) {
   const customer = await authenticateVerifiedCustomer(request.headers.get("authorization"), (token) => adminAuth.verifyIdToken(token));
   if (!customer.success) return NextResponse.json({ error: customer.error }, { status: customer.status });
@@ -98,6 +123,7 @@ export async function POST(request: Request) {
     if (evaluation.unit !== terms.currency) return NextResponse.json({
       error: "The evaluated pricing unit does not match the explicitly approved service currency.",
     }, { status: 409 });
+    const roundedTotal = roundCommercialTotal(evaluation.total, terms.roundingMode, terms.decimalPlaces);
 
     const issuedAt = new Date();
     const validUntil = new Date(issuedAt.getTime() + Number(terms.quoteValidityMinutes) * 60_000);
@@ -112,11 +138,14 @@ export async function POST(request: Request) {
       routeEvidence: routeRecord ? { evidenceId: routeRecord.evidenceId, evidence: routeRecord.evidence, review: routeRecord.review } : null,
       pricing: {
         definitionId: evaluation.definitionId, versionId: evaluation.versionId, versionNumber: evaluation.versionNumber,
-        components: evaluation.components, total: evaluation.total, currency: terms.currency,
-        inputValues: values, authority: "owner_approved_DEC-048_configuration",
+        components: evaluation.components, rawTotal: evaluation.total, total: roundedTotal, currency: terms.currency,
+        rounding: { mode: terms.roundingMode, decimalPlaces: terms.decimalPlaces, stage: terms.roundingStage },
+        inputValues: values, calculationPrimitiveAuthority: evaluation.authority,
+        authority: "approved_DEC-048_terms_and_exact_pricing_version",
         approvedTerms: {
           approvedBy: terms.approvedBy, approvedAt: terms.approvedAt,
-          roundingPolicy: terms.roundingPolicy, taxTreatment: terms.taxTreatment,
+          roundingMode: terms.roundingMode, decimalPlaces: terms.decimalPlaces, roundingStage: terms.roundingStage,
+          taxTreatment: terms.taxTreatment,
           surchargeTreatment: terms.surchargeTreatment, discountTreatment: terms.discountTreatment,
           feeTreatment: terms.feeTreatment,
         },
