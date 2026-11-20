@@ -202,6 +202,8 @@ export default function CustomerQuotesPage() {
               const version = quote.currentVersion ?? quote.versions?.find((item) => item.versionId === quote.currentVersionId);
               const snapshot = version?.snapshot ?? {};
               const pricing = (snapshot.pricing ?? snapshot.evaluation ?? {}) as Record<string, unknown>;
+              const quoteTerms = (snapshot.quoteTerms ?? {}) as Record<string, unknown>;
+              const rounding = (pricing.rounding ?? {}) as Record<string, unknown>;
               const components = Array.isArray(pricing.components) ? pricing.components as Array<Record<string, unknown>> : [];
               const status = quote.status ?? "unknown";
               const canDecide = status === "issued" && quote.currentVersionId;
@@ -216,12 +218,14 @@ export default function CustomerQuotesPage() {
                     <span className={"customer-status " + (status === "accepted" ? "customer-status-success" : status === "rejected" || status === "expired" ? "customer-status-cancelled" : "customer-status-pending")}>{status.replaceAll("_", " ")}</span>
                   </div>
                   <p>Version {version?.sequence ?? "—"} · Valid until {formatDate(quote.validUntil ?? version?.validUntil)}</p>
+                  {quoteTerms.handoverWindowMinutes !== undefined && <p>Physical handover window after acceptance: {displayValue(quoteTerms.handoverWindowMinutes)} minutes.</p>}
                   <div className="cost-version-list">
                     {snapshot.origin !== undefined && <div className="cost-version-row"><strong>Origin</strong><span>{displayValue(snapshot.origin)}</span></div>}
                     {snapshot.destination !== undefined && <div className="cost-version-row"><strong>Destination</strong><span>{displayValue(snapshot.destination)}</span></div>}
                     {components.map((component, index) => <div className="cost-version-row" key={String(component.key ?? index)}><strong>{displayValue(component.label ?? component.key)}</strong><span>{displayValue(component.value)} {displayValue(component.unit)}</span></div>)}
                   </div>
                   {pricing.total !== undefined && <p><strong>Total: {displayValue(pricing.total)} {displayValue(pricing.unit ?? pricing.currency)}</strong></p>}
+                  {rounding.mode !== undefined && <p className="text-sm text-gray-600">Total rounding: {displayValue(rounding.mode)} · {displayValue(rounding.decimalPlaces)} decimal places.</p>}
                   {status === "accepted" && <p><CheckCircle2 size={16} /> Accepted version: {quote.acceptedVersionId ?? "—"} · Handover deadline: {formatDate(quote.handoverDeadlineAt)}</p>}
                   {(quote.versions?.length ?? 0) > 1 && <div className="cost-field cost-field-wide">
                     <strong>Quotation version history</strong>
