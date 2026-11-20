@@ -19,10 +19,18 @@ import {
 import { auth } from "@/lib/firebase";
 import { signOutCustomer } from "@/lib/customer-auth";
 
+interface PudoLocationOption {
+  locationId: string;
+  name: string;
+  address: string;
+}
+
 interface ShipmentDraft {
   id: string;
   origin: string;
   destination: string;
+  originPudoLocationId?: string;
+  destinationPudoLocationId?: string;
   parcelDescription: string;
   declaredMeasurements?: Partial<Record<"weight" | "length" | "width" | "height", { value: number; unit: string }>>;
   status: "draft";
@@ -35,6 +43,8 @@ const MAX_DRAFTS = 50;
 const emptyForm = {
   origin: "",
   destination: "",
+  originPudoLocationId: "",
+  destinationPudoLocationId: "",
   parcelDescription: "",
   weight: "",
   weightUnit: "",
@@ -68,6 +78,8 @@ export default function ShipmentDraftsPage() {
   const [user, setUser] = useState<User | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [drafts, setDrafts] = useState<ShipmentDraft[]>([]);
+  const [pudoLocations, setPudoLocations] = useState<PudoLocationOption[]>([]);
+  const [pudoLocationsError, setPudoLocationsError] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -134,6 +146,23 @@ export default function ShipmentDraftsPage() {
       setUser(currentUser);
       setCheckingAuth(false);
       void loadDrafts(currentUser);
+      void (async () => {
+        try {
+          const idToken = await currentUser.getIdToken();
+          const response = await fetch("/api/account/available-pudo-locations", {
+            headers: { Authorization: `Bearer ${idToken}` },
+            cache: "no-store",
+          });
+          const data = await response.json().catch(() => null);
+          if (!response.ok || !data?.success) {
+            throw new Error(data?.error || "Unable to load active PUDO locations.");
+          }
+          setPudoLocations(Array.isArray(data.locations) ? data.locations : []);
+          setPudoLocationsError("");
+        } catch (loadError) {
+          setPudoLocationsError(loadError instanceof Error ? loadError.message : "Unable to load active PUDO locations.");
+        }
+      })();
     });
 
     return () => unsubscribe();
@@ -152,6 +181,8 @@ export default function ShipmentDraftsPage() {
     setForm({
       origin: draft.origin,
       destination: draft.destination,
+      originPudoLocationId: draft.originPudoLocationId ?? "",
+      destinationPudoLocationId: draft.destinationPudoLocationId ?? "",
       parcelDescription: draft.parcelDescription,
       weight: draft.declaredMeasurements?.weight ? String(draft.declaredMeasurements.weight.value) : "",
       weightUnit: draft.declaredMeasurements?.weight?.unit ?? "",
@@ -185,6 +216,8 @@ export default function ShipmentDraftsPage() {
     const submittedForm = {
       origin: form.origin,
       destination: form.destination,
+      ...(form.originPudoLocationId ? { originPudoLocationId: form.originPudoLocationId } : {}),
+      ...(form.destinationPudoLocationId ? { destinationPudoLocationId: form.destinationPudoLocationId } : {}),
       parcelDescription: form.parcelDescription,
       declaredMeasurements: Object.fromEntries(
         (["weight", "length", "width", "height"] as const)
@@ -338,6 +371,43 @@ export default function ShipmentDraftsPage() {
               />
               <small>{form.destination.length}/180 characters</small>
             </label>
+
+            <label>
+              <span>Origin PUDO (optional)</span>
+              <select
+                value={form.originPudoLocationId}
+                onChange={(event) => setForm({ ...form, originPudoLocationId: event.target.value })}
+                disabled={saving || Boolean(pudoLocationsError)}
+              >
+                <option value="">Address / other endpoint</option>
+                {pudoLocations.map((location) => (
+                  <option key={location.locationId} value={location.locationId}>
+                    {location.name} — {location.address}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              <span>Destination PUDO (optional)</span>
+              <select
+                value={form.destinationPudoLocationId}
+                onChange={(event) => setForm({ ...form, destinationPudoLocationId: event.target.value })}
+                disabled={saving || Boolean(pudoLocationsError)}
+              >
+                <option value="">Address / other endpoint</option>
+                {pudoLocations.map((location) => (
+                  <option key={location.locationId} value={location.locationId}>
+                    {location.name} — {location.address}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {pudoLocationsError && (
+              <p className="customer-panel-description shipment-form-wide" role="status">
+                Active PUDO choices could not be loaded. You can still save address-based draft endpoints.
+              </p>
+            )}
 
             <label className="shipment-form-wide">
               <span>Parcel description</span>
