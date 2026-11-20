@@ -18,7 +18,10 @@ function roundCommercialTotal(value: number, mode: unknown, decimalPlaces: unkno
   if (typeof decimalPlaces !== "number" || !Number.isSafeInteger(decimalPlaces) || decimalPlaces < 0 || decimalPlaces > 6) {
     throw new TypeError("The approved decimal precision is unavailable.");
   }
-  if (mode === "none") return value;
+  if (mode === "none") {
+    if (decimalPlaces !== 0) throw new TypeError("No-rounding terms must specify zero decimal places.");
+    return value;
+  }
   const factor = 10 ** decimalPlaces;
   const scaled = value * factor;
   if (!Number.isFinite(scaled)) throw new TypeError("The rounded quotation total is outside the supported numeric range.");
