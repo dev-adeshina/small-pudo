@@ -221,6 +221,10 @@ export function createCommercialQuotationReadinessStore({
       if (outcome === "conditionally_eligible" && (evidenceReferences.length === 0 || conditions.length === 0)) {
         throw new TypeError("Conditional eligibility requires evidence references and explicit conditions.");
       }
+      if ((outcome === "eligible" || outcome === "conditionally_eligible") &&
+          (!(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) || validUntil <= now())) {
+        throw new TypeError("Positive eligibility requires an explicit future validity end.");
+      }
       if (validUntil && (!(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) || validUntil <= now())) {
         throw new TypeError("Eligibility validity must be a future date.");
       }
