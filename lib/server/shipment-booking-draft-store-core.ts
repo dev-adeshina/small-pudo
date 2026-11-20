@@ -139,10 +139,10 @@ export function createShipmentBookingDraftStore({
           () => transaction.get(draftRef),
           () => {
             const draftFields = {
-        origin: input.origin,
-        destination: input.destination,
-        parcelDescription: input.parcelDescription,
-      };
+              origin: input.origin,
+              destination: input.destination,
+              parcelDescription: input.parcelDescription,
+            };
             transaction.update(draftRef, {
               ...draftFields,
               parcelInput: parcelInputForDraft(customerUid, input),
