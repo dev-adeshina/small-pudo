@@ -133,5 +133,40 @@ export function createCommercialServiceTermsApprovalStore({ db, serverTimestamp 
         return { serviceCode, status: "approved", pricingVersionId };
       });
     },
+    async revoke(input: { actorUid: string; serviceCode: CommercialServiceCode; reason: string }) {
+      const { actorUid, serviceCode, reason } = input;
+      assertActor(actorUid);
+      if (!["standard", "express", "scheduled"].includes(serviceCode)) throw new TypeError("Unsupported service code.");
+      assertText(reason, "A DEC-048 revocation reason");
+      const approvalRef = approvals.doc(serviceCode);
+      const eventRef = approvalRef.collection("events").doc();
+      return db.runTransaction(async (transaction: Transaction) => {
+        const allowed = await hasStaffActionPermissionInTransaction(
+          transaction, db, actorUid, "commercial_pricing.owner_approve",
+        );
+        if (!allowed) throw new Error("You are not authorised to revoke DEC-048 service commercial terms.");
+        const approval = await transaction.get(approvalRef);
+        if (!approval.exists || approval.data()?.status !== "approved") {
+          return { outcome: "not_active" as const, serviceCode };
+        }
+        const timestamp = serverTimestamp();
+        transaction.update(approvalRef, {
+          status: "revoked",
+          revokedBy: actorUid,
+          revokedAt: timestamp,
+          revocationReason: reason.trim(),
+          updatedAt: timestamp,
+        });
+        transaction.create(eventRef, {
+          action: "revoked",
+          actorUid,
+          serviceCode,
+          reason: reason.trim(),
+          previousPricingVersionId: approval.data()?.pricingVersionId ?? null,
+          timestamp,
+        });
+        return { outcome: "revoked" as const, serviceCode };
+      });
+    },
   };
 }
