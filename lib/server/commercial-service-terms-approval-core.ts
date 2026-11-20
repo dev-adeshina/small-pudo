@@ -3,6 +3,8 @@ import { hasStaffActionPermissionInTransaction } from "./staff-permission-grants
 import { assertCommercialPricingConfiguration } from "./commercial-pricing-engine-core.ts";
 
 export type CommercialServiceCode = "standard" | "express" | "scheduled";
+export type CommercialRoundingMode = "none" | "half_up" | "half_even" | "ceil" | "floor";
+export type CommercialChargeTreatment = "included_in_components" | "not_applicable";
 
 interface Dependencies {
   db: Firestore;
@@ -35,11 +37,13 @@ export function createCommercialServiceTermsApprovalStore({ db, serverTimestamp 
       currency: string;
       quoteValidityMinutes: number;
       handoverWindowMinutes: number;
-      roundingPolicy: string;
-      taxTreatment: string;
-      surchargeTreatment: string;
-      discountTreatment: string;
-      feeTreatment: string;
+      roundingMode: CommercialRoundingMode;
+      decimalPlaces: number;
+      roundingStage: "total_only";
+      taxTreatment: CommercialChargeTreatment;
+      surchargeTreatment: CommercialChargeTreatment;
+      discountTreatment: CommercialChargeTreatment;
+      feeTreatment: CommercialChargeTreatment;
       confirmation: "DEC-048_TERMS_REVIEWED";
     }) {
       const { actorUid, serviceCode, pricingDefinitionId, pricingVersionId } = input;
@@ -50,11 +54,19 @@ export function createCommercialServiceTermsApprovalStore({ db, serverTimestamp 
       assertText(input.currency, "Currency", 12);
       assertMinutes(input.quoteValidityMinutes, "Quote validity");
       assertMinutes(input.handoverWindowMinutes, "Physical handover window");
-      assertText(input.roundingPolicy, "Rounding policy");
-      assertText(input.taxTreatment, "Tax treatment");
-      assertText(input.surchargeTreatment, "Surcharge treatment");
-      assertText(input.discountTreatment, "Discount treatment");
-      assertText(input.feeTreatment, "Fee treatment");
+      if (!["none", "half_up", "half_even", "ceil", "floor"].includes(input.roundingMode)) throw new TypeError("A supported rounding mode must be explicitly approved.");
+      if (!Number.isSafeInteger(input.decimalPlaces) || input.decimalPlaces < 0 || input.decimalPlaces > 6) throw new TypeError("Decimal places must be an explicitly approved integer from 0 to 6.");
+      if (input.roundingStage !== "total_only") throw new TypeError("Only explicitly approved total-only rounding is supported.");
+      for (const [label, treatment] of [
+        ["Tax treatment", input.taxTreatment],
+        ["Surcharge treatment", input.surchargeTreatment],
+        ["Discount treatment", input.discountTreatment],
+        ["Fee treatment", input.feeTreatment],
+      ] as const) {
+        if (treatment !== "included_in_components" && treatment !== "not_applicable") {
+          throw new TypeError(label + " must be explicitly included in the approved pricing components or marked not applicable.");
+        }
+      }
       if (input.confirmation !== "DEC-048_TERMS_REVIEWED") throw new TypeError("Explicit DEC-048 confirmation is required.");
 
       const definitionRef = definitions.doc(pricingDefinitionId);
@@ -105,11 +117,13 @@ export function createCommercialServiceTermsApprovalStore({ db, serverTimestamp 
           currency: input.currency.trim().toUpperCase(),
           quoteValidityMinutes: input.quoteValidityMinutes,
           handoverWindowMinutes: input.handoverWindowMinutes,
-          roundingPolicy: input.roundingPolicy.trim(),
-          taxTreatment: input.taxTreatment.trim(),
-          surchargeTreatment: input.surchargeTreatment.trim(),
-          discountTreatment: input.discountTreatment.trim(),
-          feeTreatment: input.feeTreatment.trim(),
+          roundingMode: input.roundingMode,
+          decimalPlaces: input.decimalPlaces,
+          roundingStage: input.roundingStage,
+          taxTreatment: input.taxTreatment,
+          surchargeTreatment: input.surchargeTreatment,
+          discountTreatment: input.discountTreatment,
+          feeTreatment: input.feeTreatment,
           approvedBy: actorUid,
           approvedAt: timestamp,
           updatedAt: timestamp,
