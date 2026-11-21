@@ -44,6 +44,23 @@ const ID = /^[A-Za-z0-9_-]{1,128}$/;
 const ROUTE_REVIEW_PERMISSION = "commercial_route_distance.approve";
 const ELIGIBILITY_PERMISSION = "commercial_service_eligibility.approve";
 const CAPABILITY_PERMISSION = "pudo_location.capability_approve";
+const OPERATIONAL_EVIDENCE_RECORD_PERMISSION = "commercial_operational_evidence.record";
+const OPERATIONAL_EVIDENCE_REVIEW_PERMISSION = "commercial_operational_evidence.review";
+const OPERATIONAL_EVIDENCE_REVOKE_PERMISSION = "commercial_operational_evidence.revoke";
+type OperationalEvidenceKind = "service_coverage" | "operating_availability" | "capacity";
+type OperationalEvidenceRecord = {
+  evidenceId: string;
+  kind: OperationalEvidenceKind;
+  serviceCode: CommercialServiceCode;
+  recordedBy: string;
+  recordedAt: unknown;
+  supportingReference: string;
+  source: string;
+  validFrom: Date;
+  validUntil: Date;
+  scope: Record<string, unknown>;
+  details: Record<string, unknown>;
+};
 
 function assertActor(value: string): void {
   if (typeof value !== "string" || !ID.test(value)) throw new TypeError("A valid authenticated staff identity is required.");
@@ -104,6 +121,8 @@ export function createCommercialQuotationReadinessStore({
   const locations = db.collection("pudoLocations");
   const pricingDefinitions = db.collection("commercialPricingDefinitions");
   const commercialTerms = db.collection("commercialServiceCommercialApprovals");
+  const operationalEvidence = db.collection("commercialOperationalEvidence");
+  const operationalEvidenceReviews = db.collection("commercialOperationalEvidenceReviews");
 
   async function requirePermission(
     transaction: Transaction,
@@ -128,6 +147,188 @@ export function createCommercialQuotationReadinessStore({
   }
 
   return {
+    async recordOperationalEvidence(input: {
+      actorUid: string;
+      kind: OperationalEvidenceKind;
+      serviceCode: CommercialServiceCode;
+      source: string;
+      supportingReference: string;
+      validFrom: Date;
+      validUntil: Date;
+      scope: Record<string, unknown>;
+      details: Record<string, unknown>;
+    }) {
+      const { actorUid, kind, serviceCode, source, supportingReference, validFrom, validUntil, scope, details } = input;
+      assertActor(actorUid);
+      if (!["service_coverage", "operating_availability", "capacity"].includes(kind)) throw new TypeError("Unsupported operational evidence type.");
+      if (!SERVICES.has(serviceCode)) throw new TypeError("Unsupported service code.");
+      assertText(source, "An evidence source", 500);
+      assertText(supportingReference, "A traceable supporting reference", 1000);
+      if (!(validFrom instanceof Date) || !Number.isFinite(validFrom.getTime()) ||
+        !(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) ||
+        validUntil <= validFrom || validUntil <= now()) {
+        throw new TypeError("Operational evidence requires a valid effective period ending in the future.");
+      }
+      if (!scope || typeof scope !== "object" || Array.isArray(scope) ||
+        !details || typeof details !== "object" || Array.isArray(details)) {
+        throw new TypeError("Evidence scope and details must be structured records.");
+      }
+      const cleanScope = { ...scope };
+      const cleanDetails = { ...details };
+      if (kind === "service_coverage") {
+        if (!["area", "route"].includes(String(cleanScope.scopeType))) throw new TypeError("Coverage evidence must identify an operational area or directed route.");
+        if (cleanScope.scopeType === "area") assertText(cleanScope.areaRef, "A covered operational area reference", 300);
+        if (cleanScope.scopeType === "route") {
+          assertText(cleanScope.originOperationalPointRef, "A route origin operational point", 128);
+          assertText(cleanScope.destinationOperationalPointRef, "A route destination operational point", 128);
+          if (cleanScope.originOperationalPointRef === cleanScope.destinationOperationalPointRef) throw new TypeError("A covered route must have distinct directed endpoints.");
+        }
+        assertText(cleanDetails.coverageBasis, "A coverage basis", 1000);
+      } else if (kind === "operating_availability") {
+        assertId(String(cleanScope.locationId ?? ""), "PUDO location ID");
+        if (!Array.isArray(cleanDetails.operatingWindows) || cleanDetails.operatingWindows.length === 0 ||
+          cleanDetails.operatingWindows.length > 50 ||
+          cleanDetails.operatingWindows.some((item) => typeof item !== "string" || !item.trim() || item.length > 200)) {
+          throw new TypeError("Availability evidence requires explicit operating windows.");
+        }
+        assertText(cleanDetails.timeZone, "The operating time zone", 100);
+      } else {
+        assertId(String(cleanScope.locationId ?? ""), "PUDO location ID");
+        assertText(cleanDetails.capacityBasis, "A capacity basis", 500);
+        assertText(cleanDetails.capacityUnit, "A capacity unit", 100);
+        if (typeof cleanDetails.supportedLoad !== "number" || !Number.isFinite(cleanDetails.supportedLoad) || cleanDetails.supportedLoad <= 0) {
+          throw new TypeError("Capacity evidence requires a positive, measurable supported load.");
+        }
+      }
+      const evidenceRef = operationalEvidence.doc();
+      const eventRef = evidenceRef.collection("events").doc();
+      return db.runTransaction(async (transaction) => {
+        await requirePermission(transaction, actorUid, OPERATIONAL_EVIDENCE_RECORD_PERMISSION, "record operational evidence");
+        if (kind !== "service_coverage") {
+          const [location, activation, verification] = await Promise.all([
+            transaction.get(locations.doc(String(cleanScope.locationId))),
+            transaction.get(activations.doc(String(cleanScope.locationId))),
+            transaction.get(verifications.doc(String(cleanScope.locationId))),
+          ]);
+          if (!location.exists || location.data()?.lifecycle !== "active" ||
+            !activation.exists || activation.data()?.status !== "active" ||
+            !verification.exists || verification.data()?.status !== "approved_to_activate") {
+            throw new TypeError("PUDO-specific evidence can only be recorded for an active, physically verified and activated location.");
+          }
+        }
+        const timestamp = serverTimestamp();
+        transaction.create(evidenceRef, {
+          schemaVersion: 1, evidenceId: evidenceRef.id, kind, serviceCode,
+          source: source.trim(), supportingReference: supportingReference.trim(),
+          validFrom, validUntil, scope: cleanScope, details: cleanDetails,
+          recordedBy: actorUid, recordedAt: timestamp, createdAt: timestamp,
+        });
+        transaction.create(eventRef, {
+          action: "recorded", evidenceId: evidenceRef.id, kind, serviceCode,
+          actorUid, timestamp,
+        });
+        return { evidenceId: evidenceRef.id, kind, serviceCode, reviewStatus: "pending_review" as const };
+      });
+    },
+
+    async reviewOperationalEvidence(actorUid: string, evidenceId: string, decision: "approve" | "reject", reason: string, validUntil?: Date) {
+      assertActor(actorUid);
+      assertId(evidenceId, "Operational evidence ID");
+      if (decision !== "approve" && decision !== "reject") throw new TypeError("A valid evidence review decision is required.");
+      assertText(reason, "An evidence review reason");
+      if (decision === "approve" && (!(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) || validUntil <= now())) {
+        throw new TypeError("Evidence approval requires an explicit future validity end.");
+      }
+      const evidenceRef = operationalEvidence.doc(evidenceId);
+      const reviewRef = operationalEvidenceReviews.doc(evidenceId);
+      const eventRef = reviewRef.collection("events").doc();
+      return db.runTransaction(async (transaction) => {
+        await requirePermission(transaction, actorUid, OPERATIONAL_EVIDENCE_REVIEW_PERMISSION, "review operational evidence");
+        const [evidenceSnapshot, previousReview] = await Promise.all([
+          transaction.get(evidenceRef), transaction.get(reviewRef),
+        ]);
+        if (!evidenceSnapshot.exists) throw new Error("Operational evidence was not found.");
+        const evidence = evidenceSnapshot.data()!;
+        if (evidence.recordedBy === actorUid) throw new Error("Operational evidence review must be independent of its recorder.");
+        if (previousReview.data()?.status === "revoked") throw new Error("Revoked operational evidence cannot be re-approved; record a new evidence item.");
+        if (decision === "approve" && validUntil! > (dateMillis(evidence.validUntil) === null ? new Date(0) : new Date(dateMillis(evidence.validUntil)!))) {
+          throw new TypeError("Review validity cannot extend beyond the recorded evidence validity.");
+        }
+        const timestamp = serverTimestamp();
+        transaction.set(reviewRef, {
+          evidenceId, decision, status: decision === "approve" ? "approved" : "rejected",
+          evidenceSnapshot: evidence, validUntil: decision === "approve" ? validUntil : null,
+          reason: reason.trim(), reviewedBy: actorUid, reviewedAt: timestamp, updatedAt: timestamp,
+        });
+        transaction.create(eventRef, { action: decision, evidenceId, actorUid, reason: reason.trim(), timestamp });
+        return { evidenceId, status: decision === "approve" ? "approved" : "rejected" };
+      });
+    },
+
+    async revokeOperationalEvidence(actorUid: string, evidenceId: string, reason: string) {
+      assertActor(actorUid);
+      assertId(evidenceId, "Operational evidence ID");
+      assertText(reason, "An evidence revocation reason");
+      const evidenceRef = operationalEvidence.doc(evidenceId);
+      const reviewRef = operationalEvidenceReviews.doc(evidenceId);
+      const eventRef = reviewRef.collection("events").doc();
+      return db.runTransaction(async (transaction) => {
+        await requirePermission(transaction, actorUid, OPERATIONAL_EVIDENCE_REVOKE_PERMISSION, "revoke operational evidence");
+        const [evidenceSnapshot, reviewSnapshot] = await Promise.all([
+          transaction.get(evidenceRef), transaction.get(reviewRef),
+        ]);
+        if (!evidenceSnapshot.exists) throw new Error("Operational evidence was not found.");
+        if (!reviewSnapshot.exists || reviewSnapshot.data()?.status !== "approved") throw new TypeError("Only currently approved operational evidence can be revoked.");
+        const timestamp = serverTimestamp();
+        transaction.set(reviewRef, {
+          evidenceId, decision: "revoke", status: "revoked",
+          evidenceSnapshot: evidenceSnapshot.data(), validUntil: null,
+          reason: reason.trim(), reviewedBy: reviewSnapshot.data()?.reviewedBy ?? null,
+          revokedBy: actorUid, revokedAt: timestamp, updatedAt: timestamp,
+        });
+        transaction.create(eventRef, { action: "revoked", evidenceId, actorUid, reason: reason.trim(), timestamp });
+        return { evidenceId, status: "revoked" as const };
+      });
+    },
+
+    async listOperationalEvidence(actorUid: string, filters?: { kind?: OperationalEvidenceKind; serviceCode?: CommercialServiceCode; locationId?: string }) {
+      assertActor(actorUid);
+      const hasAccess = await Promise.all([
+        hasStaffActionPermissionInTransaction,
+      ]);
+      void hasAccess;
+      const snapshot = await operationalEvidence.orderBy("recordedAt", "desc").limit(200).get();
+      const rows = await Promise.all(snapshot.docs.map(async (document) => {
+        const evidence = document.data();
+        const reviewSnapshot = await operationalEvidenceReviews.doc(document.id).get();
+        const review = reviewSnapshot.data();
+        if (filters?.kind && evidence.kind !== filters.kind) return null;
+        if (filters?.serviceCode && evidence.serviceCode !== filters.serviceCode) return null;
+        if (filters?.locationId && evidence.scope?.locationId !== filters.locationId) return null;
+        const evidenceExpiry = dateMillis(evidence.validUntil);
+        const reviewExpiry = dateMillis(review?.validUntil);
+        const current = review?.status === "approved" && reviewExpiry !== null &&
+          reviewExpiry > now().getTime() && evidenceExpiry !== null && evidenceExpiry > now().getTime();
+        return {
+          evidenceId: document.id, kind: evidence.kind, serviceCode: evidence.serviceCode,
+          source: evidence.source, supportingReference: evidence.supportingReference,
+          scope: evidence.scope, details: evidence.details,
+          recordedBy: evidence.recordedBy,
+          recordedAt: dateMillis(evidence.recordedAt) === null ? null : new Date(dateMillis(evidence.recordedAt)!).toISOString(),
+          validFrom: dateMillis(evidence.validFrom) === null ? null : new Date(dateMillis(evidence.validFrom)!).toISOString(),
+          validUntil: dateMillis(evidence.validUntil) === null ? null : new Date(dateMillis(evidence.validUntil)!).toISOString(),
+          reviewStatus: review?.status ?? "pending_review",
+          reviewedBy: review?.reviewedBy ?? null,
+          reviewedAt: dateMillis(review?.reviewedAt) === null ? null : new Date(dateMillis(review?.reviewedAt)!).toISOString(),
+          reviewValidUntil: dateMillis(review?.validUntil) === null ? null : new Date(dateMillis(review?.validUntil)!).toISOString(),
+          reviewReason: review?.reason ?? null,
+          revokedBy: review?.revokedBy ?? null,
+          isCurrentApproved: current,
+        };
+      }));
+      return rows.filter((row): row is NonNullable<typeof row> => row !== null);
+    },
+
     async reviewRouteEvidence(actorUid: string, evidenceId: string, decision: RouteEvidenceDecision, reason: string, validUntil?: Date) {
       assertActor(actorUid);
       assertId(evidenceId, "Route evidence ID");
