@@ -74,6 +74,9 @@ export function buildCommercialParcelPricingInputValues(
       if (category.required) {
         throw new TypeError("A required parcel characteristic is missing: " + category.label);
       }
+      // Neutral mathematical values preserve the configured expression when an
+      // optional characteristic is not selected; they are not customer rates.
+      values[category.inputKey] = category.treatment === "multiplier" ? 1 : 0;
       continue;
     }
     const option = category.options.find((candidate) => candidate.key === selectedOptionKey);
