@@ -13,6 +13,7 @@ interface QuoteLineageData {
   currentVersionId?: unknown;
   acceptedVersionId?: unknown;
   bookingId?: unknown;
+  handoverDeadlineAt?: unknown;
   status?: unknown;
   validUntil?: unknown;
   handoverWindowMinutes?: unknown;
