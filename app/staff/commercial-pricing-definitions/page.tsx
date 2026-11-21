@@ -53,6 +53,16 @@ type PricingComponent = {
   expression: PricingExpression;
 };
 
+type ParcelCharacteristicOption = { key: string; label: string; value: number };
+type ParcelCharacteristic = {
+  key: string;
+  label: string;
+  required: boolean;
+  treatment: "fixed_amount" | "multiplier";
+  inputKey: string;
+  options: ParcelCharacteristicOption[];
+};
+
 type Configuration = {
   schemaVersion: 1;
   configurationName: string;
@@ -60,6 +70,7 @@ type Configuration = {
   pricingModel?: "fixed" | "calculated" | "hybrid";
   inputs: PricingInput[];
   components: PricingComponent[];
+  parcelCharacteristics?: ParcelCharacteristic[];
   activityPricing: { schemaVersion: 1; activities: Activity[] };
 };
 type Version = Omit<Configuration, "activityPricing"> & { activityPricing?: { schemaVersion: 1; activities: Activity[] }; versionId: string; versionNumber: number; createdAt?: unknown; approvalWorkflow?: { state: "draft" | "pending_approval" | "changes_requested" | "approved" | "rejected"; proposerUid?: string; approverUid?: string; reason?: string | null } };
@@ -157,6 +168,7 @@ function emptyConfiguration(serviceCode: ServiceCode = "standard"): Configuratio
     serviceCode,
     inputs: [],
     components: [],
+    parcelCharacteristics: [],
     activityPricing: {
       schemaVersion: 1,
       activities: CATALOGUE.map(([activityCode, activityName]) => ({
@@ -178,6 +190,7 @@ function configurationFromVersion(version: Version): Configuration {
     ...(version.pricingModel ? { pricingModel: version.pricingModel } : {}),
     inputs: version.inputs ?? [],
     components: version.components ?? [],
+    parcelCharacteristics: version.parcelCharacteristics ?? [],
     activityPricing: {
       schemaVersion: 1,
       activities: CATALOGUE.map(([activityCode, activityName]) => {
@@ -456,8 +469,65 @@ export default function CommercialPricingDefinitionsPage() {
         ...current,
         inputs: nextInputs,
         components: nextComponents,
+        parcelCharacteristics: (current.parcelCharacteristics ?? []).map((category) =>
+          category.inputKey === previousKey ? { ...category, inputKey: nextKey } : category
+        ),
       };
     });
+  }
+
+  function addParcelCharacteristic() {
+    setForm((current) => {
+      const index = (current.parcelCharacteristics ?? []).length + 1;
+      const key = "characteristic_" + index;
+      const inputKey = "characteristic_value_" + index;
+      const input: PricingInput = {
+        key: inputKey, label: "Characteristic " + index, required: false,
+        valueType: "number", unit: "", 
+      };
+      const category: ParcelCharacteristic = {
+        key, label: "Characteristic " + index, required: false,
+        treatment: "fixed_amount", inputKey,
+        options: [{ key: "option_1", label: "Option 1", value: 0 }],
+      };
+      return {
+        ...current,
+        inputs: [...current.inputs, input],
+        parcelCharacteristics: [...(current.parcelCharacteristics ?? []), category],
+      };
+    });
+  }
+
+  function updateParcelCharacteristic(index: number, changes: Partial<ParcelCharacteristic>) {
+    setForm((current) => {
+      const categories = [...(current.parcelCharacteristics ?? [])];
+      const existing = categories[index];
+      if (!existing) return current;
+      categories[index] = { ...existing, ...changes };
+      const inputs = current.inputs.map((input) => input.key === existing.inputKey
+        ? {
+            ...input,
+            label: categories[index].label,
+            required: categories[index].required,
+            unit: categories[index].treatment === "multiplier" ? "1" : input.unit,
+          }
+        : input);
+      return { ...current, inputs, parcelCharacteristics: categories };
+    });
+  }
+
+  function updateCharacteristicOption(categoryIndex: number, optionIndex: number, changes: Partial<ParcelCharacteristicOption>) {
+    setForm((current) => ({
+      ...current,
+      parcelCharacteristics: (current.parcelCharacteristics ?? []).map((category, index) =>
+        index !== categoryIndex ? category : {
+          ...category,
+          options: category.options.map((option, itemIndex) =>
+            itemIndex === optionIndex ? { ...option, ...changes } : option
+          ),
+        }
+      ),
+    }));
   }
 
   function updateComponent(index: number, changes: Partial<PricingComponent>) {
@@ -720,6 +790,90 @@ export default function CommercialPricingDefinitionsPage() {
                   >
                     Remove input
                   </button>
+                </div>
+              </div>
+            ))}
+
+            <div className="cost-field cost-field-wide">
+              <strong>Configurable parcel characteristics</strong>
+              <p>
+                Define customer-selectable handling, size, transport or other parcel classes.
+                Each option supplies a configured numeric amount or multiplier to the pricing
+                expression through its linked input. No rates are pre-filled by the system.
+                Multiplier inputs use unit 1; fixed amounts use the same unit as the component
+                they contribute to.
+              </p>
+              <button type="button" className="cost-secondary-button"
+                disabled={(form.parcelCharacteristics ?? []).length >= 30}
+                onClick={addParcelCharacteristic}>Add characteristic category</button>
+            </div>
+
+            {(form.parcelCharacteristics ?? []).map((category, categoryIndex) => (
+              <div className="cost-field cost-field-wide" key={category.key + "-" + categoryIndex}>
+                <strong>Characteristic {categoryIndex + 1}</strong>
+                <div className="cost-form-grid">
+                  <label className="cost-field">Stable key
+                    <input required value={category.key}
+                      onChange={(event) => updateParcelCharacteristic(categoryIndex, { key: event.target.value })} />
+                  </label>
+                  <label className="cost-field">Customer-facing label
+                    <input required maxLength={120} value={category.label}
+                      onChange={(event) => updateParcelCharacteristic(categoryIndex, { label: event.target.value })} />
+                  </label>
+                  <label className="cost-field">Pricing treatment
+                    <select value={category.treatment}
+                      onChange={(event) => updateParcelCharacteristic(categoryIndex, {
+                        treatment: event.target.value as "fixed_amount" | "multiplier",
+                      })}>
+                      <option value="fixed_amount">Fixed amount</option>
+                      <option value="multiplier">Multiplier</option>
+                    </select>
+                  </label>
+                  <label className="cost-field">
+                    <span><input type="checkbox" checked={category.required}
+                      onChange={(event) => updateParcelCharacteristic(categoryIndex, { required: event.target.checked })} /> Required customer selection</span>
+                  </label>
+                  <div className="cost-field cost-field-wide">
+                    <strong>Options and configured values</strong>
+                    <p>{category.treatment === "multiplier"
+                      ? "Enter a dimensionless multiplier (for example, 1.15)."
+                      : "Enter a fixed amount in the linked pricing input unit."}</p>
+                    {category.options.map((option, optionIndex) => (
+                      <div className="cost-form-grid" key={option.key + "-" + optionIndex}>
+                        <label className="cost-field">Option key
+                          <input required value={option.key}
+                            onChange={(event) => updateCharacteristicOption(categoryIndex, optionIndex, { key: event.target.value })} />
+                        </label>
+                        <label className="cost-field">Option label
+                          <input required maxLength={120} value={option.label}
+                            onChange={(event) => updateCharacteristicOption(categoryIndex, optionIndex, { label: event.target.value })} />
+                        </label>
+                        <label className="cost-field">Numeric value
+                          <input required type="number" step="any" value={option.value}
+                            onChange={(event) => updateCharacteristicOption(categoryIndex, optionIndex, { value: event.target.value === "" ? 0 : Number(event.target.value) })} />
+                        </label>
+                        <button type="button" className="cost-secondary-button"
+                          disabled={category.options.length <= 1}
+                          onClick={() => updateParcelCharacteristic(categoryIndex, {
+                            options: category.options.filter((_, itemIndex) => itemIndex !== optionIndex),
+                          })}>Remove option</button>
+                      </div>
+                    ))}
+                    <button type="button" className="cost-secondary-button"
+                      disabled={category.options.length >= 100}
+                      onClick={() => updateParcelCharacteristic(categoryIndex, {
+                        options: [...category.options, {
+                          key: "option_" + (category.options.length + 1),
+                          label: "Option " + (category.options.length + 1), value: 0,
+                        }],
+                      })}>Add option</button>
+                  </div>
+                  <p className="cost-footer-note">Linked pricing input: {category.inputKey}. Configure its unit in Pricing inputs. Include this input in the relevant component expression for the selection to affect the evaluated amount.</p>
+                  <button type="button" className="cost-secondary-button"
+                    onClick={() => setForm((current) => ({
+                      ...current,
+                      parcelCharacteristics: (current.parcelCharacteristics ?? []).filter((_, itemIndex) => itemIndex !== categoryIndex),
+                    }))}>Remove characteristic category</button>
                 </div>
               </div>
             ))}
