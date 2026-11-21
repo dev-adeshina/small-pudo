@@ -28,6 +28,10 @@ type Evidence = {
   source: string;
   measuredOn?: string;
   supportingReference?: string;
+  reviewStatus: "not_reviewed" | "approved" | "revoked" | string;
+  reviewValidUntil?: string | null;
+  reviewedBy?: string | null;
+  reviewedAt?: string | null;
   coordinatesUsed?: {
     origin: { latitude: number; longitude: number };
     destination: { latitude: number; longitude: number };
@@ -72,6 +76,8 @@ export default function CommercialRouteDistancePage() {
   const [measuredOn, setMeasuredOn] = useState(new Date().toISOString().slice(0, 10));
   const [supportingReference, setSupportingReference] = useState("");
   const [evidence, setEvidence] = useState<Evidence[]>([]);
+  const [evidenceSearch, setEvidenceSearch] = useState("");
+  const [viewEvidenceId, setViewEvidenceId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -193,7 +199,7 @@ export default function CommercialRouteDistancePage() {
             distance: { value: Number(distanceValue), unit: distanceUnit },
             source: source.trim(),
             measuredOn,
-            ...(supportingReference.trim() ? { supportingReference: supportingReference.trim() } : {}),
+            supportingReference: supportingReference.trim(),
           };
       const response = await fetch("/api/admin/commercial-route-distance/evidence", {
         method: "POST", headers: headers(token), body: JSON.stringify(body),
@@ -336,8 +342,8 @@ export default function CommercialRouteDistancePage() {
                   <label className="block text-sm font-medium">Measurement date
                     <input className="mt-2 w-full rounded-lg border p-3" type="date" required value={measuredOn} onChange={(event) => setMeasuredOn(event.target.value)} />
                   </label>
-                  <label className="block text-sm font-medium">Supporting reference (optional)
-                    <input className="mt-2 w-full rounded-lg border p-3" type="text" maxLength={200} placeholder="Document, route ID or measurement reference" value={supportingReference} onChange={(event) => setSupportingReference(event.target.value)} />
+                  <label className="block text-sm font-medium">Supporting reference (required)
+                    <input className="mt-2 w-full rounded-lg border p-3" type="text" maxLength={200} required placeholder="Document, route ID or traceable measurement reference" value={supportingReference} onChange={(event) => setSupportingReference(event.target.value)} />
                   </label>
                 </div>
               </div>
@@ -354,24 +360,50 @@ export default function CommercialRouteDistancePage() {
           </div>
           {!origin || !destination || origin === destination ? <p>Select two different locations to view evidence.</p> :
             evidence.length === 0 ? <p>No distance evidence has been recorded for this directed route.</p> : (
-              <div className="space-y-3">
-                {evidence.map((item) => (
-                  <article key={item.evidenceId} className="rounded-lg border p-4">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <strong>{formatDistance(item.distance.value, item.distance.unit)}</strong>
-                        <p className="mt-1 text-sm text-gray-600">{methodLabel(item.method)}</p>
-                      </div>
-                      <span className="text-sm text-gray-500">{formatDate(item.recordedAt)}</span>
-                    </div>
-                    <p className="mt-2 text-xs text-gray-500">Evidence ID: {item.evidenceId}</p>
-                    <p className="mt-2 text-sm">Source: {item.source}</p>
-                    {item.measuredOn && <p className="mt-1 text-sm">Measurement date: {formatDate(item.measuredOn + "T00:00:00")}</p>}
-                    {item.supportingReference && <p className="mt-1 break-all text-sm">Supporting reference: {item.supportingReference}</p>}
-                    {item.coordinatesUsed && <p className="mt-1 text-xs text-gray-500">WGS84 coordinates used: {item.coordinatesUsed.origin.latitude}, {item.coordinatesUsed.origin.longitude} → {item.coordinatesUsed.destination.latitude}, {item.coordinatesUsed.destination.longitude}</p>}
-                    <p className="mt-1 text-xs text-gray-500">Recorded by staff identity {item.recordedBy}</p>
-                  </article>
-                ))}
+              <div className="space-y-4">
+                <label className="block text-sm font-medium">Search route evidence
+                  <input className="mt-2 w-full rounded-lg border p-3" value={evidenceSearch} onChange={(event) => setEvidenceSearch(event.target.value)} placeholder="Search method, source, evidence ID, recorder or review status" />
+                </label>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
+                    <thead className="bg-gray-50 text-xs uppercase text-gray-600">
+                      <tr>
+                        <th className="px-3 py-3">Route</th><th className="px-3 py-3">Distance</th><th className="px-3 py-3">Method / source</th>
+                        <th className="px-3 py-3">Measured</th><th className="px-3 py-3">Recorded by</th><th className="px-3 py-3">Review status</th>
+                        <th className="px-3 py-3">Valid until</th><th className="px-3 py-3">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {evidence.filter((item) => [item.evidenceId, item.source, item.recordedBy, item.method, item.reviewStatus, item.supportingReference ?? ""].join(" ").toLowerCase().includes(evidenceSearch.toLowerCase())).map((item) => (
+                        <tr key={item.evidenceId}>
+                          <td className="px-3 py-3"><span className="font-medium">{selectedOrigin?.name ?? item.originOperationalPointRef} → {selectedDestination?.name ?? item.destinationOperationalPointRef}</span><span className="block text-xs text-gray-500">{item.evidenceId}</span></td>
+                          <td className="whitespace-nowrap px-3 py-3 font-semibold">{formatDistance(item.distance.value, item.distance.unit)}</td>
+                          <td className="px-3 py-3"><span>{methodLabel(item.method)}</span><span className="block text-xs text-gray-500">{item.source}</span></td>
+                          <td className="whitespace-nowrap px-3 py-3">{item.measuredOn ? formatDate(item.measuredOn + "T00:00:00") : "—"}</td>
+                          <td className="px-3 py-3">{item.recordedBy}</td>
+                          <td className="px-3 py-3"><span className="rounded-full bg-gray-100 px-2 py-1 text-xs">{item.reviewStatus.replaceAll("_", " ")}</span><span className="block text-xs text-gray-500">{item.reviewedBy ? "Reviewed by " + item.reviewedBy : "Not reviewed"}</span></td>
+                          <td className="whitespace-nowrap px-3 py-3">{item.reviewValidUntil ? formatDate(item.reviewValidUntil) : "—"}</td>
+                          <td className="px-3 py-3"><button type="button" className="admin-action" onClick={() => setViewEvidenceId((current) => current === item.evidenceId ? null : item.evidenceId)}>{viewEvidenceId === item.evidenceId ? "Hide details" : "View details"}</button></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {viewEvidenceId && evidence.some((item) => item.evidenceId === viewEvidenceId) && (() => {
+                  const item = evidence.find((candidate) => candidate.evidenceId === viewEvidenceId)!;
+                  return <div className="rounded-lg border bg-gray-50 p-4 text-sm">
+                    <div className="flex items-center justify-between gap-3"><h3 className="font-semibold">Immutable evidence details</h3><button type="button" className="admin-action" onClick={() => setViewEvidenceId(null)}>Close</button></div>
+                    <p className="mt-2 break-all">Evidence ID: {item.evidenceId}</p>
+                    <p className="mt-1">Directed route: {item.originOperationalPointRef} → {item.destinationOperationalPointRef}</p>
+                    <p className="mt-1">Distance: {formatDistance(item.distance.value, item.distance.unit)}</p>
+                    <p className="mt-1">Source: {item.source}</p>
+                    <p className="mt-1 break-all">Supporting reference: {item.supportingReference ?? "Not supplied on this legacy record"}</p>
+                    <p className="mt-1">Recorded: {formatDate(item.recordedAt)} by {item.recordedBy}</p>
+                    {item.coordinatesUsed && <p className="mt-1">WGS84/Haversine coordinates: {item.coordinatesUsed.origin.latitude}, {item.coordinatesUsed.origin.longitude} → {item.coordinatesUsed.destination.latitude}, {item.coordinatesUsed.destination.longitude}</p>}
+                    <p className="mt-2 text-xs text-gray-600">Evidence is immutable. Corrections must be recorded as a new evidence item. Review approval and revocation are separate permission-controlled decisions.</p>
+                  </div>;
+                })()}
+                {evidence.filter((item) => [item.evidenceId, item.source, item.recordedBy, item.method, item.reviewStatus, item.supportingReference ?? ""].join(" ").toLowerCase().includes(evidenceSearch.toLowerCase())).length === 0 && <p className="text-sm text-gray-500">No evidence matches this search.</p>}
               </div>
             )}
         </section>
