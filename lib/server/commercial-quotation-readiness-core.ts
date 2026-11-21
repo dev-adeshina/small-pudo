@@ -48,19 +48,7 @@ const OPERATIONAL_EVIDENCE_RECORD_PERMISSION = "commercial_operational_evidence.
 const OPERATIONAL_EVIDENCE_REVIEW_PERMISSION = "commercial_operational_evidence.review";
 const OPERATIONAL_EVIDENCE_REVOKE_PERMISSION = "commercial_operational_evidence.revoke";
 type OperationalEvidenceKind = "service_coverage" | "operating_availability" | "capacity";
-type OperationalEvidenceRecord = {
-  evidenceId: string;
-  kind: OperationalEvidenceKind;
-  serviceCode: CommercialServiceCode;
-  recordedBy: string;
-  recordedAt: unknown;
-  supportingReference: string;
-  source: string;
-  validFrom: Date;
-  validUntil: Date;
-  scope: Record<string, unknown>;
-  details: Record<string, unknown>;
-};
+
 
 function assertActor(value: string): void {
   if (typeof value !== "string" || !ID.test(value)) throw new TypeError("A valid authenticated staff identity is required.");
@@ -293,10 +281,15 @@ export function createCommercialQuotationReadinessStore({
 
     async listOperationalEvidence(actorUid: string, filters?: { kind?: OperationalEvidenceKind; serviceCode?: CommercialServiceCode; locationId?: string }) {
       assertActor(actorUid);
-      const hasAccess = await Promise.all([
-        hasStaffActionPermissionInTransaction,
-      ]);
-      void hasAccess;
+      const canRead = await db.runTransaction(async (transaction) => {
+        const permissions = await Promise.all([
+          hasStaffActionPermissionInTransaction(transaction, db, actorUid, OPERATIONAL_EVIDENCE_RECORD_PERMISSION),
+          hasStaffActionPermissionInTransaction(transaction, db, actorUid, OPERATIONAL_EVIDENCE_REVIEW_PERMISSION),
+          hasStaffActionPermissionInTransaction(transaction, db, actorUid, OPERATIONAL_EVIDENCE_REVOKE_PERMISSION),
+        ]);
+        return permissions.some(Boolean);
+      });
+      assertPermission(canRead, "view operational evidence");
       const snapshot = await operationalEvidence.orderBy("recordedAt", "desc").limit(200).get();
       const rows = await Promise.all(snapshot.docs.map(async (document) => {
         const evidence = document.data();
