@@ -30,16 +30,21 @@ function declaredMeasurementsFromParcelInput(value: unknown): ShipmentBookingDra
 
 function parcelInputForDraft(customerUid: string, input: ShipmentBookingDraftInput) {
   const measurements = input.declaredMeasurements;
-  if (!measurements || Object.keys(measurements).length === 0) return null;
+  const characteristics = input.parcelCharacteristics;
+  if ((!measurements || Object.keys(measurements).length === 0) &&
+      (!characteristics || Object.keys(characteristics).length === 0)) return null;
   return {
     schemaVersion: 1,
-    declared: {
-      measurements,
-      recordedAt: new Date().toISOString(),
-      recordedBy: customerUid,
-      source: "customer_declared",
-    },
+    ...(measurements && Object.keys(measurements).length > 0 ? {
+      declared: {
+        measurements,
+        recordedAt: new Date().toISOString(),
+        recordedBy: customerUid,
+        source: "customer_declared",
+      },
+    } : {}),
     handlingCharacteristics: [],
+    ...(characteristics && Object.keys(characteristics).length > 0 ? { characteristics } : {}),
   };
 }
 
@@ -97,6 +102,7 @@ export function createShipmentBookingDraftStore({
           ...(typeof data.destinationPudoLocationId === "string" ? { destinationPudoLocationId: data.destinationPudoLocationId } : {}),
           parcelDescription: data.parcelDescription,
           declaredMeasurements: declaredMeasurementsFromParcelInput(data.parcelInput),
+          ...(data.parcelInput && typeof data.parcelInput === "object" && data.parcelInput.characteristics && typeof data.parcelInput.characteristics === "object" ? { parcelCharacteristics: data.parcelInput.characteristics as Record<string, string> } : {}),
           status: "draft" as const,
           createdAt: toISOString(data.createdAt),
           updatedAt: toISOString(data.updatedAt),
