@@ -11,6 +11,26 @@ export type CommercialEligibilityOutcome =
   | "not_eligible"
   | "revoked";
 export type RouteEvidenceDecision = "approve" | "revoke";
+export interface ApprovedCommercialTerms {
+  serviceCode: CommercialServiceCode;
+  pricingDefinitionId: string;
+  pricingVersionId: string;
+  pricingVersionNumber: number;
+  pricingConfiguration: Record<string, unknown>;
+  approvedVersion: string;
+  currency: string;
+  roundingMode: string;
+  decimalPlaces: number;
+  roundingStage: string;
+  taxTreatment: string;
+  surchargeTreatment: string;
+  discountTreatment: string;
+  feeTreatment: string;
+  quoteValidityMinutes: number;
+  handoverWindowMinutes: number;
+  approvedBy: string;
+  approvedAt: unknown;
+}
 
 interface Dependencies {
   db: Firestore;
@@ -139,9 +159,9 @@ export function createCommercialQuotationReadinessStore({
             throw new Error("Straight-line measurements cannot be approved as operational road-route evidence.");
           }
           if (typeof evidence.originOperationalPointRef !== "string" ||
-              typeof evidence.destinationOperationalPointRef !== "string" ||
-              typeof evidence.source !== "string" || !evidence.source.trim() ||
-              typeof evidence.measuredOn !== "string") {
+            typeof evidence.destinationOperationalPointRef !== "string" ||
+            typeof evidence.source !== "string" || !evidence.source.trim() ||
+            typeof evidence.measuredOn !== "string") {
             throw new Error("Route evidence is missing its endpoint, source or measurement-date provenance.");
           }
         }
@@ -185,11 +205,11 @@ export function createCommercialQuotationReadinessStore({
           return null;
         }
         if (evidence.originOperationalPointRef !== originId ||
-            evidence.destinationOperationalPointRef !== destinationId ||
-            evidence.method === "straight_line" ||
-            typeof evidence.measuredOn !== "string" ||
-            !Number.isFinite(Date.parse(evidence.measuredOn)) ||
-            canonicalJson(reviewData.evidenceSnapshot) !== canonicalJson(evidence)) return null;
+          evidence.destinationOperationalPointRef !== destinationId ||
+          evidence.method === "straight_line" ||
+          typeof evidence.measuredOn !== "string" ||
+          !Number.isFinite(Date.parse(evidence.measuredOn)) ||
+          canonicalJson(reviewData.evidenceSnapshot) !== canonicalJson(evidence)) return null;
         const measured = Date.parse(evidence.measuredOn + "T00:00:00Z");
         if (measured > now().getTime()) return null;
         return { evidenceId: doc.id, evidence, review: reviewData };
@@ -212,12 +232,12 @@ export function createCommercialQuotationReadinessStore({
       assertId(locationId, "PUDO location ID");
       if (!SERVICES.has(serviceCode)) throw new TypeError("Unsupported service code.");
       if (!Array.isArray(supportedActions) || supportedActions.length === 0 || supportedActions.length > 30 ||
-          supportedActions.some((action) => typeof action !== "string" || !action.trim() || action.length > 120) ||
-          new Set(supportedActions.map((action) => action.trim())).size !== supportedActions.length) {
+        supportedActions.some((action) => typeof action !== "string" || !action.trim() || action.length > 120) ||
+        new Set(supportedActions.map((action) => action.trim())).size !== supportedActions.length) {
         throw new TypeError("At least one unique, explicit supported endpoint action is required.");
       }
       if (!Array.isArray(evidenceReferences) || evidenceReferences.length > 50 ||
-          evidenceReferences.some((reference) => typeof reference !== "string" || !reference.trim() || reference.length > 300)) {
+        evidenceReferences.some((reference) => typeof reference !== "string" || !reference.trim() || reference.length > 300)) {
         throw new TypeError("Capability evidence references must be a list of valid Firestore document paths.");
       }
       if (!(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) || validUntil <= now()) {
@@ -236,8 +256,8 @@ export function createCommercialQuotationReadinessStore({
           transaction.get(verifications.doc(locationId)),
         ]);
         if (!candidate.exists || candidate.data()?.lifecycle !== "active" ||
-            !activation.exists || activation.data()?.status !== "active" ||
-            !verification.exists || verification.data()?.status !== "approved_to_activate") {
+          !activation.exists || activation.data()?.status !== "active" ||
+          !verification.exists || verification.data()?.status !== "approved_to_activate") {
           throw new TypeError("PUDO service capabilities require an actively activated and physically verified location.");
         }
         const requiredLocationRefs = [
@@ -325,22 +345,22 @@ export function createCommercialQuotationReadinessStore({
       else if (destinationPudoLocationId !== undefined) throw new TypeError("An address destination cannot include a PUDO location ID.");
       if (originPudoLocationId && originPudoLocationId === destinationPudoLocationId) throw new TypeError("Origin and destination PUDO locations must be different.");
       if (!Array.isArray(evidenceReferences) || evidenceReferences.length > 50 ||
-          evidenceReferences.some((item) => typeof item !== "string" || !item.trim() || item.length > 300)) {
+        evidenceReferences.some((item) => typeof item !== "string" || !item.trim() || item.length > 300)) {
         throw new TypeError("Eligibility evidence references must be a list of at most 50 valid references.");
       }
       if (!Array.isArray(conditions) || conditions.length > 30 ||
-          conditions.some((item) => typeof item !== "string" || !item.trim() || item.length > 500)) {
+        conditions.some((item) => typeof item !== "string" || !item.trim() || item.length > 500)) {
         throw new TypeError("Eligibility conditions must be a list of at most 30 valid conditions.");
       }
       const referenceGroups = [serviceCoverageEvidenceReferences, operatingAvailabilityEvidenceReferences, capacityEvidenceReferences];
       if (referenceGroups.some((group) => !Array.isArray(group) || group.length > 30 ||
-          group.some((reference) => typeof reference !== "string" || !reference.trim() || reference.length > 300))) {
+        group.some((reference) => typeof reference !== "string" || !reference.trim() || reference.length > 300))) {
         throw new TypeError("Coverage, availability and capacity evidence must be explicit lists of valid document paths.");
       }
       for (const actionList of [originRequiredActions, destinationRequiredActions]) {
         if (!Array.isArray(actionList) || actionList.length > 30 ||
-            actionList.some((action) => typeof action !== "string" || !action.trim() || action.length > 120) ||
-            new Set(actionList).size !== actionList.length) {
+          actionList.some((action) => typeof action !== "string" || !action.trim() || action.length > 120) ||
+          new Set(actionList).size !== actionList.length) {
           throw new TypeError("Required endpoint actions must be explicit unique action names.");
         }
       }
@@ -351,10 +371,10 @@ export function createCommercialQuotationReadinessStore({
       }
       if (outcome === "eligible" || outcome === "conditionally_eligible") {
         if (serviceCoverageEvidenceReferences.length === 0 ||
-            operatingAvailabilityEvidenceReferences.length === 0 ||
-            capacityEvidenceReferences.length === 0 ||
-            originRequiredActions.length === 0 ||
-            destinationRequiredActions.length === 0) {
+          operatingAvailabilityEvidenceReferences.length === 0 ||
+          capacityEvidenceReferences.length === 0 ||
+          originRequiredActions.length === 0 ||
+          destinationRequiredActions.length === 0) {
           throw new TypeError("Positive eligibility requires service coverage, operating availability, capacity evidence and explicit actions for both PUDO endpoints.");
         }
         const requiredEvidence = [
@@ -367,7 +387,7 @@ export function createCommercialQuotationReadinessStore({
         }
       }
       if ((outcome === "eligible" || outcome === "conditionally_eligible") &&
-          (!(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) || validUntil <= now())) {
+        (!(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) || validUntil <= now())) {
         throw new TypeError("Positive eligibility requires an explicit future validity end.");
       }
       if (validUntil && (!(validUntil instanceof Date) || !Number.isFinite(validUntil.getTime()) || validUntil <= now())) {
@@ -383,8 +403,8 @@ export function createCommercialQuotationReadinessStore({
           for (const conditionReference of conditions) {
             const segments = conditionReference.split("/");
             if (segments.length < 2 || segments.length % 2 !== 0 ||
-                !segments.every((segment) => ID.test(segment)) ||
-                !evidenceReferences.includes(conditionReference)) {
+              !segments.every((segment) => ID.test(segment)) ||
+              !evidenceReferences.includes(conditionReference)) {
               throw new TypeError("Each conditional eligibility requirement must be a current Firestore evidence document path included in the decision evidence.");
             }
           }
@@ -393,7 +413,7 @@ export function createCommercialQuotationReadinessStore({
           const routeEvidenceReferences = evidenceReferences.filter((reference) => reference.startsWith("commercialRouteDistanceEvidence/"));
           const routeReviewReferences = evidenceReferences.filter((reference) => reference.startsWith("commercialRouteDistanceReviews/"));
           if (routeEvidenceReferences.length !== 1 || routeReviewReferences.length !== 1 ||
-              routeEvidenceReferences[0].split("/")[1] !== routeReviewReferences[0].split("/")[1]) {
+            routeEvidenceReferences[0].split("/")[1] !== routeReviewReferences[0].split("/")[1]) {
             throw new TypeError("Positive PUDO-to-PUDO eligibility requires exactly one matching route measurement and independent route review reference.");
           }
           const endpointRequirements = [
@@ -411,17 +431,17 @@ export function createCommercialQuotationReadinessStore({
               transaction.get(capabilities.doc(capabilityId)),
             ]);
             if (!candidate.exists || candidate.data()?.lifecycle !== "active" ||
-                !activation.exists || activation.data()?.status !== "active" ||
-                !verification.exists || verification.data()?.status !== "approved_to_activate") {
+              !activation.exists || activation.data()?.status !== "active" ||
+              !verification.exists || verification.data()?.status !== "approved_to_activate") {
               throw new TypeError("Every exact PUDO endpoint must be active and physically verified before eligibility can be approved.");
             }
             const capabilityData = capability.data();
             if (!capability.exists || !capabilityData || capabilityData.status !== "active" ||
-                capabilityData.locationId !== locationId ||
-                capabilityData.serviceCode !== serviceCode ||
-                !Array.isArray(capabilityData.supportedActions) ||
-                endpoint.actions.length === 0 ||
-                endpoint.actions.some((action) => !capabilityData.supportedActions.includes(action))) {
+              capabilityData.locationId !== locationId ||
+              capabilityData.serviceCode !== serviceCode ||
+              !Array.isArray(capabilityData.supportedActions) ||
+              endpoint.actions.length === 0 ||
+              endpoint.actions.some((action) => !capabilityData.supportedActions.includes(action))) {
               throw new TypeError("The PUDO endpoint does not have current approved capability for every required service action.");
             }
             const capabilityExpiry = dateMillis(capabilityData.validUntil);
@@ -446,8 +466,8 @@ export function createCommercialQuotationReadinessStore({
           if (!evidenceDocument.exists) throw new TypeError("An eligibility evidence reference does not exist: " + reference);
           const evidenceData = evidenceDocument.data()!;
           if ((outcome === "eligible" || outcome === "conditionally_eligible") &&
-              [evidenceData.createdBy, evidenceData.recordedBy, evidenceData.inspectorUid, evidenceData.decisionMakerUid, evidenceData.activatedBy, evidenceData.reviewedBy, evidenceData.approvedBy]
-                .some((evidenceActor) => evidenceActor === actorUid)) {
+            [evidenceData.createdBy, evidenceData.recordedBy, evidenceData.inspectorUid, evidenceData.decisionMakerUid, evidenceData.activatedBy, evidenceData.reviewedBy, evidenceData.approvedBy]
+              .some((evidenceActor) => evidenceActor === actorUid)) {
             throw new TypeError("Service eligibility approval must be independent of the referenced evidence creators and operational actors.");
           }
           if (outcome === "eligible" || outcome === "conditionally_eligible") {
@@ -524,10 +544,10 @@ export function createCommercialQuotationReadinessStore({
       if (!record.exists) return { eligible: false as const, outcome: "pending_verification" as const, reason: "No DEC-047 eligibility decision has been recorded." };
       const data = record.data()!;
       if (data.serviceCode !== serviceCode ||
-          data.originType !== originType ||
-          data.destinationType !== destinationType ||
-          data.originPudoLocationId !== originPudoLocationId ||
-          data.destinationPudoLocationId !== destinationPudoLocationId) {
+        data.originType !== originType ||
+        data.destinationType !== destinationType ||
+        data.originPudoLocationId !== originPudoLocationId ||
+        data.destinationPudoLocationId !== destinationPudoLocationId) {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The stored eligibility decision does not match the requested service and exact endpoints." };
       }
       if (data.outcome === "pending_verification") {
@@ -562,8 +582,8 @@ export function createCommercialQuotationReadinessStore({
       const destinationActions = Array.isArray(data.destinationRequiredActions) ? data.destinationRequiredActions as string[] : [];
       const categorizedRefs = [...serviceCoverageRefs, ...availabilityRefs, ...capacityRefs];
       if (serviceCoverageRefs.length === 0 || availabilityRefs.length === 0 || capacityRefs.length === 0 ||
-          categorizedRefs.some((reference) => !evidenceReferences.includes(reference)) ||
-          originActions.length === 0 || destinationActions.length === 0) {
+        categorizedRefs.some((reference) => !evidenceReferences.includes(reference)) ||
+        originActions.length === 0 || destinationActions.length === 0) {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision is missing current coverage, availability, capacity or endpoint-action evidence." };
       }
       const capabilityEvidence: Array<Record<string, unknown>> = [];
@@ -580,11 +600,11 @@ export function createCommercialQuotationReadinessStore({
         const capabilityData = capability.data();
         const capabilityExpiry = dateMillis(capabilityData?.validUntil);
         if (!capability.exists || !capabilityData || capabilityData.status !== "active" ||
-            capabilityData.locationId !== endpoint.locationId ||
-            capabilityData.serviceCode !== serviceCode ||
-            capabilityExpiry === null || capabilityExpiry <= now().getTime() ||
-            !Array.isArray(capabilityData.supportedActions) ||
-            endpoint.actions.some((action) => !capabilityData.supportedActions.includes(action))) {
+          capabilityData.locationId !== endpoint.locationId ||
+          capabilityData.serviceCode !== serviceCode ||
+          capabilityExpiry === null || capabilityExpiry <= now().getTime() ||
+          !Array.isArray(capabilityData.supportedActions) ||
+          endpoint.actions.some((action) => !capabilityData.supportedActions.includes(action))) {
           return { eligible: false as const, outcome: "pending_verification" as const, reason: "A required PUDO service capability is missing, expired or does not support the required endpoint actions." };
         }
         capabilityEvidence.push({ capabilityId, ...capabilityData });
@@ -598,14 +618,14 @@ export function createCommercialQuotationReadinessStore({
       }
       const requiredConditions = Array.isArray(data.conditions) ? data.conditions as string[] : [];
       if (data.outcome === "conditionally_eligible" &&
-          (requiredConditions.length === 0 ||
-           requiredConditions.some((condition) =>
-             typeof condition !== "string" ||
-             !evidenceReferences.includes(condition) ||
-             condition.split("/").length < 2 ||
-             condition.split("/").length % 2 !== 0 ||
-             !condition.split("/").every((segment) => ID.test(segment))
-           ))) {
+        (requiredConditions.length === 0 ||
+          requiredConditions.some((condition) =>
+            typeof condition !== "string" ||
+            !evidenceReferences.includes(condition) ||
+            condition.split("/").length < 2 ||
+            condition.split("/").length % 2 !== 0 ||
+            !condition.split("/").every((segment) => ID.test(segment))
+          ))) {
         return { eligible: false as const, outcome: "conditionally_eligible" as const, reason: "The conditional eligibility record has no valid current evidence references.", conditions: requiredConditions };
       }
       return {
@@ -626,49 +646,55 @@ export function createCommercialQuotationReadinessStore({
       };
     },
 
-    async getApprovedCommercialTerms(serviceCode: CommercialServiceCode) {
+    async getApprovedCommercialTerms(
+      serviceCode: CommercialServiceCode,
+    ): Promise<ApprovedCommercialTerms | null> {
       if (!SERVICES.has(serviceCode)) return null;
       const approval = await commercialTerms.doc(serviceCode).get();
       if (!approval.exists) return null;
       const data = approval.data()!;
       if (data.status !== "approved" || data.serviceCode !== serviceCode ||
-          typeof data.pricingDefinitionId !== "string" || !ID.test(data.pricingDefinitionId) ||
-          typeof data.pricingVersionId !== "string" || !ID.test(data.pricingVersionId) ||
-          typeof data.currency !== "string" || !/^[A-Z]{3}$/.test(data.currency) ||
-          !Number.isSafeInteger(data.quoteValidityMinutes) || data.quoteValidityMinutes < 1 ||
-          !Number.isSafeInteger(data.handoverWindowMinutes) || data.handoverWindowMinutes < 1 ||
-          typeof data.approvedBy !== "string" || !data.approvedBy ||
-          !data.approvedAt ||
-          !["none", "half_up", "half_even", "ceil", "floor"].includes(String(data.roundingMode)) ||
-          !Number.isSafeInteger(data.decimalPlaces) || data.decimalPlaces < 0 || data.decimalPlaces > 6 ||
-          (data.roundingMode === "none" && data.decimalPlaces !== 0) ||
-          data.roundingStage !== "total_only" ||
-          !["included_in_components", "not_applicable"].includes(String(data.taxTreatment)) ||
-          !["included_in_components", "not_applicable"].includes(String(data.surchargeTreatment)) ||
-          !["included_in_components", "not_applicable"].includes(String(data.discountTreatment)) ||
-          !["included_in_components", "not_applicable"].includes(String(data.feeTreatment))) return null;
+        typeof data.pricingDefinitionId !== "string" || !ID.test(data.pricingDefinitionId) ||
+        typeof data.pricingVersionId !== "string" || !ID.test(data.pricingVersionId) ||
+        typeof data.currency !== "string" || !/^[A-Z]{3}$/.test(data.currency) ||
+        !Number.isSafeInteger(data.quoteValidityMinutes) || data.quoteValidityMinutes < 1 ||
+        !Number.isSafeInteger(data.handoverWindowMinutes) || data.handoverWindowMinutes < 1 ||
+        typeof data.approvedBy !== "string" || !data.approvedBy ||
+        !data.approvedAt ||
+        !["none", "half_up", "half_even", "ceil", "floor"].includes(String(data.roundingMode)) ||
+        !Number.isSafeInteger(data.decimalPlaces) || data.decimalPlaces < 0 || data.decimalPlaces > 6 ||
+        (data.roundingMode === "none" && data.decimalPlaces !== 0) ||
+        data.roundingStage !== "total_only" ||
+        !["included_in_components", "not_applicable"].includes(String(data.taxTreatment)) ||
+        !["included_in_components", "not_applicable"].includes(String(data.surchargeTreatment)) ||
+        !["included_in_components", "not_applicable"].includes(String(data.discountTreatment)) ||
+        !["included_in_components", "not_applicable"].includes(String(data.feeTreatment))) return null;
       const definition = await pricingDefinitions.doc(data.pricingDefinitionId).get();
       if (!definition.exists) return null;
       const lineage = definition.data()!;
       if (lineage.currentVersionId !== data.pricingVersionId ||
-          lineage.publishedVersionId !== data.pricingVersionId ||
-          lineage.approvedVersionId !== data.pricingVersionId ||
-          lineage.currentVersionNumber !== lineage.publishedVersionNumber ||
-          lineage.currentVersionNumber !== lineage.approvedVersionNumber) return null;
+        lineage.publishedVersionId !== data.pricingVersionId ||
+        lineage.approvedVersionId !== data.pricingVersionId ||
+        lineage.currentVersionNumber !== lineage.publishedVersionNumber ||
+        lineage.currentVersionNumber !== lineage.approvedVersionNumber) return null;
       const workflow = await definition.ref.collection("versions").doc(data.pricingVersionId).collection("approval").doc("workflow").get();
       if (!workflow.exists || workflow.data()?.state !== "approved") return null;
       const version = await definition.ref.collection("versions").doc(data.pricingVersionId).get();
       if (!version.exists || version.data()?.serviceCode !== serviceCode ||
-          version.data()?.versionNumber !== lineage.currentVersionNumber ||
-          !version.data()?.pricingModel ||
-          !Array.isArray(version.data()?.components) ||
-          version.data()!.components.length === 0) return null;
+        version.data()?.versionNumber !== lineage.currentVersionNumber ||
+        !version.data()?.pricingModel ||
+        !Array.isArray(version.data()?.components) ||
+        version.data()!.components.length === 0) return null;
       return {
         ...data,
-        pricingVersionNumber: version.data()?.versionNumber,
-        pricingConfiguration: Object.fromEntries(Object.entries(version.data()!).filter(([key]) => !["versionNumber", "createdAt", "createdBy"].includes(key))),
+        pricingVersionNumber: version.data()?.versionNumber as number,
+        pricingConfiguration: Object.fromEntries(
+          Object.entries(version.data()!).filter(
+            ([key]) => !["versionNumber", "createdAt", "createdBy"].includes(key),
+          ),
+        ),
         approvedVersion: data.pricingVersionId,
-      };
+      } as ApprovedCommercialTerms;
     },
   };
 }
