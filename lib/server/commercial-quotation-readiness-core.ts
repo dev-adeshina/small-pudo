@@ -353,8 +353,10 @@ export function createCommercialQuotationReadinessStore({
         if (filters?.locationId && evidence.scope?.locationId !== filters.locationId) return null;
         const evidenceExpiry = dateMillis(evidence.validUntil);
         const reviewExpiry = dateMillis(review?.validUntil);
+        const evidenceStart = dateMillis(evidence.validFrom);
         const current = review?.status === "approved" && reviewExpiry !== null &&
-          reviewExpiry > now().getTime() && evidenceExpiry !== null && evidenceExpiry > now().getTime();
+          reviewExpiry > now().getTime() && evidenceStart !== null && evidenceStart <= now().getTime() &&
+          evidenceExpiry !== null && evidenceExpiry > now().getTime();
         return {
           evidenceId: document.id, kind: evidence.kind, serviceCode: evidence.serviceCode,
           source: evidence.source, supportingReference: evidence.supportingReference,
