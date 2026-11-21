@@ -181,6 +181,56 @@ export function createCommercialQuotationReadinessStore({
     return scope.locationId === originId || scope.locationId === destinationId;
   }
 
+  async function hasApprovedRouteEvidence(
+    evidenceReference: string,
+    reviewReference: string,
+    originId: string,
+    destinationId: string,
+    actorUid?: string,
+    transaction?: Transaction,
+  ): Promise<boolean> {
+    const evidenceSegments = evidenceReference.split("/");
+    const reviewSegments = reviewReference.split("/");
+    if (evidenceSegments.length !== 2 || reviewSegments.length !== 2 ||
+      evidenceSegments[0] !== "commercialRouteDistanceEvidence" ||
+      reviewSegments[0] !== "commercialRouteDistanceReviews" ||
+      !ID.test(evidenceSegments[1]) || evidenceSegments[1] !== reviewSegments[1]) return false;
+    const evidenceRef = routeEvidence.doc(evidenceSegments[1]);
+    const reviewRef = routeReviews.doc(reviewSegments[1]);
+    const [evidenceSnapshot, reviewSnapshot] = transaction
+      ? await Promise.all([transaction.get(evidenceRef), transaction.get(reviewRef)])
+      : await Promise.all([evidenceRef.get(), reviewRef.get()]);
+    if (!evidenceSnapshot.exists || !reviewSnapshot.exists) return false;
+    const row = evidenceSnapshot.data()!;
+    const evidence = row.evidence as Record<string, unknown> | undefined;
+    const review = reviewSnapshot.data()!;
+    const reviewExpiry = dateMillis(review.validUntil);
+    if (!evidence || row.originOperationalPointRef !== originId ||
+      row.destinationOperationalPointRef !== destinationId ||
+      evidence.originOperationalPointRef !== originId ||
+      evidence.destinationOperationalPointRef !== destinationId ||
+      evidence.method === "straight_line" ||
+      evidence.recordedBy === review.reviewedBy ||
+      (actorUid !== undefined && (evidence.recordedBy === actorUid || review.reviewedBy === actorUid)) ||
+      review.status !== "approved" || review.decision !== "approve" ||
+      review.evidenceId !== evidenceSegments[1] ||
+      typeof review.reviewedBy !== "string" || !review.reviewedBy ||
+      reviewExpiry === null || reviewExpiry <= now().getTime() ||
+      typeof evidence.source !== "string" || !evidence.source.trim() ||
+      typeof evidence.supportingReference !== "string" || !evidence.supportingReference.trim() ||
+      typeof evidence.measuredOn !== "string" ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(evidence.measuredOn) ||
+      !Number.isFinite(Date.parse(evidence.measuredOn + "T00:00:00Z")) ||
+      Date.parse(evidence.measuredOn + "T00:00:00Z") > now().getTime() ||
+      canonicalJson(review.evidenceSnapshot) !== canonicalJson(evidence)) return false;
+    try {
+      assertCommercialRouteDistanceEvidence(evidence);
+    } catch {
+      return false;
+    }
+    return true;
+  }
+
   return {
     async recordOperationalEvidence(input: {
       actorUid: string;
@@ -739,8 +789,11 @@ export function createCommercialQuotationReadinessStore({
           const routeEvidenceReferences = evidenceReferences.filter((reference) => reference.startsWith("commercialRouteDistanceEvidence/"));
           const routeReviewReferences = evidenceReferences.filter((reference) => reference.startsWith("commercialRouteDistanceReviews/"));
           if (routeEvidenceReferences.length !== 1 || routeReviewReferences.length !== 1 ||
-            routeEvidenceReferences[0].split("/")[1] !== routeReviewReferences[0].split("/")[1]) {
-            throw new TypeError("Positive PUDO-to-PUDO eligibility requires exactly one matching route measurement and independent route review reference.");
+            !(await hasApprovedRouteEvidence(
+              routeEvidenceReferences[0], routeReviewReferences[0],
+              originPudoLocationId!, destinationPudoLocationId!, actorUid, transaction,
+            ))) {
+            throw new TypeError("Positive PUDO-to-PUDO eligibility requires exactly one current, independently reviewed road-route measurement for the exact directed endpoints.");
           }
           const endpointRequirements = [
             { locationId: originPudoLocationId, actions: originRequiredActions },
@@ -938,6 +991,12 @@ export function createCommercialQuotationReadinessStore({
           recordedBy: item.evidence.recordedBy, reviewedBy: item.review.reviewedBy,
           validUntil: item.evidence.validUntil,
         })));
+      }
+      const routeEvidenceReferences = evidenceReferences.filter((reference) => reference.startsWith("commercialRouteDistanceEvidence/"));
+      const routeReviewReferences = evidenceReferences.filter((reference) => reference.startsWith("commercialRouteDistanceReviews/"));
+      if (routeEvidenceReferences.length !== 1 || routeReviewReferences.length !== 1 ||
+        !(await hasApprovedRouteEvidence(routeEvidenceReferences[0], routeReviewReferences[0], endpoints[0], endpoints[1]))) {
+        return { eligible: false as const, outcome: "pending_verification" as const, reason: "The exact directed road-route evidence is missing, expired, revoked, changed since review or no longer independently approved." };
       }
       const capabilityEvidence: Array<Record<string, unknown>> = [];
       for (const endpoint of [
