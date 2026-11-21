@@ -187,6 +187,40 @@ export function createCommercialQuotationReadinessStore({
       });
     },
 
+    async getRouteEvidenceForReview(actorUid: string, evidenceId: string) {
+      assertActor(actorUid);
+      assertId(evidenceId, "Route evidence ID");
+      return db.runTransaction(async (transaction) => {
+        await requirePermission(transaction, actorUid, ROUTE_REVIEW_PERMISSION, "view route-distance evidence for review");
+        const evidenceRef = routeEvidence.doc(evidenceId);
+        const reviewRef = routeReviews.doc(evidenceId);
+        const [evidenceSnapshot, reviewSnapshot] = await Promise.all([
+          transaction.get(evidenceRef),
+          transaction.get(reviewRef),
+        ]);
+        if (!evidenceSnapshot.exists) throw new Error("Route-distance evidence was not found.");
+        const row = evidenceSnapshot.data()!;
+        const evidence = row.evidence as Record<string, unknown> | undefined;
+        if (!evidence || typeof evidence !== "object") throw new Error("Route-distance evidence is malformed.");
+        assertCommercialRouteDistanceEvidence(evidence);
+        const review = reviewSnapshot.exists ? reviewSnapshot.data()! : null;
+        return {
+          evidenceId,
+          originOperationalPointRef: row.originOperationalPointRef,
+          destinationOperationalPointRef: row.destinationOperationalPointRef,
+          evidence,
+          review: review ? {
+            status: review.status ?? "not_reviewed",
+            decision: review.decision ?? null,
+            reviewedBy: review.reviewedBy ?? null,
+            reviewedAt: dateMillis(review.reviewedAt) === null ? null : new Date(dateMillis(review.reviewedAt)!).toISOString(),
+            validUntil: dateMillis(review.validUntil) === null ? null : new Date(dateMillis(review.validUntil)!).toISOString(),
+            reason: review.reason ?? null,
+          } : null,
+        };
+      });
+    },
+
     async getUsableRouteEvidence(originId: string, destinationId: string) {
       assertId(originId, "Origin operational point ID");
       assertId(destinationId, "Destination operational point ID");
