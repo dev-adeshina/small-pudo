@@ -264,6 +264,21 @@ export default function CommercialQuotationReadinessPage() {
     }
   }
 
+  const visibleOperationalEvidenceRows: OperationalEvidenceRow[] = operationalEvidenceRows.filter((row) => {
+    const query = evidenceSearch.trim().toLowerCase();
+    const haystack = [
+      row.evidenceId, row.kind, row.serviceCode, row.source, row.supportingReference,
+      row.recordedBy, row.reviewedBy, JSON.stringify(row.scope), JSON.stringify(row.details),
+    ].join(" ").toLowerCase();
+    const status = row.reviewStatus === "approved"
+      ? (row.isCurrentApproved ? "approved" : "expired")
+      : row.reviewStatus;
+    return (!query || haystack.includes(query)) &&
+      (evidenceKindFilter === "all" || row.kind === evidenceKindFilter) &&
+      (evidenceStatusFilter === "all" || status === evidenceStatusFilter ||
+        (evidenceStatusFilter === "pending" && row.reviewStatus === "pending_review"));
+  });
+
   const chargeTreatmentFields: Array<{
     label: string;
     value: "" | "included_in_components" | "not_applicable";
