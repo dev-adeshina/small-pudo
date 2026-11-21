@@ -120,6 +120,7 @@ export default function CommercialQuotationReadinessPage() {
     if (!token || !routeEvidenceId.trim()) {
       setRouteEvidenceDetails(null);
       setRouteEvidenceError("");
+      setRouteEvidenceLoading(false);
       return;
     }
     let active = true;
@@ -162,6 +163,16 @@ export default function CommercialQuotationReadinessPage() {
       const data = await response.json().catch(() => null);
       if (!response.ok) throw new Error(data?.error || "The request could not be completed.");
       setNotice(successMessage);
+      if (path.includes("/route-evidence/") && path.endsWith("/review")) {
+        const refreshed = await fetch(path, {
+          headers: { Authorization: "Bearer " + currentToken },
+          cache: "no-store",
+        });
+        const refreshedData = await refreshed.json().catch(() => null);
+        if (refreshed.ok && refreshedData?.evidence) {
+          setRouteEvidenceDetails(refreshedData.evidence as RouteEvidenceReviewDetails);
+        }
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "The request could not be completed.");
     } finally {
