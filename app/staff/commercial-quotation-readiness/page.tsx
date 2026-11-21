@@ -80,6 +80,8 @@ export default function CommercialQuotationReadinessPage() {
         }
         setToken(idToken);
         setEmail(user.email ?? "");
+        const selectedRouteEvidenceId = new URLSearchParams(window.location.search).get("routeEvidenceId");
+        if (selectedRouteEvidenceId) setRouteEvidenceId(selectedRouteEvidenceId);
       } catch {
         setError("Unable to verify staff access.");
       } finally {
