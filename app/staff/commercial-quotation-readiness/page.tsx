@@ -78,6 +78,8 @@ export default function CommercialQuotationReadinessPage() {
   const [destinationPudoLocationId, setDestinationPudoLocationId] = useState("");
   const [eligibilityOutcome, setEligibilityOutcome] = useState<"" | "pending_verification" | "eligible" | "conditionally_eligible" | "not_eligible" | "revoked">("");
   const [operationalEvidenceRows, setOperationalEvidenceRows] = useState<OperationalEvidenceRow[]>([]);
+  const [operationalEvidencePermissions, setOperationalEvidencePermissions] = useState({ record: false, review: false, revoke: false });
+  const [staffUid, setStaffUid] = useState("");
   const [operationalEvidenceLoading, setOperationalEvidenceLoading] = useState(false);
   const [evidenceKind, setEvidenceKind] = useState<OperationalEvidenceRow["kind"]>("service_coverage");
   const [evidenceServiceCode, setEvidenceServiceCode] = useState<ServiceCode>("standard");
@@ -148,6 +150,7 @@ export default function CommercialQuotationReadinessPage() {
           return;
         }
         setToken(idToken);
+        setStaffUid(user.uid);
         setEmail(user.email ?? "");
         const selectedRouteEvidenceId = new URLSearchParams(window.location.search).get("routeEvidenceId");
         if (selectedRouteEvidenceId) setRouteEvidenceId(selectedRouteEvidenceId);
@@ -202,7 +205,8 @@ export default function CommercialQuotationReadinessPage() {
       });
       const data = await response.json().catch(() => null);
       if (!response.ok) throw new Error(data?.error || "Unable to load operational evidence.");
-      setOperationalEvidenceRows(Array.isArray(data?.result) ? data.result as OperationalEvidenceRow[] : []);
+      setOperationalEvidenceRows(Array.isArray(data?.result?.items) ? data.result.items as OperationalEvidenceRow[] : []);
+      setOperationalEvidencePermissions(data?.result?.permissions ?? { record: false, review: false, revoke: false });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to load operational evidence.");
     } finally {
@@ -235,8 +239,9 @@ export default function CommercialQuotationReadinessPage() {
           headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
         });
         const refreshedData = await refreshed.json().catch(() => null);
-        if (refreshed.ok && Array.isArray(refreshedData?.result)) {
-          setOperationalEvidenceRows(refreshedData.result as OperationalEvidenceRow[]);
+        if (refreshed.ok && Array.isArray(refreshedData?.result?.items)) {
+          setOperationalEvidenceRows(refreshedData.result.items as OperationalEvidenceRow[]);
+          setOperationalEvidencePermissions(refreshedData.result.permissions ?? { record: false, review: false, revoke: false });
         }
       }
       if (path.includes("/route-evidence/") && path.endsWith("/review")) {
@@ -465,8 +470,8 @@ export default function CommercialQuotationReadinessPage() {
             <div className="grid gap-4 md:grid-cols-2">
               <label className="block text-sm font-medium">Approved service coverage evidence<select multiple size={5} className="mt-2 w-full rounded-lg border p-3" value={selectedCoverageIds} onChange={(event) => setSelectedCoverageIds(Array.from(event.target.selectedOptions, (option) => option.value))}>
                 {operationalEvidenceRows.filter((row) => row.kind === "service_coverage" && row.serviceCode === serviceCode && row.isCurrentApproved &&
-                  (coverageScopeType === "route" ? row.scope.originOperationalPointRef === originPudoLocationId && row.scope.destinationOperationalPointRef === destinationPudoLocationId :
-                    Array.isArray(row.scope.operationalPointRefs) && row.scope.operationalPointRefs.includes(originPudoLocationId) && row.scope.operationalPointRefs.includes(destinationPudoLocationId)))
+                  ((row.scope.scopeType === "route" && row.scope.originOperationalPointRef === originPudoLocationId && row.scope.destinationOperationalPointRef === destinationPudoLocationId) ||
+                    (row.scope.scopeType === "area" && Array.isArray(row.scope.operationalPointRefs) && row.scope.operationalPointRefs.includes(originPudoLocationId) && row.scope.operationalPointRefs.includes(destinationPudoLocationId))))
                   .map((row) => <option key={row.evidenceId} value={row.evidenceId}>{row.evidenceId} · {String(row.scope.scopeType)} · {row.source}</option>)}
               </select></label>
               <label className="block text-sm font-medium">Approved operating availability (select evidence for both endpoints)<select multiple size={5} className="mt-2 w-full rounded-lg border p-3" value={selectedAvailabilityIds} onChange={(event) => setSelectedAvailabilityIds(Array.from(event.target.selectedOptions, (option) => option.value))}>
