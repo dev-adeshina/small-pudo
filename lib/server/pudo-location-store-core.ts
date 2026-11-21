@@ -4,7 +4,7 @@ import { hasStaffActionPermissionInTransaction } from "./staff-permission-grants
 const PERMISSION = "pudo_location.register";
 
 export type PudoCoordinateCaptureMethod = "device" | "manual";
-export type PudoLocationLifecycle = "draft" | "submitted" | "active";
+export type PudoLocationLifecycle = "draft" | "submitted" | "active" | "withdrawn";
 
 export interface PudoLocationInput {
   name?: string;
@@ -190,10 +190,12 @@ export function createPudoLocationStore({
         .limit(limit)
         .get();
 
-      return snapshot.docs.map((document) => ({
-        locationId: document.id,
-        ...document.data(),
-      }));
+      return snapshot.docs
+        .filter((document) => document.data().lifecycle !== "withdrawn")
+        .map((document) => ({
+          locationId: document.id,
+          ...document.data(),
+        }));
     },
 
     async getCandidate(actorUid: string, locationId: string) {
@@ -204,6 +206,52 @@ export function createPudoLocationStore({
       return snapshot.exists
         ? { locationId: snapshot.id, ...snapshot.data() }
         : null;
+    },
+
+    async withdrawCandidate(actorUid: string, locationId: string) {
+      assertActor(actorUid);
+      assertLocationId(locationId);
+
+      const candidateRef = collection.doc(locationId);
+      const eventRef = candidateRef.collection("auditEvents").doc();
+
+      return db.runTransaction(async (transaction) => {
+        await requirePermission(actorUid, transaction);
+
+        const snapshot = await transaction.get(candidateRef);
+        if (!snapshot.exists) {
+          throw new Error("PUDO candidate not found.");
+        }
+
+        const candidate = snapshot.data()!;
+        if (candidate.lifecycle === "active") {
+          throw new Error("An active PUDO location cannot be deleted.");
+        }
+        if (candidate.lifecycle === "withdrawn") {
+          throw new Error("This PUDO candidate has already been removed.");
+        }
+        if (candidate.lifecycle !== "draft" && candidate.lifecycle !== "submitted") {
+          throw new Error("This PUDO candidate cannot be removed in its current state.");
+        }
+
+        const now = serverTimestamp();
+        transaction.update(candidateRef, {
+          lifecycle: "withdrawn",
+          withdrawnAt: now,
+          withdrawnBy: actorUid,
+          updatedAt: now,
+          updatedBy: actorUid,
+        });
+        transaction.create(eventRef, {
+          action: "candidate_withdrawn",
+          locationId,
+          actorUid,
+          timestamp: now,
+          previousLifecycle: candidate.lifecycle,
+        });
+
+        return { locationId, lifecycle: "withdrawn" as const };
+      });
     },
 
     async saveCandidate(

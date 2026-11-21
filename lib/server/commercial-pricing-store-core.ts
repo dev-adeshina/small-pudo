@@ -1,6 +1,11 @@
 import type { FieldValue, Firestore } from "firebase-admin/firestore";
+import { assertCommercialPricingConfiguration } from "./commercial-pricing-engine-core";
 
-import { hasStaffActionPermission } from "./staff-permission-grants-core.ts";
+// import { hasStaffActionPermission } from "./staff-permission-grants-core.ts";
+import {
+  hasStaffActionPermission,
+  hasStaffActionPermissionInTransaction,
+} from "./staff-permission-grants-core.ts";
 
 export type CommercialPricingConfiguration =
   Readonly<Record<string, unknown>>;
@@ -13,6 +18,14 @@ interface CommercialPricingStoreDependencies {
 interface CommercialPricingLineageData {
   currentVersionId?: unknown;
   currentVersionNumber?: unknown;
+  approvedVersionId?: unknown;
+  approvedVersionNumber?: unknown;
+  approvedAt?: unknown;
+  approvedBy?: unknown;
+  publishedVersionId?: unknown;
+  publishedVersionNumber?: unknown;
+  publishedAt?: unknown;
+  publishedBy?: unknown;
   createdAt?: unknown;
   createdBy?: unknown;
   updatedAt?: unknown;
@@ -25,6 +38,45 @@ interface CommercialPricingVersionData {
   createdBy?: unknown;
   [key: string]: unknown;
 }
+
+type CommercialPricingWorkflowState =
+  | "draft"
+  | "pending_approval"
+  | "changes_requested"
+  | "approved"
+  | "rejected";
+
+type CommercialPricingWorkflowDocument = {
+  state: CommercialPricingWorkflowState;
+  proposerUid?: string;
+  approverUid?: string;
+  reason?: string | null;
+  createdAt?: unknown;
+  createdBy?: string;
+  updatedAt?: unknown;
+  updatedBy?: string;
+};
+
+type CommercialPricingWorkflowAction =
+  | "submit"
+  | "approve"
+  | "request_changes"
+  | "reject";
+
+type CommercialPricingWorkflowResult =
+  | {
+    outcome: "transitioned";
+    state: CommercialPricingWorkflowState;
+  }
+  | { outcome: "not_found" };
+
+type CommercialPricingPublicationResult =
+  | {
+    outcome: "published";
+    versionId: string;
+    versionNumber: number;
+  }
+  | { outcome: "not_found" };
 
 export type ReviseCommercialPricingDefinitionResult =
   | {
@@ -162,11 +214,14 @@ function assertExpectedVersionNumber(value: number): void {
 }
 
 /**
- * Server-side persistence primitives only.
+ * Server-side commercial pricing persistence and lifecycle primitives.
  *
- * These records do not calculate prices, approve or publish configurations,
- * issue customer quotations, or apply pricing to bookings or checkout.
+ * These records support immutable pricing configurations, independent
+ * approval and controlled publication. They do not issue customer
+ * quotations or apply pricing to bookings or checkout.
  */
+
+
 export function createCommercialPricingStore({
   db,
   serverTimestamp,
@@ -178,9 +233,20 @@ export function createCommercialPricingStore({
     ): Promise<boolean> {
       assertActorUid(actorUid);
 
+      // if (
+      //   permissionId !== "commercial_pricing.view" &&
+      //   permissionId !== "commercial_pricing.propose"
+      // ) {
+      //   throw new TypeError("Unsupported commercial pricing permission");
+      // }
+
       if (
-        permissionId !== "commercial_pricing.view" &&
-        permissionId !== "commercial_pricing.propose"
+        ![
+          "commercial_pricing.view",
+          "commercial_pricing.propose",
+          "commercial_pricing.approve",
+          "commercial_pricing.publish",
+        ].includes(permissionId)
       ) {
         throw new TypeError("Unsupported commercial pricing permission");
       }
@@ -257,9 +323,13 @@ export function createCommercialPricingStore({
         .orderBy("versionNumber", "asc")
         .get();
 
-      const versions = versionsSnapshot.docs.map((version) => ({
-        versionId: version.id,
-        ...version.data(),
+      const versions = await Promise.all(versionsSnapshot.docs.map(async (version) => {
+        const workflow = await version.ref.collection("approval").doc("workflow").get();
+        return {
+          versionId: version.id,
+          ...version.data(),
+          approvalWorkflow: workflow.exists ? workflow.data() : { state: "draft" },
+        };
       }));
 
       return {
@@ -381,12 +451,30 @@ export function createCommercialPricingStore({
           );
         }
 
+
         const currentVersion =
           currentVersionDocument.data() as CommercialPricingVersionData;
 
         if (currentVersion.versionNumber !== currentVersionNumber) {
           throw new Error(
             "Commercial pricing version number does not match its lineage"
+          );
+        }
+
+        const currentWorkflowRef = currentVersionRef
+          .collection("approval")
+          .doc("workflow");
+
+        const currentWorkflowDocument =
+          await transaction.get(currentWorkflowRef);
+
+        const currentWorkflowState = currentWorkflowDocument.exists
+          ? currentWorkflowDocument.data()?.state
+          : "draft";
+
+        if (currentWorkflowState === "pending_approval") {
+          throw new Error(
+            "A commercial pricing version cannot be revised while approval is pending"
           );
         }
 
@@ -405,6 +493,10 @@ export function createCommercialPricingStore({
         transaction.update(definitionRef, {
           currentVersionId: nextVersionRef.id,
           currentVersionNumber: nextVersionNumber,
+          approvedVersionId: null,
+          approvedVersionNumber: null,
+          approvedAt: null,
+          approvedBy: null,
           updatedAt: serverTimestamp(),
           updatedBy: actorUid,
         });
@@ -413,6 +505,343 @@ export function createCommercialPricingStore({
           outcome: "updated",
           versionId: nextVersionRef.id,
           versionNumber: nextVersionNumber,
+        } as const;
+      });
+    },
+
+    async transitionWorkflow(input: {
+      definitionId: string;
+      versionId: string;
+      actorUid: string;
+      action: CommercialPricingWorkflowAction;
+      reason?: string;
+    }): Promise<CommercialPricingWorkflowResult> {
+      const { definitionId, versionId, actorUid, action, reason } = input;
+
+      assertDefinitionId(definitionId);
+      assertDefinitionId(versionId);
+      assertActorUid(actorUid);
+
+      if (
+        !["submit", "approve", "request_changes", "reject"].includes(action)
+      ) {
+        throw new TypeError("Unsupported commercial pricing workflow action");
+      }
+
+      if (
+        (action === "request_changes" || action === "reject") &&
+        (typeof reason !== "string" || !reason.trim() || reason.length > 1000)
+      ) {
+        throw new TypeError(
+          "A reason of at most 1000 characters is required for this decision"
+        );
+      }
+
+      const definitionRef = db
+        .collection("commercialPricingDefinitions")
+        .doc(definitionId);
+
+      const versionRef = definitionRef.collection("versions").doc(versionId);
+      const workflowRef = versionRef.collection("approval").doc("workflow");
+      const eventRef = workflowRef.collection("events").doc();
+
+      return db.runTransaction(async (transaction) => {
+        const [definitionDocument, versionDocument, workflowDocument] =
+          await Promise.all([
+            transaction.get(definitionRef),
+            transaction.get(versionRef),
+            transaction.get(workflowRef),
+          ]);
+
+        if (!definitionDocument.exists || !versionDocument.exists) {
+          return { outcome: "not_found" } as const;
+        }
+
+        const lineage =
+          definitionDocument.data() as CommercialPricingLineageData;
+
+        const version =
+          versionDocument.data() as CommercialPricingVersionData;
+
+        if (
+          lineage.currentVersionId !== versionId ||
+          typeof lineage.currentVersionNumber !== "number" ||
+          version.versionNumber !== lineage.currentVersionNumber
+        ) {
+          throw new Error(
+            "Only the current commercial pricing version may enter or advance approval"
+          );
+        }
+
+        const current = (
+          workflowDocument.exists
+            ? workflowDocument.data()
+            : { state: "draft" }
+        ) as CommercialPricingWorkflowDocument;
+
+        if (action === "submit") {
+          const configuration = Object.fromEntries(
+            Object.entries(version).filter(([key]) =>
+              key !== "versionNumber" && key !== "createdAt" && key !== "createdBy"
+            )
+          );
+          assertCommercialPricingConfiguration(configuration);
+          const pricingConfiguration = configuration as {
+            pricingModel?: unknown;
+            components?: unknown[];
+          };
+          if (
+            !pricingConfiguration.pricingModel ||
+            !Array.isArray(pricingConfiguration.components) ||
+            pricingConfiguration.components.length === 0
+          ) {
+            throw new Error("A pricing model and at least one complete pricing component are required before submission");
+          }
+        }
+
+        const permission =
+          action === "submit"
+            ? "commercial_pricing.propose"
+            : "commercial_pricing.approve";
+
+        const authorized = await hasStaffActionPermissionInTransaction(
+          transaction,
+          db,
+          actorUid,
+          permission
+        );
+
+        if (!authorized) {
+          throw new Error(
+            "The actor does not have the required active commercial pricing permission"
+          );
+        }
+
+        let nextState: CommercialPricingWorkflowState;
+
+        switch (action) {
+          case "submit":
+            if (current.state !== "draft" || version.createdBy !== actorUid) {
+              throw new Error(
+                "Only the version creator may submit a draft for approval"
+              );
+            }
+
+            nextState = "pending_approval";
+            break;
+
+          case "approve":
+            if (
+              current.state !== "pending_approval" ||
+              current.proposerUid === actorUid
+            ) {
+              throw new Error(
+                "Approval requires an independent approver and a pending version"
+              );
+            }
+
+            nextState = "approved";
+            break;
+
+          case "request_changes":
+            if (
+              current.state !== "pending_approval" ||
+              current.proposerUid === actorUid
+            ) {
+              throw new Error(
+                "Only an independent approver may request changes to a pending version"
+              );
+            }
+
+            nextState = "changes_requested";
+            break;
+
+          case "reject":
+            if (
+              current.state !== "pending_approval" ||
+              current.proposerUid === actorUid
+            ) {
+              throw new Error(
+                "Only an independent approver may reject a pending version"
+              );
+            }
+
+            nextState = "rejected";
+            break;
+        }
+
+        const timestamp = serverTimestamp();
+
+        transaction.set(workflowRef, {
+          state: nextState,
+          proposerUid:
+            action === "submit" ? actorUid : current.proposerUid,
+          ...(action === "approve" ||
+            action === "request_changes" ||
+            action === "reject"
+            ? { approverUid: actorUid }
+            : {}),
+          reason:
+            action === "request_changes" || action === "reject"
+              ? reason!.trim()
+              : null,
+          ...(workflowDocument.exists
+            ? {}
+            : {
+              createdAt: timestamp,
+              createdBy: actorUid,
+            }),
+          updatedAt: timestamp,
+          updatedBy: actorUid,
+        });
+
+        transaction.create(eventRef, {
+          action,
+          actorUid,
+          previousState: current.state,
+          resultingState: nextState,
+          reason:
+            action === "request_changes" || action === "reject"
+              ? reason!.trim()
+              : null,
+          timestamp,
+        });
+
+        if (nextState === "approved") {
+          transaction.update(definitionRef, {
+            approvedVersionId: versionId,
+            approvedVersionNumber: version.versionNumber,
+            approvedAt: timestamp,
+            approvedBy: actorUid,
+            updatedAt: timestamp,
+            updatedBy: actorUid,
+          });
+        }
+
+        return {
+          outcome: "transitioned",
+          state: nextState,
+        } as const;
+      });
+    },
+
+    async publishVersion(input: {
+      definitionId: string;
+      versionId: string;
+      actorUid: string;
+    }): Promise<CommercialPricingPublicationResult> {
+      const { definitionId, versionId, actorUid } = input;
+
+      assertDefinitionId(definitionId);
+      assertDefinitionId(versionId);
+      assertActorUid(actorUid);
+
+      const definitionRef = db
+        .collection("commercialPricingDefinitions")
+        .doc(definitionId);
+
+      const versionRef = definitionRef.collection("versions").doc(versionId);
+      const workflowRef = versionRef.collection("approval").doc("workflow");
+      const publicationEventRef = definitionRef
+        .collection("publication")
+        .doc("events")
+        .collection("entries")
+        .doc();
+
+      return db.runTransaction(async (transaction) => {
+        const [definitionDocument, versionDocument, workflowDocument] =
+          await Promise.all([
+            transaction.get(definitionRef),
+            transaction.get(versionRef),
+            transaction.get(workflowRef),
+          ]);
+
+        if (!definitionDocument.exists || !versionDocument.exists) {
+          return { outcome: "not_found" } as const;
+        }
+
+        const lineage =
+          definitionDocument.data() as CommercialPricingLineageData;
+
+        const version =
+          versionDocument.data() as CommercialPricingVersionData;
+
+        const configuration = Object.fromEntries(
+          Object.entries(version).filter(([key]) =>
+            key !== "versionNumber" && key !== "createdAt" && key !== "createdBy"
+          )
+        );
+        assertCommercialPricingConfiguration(configuration);
+        const pricingConfiguration = configuration as {
+          pricingModel?: unknown;
+          components?: unknown[];
+        };
+        if (
+          !pricingConfiguration.pricingModel ||
+          !Array.isArray(pricingConfiguration.components) ||
+          pricingConfiguration.components.length === 0
+        ) {
+          throw new Error("Only a complete pricing configuration with a selected model and pricing components can be published");
+        }
+
+        if (
+          lineage.currentVersionId !== versionId ||
+          lineage.currentVersionNumber !== version.versionNumber ||
+          lineage.approvedVersionId !== versionId ||
+          lineage.approvedVersionNumber !== version.versionNumber ||
+          workflowDocument.data()?.state !== "approved" ||
+          typeof version.versionNumber !== "number" ||
+          !Number.isSafeInteger(version.versionNumber)
+        ) {
+          throw new Error(
+            "Only the current approved commercial pricing version may be published"
+          );
+        }
+
+        const authorized = await hasStaffActionPermissionInTransaction(
+          transaction,
+          db,
+          actorUid,
+          "commercial_pricing.publish"
+        );
+
+        if (!authorized) {
+          throw new Error(
+            "The actor does not have the required active publication permission"
+          );
+        }
+
+        if (lineage.publishedVersionId === versionId && lineage.publishedVersionNumber === version.versionNumber) {
+          return {
+            outcome: "published",
+            versionId,
+            versionNumber: version.versionNumber,
+          } as const;
+        }
+
+        const timestamp = serverTimestamp();
+
+        transaction.update(definitionRef, {
+          publishedVersionId: versionId,
+          publishedVersionNumber: version.versionNumber,
+          publishedAt: timestamp,
+          publishedBy: actorUid,
+          updatedAt: timestamp,
+          updatedBy: actorUid,
+        });
+
+        transaction.create(publicationEventRef, {
+          action: "publish",
+          versionId,
+          versionNumber: version.versionNumber,
+          actorUid,
+          timestamp,
+        });
+
+        return {
+          outcome: "published",
+          versionId,
+          versionNumber: version.versionNumber,
         } as const;
       });
     },
