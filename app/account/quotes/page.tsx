@@ -21,6 +21,7 @@ type QuoteEvent = {
   eventId: string;
   action?: string;
   versionId?: string;
+  bookingId?: string;
   reason?: string;
   timestamp?: unknown;
   handoverDeadlineAt?: unknown;
@@ -252,7 +253,7 @@ export default function CustomerQuotesPage() {
                 <section className="customer-panel" key={quote.quoteId} style={{ marginBottom: 18 }}>
                   <div className="customer-panel-heading">
                     <div><span className="section-label">QUOTATION / {quote.quoteId}</span><h2>{displayValue(snapshot.serviceName ?? snapshot.serviceCode ?? "Shipment quotation")}</h2></div>
-                    <span className={"customer-status " + (status === "accepted" ? "customer-status-success" : status === "rejected" || status === "expired" ? "customer-status-cancelled" : "customer-status-pending")}>{status.replaceAll("_", " ")}</span>
+                    <span className={"customer-status " + (status === "accepted" || status === "booked" ? "customer-status-success" : status === "rejected" || status === "expired" ? "customer-status-cancelled" : "customer-status-pending")}>{status.replaceAll("_", " ")}</span>
                   </div>
                   <p>Version {version?.sequence ?? "—"} · Valid until {formatDate(quote.validUntil ?? version?.validUntil)}</p>
                   {quoteTerms.handoverWindowMinutes !== undefined && <p>Physical handover window after acceptance: {displayValue(quoteTerms.handoverWindowMinutes)} minutes.</p>}
@@ -284,6 +285,7 @@ export default function CustomerQuotesPage() {
                           <span>{formatDate(event.timestamp)}</span>
                           <small>
                             {event.versionId ? `Version reference: ${event.versionId}` : ""}
+                            {event.bookingId ? ` · Booking reference: ${event.bookingId}` : ""}
                             {event.reason ? ` · Reason: ${event.reason}` : ""}
                             {event.handoverDeadlineAt ? ` · Handover deadline: ${formatDate(event.handoverDeadlineAt)}` : ""}
                           </small>
