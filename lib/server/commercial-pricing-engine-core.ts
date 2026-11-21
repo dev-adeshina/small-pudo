@@ -477,6 +477,9 @@ export function assertCommercialPricingConfiguration(
         if (category.treatment === "multiplier" && (option.value as number) <= 0) {
           throw new TypeError("A parcel characteristic multiplier must be greater than zero");
         }
+        if (category.treatment === "fixed_amount" && (option.value as number) < 0) {
+          throw new TypeError("A parcel characteristic fixed amount cannot be negative");
+        }
       }
     }
   }
@@ -522,6 +525,20 @@ export function assertCommercialPricingConfiguration(
     }
     return dependencies.size > 0;
   });
+
+  for (const characteristicInputKey of characteristicInputKeys) {
+    if (!componentInputDependencies.some((dependencies) => dependencies)) {
+      throw new TypeError("Parcel characteristic inputs must be used by a pricing component");
+    }
+    const referenced = value.components.some((component) => {
+      const dependencies = new Set<string>();
+      collectExpressionInputKeys(component.expression as CommercialPricingExpression, dependencies);
+      return dependencies.has(characteristicInputKey);
+    });
+    if (!referenced) {
+      throw new TypeError("Parcel characteristic input is not used by a pricing component: " + characteristicInputKey);
+    }
+  }
 
   const hasInputDependentComponent = componentInputDependencies.some(Boolean);
   const hasFixedComponent = componentInputDependencies.some((dependent) => !dependent);
