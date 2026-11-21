@@ -334,15 +334,15 @@ export function createCommercialQuotationReadinessStore({
 
     async listOperationalEvidence(actorUid: string, filters?: { kind?: OperationalEvidenceKind; serviceCode?: CommercialServiceCode; locationId?: string }) {
       assertActor(actorUid);
-      const canRead = await db.runTransaction(async (transaction) => {
-        const permissions = await Promise.all([
+      const permissions = await db.runTransaction(async (transaction) => {
+        const [record, review, revoke] = await Promise.all([
           hasStaffActionPermissionInTransaction(transaction, db, actorUid, OPERATIONAL_EVIDENCE_RECORD_PERMISSION),
           hasStaffActionPermissionInTransaction(transaction, db, actorUid, OPERATIONAL_EVIDENCE_REVIEW_PERMISSION),
           hasStaffActionPermissionInTransaction(transaction, db, actorUid, OPERATIONAL_EVIDENCE_REVOKE_PERMISSION),
         ]);
-        return permissions.some(Boolean);
+        return { record, review, revoke };
       });
-      assertPermission(canRead, "view operational evidence");
+      assertPermission(permissions.record || permissions.review || permissions.revoke, "view operational evidence");
       const snapshot = await operationalEvidence.orderBy("recordedAt", "desc").limit(200).get();
       const rows = await Promise.all(snapshot.docs.map(async (document) => {
         const evidence = document.data();
@@ -372,7 +372,10 @@ export function createCommercialQuotationReadinessStore({
           isCurrentApproved: current,
         };
       }));
-      return rows.filter((row): row is NonNullable<typeof row> => row !== null);
+      return {
+        items: rows.filter((row): row is NonNullable<typeof row> => row !== null),
+        permissions,
+      };
     },
 
     async reviewRouteEvidence(actorUid: string, evidenceId: string, decision: RouteEvidenceDecision, reason: string, validUntil?: Date) {
