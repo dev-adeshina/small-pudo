@@ -99,7 +99,6 @@ export default function ShipmentDraftsPage() {
   const [loadError, setLoadError] = useState("");
   const [notice, setNotice] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [quoteServiceByDraft, setQuoteServiceByDraft] = useState<Record<string, "standard" | "express" | "scheduled">>({});
   const [requestingQuoteId, setRequestingQuoteId] = useState<string | null>(null);
   const [quoteRequestError, setQuoteRequestError] = useState("");
   const [quoteRequestNotice, setQuoteRequestNotice] = useState("");
