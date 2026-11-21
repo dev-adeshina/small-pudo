@@ -4,6 +4,7 @@ export interface ShipmentBookingDraftMeasurement {
 }
 
 export interface ShipmentBookingDraftInput {
+  serviceCode?: "standard" | "express" | "scheduled";
   origin: string;
   destination: string;
   originPudoLocationId?: string;
@@ -29,11 +30,17 @@ export function validateShipmentBookingDraft(
 
   const candidate = body as Record<string, unknown>;
   if (Object.keys(candidate).some((key) =>
-    !["origin", "destination", "originPudoLocationId", "destinationPudoLocationId", "parcelDescription", "declaredMeasurements", "parcelCharacteristics"].includes(key)
+    !["serviceCode", "origin", "destination", "originPudoLocationId", "destinationPudoLocationId", "parcelDescription", "declaredMeasurements", "parcelCharacteristics"].includes(key)
   )) {
     return { success: false, error: "The shipment draft contains an unsupported field." };
   }
 
+  const serviceCode = candidate.serviceCode === undefined ? "standard" :
+    candidate.serviceCode === "standard" || candidate.serviceCode === "express" || candidate.serviceCode === "scheduled"
+      ? candidate.serviceCode : null;
+  if (serviceCode === null) {
+    return { success: false, error: "Choose a supported shipment quotation service." };
+  }
   const origin = typeof candidate.origin === "string" ? candidate.origin.trim() : "";
   const destination = typeof candidate.destination === "string" ? candidate.destination.trim() : "";
   const parcelDescription = typeof candidate.parcelDescription === "string"
@@ -121,6 +128,7 @@ export function validateShipmentBookingDraft(
   return {
     success: true,
     data: {
+      serviceCode,
       origin,
       destination,
       ...(originPudoLocationId ? { originPudoLocationId } : {}),
