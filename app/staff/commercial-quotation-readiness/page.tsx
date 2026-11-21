@@ -8,6 +8,24 @@ import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
 
 type ServiceCode = "standard" | "express" | "scheduled";
+type OperationalEvidenceRow = {
+  evidenceId: string;
+  kind: "service_coverage" | "operating_availability" | "capacity";
+  serviceCode: ServiceCode;
+  source: string;
+  supportingReference: string;
+  scope: Record<string, unknown>;
+  details: Record<string, unknown>;
+  recordedBy: string;
+  recordedAt: string | null;
+  validFrom: string | null;
+  validUntil: string | null;
+  reviewStatus: string;
+  reviewedBy: string | null;
+  reviewValidUntil: string | null;
+  reviewReason: string | null;
+  isCurrentApproved: boolean;
+};
 type RouteEvidenceReviewDetails = {
   evidenceId: string;
   originOperationalPointRef: string;
@@ -59,9 +77,35 @@ export default function CommercialQuotationReadinessPage() {
   const [originPudoLocationId, setOriginPudoLocationId] = useState("");
   const [destinationPudoLocationId, setDestinationPudoLocationId] = useState("");
   const [eligibilityOutcome, setEligibilityOutcome] = useState<"" | "pending_verification" | "eligible" | "conditionally_eligible" | "not_eligible" | "revoked">("");
-  const [serviceCoverageReferences, setServiceCoverageReferences] = useState("");
-  const [availabilityReferences, setAvailabilityReferences] = useState("");
-  const [capacityReferences, setCapacityReferences] = useState("");
+  const [operationalEvidenceRows, setOperationalEvidenceRows] = useState<OperationalEvidenceRow[]>([]);
+  const [operationalEvidenceLoading, setOperationalEvidenceLoading] = useState(false);
+  const [evidenceKind, setEvidenceKind] = useState<OperationalEvidenceRow["kind"]>("service_coverage");
+  const [evidenceServiceCode, setEvidenceServiceCode] = useState<ServiceCode>("standard");
+  const [evidenceSource, setEvidenceSource] = useState("");
+  const [evidenceSupportingReference, setEvidenceSupportingReference] = useState("");
+  const [evidenceValidFrom, setEvidenceValidFrom] = useState("");
+  const [evidenceValidUntil, setEvidenceValidUntil] = useState("");
+  const [coverageScopeType, setCoverageScopeType] = useState<"area" | "route">("route");
+  const [coverageAreaRef, setCoverageAreaRef] = useState("");
+  const [coveragePointRefs, setCoveragePointRefs] = useState("");
+  const [coverageOriginRef, setCoverageOriginRef] = useState("");
+  const [coverageDestinationRef, setCoverageDestinationRef] = useState("");
+  const [coverageBasis, setCoverageBasis] = useState("");
+  const [evidenceLocationId, setEvidenceLocationId] = useState("");
+  const [availabilityWindows, setAvailabilityWindows] = useState("");
+  const [availabilityTimeZone, setAvailabilityTimeZone] = useState("Africa/Lagos");
+  const [capacityBasis, setCapacityBasis] = useState("");
+  const [capacityLoad, setCapacityLoad] = useState("");
+  const [capacityUnit, setCapacityUnit] = useState("");
+  const [selectedCoverageIds, setSelectedCoverageIds] = useState<string[]>([]);
+  const [selectedAvailabilityIds, setSelectedAvailabilityIds] = useState<string[]>([]);
+  const [selectedCapacityIds, setSelectedCapacityIds] = useState<string[]>([]);
+  const [reviewEvidenceId, setReviewEvidenceId] = useState("");
+  const [operationalReviewDecision, setOperationalReviewDecision] = useState<"" | "approve" | "reject">("");
+  const [operationalReviewReason, setOperationalReviewReason] = useState("");
+  const [operationalReviewValidUntil, setOperationalReviewValidUntil] = useState("");
+  const [revokeEvidenceId, setRevokeEvidenceId] = useState("");
+  const [operationalRevocationReason, setOperationalRevocationReason] = useState("");
   const [originRequiredActions, setOriginRequiredActions] = useState("");
   const [destinationRequiredActions, setDestinationRequiredActions] = useState("");
   const [capabilityLocationId, setCapabilityLocationId] = useState("");
@@ -147,6 +191,29 @@ export default function CommercialQuotationReadinessPage() {
     return () => { active = false; };
   }, [token, routeEvidenceId]);
 
+  async function refreshOperationalEvidence() {
+    if (!token) return;
+    setOperationalEvidenceLoading(true);
+    try {
+      const currentToken = await auth.currentUser?.getIdToken();
+      if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
+      const response = await fetch("/api/staff/commercial-quotation-readiness/operational-evidence", {
+        headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(data?.error || "Unable to load operational evidence.");
+      setOperationalEvidenceRows(Array.isArray(data?.result) ? data.result as OperationalEvidenceRow[] : []);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to load operational evidence.");
+    } finally {
+      setOperationalEvidenceLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (token) void refreshOperationalEvidence();
+  }, [token]);
+
   async function post(path: string, body: Record<string, unknown>, successMessage: string) {
     if (!token || busy) return;
     setBusy(true);
@@ -163,6 +230,15 @@ export default function CommercialQuotationReadinessPage() {
       const data = await response.json().catch(() => null);
       if (!response.ok) throw new Error(data?.error || "The request could not be completed.");
       setNotice(successMessage);
+      if (path.includes("/operational-evidence")) {
+        const refreshed = await fetch("/api/staff/commercial-quotation-readiness/operational-evidence", {
+          headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
+        });
+        const refreshedData = await refreshed.json().catch(() => null);
+        if (refreshed.ok && Array.isArray(refreshedData?.result)) {
+          setOperationalEvidenceRows(refreshedData.result as OperationalEvidenceRow[]);
+        }
+      }
       if (path.includes("/route-evidence/") && path.endsWith("/review")) {
         const refreshed = await fetch(path, {
           headers: { Authorization: "Bearer " + currentToken },
@@ -213,6 +289,85 @@ export default function CommercialQuotationReadinessPage() {
         </div>
         {error && <div className="cost-alert"><strong>Unable to continue</strong><span>{error}</span></div>}
         {notice && <div className="cost-notice">{notice}</div>}
+
+        <section className="cost-panel">
+          <div className="cost-panel-heading"><div><span className="section-label">00 / DEC-047 OPERATIONAL EVIDENCE</span><h2>Record, review and govern service evidence</h2></div></div>
+          <p className="mb-4 text-sm text-gray-600">Recorded evidence is immutable. Approval, rejection and revocation are separate attributed decisions. Only approved, current records with exact matching service and endpoint scope can be selected for positive eligibility.</p>
+          <form className="space-y-4 border-b pb-6" onSubmit={(event) => {
+            event.preventDefault();
+            const scope = evidenceKind === "service_coverage"
+              ? (coverageScopeType === "route"
+                ? { scopeType: "route", originOperationalPointRef: coverageOriginRef, destinationOperationalPointRef: coverageDestinationRef }
+                : { scopeType: "area", areaRef: coverageAreaRef, operationalPointRefs: lines(coveragePointRefs) })
+              : { locationId: evidenceLocationId };
+            const details = evidenceKind === "service_coverage"
+              ? { coverageBasis }
+              : evidenceKind === "operating_availability"
+                ? { operatingWindows: lines(availabilityWindows), timeZone: availabilityTimeZone }
+                : { capacityBasis, supportedLoad: Number(capacityLoad), capacityUnit };
+            void post("/api/staff/commercial-quotation-readiness/operational-evidence", {
+              kind: evidenceKind, serviceCode: evidenceServiceCode, source: evidenceSource,
+              supportingReference: evidenceSupportingReference, validFrom: new Date(evidenceValidFrom).toISOString(),
+              validUntil: new Date(evidenceValidUntil).toISOString(), scope, details,
+            }, "Operational evidence recorded and awaiting independent review.");
+          }}>
+            <h3 className="font-semibold">Record new evidence</h3>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="block text-sm font-medium">Evidence category<select className="mt-2 w-full rounded-lg border p-3" value={evidenceKind} onChange={(event) => setEvidenceKind(event.target.value as OperationalEvidenceRow["kind"])}><option value="service_coverage">Service coverage</option><option value="operating_availability">PUDO operating availability</option><option value="capacity">PUDO capacity</option></select></label>
+              <label className="block text-sm font-medium">Service<select className="mt-2 w-full rounded-lg border p-3" value={evidenceServiceCode} onChange={(event) => setEvidenceServiceCode(event.target.value as ServiceCode)}><option value="standard">Standard</option><option value="express">Express</option><option value="scheduled">Scheduled</option></select></label>
+              <label className="block text-sm font-medium">Evidence source<input className="mt-2 w-full rounded-lg border p-3" value={evidenceSource} onChange={(event) => setEvidenceSource(event.target.value)} required maxLength={500} /></label>
+              <label className="block text-sm font-medium">Supporting reference<input className="mt-2 w-full rounded-lg border p-3" value={evidenceSupportingReference} onChange={(event) => setEvidenceSupportingReference(event.target.value)} required maxLength={1000} /></label>
+              <label className="block text-sm font-medium">Effective from<input className="mt-2 w-full rounded-lg border p-3" type="datetime-local" value={evidenceValidFrom} onChange={(event) => setEvidenceValidFrom(event.target.value)} required /></label>
+              <label className="block text-sm font-medium">Evidence expires<input className="mt-2 w-full rounded-lg border p-3" type="datetime-local" value={evidenceValidUntil} onChange={(event) => setEvidenceValidUntil(event.target.value)} required /></label>
+            </div>
+            {evidenceKind === "service_coverage" ? <>
+              <label className="block text-sm font-medium">Coverage scope<select className="mt-2 w-full rounded-lg border p-3" value={coverageScopeType} onChange={(event) => setCoverageScopeType(event.target.value as "area" | "route")}><option value="route">Directed PUDO-to-PUDO route</option><option value="area">Operational area with explicit covered points</option></select></label>
+              {coverageScopeType === "route" ? <div className="grid gap-4 md:grid-cols-2"><label className="block text-sm font-medium">Origin operational point ID<input className="mt-2 w-full rounded-lg border p-3" value={coverageOriginRef} onChange={(event) => setCoverageOriginRef(event.target.value)} required /></label><label className="block text-sm font-medium">Destination operational point ID<input className="mt-2 w-full rounded-lg border p-3" value={coverageDestinationRef} onChange={(event) => setCoverageDestinationRef(event.target.value)} required /></label></div> :
+                <><label className="block text-sm font-medium">Operational area reference<input className="mt-2 w-full rounded-lg border p-3" value={coverageAreaRef} onChange={(event) => setCoverageAreaRef(event.target.value)} required /></label><label className="block text-sm font-medium">Covered operational point IDs (one per line)<textarea className="mt-2 w-full rounded-lg border p-3" value={coveragePointRefs} onChange={(event) => setCoveragePointRefs(event.target.value)} required rows={3} /></label></>}
+              <label className="block text-sm font-medium">Coverage basis<textarea className="mt-2 w-full rounded-lg border p-3" value={coverageBasis} onChange={(event) => setCoverageBasis(event.target.value)} required /></label>
+            </> : <>
+              <label className="block text-sm font-medium">PUDO location ID<input className="mt-2 w-full rounded-lg border p-3" value={evidenceLocationId} onChange={(event) => setEvidenceLocationId(event.target.value)} required /></label>
+              {evidenceKind === "operating_availability" ? <>
+                <label className="block text-sm font-medium">Operating windows (one explicit window per line)<textarea className="mt-2 w-full rounded-lg border p-3" value={availabilityWindows} onChange={(event) => setAvailabilityWindows(event.target.value)} required rows={3} placeholder="Monday-Friday 08:00-18:00" /></label>
+                <label className="block text-sm font-medium">Time zone<input className="mt-2 w-full rounded-lg border p-3" value={availabilityTimeZone} onChange={(event) => setAvailabilityTimeZone(event.target.value)} required /></label>
+              </> : <div className="grid gap-4 md:grid-cols-3"><label className="block text-sm font-medium">Capacity basis<input className="mt-2 w-full rounded-lg border p-3" value={capacityBasis} onChange={(event) => setCapacityBasis(event.target.value)} required /></label><label className="block text-sm font-medium">Supported load<input className="mt-2 w-full rounded-lg border p-3" type="number" min="0.001" step="any" value={capacityLoad} onChange={(event) => setCapacityLoad(event.target.value)} required /></label><label className="block text-sm font-medium">Capacity unit<input className="mt-2 w-full rounded-lg border p-3" value={capacityUnit} onChange={(event) => setCapacityUnit(event.target.value)} required /></label></div>}
+            </>}
+            <button className="cost-primary-button" disabled={busy}>{busy ? "Saving..." : "Record immutable evidence"}</button>
+            <p className="text-xs text-gray-600">Requires <code>commercial_operational_evidence.record</code>. Recording does not approve evidence or make a service eligible.</p>
+          </form>
+          <div className="mt-6 overflow-x-auto">
+            <div className="mb-3 flex items-center justify-between"><h3 className="font-semibold">Operational evidence register</h3><button type="button" className="cost-secondary-button" disabled={operationalEvidenceLoading} onClick={() => void refreshOperationalEvidence()}>{operationalEvidenceLoading ? "Refreshing..." : "Refresh register"}</button></div>
+            <table className="w-full min-w-[900px] text-left text-sm">
+              <thead><tr className="border-b"><th className="p-2">ID / category</th><th className="p-2">Service / scope</th><th className="p-2">Recorder</th><th className="p-2">Review</th><th className="p-2">Validity</th></tr></thead>
+              <tbody>{operationalEvidenceRows.map((row) => <tr key={row.evidenceId} className="border-b align-top">
+                <td className="p-2"><div className="font-medium">{row.evidenceId}</div><div>{row.kind.replaceAll("_", " ")}</div></td>
+                <td className="p-2"><div>{row.serviceCode}</div><div>{String(row.scope.locationId ?? row.scope.areaRef ?? (String(row.scope.originOperationalPointRef ?? "") + " → " + String(row.scope.destinationOperationalPointRef ?? "")))}</div></td>
+                <td className="p-2">{row.recordedBy}<div>{row.recordedAt ?? "—"}</div></td>
+                <td className="p-2">{row.reviewStatus}<div>{row.reviewedBy ?? "—"}</div></td>
+                <td className="p-2">{row.validUntil ?? "—"}<div>{row.isCurrentApproved ? "Current and approved" : "Not currently selectable"}</div></td>
+              </tr>)}</tbody>
+            </table>
+            {!operationalEvidenceRows.length && !operationalEvidenceLoading && <p className="py-4 text-sm text-gray-600">No operational evidence records are available to this account.</p>}
+          </div>
+          <div className="mt-6 grid gap-6 border-t pt-6 md:grid-cols-2">
+            <form className="space-y-3" onSubmit={(event) => { event.preventDefault(); void post("/api/staff/commercial-quotation-readiness/operational-evidence/" + encodeURIComponent(reviewEvidenceId) + "/review", { decision: operationalReviewDecision, reason: operationalReviewReason, ...(operationalReviewDecision === "approve" ? { validUntil: new Date(operationalReviewValidUntil).toISOString() } : {}) }, "Operational evidence review recorded."); }}>
+              <h3 className="font-semibold">Independent evidence review</h3>
+              <label className="block text-sm font-medium">Evidence ID<input className="mt-2 w-full rounded-lg border p-3" value={reviewEvidenceId} onChange={(event) => setReviewEvidenceId(event.target.value)} required /></label>
+              <label className="block text-sm font-medium">Decision<select className="mt-2 w-full rounded-lg border p-3" value={operationalReviewDecision} onChange={(event) => setOperationalReviewDecision(event.target.value as typeof operationalReviewDecision)} required><option value="">Select decision</option><option value="approve">Approve</option><option value="reject">Reject</option></select></label>
+              {operationalReviewDecision === "approve" && <label className="block text-sm font-medium">Approval validity end<input className="mt-2 w-full rounded-lg border p-3" type="datetime-local" value={operationalReviewValidUntil} onChange={(event) => setOperationalReviewValidUntil(event.target.value)} required /></label>}
+              <label className="block text-sm font-medium">Review reason<textarea className="mt-2 w-full rounded-lg border p-3" value={operationalReviewReason} onChange={(event) => setOperationalReviewReason(event.target.value)} required /></label>
+              <button className="cost-primary-button" disabled={busy || !reviewEvidenceId || !operationalReviewDecision}>Record independent review</button>
+              <p className="text-xs text-gray-600">Requires <code>commercial_operational_evidence.review</code>. The recorder cannot approve their own evidence.</p>
+            </form>
+            <form className="space-y-3" onSubmit={(event) => { event.preventDefault(); void post("/api/staff/commercial-quotation-readiness/operational-evidence/" + encodeURIComponent(revokeEvidenceId) + "/revoke", { reason: operationalRevocationReason }, "Operational evidence revoked. It is no longer eligible for positive DEC-047 decisions."); }}>
+              <h3 className="font-semibold">Revoke approved evidence</h3>
+              <label className="block text-sm font-medium">Evidence ID<input className="mt-2 w-full rounded-lg border p-3" value={revokeEvidenceId} onChange={(event) => setRevokeEvidenceId(event.target.value)} required /></label>
+              <label className="block text-sm font-medium">Revocation reason<textarea className="mt-2 w-full rounded-lg border p-3" value={operationalRevocationReason} onChange={(event) => setOperationalRevocationReason(event.target.value)} required /></label>
+              <button className="cost-secondary-button" disabled={busy || !revokeEvidenceId}>Revoke evidence</button>
+              <p className="text-xs text-gray-600">Requires <code>commercial_operational_evidence.revoke</code>. Revocation is an append-only decision; recorded evidence is never edited or deleted.</p>
+            </form>
+          </div>
+        </section>
 
         <section className="cost-panel">
           <div className="cost-panel-heading"><div><span className="section-label">01 / ROUTE EVIDENCE</span><h2>Review a recorded route measurement</h2></div></div>
@@ -279,14 +434,18 @@ export default function CommercialQuotationReadinessPage() {
           <div className="cost-panel-heading"><div><span className="section-label">03 / DEC-047</span><h2>Record service and endpoint eligibility</h2></div></div>
           <form className="space-y-4" onSubmit={(event) => {
             event.preventDefault();
+            const selectedOperationalRefs = [
+              ...selectedCoverageIds, ...selectedAvailabilityIds, ...selectedCapacityIds,
+            ].map((id) => "commercialOperationalEvidence/" + id);
             void post("/api/staff/commercial-quotation-readiness/eligibility", {
               serviceCode, originType: eligibilityOriginType, destinationType: eligibilityDestinationType,
               ...(eligibilityOriginType === "pudo" ? { originPudoLocationId } : {}),
               ...(eligibilityDestinationType === "pudo" ? { destinationPudoLocationId } : {}),
-              outcome: eligibilityOutcome, evidenceReferences: lines(evidenceReferences),
-              serviceCoverageEvidenceReferences: lines(serviceCoverageReferences),
-              operatingAvailabilityEvidenceReferences: lines(availabilityReferences),
-              capacityEvidenceReferences: lines(capacityReferences),
+              outcome: eligibilityOutcome,
+              evidenceReferences: [...new Set([...lines(evidenceReferences), ...selectedOperationalRefs])],
+              serviceCoverageEvidenceReferences: selectedCoverageIds.map((id) => "commercialOperationalEvidence/" + id),
+              operatingAvailabilityEvidenceReferences: selectedAvailabilityIds.map((id) => "commercialOperationalEvidence/" + id),
+              capacityEvidenceReferences: selectedCapacityIds.map((id) => "commercialOperationalEvidence/" + id),
               originRequiredActions: lines(originRequiredActions),
               destinationRequiredActions: lines(destinationRequiredActions),
               conditions: lines(conditions), reason: eligibilityReason,
@@ -304,9 +463,22 @@ export default function CommercialQuotationReadinessPage() {
             <p className="text-sm text-gray-600">Include every endpoint, capability, route, coverage, availability, capacity and conditional evidence path in the all-decision-evidence list below, as well as in its relevant category field.</p>
             <label className="block text-sm font-medium">All decision evidence document paths (one Firestore document path per line)<textarea className="mt-2 w-full rounded-lg border p-3" value={evidenceReferences} onChange={(event) => setEvidenceReferences(event.target.value)} rows={5} placeholder={"pudoLocationVerifications/ORIGIN_ID\npudoLocationActivations/ORIGIN_ID\npudoLocationServiceCapabilities/ORIGIN_ID__SELECTED_SERVICE\npudoLocationVerifications/DESTINATION_ID\npudoLocationActivations/DESTINATION_ID\npudoLocationServiceCapabilities/DESTINATION_ID__SELECTED_SERVICE\ncommercialRouteDistanceEvidence/EVIDENCE_ID\ncommercialRouteDistanceReviews/EVIDENCE_ID"} /></label>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="block text-sm font-medium">Service coverage evidence paths<textarea className="mt-2 w-full rounded-lg border p-3" value={serviceCoverageReferences} onChange={(event) => setServiceCoverageReferences(event.target.value)} rows={3} /></label>
-              <label className="block text-sm font-medium">Operating availability evidence paths<textarea className="mt-2 w-full rounded-lg border p-3" value={availabilityReferences} onChange={(event) => setAvailabilityReferences(event.target.value)} rows={3} /></label>
-              <label className="block text-sm font-medium">Capacity evidence paths<textarea className="mt-2 w-full rounded-lg border p-3" value={capacityReferences} onChange={(event) => setCapacityReferences(event.target.value)} rows={3} /></label>
+              <label className="block text-sm font-medium">Approved service coverage evidence<select multiple size={5} className="mt-2 w-full rounded-lg border p-3" value={selectedCoverageIds} onChange={(event) => setSelectedCoverageIds(Array.from(event.target.selectedOptions, (option) => option.value))}>
+                {operationalEvidenceRows.filter((row) => row.kind === "service_coverage" && row.serviceCode === serviceCode && row.isCurrentApproved &&
+                  (coverageScopeType === "route" ? row.scope.originOperationalPointRef === originPudoLocationId && row.scope.destinationOperationalPointRef === destinationPudoLocationId :
+                    Array.isArray(row.scope.operationalPointRefs) && row.scope.operationalPointRefs.includes(originPudoLocationId) && row.scope.operationalPointRefs.includes(destinationPudoLocationId)))
+                  .map((row) => <option key={row.evidenceId} value={row.evidenceId}>{row.evidenceId} · {String(row.scope.scopeType)} · {row.source}</option>)}
+              </select></label>
+              <label className="block text-sm font-medium">Approved operating availability (select evidence for both endpoints)<select multiple size={5} className="mt-2 w-full rounded-lg border p-3" value={selectedAvailabilityIds} onChange={(event) => setSelectedAvailabilityIds(Array.from(event.target.selectedOptions, (option) => option.value))}>
+                {operationalEvidenceRows.filter((row) => row.kind === "operating_availability" && row.serviceCode === serviceCode && row.isCurrentApproved &&
+                  [originPudoLocationId, destinationPudoLocationId].includes(String(row.scope.locationId)))
+                  .map((row) => <option key={row.evidenceId} value={row.evidenceId}>{row.evidenceId} · {String(row.scope.locationId)} · {row.source}</option>)}
+              </select></label>
+              <label className="block text-sm font-medium">Approved capacity evidence (select evidence for both endpoints)<select multiple size={5} className="mt-2 w-full rounded-lg border p-3" value={selectedCapacityIds} onChange={(event) => setSelectedCapacityIds(Array.from(event.target.selectedOptions, (option) => option.value))}>
+                {operationalEvidenceRows.filter((row) => row.kind === "capacity" && row.serviceCode === serviceCode && row.isCurrentApproved &&
+                  [originPudoLocationId, destinationPudoLocationId].includes(String(row.scope.locationId)))
+                  .map((row) => <option key={row.evidenceId} value={row.evidenceId}>{row.evidenceId} · {String(row.scope.locationId)} · {row.source}</option>)}
+              </select></label>
               <label className="block text-sm font-medium">Origin required actions<textarea className="mt-2 w-full rounded-lg border p-3" value={originRequiredActions} onChange={(event) => setOriginRequiredActions(event.target.value)} rows={3} /></label>
               <label className="block text-sm font-medium">Destination required actions<textarea className="mt-2 w-full rounded-lg border p-3" value={destinationRequiredActions} onChange={(event) => setDestinationRequiredActions(event.target.value)} rows={3} /></label>
               <label className="block text-sm font-medium">Conditional evidence paths (one per line)<textarea className="mt-2 w-full rounded-lg border p-3" value={conditions} onChange={(event) => setConditions(event.target.value)} rows={3} /></label>
