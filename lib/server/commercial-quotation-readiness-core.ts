@@ -220,7 +220,7 @@ export function createCommercialQuotationReadinessStore({
           typeof evidence.source !== "string" || !evidence.source.trim() ||
           typeof evidence.supportingReference !== "string" || !evidence.supportingReference.trim() ||
           typeof evidence.measuredOn !== "string" ||
-          !/^\\d{4}-\\d{2}-\\d{2}$/.test(evidence.measuredOn) ||
+          !/^\d{4}-\d{2}-\d{2}$/.test(evidence.measuredOn) ||
           !Number.isFinite(Date.parse(evidence.measuredOn + "T00:00:00Z")) ||
           canonicalJson(reviewData.evidenceSnapshot) !== canonicalJson(evidence)) return null;
         const measured = Date.parse(evidence.measuredOn + "T00:00:00Z");
