@@ -298,7 +298,7 @@ export default function CommercialQuotationReadinessPage() {
         <section className="cost-panel">
           <div className="cost-panel-heading"><div><span className="section-label">00 / DEC-047 OPERATIONAL EVIDENCE</span><h2>Record, review and govern service evidence</h2></div></div>
           <p className="mb-4 text-sm text-gray-600">Recorded evidence is immutable. Approval, rejection and revocation are separate attributed decisions. Only approved, current records with exact matching service and endpoint scope can be selected for positive eligibility.</p>
-          <form className="space-y-4 border-b pb-6" onSubmit={(event) => {
+          {operationalEvidencePermissions.record && <form className="space-y-4 border-b pb-6" onSubmit={(event) => {
             event.preventDefault();
             const scope = evidenceKind === "service_coverage"
               ? (coverageScopeType === "route"
@@ -339,23 +339,24 @@ export default function CommercialQuotationReadinessPage() {
             </>}
             <button className="cost-primary-button" disabled={busy}>{busy ? "Saving..." : "Record immutable evidence"}</button>
             <p className="text-xs text-gray-600">Requires <code>commercial_operational_evidence.record</code>. Recording does not approve evidence or make a service eligible.</p>
-          </form>
+          </form>}
           <div className="mt-6 overflow-x-auto">
             <div className="mb-3 flex items-center justify-between"><h3 className="font-semibold">Operational evidence register</h3><button type="button" className="cost-secondary-button" disabled={operationalEvidenceLoading} onClick={() => void refreshOperationalEvidence()}>{operationalEvidenceLoading ? "Refreshing..." : "Refresh register"}</button></div>
             <table className="w-full min-w-[900px] text-left text-sm">
-              <thead><tr className="border-b"><th className="p-2">ID / category</th><th className="p-2">Service / scope</th><th className="p-2">Recorder</th><th className="p-2">Review</th><th className="p-2">Validity</th></tr></thead>
+              <thead><tr className="border-b"><th className="p-2">ID / category</th><th className="p-2">Service / scope</th><th className="p-2">Recorder</th><th className="p-2">Review</th><th className="p-2">Validity</th><th className="p-2">Actions</th></tr></thead>
               <tbody>{operationalEvidenceRows.map((row) => <tr key={row.evidenceId} className="border-b align-top">
                 <td className="p-2"><div className="font-medium">{row.evidenceId}</div><div>{row.kind.replaceAll("_", " ")}</div></td>
                 <td className="p-2"><div>{row.serviceCode}</div><div>{String(row.scope.locationId ?? row.scope.areaRef ?? (String(row.scope.originOperationalPointRef ?? "") + " → " + String(row.scope.destinationOperationalPointRef ?? "")))}</div></td>
                 <td className="p-2">{row.recordedBy}<div>{row.recordedAt ?? "—"}</div></td>
                 <td className="p-2">{row.reviewStatus}<div>{row.reviewedBy ?? "—"}</div></td>
                 <td className="p-2">{row.validUntil ?? "—"}<div>{row.isCurrentApproved ? "Current and approved" : "Not currently selectable"}</div></td>
+                <td className="p-2"><div className="flex flex-wrap gap-2">{operationalEvidencePermissions.review && staffUid !== row.recordedBy && row.reviewStatus !== "revoked" && <button type="button" className="cost-secondary-button" onClick={() => { setReviewEvidenceId(row.evidenceId); setOperationalReviewDecision(""); }}>Review</button>}{operationalEvidencePermissions.revoke && row.reviewStatus === "approved" && <button type="button" className="cost-secondary-button" onClick={() => setRevokeEvidenceId(row.evidenceId)}>Revoke</button>}</div></td>
               </tr>)}</tbody>
             </table>
             {!operationalEvidenceRows.length && !operationalEvidenceLoading && <p className="py-4 text-sm text-gray-600">No operational evidence records are available to this account.</p>}
           </div>
           <div className="mt-6 grid gap-6 border-t pt-6 md:grid-cols-2">
-            <form className="space-y-3" onSubmit={(event) => { event.preventDefault(); void post("/api/staff/commercial-quotation-readiness/operational-evidence/" + encodeURIComponent(reviewEvidenceId) + "/review", { decision: operationalReviewDecision, reason: operationalReviewReason, ...(operationalReviewDecision === "approve" ? { validUntil: new Date(operationalReviewValidUntil).toISOString() } : {}) }, "Operational evidence review recorded."); }}>
+            {operationalEvidencePermissions.review && <form className="space-y-3" onSubmit={(event) => { event.preventDefault(); void post("/api/staff/commercial-quotation-readiness/operational-evidence/" + encodeURIComponent(reviewEvidenceId) + "/review", { decision: operationalReviewDecision, reason: operationalReviewReason, ...(operationalReviewDecision === "approve" ? { validUntil: new Date(operationalReviewValidUntil).toISOString() } : {}) }, "Operational evidence review recorded."); }}>
               <h3 className="font-semibold">Independent evidence review</h3>
               <label className="block text-sm font-medium">Evidence ID<input className="mt-2 w-full rounded-lg border p-3" value={reviewEvidenceId} onChange={(event) => setReviewEvidenceId(event.target.value)} required /></label>
               <label className="block text-sm font-medium">Decision<select className="mt-2 w-full rounded-lg border p-3" value={operationalReviewDecision} onChange={(event) => setOperationalReviewDecision(event.target.value as typeof operationalReviewDecision)} required><option value="">Select decision</option><option value="approve">Approve</option><option value="reject">Reject</option></select></label>
@@ -363,14 +364,14 @@ export default function CommercialQuotationReadinessPage() {
               <label className="block text-sm font-medium">Review reason<textarea className="mt-2 w-full rounded-lg border p-3" value={operationalReviewReason} onChange={(event) => setOperationalReviewReason(event.target.value)} required /></label>
               <button className="cost-primary-button" disabled={busy || !reviewEvidenceId || !operationalReviewDecision}>Record independent review</button>
               <p className="text-xs text-gray-600">Requires <code>commercial_operational_evidence.review</code>. The recorder cannot approve their own evidence.</p>
-            </form>
-            <form className="space-y-3" onSubmit={(event) => { event.preventDefault(); void post("/api/staff/commercial-quotation-readiness/operational-evidence/" + encodeURIComponent(revokeEvidenceId) + "/revoke", { reason: operationalRevocationReason }, "Operational evidence revoked. It is no longer eligible for positive DEC-047 decisions."); }}>
+            </form>}
+            {operationalEvidencePermissions.revoke && <form className="space-y-3" onSubmit={(event) => { event.preventDefault(); void post("/api/staff/commercial-quotation-readiness/operational-evidence/" + encodeURIComponent(revokeEvidenceId) + "/revoke", { reason: operationalRevocationReason }, "Operational evidence revoked. It is no longer eligible for positive DEC-047 decisions."); }}>
               <h3 className="font-semibold">Revoke approved evidence</h3>
               <label className="block text-sm font-medium">Evidence ID<input className="mt-2 w-full rounded-lg border p-3" value={revokeEvidenceId} onChange={(event) => setRevokeEvidenceId(event.target.value)} required /></label>
               <label className="block text-sm font-medium">Revocation reason<textarea className="mt-2 w-full rounded-lg border p-3" value={operationalRevocationReason} onChange={(event) => setOperationalRevocationReason(event.target.value)} required /></label>
               <button className="cost-secondary-button" disabled={busy || !revokeEvidenceId}>Revoke evidence</button>
               <p className="text-xs text-gray-600">Requires <code>commercial_operational_evidence.revoke</code>. Revocation is an append-only decision; recorded evidence is never edited or deleted.</p>
-            </form>
+            </form>}
           </div>
         </section>
 
