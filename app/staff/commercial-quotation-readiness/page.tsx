@@ -81,6 +81,9 @@ export default function CommercialQuotationReadinessPage() {
   const [operationalEvidencePermissions, setOperationalEvidencePermissions] = useState({ record: false, review: false, revoke: false });
   const [staffUid, setStaffUid] = useState("");
   const [operationalEvidenceLoading, setOperationalEvidenceLoading] = useState(false);
+  const [evidenceSearch, setEvidenceSearch] = useState("");
+  const [evidenceKindFilter, setEvidenceKindFilter] = useState<"all" | OperationalEvidenceRow["kind"]>("all");
+  const [evidenceStatusFilter, setEvidenceStatusFilter] = useState<"all" | "pending" | "approved" | "rejected" | "revoked">("all");
   const [evidenceKind, setEvidenceKind] = useState<OperationalEvidenceRow["kind"]>("service_coverage");
   const [evidenceServiceCode, setEvidenceServiceCode] = useState<ServiceCode>("standard");
   const [evidenceSource, setEvidenceSource] = useState("");
@@ -342,9 +345,14 @@ export default function CommercialQuotationReadinessPage() {
           </form>}
           <div className="mt-6 overflow-x-auto">
             <div className="mb-3 flex items-center justify-between"><h3 className="font-semibold">Operational evidence register</h3><button type="button" className="cost-secondary-button" disabled={operationalEvidenceLoading} onClick={() => void refreshOperationalEvidence()}>{operationalEvidenceLoading ? "Refreshing..." : "Refresh register"}</button></div>
+            <div className="mb-3 grid gap-3 md:grid-cols-3">
+              <input className="w-full rounded-lg border p-3" value={evidenceSearch} onChange={(event) => setEvidenceSearch(event.target.value)} placeholder="Search ID, source, scope or recorder" aria-label="Search operational evidence" />
+              <select className="w-full rounded-lg border p-3" value={evidenceKindFilter} onChange={(event) => setEvidenceKindFilter(event.target.value as typeof evidenceKindFilter)} aria-label="Filter evidence category"><option value="all">All categories</option><option value="service_coverage">Service coverage</option><option value="operating_availability">Operating availability</option><option value="capacity">Capacity</option></select>
+              <select className="w-full rounded-lg border p-3" value={evidenceStatusFilter} onChange={(event) => setEvidenceStatusFilter(event.target.value as typeof evidenceStatusFilter)} aria-label="Filter review status"><option value="all">All review states</option><option value="pending">Pending review</option><option value="approved">Current and approved</option><option value="rejected">Rejected</option><option value="revoked">Revoked</option></select>
+            </div>
             <table className="w-full min-w-[900px] text-left text-sm">
               <thead><tr className="border-b"><th className="p-2">ID / category</th><th className="p-2">Service / scope / details</th><th className="p-2">Recorder</th><th className="p-2">Review</th><th className="p-2">Validity</th><th className="p-2">Actions</th></tr></thead>
-              <tbody>{operationalEvidenceRows.map((row) => <tr key={row.evidenceId} className="border-b align-top">
+              <tbody>{visibleOperationalEvidenceRows.map((row) => <tr key={row.evidenceId} className="border-b align-top">
                 <td className="p-2"><div className="font-medium">{row.evidenceId}</div><div>{row.kind.replaceAll("_", " ")}</div></td>
                 <td className="p-2"><div>{row.serviceCode}</div><div>{String(row.scope.locationId ?? row.scope.areaRef ?? (String(row.scope.originOperationalPointRef ?? "") + " → " + String(row.scope.destinationOperationalPointRef ?? "")))}</div><div className="text-xs text-gray-600">{row.kind === "service_coverage" ? String(row.details.coverageBasis ?? "") : row.kind === "operating_availability" ? String(row.details.operatingWindows ?? []) : String(row.details.supportedLoad ?? "") + " " + String(row.details.capacityUnit ?? "")}</div></td>
                 <td className="p-2">{row.recordedBy}<div>{row.recordedAt ?? "—"}</div></td>
@@ -353,7 +361,7 @@ export default function CommercialQuotationReadinessPage() {
                 <td className="p-2"><div className="flex flex-wrap gap-2">{operationalEvidencePermissions.review && staffUid !== row.recordedBy && row.reviewStatus !== "revoked" && <button type="button" className="cost-secondary-button" onClick={() => { setReviewEvidenceId(row.evidenceId); setOperationalReviewDecision(""); }}>Review</button>}{operationalEvidencePermissions.revoke && row.reviewStatus === "approved" && <button type="button" className="cost-secondary-button" onClick={() => setRevokeEvidenceId(row.evidenceId)}>Revoke</button>}</div></td>
               </tr>)}</tbody>
             </table>
-            {!operationalEvidenceRows.length && !operationalEvidenceLoading && <p className="py-4 text-sm text-gray-600">No operational evidence records are available to this account.</p>}
+            {!visibleOperationalEvidenceRows.length && !operationalEvidenceLoading && <p className="py-4 text-sm text-gray-600">No operational evidence matches the current filters.</p>}
           </div>
           <div className="mt-6 grid gap-6 border-t pt-6 md:grid-cols-2">
             {operationalEvidencePermissions.review && <form className="space-y-3" onSubmit={(event) => { event.preventDefault(); void post("/api/staff/commercial-quotation-readiness/operational-evidence/" + encodeURIComponent(reviewEvidenceId) + "/review", { decision: operationalReviewDecision, reason: operationalReviewReason, ...(operationalReviewDecision === "approve" ? { validUntil: new Date(operationalReviewValidUntil).toISOString() } : {}) }, "Operational evidence review recorded."); }}>
