@@ -10,6 +10,7 @@ export interface ShipmentBookingDraftInput {
   destinationPudoLocationId?: string;
   parcelDescription: string;
   declaredMeasurements?: Partial<Record<"weight" | "length" | "width" | "height", ShipmentBookingDraftMeasurement>>;
+  parcelCharacteristics?: Record<string, string>;
 }
 
 export type ShipmentBookingDraftValidation =
@@ -28,7 +29,7 @@ export function validateShipmentBookingDraft(
 
   const candidate = body as Record<string, unknown>;
   if (Object.keys(candidate).some((key) =>
-    !["origin", "destination", "originPudoLocationId", "destinationPudoLocationId", "parcelDescription", "declaredMeasurements"].includes(key)
+    !["origin", "destination", "originPudoLocationId", "destinationPudoLocationId", "parcelDescription", "declaredMeasurements", "parcelCharacteristics"].includes(key)
   )) {
     return { success: false, error: "The shipment draft contains an unsupported field." };
   }
@@ -95,6 +96,28 @@ export function validateShipmentBookingDraft(
     if (Object.keys(parsed).length > 0) declaredMeasurements = parsed;
   }
 
+  let parcelCharacteristics: Record<string, string> | undefined;
+  if (candidate.parcelCharacteristics !== undefined) {
+    const raw = candidate.parcelCharacteristics;
+    if (raw === null || typeof raw !== "object" || Array.isArray(raw) ||
+        Object.getPrototypeOf(raw) !== Object.prototype && Object.getPrototypeOf(raw) !== null) {
+      return { success: false, error: "Parcel characteristics must be a category-to-option selection map." };
+    }
+    const entries = raw as Record<string, unknown>;
+    if (Object.keys(entries).length > 30) {
+      return { success: false, error: "Too many parcel characteristic selections were supplied." };
+    }
+    parcelCharacteristics = {};
+    for (const [categoryKey, optionKey] of Object.entries(entries)) {
+      if (!/^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(categoryKey) ||
+          typeof optionKey !== "string" || !/^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(optionKey)) {
+        return { success: false, error: "A parcel characteristic selection is invalid." };
+      }
+      parcelCharacteristics[categoryKey] = optionKey;
+    }
+    if (Object.keys(parcelCharacteristics).length === 0) parcelCharacteristics = undefined;
+  }
+
   return {
     success: true,
     data: {
@@ -104,6 +127,7 @@ export function validateShipmentBookingDraft(
       ...(destinationPudoLocationId ? { destinationPudoLocationId } : {}),
       parcelDescription,
       ...(declaredMeasurements ? { declaredMeasurements } : {}),
+      ...(parcelCharacteristics ? { parcelCharacteristics } : {}),
     },
   };
 }
