@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
@@ -194,7 +194,7 @@ export default function CommercialQuotationReadinessPage() {
     return () => { active = false; };
   }, [token, routeEvidenceId]);
 
-  async function refreshOperationalEvidence() {
+  const refreshOperationalEvidence = useCallback(async () => {
     if (!token) return;
     setOperationalEvidenceLoading(true);
     try {
@@ -212,11 +212,11 @@ export default function CommercialQuotationReadinessPage() {
     } finally {
       setOperationalEvidenceLoading(false);
     }
-  }
+  }, [token]);
 
   useEffect(() => {
     if (token) void refreshOperationalEvidence();
-  }, [token]);
+  }, [refreshOperationalEvidence]);
 
   async function post(path: string, body: Record<string, unknown>, successMessage: string) {
     if (!token || busy) return;
