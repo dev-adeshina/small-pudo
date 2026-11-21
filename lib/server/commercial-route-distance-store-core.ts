@@ -52,9 +52,9 @@ function assertMeasurementDate(value: unknown): asserts value is string {
   }
 }
 
-function assertSupportingReference(value: unknown): asserts value is string | undefined {
-  if (value !== undefined && (typeof value !== "string" || !value.trim() || value.trim().length > 200)) {
-    throw new TypeError("Supporting reference must be 1–200 characters when supplied.");
+function assertSupportingReference(value: unknown): asserts value is string {
+  if (typeof value !== "string" || !value.trim() || value.trim().length > 200) {
+    throw new TypeError("A supporting reference of 1–200 characters is required for manual and road-network measurements.");
   }
 }
 
@@ -82,6 +82,7 @@ export function createCommercialRouteDistanceStore({
   const candidates = db.collection("pudoLocations");
   const activations = db.collection("pudoLocationActivations");
   const evidenceCollection = db.collection("commercialRouteDistanceEvidence");
+  const reviewsCollection = db.collection("commercialRouteDistanceReviews");
 
   async function requireViewPermission(actorUid: string, transaction: Transaction) {
     const allowed = await hasStaffActionPermissionInTransaction(
@@ -186,12 +187,28 @@ export function createCommercialRouteDistanceStore({
         .limit(limit)
         .get();
 
-      return snapshot.docs.map((document) => {
+      const rows = await Promise.all(snapshot.docs.map(async (document) => {
         const data = document.data();
         const evidence = data.evidence as CommercialRouteDistanceEvidence;
         assertCommercialRouteDistanceEvidence(evidence);
-        return { evidenceId: document.id, ...evidence };
-      }).sort((left, right) => Date.parse(right.recordedAt) - Date.parse(left.recordedAt));
+        const reviewSnapshot = await reviewsCollection.doc(document.id).get();
+        const review = reviewSnapshot.data();
+        const validUntil = review?.validUntil;
+        const reviewValidUntil = validUntil && typeof validUntil.toDate === "function"
+          ? validUntil.toDate().toISOString()
+          : validUntil instanceof Date ? validUntil.toISOString() : null;
+        return {
+          evidenceId: document.id,
+          ...evidence,
+          reviewStatus: typeof review?.status === "string" ? review.status : "not_reviewed",
+          reviewValidUntil,
+          reviewedBy: typeof review?.reviewedBy === "string" ? review.reviewedBy : null,
+          reviewedAt: review?.reviewedAt && typeof review.reviewedAt.toDate === "function"
+            ? review.reviewedAt.toDate().toISOString()
+            : null,
+        };
+      }));
+      return rows.sort((left, right) => Date.parse(right.recordedAt) - Date.parse(left.recordedAt));
     },
 
     async recordEvidence(actorUid: string, input: RecordCommercialRouteDistanceInput) {
