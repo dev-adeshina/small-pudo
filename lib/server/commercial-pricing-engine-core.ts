@@ -422,12 +422,12 @@ export function assertCommercialPricingConfiguration(
     assertNonEmptyString(input.unit, "Commercial pricing input unit", 80);
   }
 
+  const characteristicInputKeys = new Set<string>();
   if (value.parcelCharacteristics !== undefined) {
     if (!Array.isArray(value.parcelCharacteristics) || value.parcelCharacteristics.length > 30) {
       throw new TypeError("Parcel characteristics must be an array of at most 30 categories");
     }
     const categoryKeys = new Set<string>();
-    const characteristicInputKeys = new Set<string>();
     for (const category of value.parcelCharacteristics) {
       assertPlainMap(category, "A parcel characteristic category");
       const allowedCategoryFields = new Set(["key", "label", "required", "treatment", "inputKey", "options"]);
@@ -514,7 +514,7 @@ export function assertCommercialPricingConfiguration(
     const dependencies = new Set<string>();
     collectExpressionInputKeys(component.expression as CommercialPricingExpression, dependencies);
     for (const key of dependencies) {
-      if (!inputDefinitions.get(key)?.required) {
+      if (!inputDefinitions.get(key)?.required && !characteristicInputKeys.has(key)) {
         throw new TypeError(
           "An optional pricing input cannot be referenced by an unconditional component: " + key
         );
