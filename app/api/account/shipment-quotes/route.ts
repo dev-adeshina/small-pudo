@@ -77,6 +77,9 @@ export async function POST(request: Request) {
     const draft = draftSnapshot.data()!;
     if (draft.bookingPartyUid !== customer.uid) return NextResponse.json({ error: "The shipment draft is not owned by the authenticated booking party." }, { status: 404 });
     const serviceCode = input.serviceCode as "standard" | "express" | "scheduled";
+    if (draft.serviceCode !== undefined && draft.serviceCode !== serviceCode) {
+      return NextResponse.json({ error: "The quotation service must match the service selected for this shipment draft. Update the draft first." }, { status: 409 });
+    }
     const originType = typeof draft.originPudoLocationId === "string" ? "pudo" : "address";
     const destinationType = typeof draft.destinationPudoLocationId === "string" ? "pudo" : "address";
 
