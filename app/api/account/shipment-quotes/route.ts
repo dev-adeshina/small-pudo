@@ -128,7 +128,10 @@ export async function POST(request: Request) {
         (parcelInput.declared.recordedBy !== customer.uid || parcelInput.declared.source !== "customer_declared")) {
         throw new TypeError("Declared parcel measurements must retain the authenticated customer's declared-evidence provenance.");
       }
-      parcelValues = buildCommercialParcelPricingInputValues(configuration, parcelInput);
+      const selectedCharacteristics = parcelInput.characteristics && typeof parcelInput.characteristics === "object" && !Array.isArray(parcelInput.characteristics)
+        ? parcelInput.characteristics as Record<string, string>
+        : {};
+      parcelValues = buildCommercialParcelPricingInputValues(configuration, parcelInput, selectedCharacteristics);
     }
     const routeValues = buildCommercialRoutePricingInputValues(configuration, routeRecord?.evidence as Parameters<typeof buildCommercialRoutePricingInputValues>[1]);
     const values = { ...parcelValues, ...routeValues };
