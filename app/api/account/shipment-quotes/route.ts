@@ -124,18 +124,20 @@ export async function POST(request: Request) {
     }, { status: 409 });
 
     let parcelValues: Readonly<Record<string, number>> = {};
-    if (draft.parcelInput) {
-      const parcelInput = draft.parcelInput as CommercialParcelInput;
-      if (parcelInput.actual !== undefined) throw new TypeError("Customer quotation requests cannot supply or replace actual intake measurements.");
-      if (parcelInput.declared &&
-        (parcelInput.declared.recordedBy !== customer.uid || parcelInput.declared.source !== "customer_declared")) {
-        throw new TypeError("Declared parcel measurements must retain the authenticated customer's declared-evidence provenance.");
-      }
-      const selectedCharacteristics = parcelInput.characteristics && typeof parcelInput.characteristics === "object" && !Array.isArray(parcelInput.characteristics)
-        ? parcelInput.characteristics as Record<string, string>
-        : {};
-      parcelValues = buildCommercialParcelPricingInputValues(configuration, parcelInput, selectedCharacteristics);
+    const parcelInput = (draft.parcelInput ?? {
+      schemaVersion: 1,
+      handlingCharacteristics: [],
+      characteristics: {},
+    }) as CommercialParcelInput;
+    if (parcelInput.actual !== undefined) throw new TypeError("Customer quotation requests cannot supply or replace actual intake measurements.");
+    if (parcelInput.declared &&
+      (parcelInput.declared.recordedBy !== customer.uid || parcelInput.declared.source !== "customer_declared")) {
+      throw new TypeError("Declared parcel measurements must retain the authenticated customer's declared-evidence provenance.");
     }
+    const selectedCharacteristics = parcelInput.characteristics && typeof parcelInput.characteristics === "object" && !Array.isArray(parcelInput.characteristics)
+      ? parcelInput.characteristics as Record<string, string>
+      : {};
+    parcelValues = buildCommercialParcelPricingInputValues(configuration, parcelInput, selectedCharacteristics);
     const routeValues = buildCommercialRoutePricingInputValues(configuration, routeRecord?.evidence as Parameters<typeof buildCommercialRoutePricingInputValues>[1]);
     const values = { ...parcelValues, ...routeValues };
     const evaluation = evaluateCommercialPricing({
