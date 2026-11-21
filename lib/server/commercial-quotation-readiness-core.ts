@@ -134,6 +134,53 @@ export function createCommercialQuotationReadinessStore({
       activation.exists && activation.data()?.status === "active";
   }
 
+  async function loadApprovedOperationalEvidence(reference: string, transaction?: Transaction) {
+    const segments = reference.split("/");
+    if (segments.length !== 2 || segments[0] !== "commercialOperationalEvidence" || !ID.test(segments[1])) return null;
+    const evidenceRef = operationalEvidence.doc(segments[1]);
+    const reviewRef = operationalEvidenceReviews.doc(segments[1]);
+    const [evidenceSnapshot, reviewSnapshot] = transaction
+      ? await Promise.all([transaction.get(evidenceRef), transaction.get(reviewRef)])
+      : await Promise.all([evidenceRef.get(), reviewRef.get()]);
+    if (!evidenceSnapshot.exists || !reviewSnapshot.exists) return null;
+    const evidence = evidenceSnapshot.data()!;
+    const review = reviewSnapshot.data()!;
+    const evidenceStart = dateMillis(evidence.validFrom);
+    const evidenceEnd = dateMillis(evidence.validUntil);
+    const reviewEnd = dateMillis(review.validUntil);
+    if (review.status !== "approved" || review.decision !== "approve" ||
+      review.evidenceId !== segments[1] || typeof review.reviewedBy !== "string" ||
+      !review.reviewedBy || review.reviewedBy === evidence.recordedBy ||
+      evidenceStart === null || evidenceEnd === null || reviewEnd === null ||
+      evidenceStart > now().getTime() || evidenceEnd <= now().getTime() ||
+      reviewEnd <= now().getTime() || reviewEnd > evidenceEnd ||
+      canonicalJson(review.evidenceSnapshot) !== canonicalJson(evidence)) return null;
+    return { evidenceId: segments[1], evidence, review };
+  }
+
+  function operationalEvidenceMatches(
+    item: { evidence: Record<string, any> },
+    kind: OperationalEvidenceKind,
+    serviceCode: CommercialServiceCode,
+    originId: string,
+    destinationId: string,
+  ): boolean {
+    const evidence = item.evidence;
+    if (evidence.kind !== kind || evidence.serviceCode !== serviceCode) return false;
+    const scope = evidence.scope as Record<string, unknown> | undefined;
+    if (!scope) return false;
+    if (kind === "service_coverage") {
+      if (scope.scopeType === "route") {
+        return scope.originOperationalPointRef === originId &&
+          scope.destinationOperationalPointRef === destinationId;
+      }
+      const points = scope.operationalPointRefs;
+      return scope.scopeType === "area" && Array.isArray(points) &&
+        points.includes(originId) && points.includes(destinationId);
+    }
+    return scope.locationId === originId || scope.locationId === destinationId;
+  }
+
   return {
     async recordOperationalEvidence(input: {
       actorUid: string;
@@ -165,7 +212,13 @@ export function createCommercialQuotationReadinessStore({
       const cleanDetails = { ...details };
       if (kind === "service_coverage") {
         if (!["area", "route"].includes(String(cleanScope.scopeType))) throw new TypeError("Coverage evidence must identify an operational area or directed route.");
-        if (cleanScope.scopeType === "area") assertText(cleanScope.areaRef, "A covered operational area reference", 300);
+        if (cleanScope.scopeType === "area") {
+          assertText(cleanScope.areaRef, "A covered operational area reference", 300);
+          if (!Array.isArray(cleanScope.operationalPointRefs) || cleanScope.operationalPointRefs.length < 2 ||
+            cleanScope.operationalPointRefs.some((item) => typeof item !== "string" || !ID.test(item))) {
+            throw new TypeError("Area coverage evidence must enumerate the operational points it covers.");
+          }
+        }
         if (cleanScope.scopeType === "route") {
           assertText(cleanScope.originOperationalPointRef, "A route origin operational point", 128);
           assertText(cleanScope.destinationOperationalPointRef, "A route destination operational point", 128);
@@ -651,6 +704,29 @@ export function createCommercialQuotationReadinessStore({
           }
         }
         if (outcome === "eligible" || outcome === "conditionally_eligible") {
+          const endpoints = [originPudoLocationId!, destinationPudoLocationId!];
+          const categoryDefinitions: Array<{ refs: string[]; kind: OperationalEvidenceKind }> = [
+            { refs: serviceCoverageEvidenceReferences, kind: "service_coverage" },
+            { refs: operatingAvailabilityEvidenceReferences, kind: "operating_availability" },
+            { refs: capacityEvidenceReferences, kind: "capacity" },
+          ];
+          for (const category of categoryDefinitions) {
+            const loaded = await Promise.all(category.refs.map((reference) => loadApprovedOperationalEvidence(reference, transaction)));
+            if (loaded.some((item) => !item)) {
+              throw new TypeError("Positive DEC-047 eligibility requires independently approved, current typed operational evidence for every evidence category.");
+            }
+            const typed = loaded as Array<NonNullable<typeof loaded[number]>>;
+            if (typed.some((item) => !operationalEvidenceMatches(item, category.kind, serviceCode, endpoints[0], endpoints[1]))) {
+              throw new TypeError("Operational evidence type, service or exact endpoint scope does not match this DEC-047 decision.");
+            }
+            if (typed.some((item) => item.evidence.recordedBy === actorUid || item.review.reviewedBy === actorUid)) {
+              throw new TypeError("DEC-047 approval must be independent of operational evidence recording and review.");
+            }
+            if (category.kind !== "service_coverage" &&
+              endpoints.some((endpointId) => !typed.some((item) => item.evidence.scope.locationId === endpointId))) {
+              throw new TypeError("Availability and capacity evidence must independently cover both exact PUDO endpoints.");
+            }
+          }
           const routeEvidenceReferences = evidenceReferences.filter((reference) => reference.startsWith("commercialRouteDistanceEvidence/"));
           const routeReviewReferences = evidenceReferences.filter((reference) => reference.startsWith("commercialRouteDistanceReviews/"));
           if (routeEvidenceReferences.length !== 1 || routeReviewReferences.length !== 1 ||
@@ -827,6 +903,33 @@ export function createCommercialQuotationReadinessStore({
         originActions.length === 0 || destinationActions.length === 0) {
         return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision is missing current coverage, availability, capacity or endpoint-action evidence." };
       }
+      const endpoints = [originPudoLocationId!, destinationPudoLocationId!];
+      const categoryDefinitions: Array<{ refs: string[]; kind: OperationalEvidenceKind }> = [
+        { refs: serviceCoverageRefs, kind: "service_coverage" },
+        { refs: availabilityRefs, kind: "operating_availability" },
+        { refs: capacityRefs, kind: "capacity" },
+      ];
+      const typedOperationalEvidence: Array<Record<string, unknown>> = [];
+      for (const category of categoryDefinitions) {
+        const loaded = await Promise.all(category.refs.map((reference) => loadApprovedOperationalEvidence(reference)));
+        if (loaded.some((item) => !item)) {
+          return { eligible: false as const, outcome: "pending_verification" as const, reason: "A required typed operational evidence record is missing, unapproved, expired, revoked or changed since review." };
+        }
+        const typed = loaded as Array<NonNullable<typeof loaded[number]>>;
+        if (typed.some((item) => !operationalEvidenceMatches(item, category.kind, serviceCode, endpoints[0], endpoints[1]))) {
+          return { eligible: false as const, outcome: "pending_verification" as const, reason: "A typed operational evidence record does not match the exact service and PUDO endpoint scope." };
+        }
+        if (category.kind !== "service_coverage" &&
+          endpoints.some((endpointId) => !typed.some((item) => item.evidence.scope.locationId === endpointId))) {
+          return { eligible: false as const, outcome: "pending_verification" as const, reason: "Current availability and capacity evidence is required for both exact PUDO endpoints." };
+        }
+        typedOperationalEvidence.push(...typed.map((item) => ({
+          evidenceId: item.evidenceId, kind: item.evidence.kind, serviceCode: item.evidence.serviceCode,
+          scope: item.evidence.scope, details: item.evidence.details,
+          recordedBy: item.evidence.recordedBy, reviewedBy: item.review.reviewedBy,
+          validUntil: item.evidence.validUntil,
+        })));
+      }
       const capabilityEvidence: Array<Record<string, unknown>> = [];
       for (const endpoint of [
         { locationId: originPudoLocationId, actions: originActions },
@@ -880,6 +983,7 @@ export function createCommercialQuotationReadinessStore({
         originRequiredActions: originActions,
         destinationRequiredActions: destinationActions,
         capabilityEvidence,
+        operationalEvidence: typedOperationalEvidence,
         decidedBy: data.decidedBy,
         decidedAt: data.decidedAt,
         validUntil: data.validUntil,
