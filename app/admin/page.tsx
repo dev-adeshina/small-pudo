@@ -13,7 +13,6 @@ import {
   Clock3,
   LogOut,
   Truck,
-  ShoppingBag,
   Tags,
   ClipboardList,
 } from "lucide-react";
@@ -307,22 +306,6 @@ export default function AdminDashboard() {
                 <ArrowUpRight size={17} />
               </Link>
 
-              <Link href="/admin/customers" className="admin-action">
-                <span>
-                  <Users size={18} />
-                  View customers
-                </span>
-                <ArrowUpRight size={17} />
-              </Link>
-
-              <Link href="/admin/services" className="admin-action">
-                <span>
-                  <ShoppingBag size={18} />
-                  Manage services
-                </span>
-                <ArrowUpRight size={17} />
-              </Link>
-
               <Link
                 href="/admin/products"
                 className="admin-action"
@@ -341,14 +324,6 @@ export default function AdminDashboard() {
                   Manage categories
                 </span>
 
-                <ArrowUpRight size={17} />
-              </Link>
-
-              <Link href="/admin/operational-cost-definitions" className="admin-action">
-                <span>
-                  <ClipboardList size={18} />
-                  Operational cost definitions
-                </span>
                 <ArrowUpRight size={17} />
               </Link>
 

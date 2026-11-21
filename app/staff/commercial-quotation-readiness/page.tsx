@@ -128,10 +128,10 @@ export default function CommercialQuotationReadinessPage() {
   return (
     <main className="admin-page">
       <header className="admin-header">
-        <Link href="/admin/commercial-pricing-definitions" className="admin-logo">VeriLyft</Link>
+        <Link href="/staff/commercial-pricing-definitions" className="admin-logo">VeriLyft</Link>
         <div className="admin-header-right">
-          <Link href="/admin/commercial-pricing-definitions" className="admin-action">Pricing definitions</Link>
-          <Link href="/admin/commercial-route-distance" className="admin-action">Route evidence</Link>
+          
+          
           <span className="admin-email">{email}</span>
         </div>
       </header>

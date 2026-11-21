@@ -128,10 +128,6 @@ export default function PudoVerificationQueuePage() {
               verification decisions.
             </p>
           </div>
-
-          <Link className="admin-action" href="/staff/pudo-locations">
-            Location registry
-          </Link>
         </header>
 
         <section className="cost-panel">

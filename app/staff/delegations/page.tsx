@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { StaffActionDialog } from "@/components/staff/StaffActionDialog";
 
 type StaffOption = { uid: string; email?: string };
 type IssuedGrant = { grantId: string; targetUid: string; targetEmail?: string | null; permissionId: string; status: string; expiresAt?: string | null; reason?: string; delegable?: boolean };
@@ -20,6 +21,7 @@ export default function StaffDelegationsPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [revokeTarget, setRevokeTarget] = useState<string | null>(null);
 
   const api = useCallback(async (method: string, body?: unknown, path = "/api/staff/delegations") => {
     const user = auth.currentUser;
@@ -90,9 +92,8 @@ export default function StaffDelegationsPage() {
     }
   }
 
-  async function revoke(grantId: string) {
-    const reason = window.prompt("Reason for revoking this delegation:");
-    if (!reason?.trim()) return;
+  async function revoke(grantId: string, reason: string) {
+    if (!reason.trim()) return;
     setBusy(true);
     setError("");
     setFeedback("");
@@ -111,7 +112,7 @@ export default function StaffDelegationsPage() {
     <main className="admin-page">
       <header className="admin-header">
         <Link href="/" className="admin-logo">VERILyFT / STAFF</Link>
-        <Link href="/admin/operational-cost-definitions" className="admin-action">Staff workspace</Link>
+        
       </header>
       <div className="admin-shell cost-admin-shell">
         <div className="cost-page-topline"><span className="section-label">STAFF / ACTIVITY DELEGATION</span></div>
@@ -160,11 +161,27 @@ export default function StaffDelegationsPage() {
               <span>Recipient: {grant.targetEmail || grant.targetUid} · Status: {grant.status}</span>
               <small>{grant.expiresAt ? "Expires " + new Date(grant.expiresAt).toLocaleString() : "No scheduled expiry"} · {grant.delegable ? "Further delegation permitted" : "No further delegation"}</small>
               <small>{grant.reason || "No reason recorded."}</small>
-              {grant.status === "active" && <button className="cost-danger-button" type="button" disabled={busy} onClick={() => void revoke(grant.grantId)}>Revoke delegation</button>}
+              {grant.status === "active" && <button className="cost-danger-button" type="button" disabled={busy} onClick={() => setRevokeTarget(grant.grantId)}>Revoke delegation</button>}
             </article>
           ))}
         </section>
       </div>
+      <StaffActionDialog
+        open={Boolean(revokeTarget)}
+        title="Revoke delegated activity?"
+        description="Revocation is auditable. Descendant delegations that depend on this grant will also become ineffective."
+        confirmLabel="Revoke delegation"
+        reasonLabel="Reason for revocation"
+        reasonRequired
+        danger
+        busy={busy}
+        onCancel={() => setRevokeTarget(null)}
+        onConfirm={async (reason) => {
+          if (!revokeTarget) return;
+          await revoke(revokeTarget, reason);
+          setRevokeTarget(null);
+        }}
+      />
     </main>
   );
 }

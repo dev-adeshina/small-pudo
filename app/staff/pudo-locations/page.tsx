@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { StaffActionDialog } from "@/components/staff/StaffActionDialog";
 
 type Candidate = {
     locationId: string;
@@ -19,6 +20,7 @@ export default function PudoLocationsPage() {
     const [error, setError] = useState("");
     const [user, setUser] = useState<User | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<Candidate | null>(null);
 
     useEffect(() => {
         return onAuthStateChanged(auth, (currentUser) => {
@@ -70,11 +72,7 @@ export default function PudoLocationsPage() {
     }, [user]);
 
     async function handleDelete(candidate: Candidate) {
-        const label = candidate.name || "this PUDO candidate";
-        const confirmed = window.confirm(
-            `Remove ${label}? It will disappear from the candidate registry. Its verification and audit history will be retained. Active locations cannot be removed.`,
-        );
-        if (!confirmed || !user) return;
+        if (!user) return;
 
         setDeletingId(candidate.locationId);
         setError("");
@@ -126,9 +124,6 @@ export default function PudoLocationsPage() {
                         <p>Register and maintain proposed PUDO locations.</p>
                     </div>
                     <div className="cost-form-grid">
-                        <Link className="admin-action" href="/staff/pudo-verifications">
-                            Verification queue
-                        </Link>
                         <Link className="admin-action" href="/staff/pudo-locations/new">
                             Register a location
                         </Link>
@@ -181,9 +176,9 @@ export default function PudoLocationsPage() {
                                         </Link>
                                         {candidate.lifecycle !== "active" && (
                                             <button
-                                                className="admin-action"
+                                                className="cost-danger-button"
                                                 type="button"
-                                                onClick={() => void handleDelete(candidate)}
+                                                onClick={() => setDeleteTarget(candidate)}
                                                 disabled={deletingId !== null}
                                                 aria-label={`Delete ${candidate.name || "PUDO candidate"}`}
                                             >
@@ -197,6 +192,20 @@ export default function PudoLocationsPage() {
                     )}
                 </section>
             </div>
+            <StaffActionDialog
+                open={Boolean(deleteTarget)}
+                title="Remove PUDO candidate?"
+                description="The candidate will be removed from the active candidate registry. Its verification and audit history will be retained. Active locations cannot be removed."
+                confirmLabel="Remove candidate"
+                danger
+                busy={deletingId !== null}
+                onCancel={() => setDeleteTarget(null)}
+                onConfirm={async () => {
+                    if (!deleteTarget) return;
+                    await handleDelete(deleteTarget);
+                    setDeleteTarget(null);
+                }}
+            />
         </main>
     );
 }
