@@ -335,14 +335,15 @@ export function createCommercialQuotationReadinessStore({
     async listOperationalEvidence(actorUid: string, filters?: { kind?: OperationalEvidenceKind; serviceCode?: CommercialServiceCode; locationId?: string }) {
       assertActor(actorUid);
       const permissions = await db.runTransaction(async (transaction) => {
-        const [record, review, revoke] = await Promise.all([
+        const [record, review, revoke, eligibilityApproval] = await Promise.all([
           hasStaffActionPermissionInTransaction(transaction, db, actorUid, OPERATIONAL_EVIDENCE_RECORD_PERMISSION),
           hasStaffActionPermissionInTransaction(transaction, db, actorUid, OPERATIONAL_EVIDENCE_REVIEW_PERMISSION),
           hasStaffActionPermissionInTransaction(transaction, db, actorUid, OPERATIONAL_EVIDENCE_REVOKE_PERMISSION),
+          hasStaffActionPermissionInTransaction(transaction, db, actorUid, ELIGIBILITY_PERMISSION),
         ]);
-        return { record, review, revoke };
+        return { record, review, revoke, eligibilityApproval };
       });
-      assertPermission(permissions.record || permissions.review || permissions.revoke, "view operational evidence");
+      assertPermission(permissions.record || permissions.review || permissions.revoke || permissions.eligibilityApproval, "view operational evidence");
       const snapshot = await operationalEvidence.orderBy("recordedAt", "desc").limit(200).get();
       const rows = await Promise.all(snapshot.docs.map(async (document) => {
         const evidence = document.data();
