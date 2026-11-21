@@ -1,4 +1,5 @@
 interface ShipmentBookingDraftInput {
+  serviceCode?: "standard" | "express" | "scheduled";
   origin: string;
   destination: string;
   originPudoLocationId?: string;
