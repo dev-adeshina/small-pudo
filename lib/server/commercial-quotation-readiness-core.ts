@@ -220,8 +220,8 @@ export function createCommercialQuotationReadinessStore({
           }
         }
         if (cleanScope.scopeType === "route") {
-          assertText(cleanScope.originOperationalPointRef, "A route origin operational point", 128);
-          assertText(cleanScope.destinationOperationalPointRef, "A route destination operational point", 128);
+          assertId(String(cleanScope.originOperationalPointRef ?? ""), "A route origin operational point ID");
+          assertId(String(cleanScope.destinationOperationalPointRef ?? ""), "A route destination operational point ID");
           if (cleanScope.originOperationalPointRef === cleanScope.destinationOperationalPointRef) throw new TypeError("A covered route must have distinct directed endpoints.");
         }
         assertText(cleanDetails.coverageBasis, "A coverage basis", 1000);
@@ -355,9 +355,12 @@ export function createCommercialQuotationReadinessStore({
         const evidenceExpiry = dateMillis(evidence.validUntil);
         const reviewExpiry = dateMillis(review?.validUntil);
         const evidenceStart = dateMillis(evidence.validFrom);
-        const current = review?.status === "approved" && reviewExpiry !== null &&
-          reviewExpiry > now().getTime() && evidenceStart !== null && evidenceStart <= now().getTime() &&
-          evidenceExpiry !== null && evidenceExpiry > now().getTime();
+        const current = review?.status === "approved" && review?.decision === "approve" &&
+          review?.evidenceId === document.id && review?.reviewedBy !== evidence.recordedBy &&
+          canonicalJson(review?.evidenceSnapshot) === canonicalJson(evidence) &&
+          reviewExpiry !== null && reviewExpiry > now().getTime() &&
+          evidenceStart !== null && evidenceStart <= now().getTime() &&
+          evidenceExpiry !== null && evidenceExpiry > now().getTime() && reviewExpiry <= evidenceExpiry;
         return {
           evidenceId: document.id, kind: evidence.kind, serviceCode: evidence.serviceCode,
           source: evidence.source, supportingReference: evidence.supportingReference,
