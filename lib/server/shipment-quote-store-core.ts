@@ -356,7 +356,11 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         const draft = draftDocument.data() as Record<string, unknown>;
         if (draft.bookingPartyUid !== bookingPartyUid || draft.status !== "draft" ||
             draft.serviceCode !== quoteSnapshot.serviceCode ||
-            draft.origin !== quoteSnapshot.origin || draft.destination !== quoteSnapshot.destination) {
+            draft.origin !== quoteSnapshot.origin || draft.destination !== quoteSnapshot.destination ||
+            draft.parcelDescription !== quoteSnapshot.parcelDescription ||
+            (draft.originPudoLocationId ?? null) !== (quoteSnapshot.originPudoLocationId ?? null) ||
+            (draft.destinationPudoLocationId ?? null) !== (quoteSnapshot.destinationPudoLocationId ?? null) ||
+            JSON.stringify(draft.parcelInput ?? null) !== JSON.stringify(quoteSnapshot.parcelInput ?? null)) {
           return { outcome: "draft_unavailable" } as const;
         }
 
