@@ -1008,16 +1008,24 @@ export function createCommercialQuotationReadinessStore({
         if (!evidenceReferences.includes(capabilityPath)) {
           return { eligible: false as const, outcome: "pending_verification" as const, reason: "The eligibility decision does not reference the exact PUDO service capability record." };
         }
-        const capability = await capabilities.doc(capabilityId).get();
+        const [capability, activation, verification] = await Promise.all([
+          capabilities.doc(capabilityId).get(),
+          activations.doc(endpoint.locationId!).get(),
+          verifications.doc(endpoint.locationId!).get(),
+        ]);
         const capabilityData = capability.data();
         const capabilityExpiry = dateMillis(capabilityData?.validUntil);
-        if (!capability.exists || !capabilityData || capabilityData.status !== "active" ||
+        if (!evidenceReferences.includes("pudoLocationActivations/" + endpoint.locationId) ||
+          !evidenceReferences.includes("pudoLocationVerifications/" + endpoint.locationId) ||
+          !activation.exists || activation.data()?.status !== "active" ||
+          !verification.exists || verification.data()?.status !== "approved_to_activate" ||
+          !capability.exists || !capabilityData || capabilityData.status !== "active" ||
           capabilityData.locationId !== endpoint.locationId ||
           capabilityData.serviceCode !== serviceCode ||
           capabilityExpiry === null || capabilityExpiry <= now().getTime() ||
           !Array.isArray(capabilityData.supportedActions) ||
           endpoint.actions.some((action) => !capabilityData.supportedActions.includes(action))) {
-          return { eligible: false as const, outcome: "pending_verification" as const, reason: "A required PUDO service capability is missing, expired or does not support the required endpoint actions." };
+          return { eligible: false as const, outcome: "pending_verification" as const, reason: "A required PUDO activation, physical verification or service capability is missing, expired or does not support the required endpoint actions." };
         }
         capabilityEvidence.push({ capabilityId, ...capabilityData });
       }
