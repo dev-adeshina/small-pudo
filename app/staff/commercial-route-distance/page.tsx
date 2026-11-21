@@ -383,7 +383,7 @@ export default function CommercialRouteDistancePage() {
                           <td className="px-3 py-3">{item.recordedBy}</td>
                           <td className="px-3 py-3"><span className="rounded-full bg-gray-100 px-2 py-1 text-xs">{item.reviewStatus.replaceAll("_", " ")}</span><span className="block text-xs text-gray-500">{item.reviewedBy ? "Reviewed by " + item.reviewedBy : "Not reviewed"}</span></td>
                           <td className="whitespace-nowrap px-3 py-3">{item.reviewValidUntil ? formatDate(item.reviewValidUntil) : "—"}</td>
-                          <td className="px-3 py-3"><button type="button" className="admin-action" onClick={() => setViewEvidenceId((current) => current === item.evidenceId ? null : item.evidenceId)}>{viewEvidenceId === item.evidenceId ? "Hide details" : "View details"}</button></td>
+                          <td className="px-3 py-3"><div className="flex flex-col items-start gap-2"><button type="button" className="admin-action" onClick={() => setViewEvidenceId((current) => current === item.evidenceId ? null : item.evidenceId)}>{viewEvidenceId === item.evidenceId ? "Hide details" : "View details"}</button><Link className="admin-action" href={"/staff/commercial-quotation-readiness?routeEvidenceId=" + encodeURIComponent(item.evidenceId)}>Open review</Link></div></td>
                         </tr>
                       ))}
                     </tbody>
