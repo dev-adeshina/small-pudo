@@ -62,11 +62,11 @@ export async function POST(request: Request) {
   if (!body || typeof body !== "object" || Array.isArray(body)) return NextResponse.json({ error: "A valid quotation request is required." }, { status: 400 });
   const input = body as Record<string, unknown>;
   if (Object.keys(input).some((key) => !["draftId", "serviceCode", "quoteId", "expectedCurrentVersionId"].includes(key)) ||
-      typeof input.draftId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(input.draftId) ||
-      !["standard", "express", "scheduled"].includes(String(input.serviceCode)) ||
-      ((input.quoteId === undefined) !== (input.expectedCurrentVersionId === undefined)) ||
-      (input.quoteId !== undefined && (typeof input.quoteId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(input.quoteId))) ||
-      (input.expectedCurrentVersionId !== undefined && (typeof input.expectedCurrentVersionId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(input.expectedCurrentVersionId)))) {
+    typeof input.draftId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(input.draftId) ||
+    !["standard", "express", "scheduled"].includes(String(input.serviceCode)) ||
+    ((input.quoteId === undefined) !== (input.expectedCurrentVersionId === undefined)) ||
+    (input.quoteId !== undefined && (typeof input.quoteId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(input.quoteId))) ||
+    (input.expectedCurrentVersionId !== undefined && (typeof input.expectedCurrentVersionId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(input.expectedCurrentVersionId)))) {
     return NextResponse.json({ error: "A valid shipment draft, service selection and optional current quotation version are required." }, { status: 400 });
   }
 
@@ -95,7 +95,8 @@ export async function POST(request: Request) {
       error: "This service does not yet have complete DEC-048 approved commercial terms and a current approved pricing version.",
     }, { status: 409 });
 
-    const configuration = terms.pricingConfiguration as CommercialPricingConfiguration;
+    const configuration =
+      terms.pricingConfiguration as unknown as CommercialPricingConfiguration;
     if (configuration.serviceCode !== serviceCode || typeof terms.pricingVersionNumber !== "number" || !Number.isSafeInteger(terms.pricingVersionNumber)) {
       return NextResponse.json({ error: "The approved pricing configuration is inconsistent." }, { status: 409 });
     }
@@ -109,7 +110,7 @@ export async function POST(request: Request) {
       }, { status: 409 });
       const eligibilityEvidence = new Set(eligibility.evidenceReferences);
       if (!eligibilityEvidence.has("commercialRouteDistanceEvidence/" + routeRecord.evidenceId) ||
-          !eligibilityEvidence.has("commercialRouteDistanceReviews/" + routeRecord.evidenceId)) {
+        !eligibilityEvidence.has("commercialRouteDistanceReviews/" + routeRecord.evidenceId)) {
         return NextResponse.json({
           error: "The DEC-047 eligibility approval must reference this exact route measurement and its independent review.",
         }, { status: 409 });
@@ -124,7 +125,7 @@ export async function POST(request: Request) {
       const parcelInput = draft.parcelInput as CommercialParcelInput;
       if (parcelInput.actual !== undefined) throw new TypeError("Customer quotation requests cannot supply or replace actual intake measurements.");
       if (parcelInput.declared &&
-          (parcelInput.declared.recordedBy !== customer.uid || parcelInput.declared.source !== "customer_declared")) {
+        (parcelInput.declared.recordedBy !== customer.uid || parcelInput.declared.source !== "customer_declared")) {
         throw new TypeError("Declared parcel measurements must retain the authenticated customer's declared-evidence provenance.");
       }
       parcelValues = buildCommercialParcelPricingInputValues(configuration, parcelInput);
