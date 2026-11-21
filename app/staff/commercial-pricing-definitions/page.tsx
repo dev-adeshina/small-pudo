@@ -509,7 +509,7 @@ export default function CommercialPricingDefinitionsPage() {
             ...input,
             label: categories[index].label,
             required: categories[index].required,
-            unit: categories[index].treatment === "multiplier" ? "1" : input.unit,
+            unit: categories[index].treatment === "multiplier" ? "1" : existing.treatment === "multiplier" ? "" : input.unit,
           }
         : input);
       return { ...current, inputs, parcelCharacteristics: categories };
