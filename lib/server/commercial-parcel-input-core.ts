@@ -34,6 +34,7 @@ export interface CommercialParcelInput {
   declared?: CommercialParcelMeasurementEvidence;
   actual?: CommercialParcelMeasurementEvidence;
   handlingCharacteristics: CommercialParcelHandlingCharacteristic[];
+  characteristics?: Record<string, string>;
 }
 
 const MEASUREMENT_NAMES = new Set(["weight", "length", "width", "height"]);
@@ -110,18 +111,32 @@ export function assertCommercialParcelInput(value: unknown): asserts value is Co
   assertMap(value, "Commercial parcel input");
   if (Object.keys(value).some((key) =>
     key !== "schemaVersion" && key !== "declared" &&
-    key !== "actual" && key !== "handlingCharacteristics"
+    key !== "actual" && key !== "handlingCharacteristics" && key !== "characteristics"
   )) {
     throw new TypeError("Commercial parcel input contains an unsupported field");
   }
   if (value.schemaVersion !== 1) {
     throw new TypeError("Commercial parcel input schema version is unsupported");
   }
-  if (value.declared === undefined && value.actual === undefined) {
-    throw new TypeError("Commercial parcel input requires declared or actual measurement evidence");
+  if (value.declared === undefined && value.actual === undefined && value.characteristics === undefined) {
+    throw new TypeError("Commercial parcel input requires measurement evidence or customer-declared characteristics");
   }
   if (value.declared !== undefined) assertEvidence(value.declared, "Declared parcel evidence");
   if (value.actual !== undefined) assertEvidence(value.actual, "Actual parcel evidence");
+
+  if (value.characteristics !== undefined) {
+    assertMap(value.characteristics, "Customer-declared parcel characteristics");
+    const entries = Object.entries(value.characteristics);
+    if (entries.length > 30) {
+      throw new TypeError("Customer-declared parcel characteristics exceed the maximum category count");
+    }
+    for (const [categoryKey, optionKey] of entries) {
+      if (!/^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(categoryKey) ||
+          typeof optionKey !== "string" || !/^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(optionKey)) {
+        throw new TypeError("A customer-declared parcel characteristic selection is invalid");
+      }
+    }
+  }
 
   if (!Array.isArray(value.handlingCharacteristics) ||
       value.handlingCharacteristics.length > MAX_CHARACTERISTICS) {
