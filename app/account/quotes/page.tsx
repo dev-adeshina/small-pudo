@@ -21,6 +21,7 @@ type QuoteEvent = {
   eventId: string;
   action?: string;
   versionId?: string;
+  bookingId?: string;
   reason?: string;
   timestamp?: unknown;
   handoverDeadlineAt?: unknown;
@@ -31,6 +32,7 @@ type ShipmentQuote = {
   status: string;
   currentVersionId?: string;
   acceptedVersionId?: string;
+  bookingId?: string;
   validUntil?: unknown;
   handoverDeadlineAt?: unknown;
   versions?: QuoteVersion[];
@@ -138,6 +140,32 @@ export default function CustomerQuotesPage() {
     }
   }
 
+  async function confirmBooking(quote: ShipmentQuote) {
+    if (!user || !quote.acceptedVersionId || busyId || quote.bookingId) return;
+    setBusyId(quote.quoteId);
+    setError("");
+    setNotice("");
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch(
+        "/api/account/shipment-quotes/" + encodeURIComponent(quote.quoteId) + "/booking",
+        {
+          method: "POST",
+          headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+          body: JSON.stringify({ acceptedVersionId: quote.acceptedVersionId }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error ?? "Unable to confirm the shipment booking.");
+      setNotice("Your booking has been confirmed. Physical parcel handover is a separate operational step.");
+      await loadQuotes(user);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to confirm the shipment booking.");
+    } finally {
+      setBusyId("");
+    }
+  }
+
   async function decide(quote: ShipmentQuote, decision: "accept" | "reject") {
     if (!user || !quote.currentVersionId || busyId) return;
     let reason: string | undefined;
@@ -225,7 +253,7 @@ export default function CustomerQuotesPage() {
                 <section className="customer-panel" key={quote.quoteId} style={{ marginBottom: 18 }}>
                   <div className="customer-panel-heading">
                     <div><span className="section-label">QUOTATION / {quote.quoteId}</span><h2>{displayValue(snapshot.serviceName ?? snapshot.serviceCode ?? "Shipment quotation")}</h2></div>
-                    <span className={"customer-status " + (status === "accepted" ? "customer-status-success" : status === "rejected" || status === "expired" ? "customer-status-cancelled" : "customer-status-pending")}>{status.replaceAll("_", " ")}</span>
+                    <span className={"customer-status " + (status === "accepted" || status === "booked" ? "customer-status-success" : status === "rejected" || status === "expired" ? "customer-status-cancelled" : "customer-status-pending")}>{status.replaceAll("_", " ")}</span>
                   </div>
                   <p>Version {version?.sequence ?? "—"} · Valid until {formatDate(quote.validUntil ?? version?.validUntil)}</p>
                   {quoteTerms.handoverWindowMinutes !== undefined && <p>Physical handover window after acceptance: {displayValue(quoteTerms.handoverWindowMinutes)} minutes.</p>}
@@ -237,6 +265,7 @@ export default function CustomerQuotesPage() {
                   {pricing.total !== undefined && <p><strong>Total: {displayValue(pricing.total)} {displayValue(pricing.unit ?? pricing.currency)}</strong></p>}
                   {rounding.mode !== undefined && <p className="text-sm text-gray-600">Total rounding: {displayValue(rounding.mode)} · {displayValue(rounding.decimalPlaces)} decimal places.</p>}
                   {status === "accepted" && <p><CheckCircle2 size={16} /> Accepted version: {quote.acceptedVersionId ?? "—"} · Handover deadline: {formatDate(quote.handoverDeadlineAt)}</p>}
+                  {quote.bookingId && <p><CheckCircle2 size={16} /> Booking confirmed · Booking reference: {quote.bookingId}</p>}
                   {(quote.versions?.length ?? 0) > 1 && <div className="cost-field cost-field-wide">
                     <strong>Quotation version history</strong>
                     <div className="cost-version-list">
@@ -256,6 +285,7 @@ export default function CustomerQuotesPage() {
                           <span>{formatDate(event.timestamp)}</span>
                           <small>
                             {event.versionId ? `Version reference: ${event.versionId}` : ""}
+                            {event.bookingId ? ` · Booking reference: ${event.bookingId}` : ""}
                             {event.reason ? ` · Reason: ${event.reason}` : ""}
                             {event.handoverDeadlineAt ? ` · Handover deadline: ${formatDate(event.handoverDeadlineAt)}` : ""}
                           </small>
@@ -269,6 +299,7 @@ export default function CustomerQuotesPage() {
                       <button className="cost-secondary-button" type="button" disabled={busyId === quote.quoteId} onClick={() => void decide(quote, "reject")}>Reject quotation</button>
                     </>}
                     {canReissue && <button className="cost-secondary-button" type="button" disabled={busyId === quote.quoteId} onClick={() => void requestNewVersion(quote, draftId!, serviceCode!)}>{busyId === quote.quoteId ? "Issuing..." : "Request updated quotation"}</button>}
+                    {status === "accepted" && !quote.bookingId && <button className="cost-primary-button" type="button" disabled={busyId === quote.quoteId || !quote.acceptedVersionId} onClick={() => void confirmBooking(quote)}>{busyId === quote.quoteId ? "Confirming..." : "Confirm shipment booking"}</button>}
                   </div>}
                   <p className="cost-footer-note">Quotation acceptance does not record payment or physical parcel handover. Booking confirmation is handled by the separate booking handoff.</p>
                 </section>

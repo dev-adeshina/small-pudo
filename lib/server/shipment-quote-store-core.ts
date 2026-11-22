@@ -13,6 +13,7 @@ interface QuoteLineageData {
   currentVersionId?: unknown;
   acceptedVersionId?: unknown;
   bookingId?: unknown;
+  handoverDeadlineAt?: unknown;
   status?: unknown;
   validUntil?: unknown;
   handoverWindowMinutes?: unknown;
@@ -179,7 +180,7 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         const lineage = document.data();
         // A lineage record is not customer-visible until an authorised
         // issuance transition has set one of the issued lifecycle states.
-        if (!["issued", "accepted", "rejected", "expired"].includes(String(lineage.status))) {
+        if (!["issued", "accepted", "rejected", "expired", "booked"].includes(String(lineage.status))) {
           return null;
         }
         const versionId = lineage.currentVersionId;
@@ -218,7 +219,7 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
       const quoteDocument = await quoteRef.get();
       if (!quoteDocument.exists || quoteDocument.data()?.bookingPartyUid !== bookingPartyUid) return null;
       const lineage = quoteDocument.data() as QuoteLineageData;
-      if (!["issued", "accepted", "rejected", "expired"].includes(String(lineage.status))) return null;
+      if (!["issued", "accepted", "rejected", "expired", "booked"].includes(String(lineage.status))) return null;
       const versionsSnapshot = await quoteRef.collection("versions").orderBy("sequence", "asc").get();
       const versions = versionsSnapshot.docs.map((version) => ({ versionId: version.id, ...version.data() }));
       const eventsSnapshot = await quoteRef.collection("events").orderBy("timestamp", "asc").get();
@@ -301,6 +302,105 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         });
         transaction.create(eventRef, { action: "rejected", versionId: expectedCurrentVersionId, actorUid: bookingPartyUid, reason: reason!.trim(), timestamp });
         return { outcome: "rejected", rejectedVersionId: expectedCurrentVersionId } as const;
+      });
+    },
+
+    async createBookingFromAcceptedQuote(input: {
+      quoteId: string;
+      acceptedVersionId: string;
+      bookingPartyUid: string;
+    }): Promise<
+      | { outcome: "created"; bookingId: string }
+      | { outcome: "already_created"; bookingId: string }
+      | { outcome: "not_found" | "not_authorized" | "not_accepted" | "stale_version" | "draft_unavailable" }
+    > {
+      const { quoteId, acceptedVersionId, bookingPartyUid } = input;
+      assertIdentifier(quoteId, "Quote ID");
+      assertIdentifier(acceptedVersionId, "Accepted quotation version ID");
+      assertBookingPartyUid(bookingPartyUid);
+
+      const quoteRef = db.collection("shipmentQuotes").doc(quoteId);
+      const versionRef = quoteRef.collection("versions").doc(acceptedVersionId);
+      const bookingRef = db.collection("shipmentBookings").doc();
+      const eventRef = quoteRef.collection("events").doc();
+
+      return db.runTransaction(async (transaction) => {
+        const quoteDocument = await transaction.get(quoteRef);
+        if (!quoteDocument.exists) return { outcome: "not_found" } as const;
+        const lineage = quoteDocument.data() as QuoteLineageData;
+        if (lineage.bookingPartyUid !== bookingPartyUid) return { outcome: "not_authorized" } as const;
+
+        if (typeof lineage.bookingId === "string" && lineage.bookingId.length > 0) {
+          return { outcome: "already_created", bookingId: lineage.bookingId } as const;
+        }
+        if (lineage.status !== "accepted" || lineage.acceptedVersionId !== acceptedVersionId) {
+          return { outcome: "not_accepted" } as const;
+        }
+        if (lineage.currentVersionId !== acceptedVersionId) return { outcome: "stale_version" } as const;
+
+        const versionDocument = await transaction.get(versionRef);
+        if (!versionDocument.exists) return { outcome: "not_found" } as const;
+        const version = versionDocument.data() as QuoteVersionData;
+        const snapshot = version.snapshot;
+        if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) {
+          throw new Error("The accepted quotation version has no valid immutable shipment snapshot");
+        }
+        const quoteSnapshot = snapshot as Record<string, unknown>;
+        const draftId = quoteSnapshot.draftId;
+        if (typeof draftId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(draftId)) {
+          throw new Error("The accepted quotation does not reference a valid shipment draft");
+        }
+        const draftRef = db.collection("users").doc(bookingPartyUid).collection("shipmentBookingDrafts").doc(draftId);
+        const draftDocument = await transaction.get(draftRef);
+        if (!draftDocument.exists) return { outcome: "draft_unavailable" } as const;
+        const draft = draftDocument.data() as Record<string, unknown>;
+        if (draft.bookingPartyUid !== bookingPartyUid || draft.status !== "draft" ||
+            draft.serviceCode !== quoteSnapshot.serviceCode ||
+            draft.origin !== quoteSnapshot.origin || draft.destination !== quoteSnapshot.destination ||
+            draft.parcelDescription !== quoteSnapshot.parcelDescription ||
+            (draft.originPudoLocationId ?? null) !== (quoteSnapshot.originPudoLocationId ?? null) ||
+            (draft.destinationPudoLocationId ?? null) !== (quoteSnapshot.destinationPudoLocationId ?? null) ||
+            JSON.stringify(draft.parcelInput ?? null) !== JSON.stringify(quoteSnapshot.parcelInput ?? null)) {
+          return { outcome: "draft_unavailable" } as const;
+        }
+
+        const timestamp = serverTimestamp();
+        const handoverDeadlineAt = dateValue(lineage.handoverDeadlineAt);
+        transaction.create(bookingRef, {
+          schemaVersion: 1,
+          bookingPartyUid,
+          quoteId,
+          acceptedQuoteVersionId: acceptedVersionId,
+          draftId,
+          serviceCode: quoteSnapshot.serviceCode,
+          status: "confirmed",
+          confirmationSource: "accepted_customer_quotation",
+          shipmentSnapshot: { ...quoteSnapshot },
+          ...(handoverDeadlineAt ? { handoverDeadlineAt } : {}),
+          createdAt: timestamp,
+          createdBy: bookingPartyUid,
+          updatedAt: timestamp,
+        });
+        transaction.update(quoteRef, {
+          status: "booked",
+          bookingId: bookingRef.id,
+          bookingCreatedAt: timestamp,
+          updatedAt: timestamp,
+        });
+        transaction.update(draftRef, {
+          status: "booked",
+          bookingId: bookingRef.id,
+          bookedAt: timestamp,
+          updatedAt: timestamp,
+        });
+        transaction.create(eventRef, {
+          action: "booking_created",
+          bookingId: bookingRef.id,
+          versionId: acceptedVersionId,
+          actorUid: bookingPartyUid,
+          timestamp,
+        });
+        return { outcome: "created", bookingId: bookingRef.id } as const;
       });
     },
 

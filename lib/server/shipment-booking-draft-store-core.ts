@@ -92,7 +92,7 @@ export function createShipmentBookingDraftStore({
       const snapshot = await db.collection("users").doc(customerUid)
         .collection("shipmentBookingDrafts").orderBy("updatedAt", "desc").limit(50).get();
 
-      return snapshot.docs.map((document) => {
+      return snapshot.docs.filter((document) => document.data().status === "draft").map((document) => {
         const data = document.data();
         return {
           id: document.id,
