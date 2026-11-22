@@ -27,6 +27,8 @@ interface PudoLocationOption {
 
 interface ShipmentDraft {
   id: string;
+  serviceCode?: "standard" | "express" | "scheduled";
+  parcelCharacteristics?: Record<string, string>;
   origin: string;
   destination: string;
   originPudoLocationId?: string;
@@ -38,9 +40,18 @@ interface ShipmentDraft {
   updatedAt?: string | null;
 }
 
+interface ParcelCharacteristicOptionGroup {
+  key: string;
+  label: string;
+  required: boolean;
+  options: Array<{ key: string; label: string }>;
+}
+
 const MAX_DRAFTS = 50;
 
 const emptyForm = {
+  serviceCode: "standard" as "standard" | "express" | "scheduled",
+  parcelCharacteristics: {} as Record<string, string>,
   origin: "",
   destination: "",
   originPudoLocationId: "",
@@ -80,13 +91,14 @@ export default function ShipmentDraftsPage() {
   const [drafts, setDrafts] = useState<ShipmentDraft[]>([]);
   const [pudoLocations, setPudoLocations] = useState<PudoLocationOption[]>([]);
   const [pudoLocationsError, setPudoLocationsError] = useState("");
+  const [characteristicOptions, setCharacteristicOptions] = useState<ParcelCharacteristicOptionGroup[]>([]);
+  const [characteristicOptionsError, setCharacteristicOptionsError] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [loadError, setLoadError] = useState("");
   const [notice, setNotice] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [quoteServiceByDraft, setQuoteServiceByDraft] = useState<Record<string, "standard" | "express" | "scheduled">>({});
   const [requestingQuoteId, setRequestingQuoteId] = useState<string | null>(null);
   const [quoteRequestError, setQuoteRequestError] = useState("");
   const [quoteRequestNotice, setQuoteRequestNotice] = useState("");
@@ -172,6 +184,42 @@ export default function ShipmentDraftsPage() {
     return () => unsubscribe();
   }, [loadDrafts, router]);
 
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    void (async () => {
+      try {
+        const idToken = await user.getIdToken();
+        const response = await fetch(
+          `/api/account/parcel-characteristics?serviceCode=${encodeURIComponent(form.serviceCode)}`,
+          { headers: { Authorization: `Bearer ${idToken}` }, cache: "no-store" }
+        );
+        const data = await response.json().catch(() => null);
+        if (!response.ok || !data?.success) {
+          throw new Error(data?.error || "Unable to load approved parcel options.");
+        }
+        if (active) {
+          setCharacteristicOptions(Array.isArray(data.characteristics) ? data.characteristics : []);
+          setCharacteristicOptionsError(data.unavailable
+            ? "Approved pricing options are not currently available for this service."
+            : "");
+          setForm((current) => {
+            const validKeys = new Set((Array.isArray(data.characteristics) ? data.characteristics : []).map((item: ParcelCharacteristicOptionGroup) => item.key));
+            const next = Object.fromEntries(Object.entries(current.parcelCharacteristics).filter(([key]) => validKeys.has(key)));
+            return { ...current, parcelCharacteristics: next };
+          });
+        }
+      } catch (error) {
+        if (active) {
+          setCharacteristicOptions([]);
+          setCharacteristicOptionsError(error instanceof Error ? error.message : "Unable to load approved parcel options.");
+        }
+      }
+    })();
+    return () => { active = false; };
+  }, [user, form.serviceCode]);
+
   useEffect(() => {
     return () => {
       requestId.current += 1;
@@ -183,6 +231,9 @@ export default function ShipmentDraftsPage() {
 
     setEditingId(draft.id);
     setForm({
+      ...emptyForm,
+      serviceCode: draft.serviceCode ?? "standard",
+      parcelCharacteristics: draft.parcelCharacteristics ?? {},
       origin: draft.origin,
       destination: draft.destination,
       originPudoLocationId: draft.originPudoLocationId ?? "",
@@ -218,6 +269,8 @@ export default function ShipmentDraftsPage() {
     const currentEditingId = editingId;
     const wasEditing = currentEditingId !== null;
     const submittedForm = {
+      serviceCode: form.serviceCode,
+      parcelCharacteristics: form.parcelCharacteristics,
       origin: form.origin,
       destination: form.destination,
       ...(form.originPudoLocationId ? { originPudoLocationId: form.originPudoLocationId } : {}),
@@ -280,7 +333,8 @@ export default function ShipmentDraftsPage() {
 
   async function requestQuote(draftId: string) {
     if (!user || requestingQuoteId) return;
-    const serviceCode = quoteServiceByDraft[draftId] ?? "standard";
+    const draft = drafts.find((item) => item.id === draftId);
+    const serviceCode = draft?.serviceCode ?? "standard";
     setRequestingQuoteId(draftId);
     setQuoteRequestError("");
     setQuoteRequestNotice("");
@@ -375,6 +429,24 @@ export default function ShipmentDraftsPage() {
           </div>
 
           <form className="shipment-form" onSubmit={handleSubmit} aria-busy={saving}>
+
+            <label>
+              <span>Quotation service</span>
+              <select
+                value={form.serviceCode}
+                onChange={(event) => setForm({
+                  ...form,
+                  serviceCode: event.target.value as "standard" | "express" | "scheduled",
+                  parcelCharacteristics: {},
+                })}
+                disabled={saving}
+              >
+                <option value="standard">Standard</option>
+                <option value="express">Express</option>
+                <option value="scheduled">Scheduled</option>
+              </select>
+            </label>
+
             <label>
               <span>Origin</span>
               <input
@@ -481,6 +553,37 @@ export default function ShipmentDraftsPage() {
               </div>
             </fieldset>
 
+
+            <fieldset className="shipment-form-wide" style={{ border: 0, padding: 0, margin: 0 }}>
+              <legend>Parcel characteristics (optional unless marked required)</legend>
+              <p className="customer-panel-description">
+                Choose from options in the approved pricing version for this service. These are your declarations; staff intake measurements remain separate.
+              </p>
+              {characteristicOptionsError && <p className="customer-panel-description" role="status">{characteristicOptionsError}</p>}
+              {characteristicOptions.map((category) => (
+                <label key={category.key}>
+                  <span>{category.label}{category.required ? " *" : ""}</span>
+                  <select
+                    value={form.parcelCharacteristics[category.key] ?? ""}
+                    onChange={(event) => setForm({
+                      ...form,
+                      parcelCharacteristics: {
+                        ...form.parcelCharacteristics,
+                        ...(event.target.value ? { [category.key]: event.target.value } : {}),
+                      },
+                    })}
+                    disabled={saving}
+                    required={category.required}
+                  >
+                    <option value="">Choose an option</option>
+                    {category.options.map((option) => (
+                      <option key={option.key} value={option.key}>{option.label}</option>
+                    ))}
+                  </select>
+                </label>
+              ))}
+            </fieldset>
+
             <div className="shipment-form-actions shipment-form-wide">
               <button type="submit" className="customer-primary-action" disabled={saving}>
                 <Save size={17} />
@@ -565,22 +668,7 @@ export default function ShipmentDraftsPage() {
                     >
                       Edit draft <ArrowUpRight size={15} />
                     </button>
-                    <label>
-                      <span className="sr-only">Quotation service</span>
-                      <select
-                        aria-label={`Quotation service for draft ${draft.id}`}
-                        value={quoteServiceByDraft[draft.id] ?? "standard"}
-                        onChange={(event) => setQuoteServiceByDraft({
-                          ...quoteServiceByDraft,
-                          [draft.id]: event.target.value as "standard" | "express" | "scheduled",
-                        })}
-                        disabled={requestingQuoteId !== null}
-                      >
-                        <option value="standard">Standard</option>
-                        <option value="express">Express</option>
-                        <option value="scheduled">Scheduled</option>
-                      </select>
-                    </label>
+                    <span className="shipment-draft-status">{(draft.serviceCode ?? "standard").toUpperCase()} SERVICE</span>
                     <button
                       type="button"
                       className="customer-primary-action"

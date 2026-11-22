@@ -1,10 +1,12 @@
 interface ShipmentBookingDraftInput {
+  serviceCode?: "standard" | "express" | "scheduled";
   origin: string;
   destination: string;
   originPudoLocationId?: string;
   destinationPudoLocationId?: string;
   parcelDescription: string;
   declaredMeasurements?: Partial<Record<"weight" | "length" | "width" | "height", { value: number; unit: string }>>;
+  parcelCharacteristics?: Record<string, string>;
 }
 
 export interface ShipmentBookingDraftRecord extends ShipmentBookingDraftInput {

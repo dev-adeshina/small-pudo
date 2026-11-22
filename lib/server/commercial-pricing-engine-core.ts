@@ -78,12 +78,28 @@ export const COMMERCIAL_PRICING_ACTIVITY_CATALOGUE: ReadonlyArray<{
   { activityCode: "ACT-11", activityName: "Origin PUDO substitution handling" },
 ];
 
+export interface CommercialParcelCharacteristicOption {
+  key: string;
+  label: string;
+  value: number;
+}
+
+export interface CommercialParcelCharacteristicDefinition {
+  key: string;
+  label: string;
+  required: boolean;
+  treatment: "fixed_amount" | "multiplier";
+  inputKey: string;
+  options: CommercialParcelCharacteristicOption[];
+}
+
 export interface CommercialPricingConfiguration {
   schemaVersion: 1;
   configurationName: string;
   serviceCode: CommercialPricingServiceCode;
   pricingModel?: CommercialPricingModel;
   activityPricing?: CommercialPricingActivityConfiguration;
+  parcelCharacteristics?: CommercialParcelCharacteristicDefinition[];
   inputs: CommercialPricingInputDefinition[];
   components: CommercialPricingComponent[];
 }
@@ -183,6 +199,7 @@ function collectExpressionInputKeys(
 }
 
 function unitSignature(unit: string): string {
+  if (unit === "1") return "";
   const tokens = unit.match(/[*/]|[A-Za-z][A-Za-z0-9_-]*(?:\^-?[0-9]+)?/g);
   if (!tokens || tokens.join("") !== unit) {
     throw new TypeError("Pricing unit must use the supported unit-expression syntax");
@@ -294,6 +311,7 @@ export function assertCommercialPricingConfiguration(
     "serviceCode",
     "pricingModel",
     "activityPricing",
+    "parcelCharacteristics",
     "inputs",
     "components",
   ]);
@@ -404,6 +422,68 @@ export function assertCommercialPricingConfiguration(
     assertNonEmptyString(input.unit, "Commercial pricing input unit", 80);
   }
 
+  const characteristicInputKeys = new Set<string>();
+  if (value.parcelCharacteristics !== undefined) {
+    if (!Array.isArray(value.parcelCharacteristics) || value.parcelCharacteristics.length > 30) {
+      throw new TypeError("Parcel characteristics must be an array of at most 30 categories");
+    }
+    const categoryKeys = new Set<string>();
+    for (const category of value.parcelCharacteristics) {
+      assertPlainMap(category, "A parcel characteristic category");
+      const allowedCategoryFields = new Set(["key", "label", "required", "treatment", "inputKey", "options"]);
+      if (Object.keys(category).some((key) => !allowedCategoryFields.has(key))) {
+        throw new TypeError("Parcel characteristic category contains an unsupported field");
+      }
+      assertKey(category.key, "Parcel characteristic category key");
+      if (categoryKeys.has(category.key as string)) {
+        throw new TypeError("Parcel characteristic category keys must be unique");
+      }
+      categoryKeys.add(category.key as string);
+      assertNonEmptyString(category.label, "Parcel characteristic category label", 120);
+      if (category.required !== true && category.required !== false) {
+        throw new TypeError("Parcel characteristic required must be a boolean");
+      }
+      if (category.treatment !== "fixed_amount" && category.treatment !== "multiplier") {
+        throw new TypeError("Parcel characteristic pricing treatment is unsupported");
+      }
+      assertKey(category.inputKey, "Parcel characteristic pricing input key");
+      if (characteristicInputKeys.has(category.inputKey as string)) {
+        throw new TypeError("Each parcel characteristic category must use a distinct pricing input");
+      }
+      characteristicInputKeys.add(category.inputKey as string);
+      const input = value.inputs.find((item) => item.key === category.inputKey);
+      if (!input || input.source !== undefined || input.required !== category.required) {
+        throw new TypeError("Parcel characteristic must reference a matching customer-selection pricing input");
+      }
+      if (category.treatment === "multiplier" && input.unit !== "1") {
+        throw new TypeError("Multiplier characteristic inputs must use the dimensionless unit 1");
+      }
+      if (!Array.isArray(category.options) || category.options.length < 1 || category.options.length > 100) {
+        throw new TypeError("Each parcel characteristic category requires 1 to 100 options");
+      }
+      const optionKeys = new Set<string>();
+      for (const option of category.options) {
+        assertPlainMap(option, "A parcel characteristic option");
+        if (Object.keys(option).some((key) => !["key", "label", "value"].includes(key))) {
+          throw new TypeError("Parcel characteristic option contains an unsupported field");
+        }
+        assertKey(option.key, "Parcel characteristic option key");
+        if (optionKeys.has(option.key as string)) {
+          throw new TypeError("Parcel characteristic option keys must be unique within a category");
+        }
+        optionKeys.add(option.key as string);
+        assertNonEmptyString(option.label, "Parcel characteristic option label", 120);
+        assertFiniteNumber(option.value, "Parcel characteristic option value");
+        if (category.treatment === "multiplier" && (option.value as number) <= 0) {
+          throw new TypeError("A parcel characteristic multiplier must be greater than zero");
+        }
+        if (category.treatment === "fixed_amount" && (option.value as number) < 0) {
+          throw new TypeError("A parcel characteristic fixed amount cannot be negative");
+        }
+      }
+    }
+  }
+
   if (
     !Array.isArray(value.components) ||
     value.components.length > MAX_COMPONENTS ||
@@ -437,7 +517,7 @@ export function assertCommercialPricingConfiguration(
     const dependencies = new Set<string>();
     collectExpressionInputKeys(component.expression as CommercialPricingExpression, dependencies);
     for (const key of dependencies) {
-      if (!inputDefinitions.get(key)?.required) {
+      if (!inputDefinitions.get(key)?.required && !characteristicInputKeys.has(key)) {
         throw new TypeError(
           "An optional pricing input cannot be referenced by an unconditional component: " + key
         );
@@ -445,6 +525,20 @@ export function assertCommercialPricingConfiguration(
     }
     return dependencies.size > 0;
   });
+
+  for (const characteristicInputKey of characteristicInputKeys) {
+    if (!componentInputDependencies.some((dependencies) => dependencies)) {
+      throw new TypeError("Parcel characteristic inputs must be used by a pricing component");
+    }
+    const referenced = value.components.some((component) => {
+      const dependencies = new Set<string>();
+      collectExpressionInputKeys(component.expression as CommercialPricingExpression, dependencies);
+      return dependencies.has(characteristicInputKey);
+    });
+    if (!referenced) {
+      throw new TypeError("Parcel characteristic input is not used by a pricing component: " + characteristicInputKey);
+    }
+  }
 
   const hasInputDependentComponent = componentInputDependencies.some(Boolean);
   const hasFixedComponent = componentInputDependencies.some((dependent) => !dependent);

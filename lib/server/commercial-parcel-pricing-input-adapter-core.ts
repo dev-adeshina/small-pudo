@@ -2,7 +2,8 @@
  * Maps explicitly declared parcel measurements into commercial pricing inputs.
  *
  * This adapter does not choose between declared and actual measurements,
- * convert units, derive measurements, or apply parcel classifications.
+ * convert units, or derive measurements. Customer-selected characteristics
+ * are resolved only against the exact supplied pricing configuration.
  */
 import {
   assertCommercialPricingConfiguration,
@@ -43,12 +44,48 @@ function parseParcelMeasurementSource(source: string): ParcelMeasurementSource |
  */
 export function buildCommercialParcelPricingInputValues(
   configuration: CommercialPricingConfiguration,
-  parcelInput: CommercialParcelInput
+  parcelInput: CommercialParcelInput,
+  selectedCharacteristics: Readonly<Record<string, string>> = {}
 ): Readonly<Record<string, number>> {
   assertCommercialPricingConfiguration(configuration);
   assertCommercialParcelInput(parcelInput);
 
+  if (selectedCharacteristics === null || typeof selectedCharacteristics !== "object" ||
+      Array.isArray(selectedCharacteristics)) {
+    throw new TypeError("Selected parcel characteristics must be a category-to-option map");
+  }
+
+  const characteristicCategories = configuration.parcelCharacteristics ?? [];
+  const categoryDefinitions = new Map(characteristicCategories.map((category) => [category.key, category]));
+  for (const categoryKey of Object.keys(selectedCharacteristics)) {
+    if (!categoryDefinitions.has(categoryKey)) {
+      throw new TypeError("An unsupported parcel characteristic category was selected: " + categoryKey);
+    }
+    if (typeof selectedCharacteristics[categoryKey] !== "string" ||
+        !selectedCharacteristics[categoryKey].trim()) {
+      throw new TypeError("A selected parcel characteristic option is invalid: " + categoryKey);
+    }
+  }
+
   const values: Record<string, number> = {};
+  for (const category of characteristicCategories) {
+    const selectedOptionKey = selectedCharacteristics[category.key];
+    if (selectedOptionKey === undefined) {
+      if (category.required) {
+        throw new TypeError("A required parcel characteristic is missing: " + category.label);
+      }
+      // Neutral mathematical values preserve the configured expression when an
+      // optional characteristic is not selected; they are not customer rates.
+      values[category.inputKey] = category.treatment === "multiplier" ? 1 : 0;
+      continue;
+    }
+    const option = category.options.find((candidate) => candidate.key === selectedOptionKey);
+    if (!option) {
+      throw new TypeError("The selected option is not configured for parcel characteristic: " + category.label);
+    }
+    values[category.inputKey] = option.value;
+  }
+
   for (const definition of configuration.inputs) {
     if (definition.source === undefined) continue;
     const source = parseParcelMeasurementSource(definition.source);

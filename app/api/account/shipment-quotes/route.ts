@@ -77,6 +77,9 @@ export async function POST(request: Request) {
     const draft = draftSnapshot.data()!;
     if (draft.bookingPartyUid !== customer.uid) return NextResponse.json({ error: "The shipment draft is not owned by the authenticated booking party." }, { status: 404 });
     const serviceCode = input.serviceCode as "standard" | "express" | "scheduled";
+    if (draft.serviceCode !== undefined && draft.serviceCode !== serviceCode) {
+      return NextResponse.json({ error: "The quotation service must match the service selected for this shipment draft. Update the draft first." }, { status: 409 });
+    }
     const originType = typeof draft.originPudoLocationId === "string" ? "pudo" : "address";
     const destinationType = typeof draft.destinationPudoLocationId === "string" ? "pudo" : "address";
 
@@ -121,15 +124,20 @@ export async function POST(request: Request) {
     }, { status: 409 });
 
     let parcelValues: Readonly<Record<string, number>> = {};
-    if (draft.parcelInput) {
-      const parcelInput = draft.parcelInput as CommercialParcelInput;
-      if (parcelInput.actual !== undefined) throw new TypeError("Customer quotation requests cannot supply or replace actual intake measurements.");
-      if (parcelInput.declared &&
-        (parcelInput.declared.recordedBy !== customer.uid || parcelInput.declared.source !== "customer_declared")) {
-        throw new TypeError("Declared parcel measurements must retain the authenticated customer's declared-evidence provenance.");
-      }
-      parcelValues = buildCommercialParcelPricingInputValues(configuration, parcelInput);
+    const parcelInput = (draft.parcelInput ?? {
+      schemaVersion: 1,
+      handlingCharacteristics: [],
+      characteristics: {},
+    }) as CommercialParcelInput;
+    if (parcelInput.actual !== undefined) throw new TypeError("Customer quotation requests cannot supply or replace actual intake measurements.");
+    if (parcelInput.declared &&
+      (parcelInput.declared.recordedBy !== customer.uid || parcelInput.declared.source !== "customer_declared")) {
+      throw new TypeError("Declared parcel measurements must retain the authenticated customer's declared-evidence provenance.");
     }
+    const selectedCharacteristics = parcelInput.characteristics && typeof parcelInput.characteristics === "object" && !Array.isArray(parcelInput.characteristics)
+      ? parcelInput.characteristics as Record<string, string>
+      : {};
+    parcelValues = buildCommercialParcelPricingInputValues(configuration, parcelInput, selectedCharacteristics);
     const routeValues = buildCommercialRoutePricingInputValues(configuration, routeRecord?.evidence as Parameters<typeof buildCommercialRoutePricingInputValues>[1]);
     const values = { ...parcelValues, ...routeValues };
     const evaluation = evaluateCommercialPricing({
