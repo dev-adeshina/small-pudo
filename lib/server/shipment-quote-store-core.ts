@@ -188,6 +188,8 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         if (!version.exists) throw new Error("Quote lineage points to a missing current version");
         const versionsSnapshot = await document.ref.collection("versions").orderBy("sequence", "asc").get();
         const versions = versionsSnapshot.docs.map((item) => ({ versionId: item.id, ...item.data() }));
+        const eventsSnapshot = await document.ref.collection("events").orderBy("timestamp", "asc").get();
+        const events = eventsSnapshot.docs.map((item) => ({ eventId: item.id, ...item.data() }));
         const expiresAt = dateValue(lineage.validUntil);
         const status = lineage.status === "issued" && expiresAt && expiresAt <= now()
           ? "expired" : lineage.status ?? "legacy";
@@ -199,6 +201,7 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
           status,
           currentVersion: { versionId, ...version.data() },
           versions,
+          events,
         };
       }))).filter((row): row is NonNullable<typeof row> => row !== null);
       return rows.sort((a, b) => {
@@ -218,10 +221,12 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
       if (!["issued", "accepted", "rejected", "expired"].includes(String(lineage.status))) return null;
       const versionsSnapshot = await quoteRef.collection("versions").orderBy("sequence", "asc").get();
       const versions = versionsSnapshot.docs.map((version) => ({ versionId: version.id, ...version.data() }));
+      const eventsSnapshot = await quoteRef.collection("events").orderBy("timestamp", "asc").get();
+      const events = eventsSnapshot.docs.map((event) => ({ eventId: event.id, ...event.data() }));
       const expiresAt = dateValue(lineage.validUntil);
       const status = lineage.status === "issued" && expiresAt && expiresAt <= now()
         ? "expired" : lineage.status ?? "legacy";
-      return { quoteId, ...lineage, status, versions };
+      return { quoteId, ...lineage, status, versions, events };
     },
 
     async respondToQuote(input: {

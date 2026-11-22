@@ -17,6 +17,15 @@ type QuoteVersion = {
   validUntil?: unknown;
 };
 
+type QuoteEvent = {
+  eventId: string;
+  action?: string;
+  versionId?: string;
+  reason?: string;
+  timestamp?: unknown;
+  handoverDeadlineAt?: unknown;
+};
+
 type ShipmentQuote = {
   quoteId: string;
   status: string;
@@ -25,6 +34,7 @@ type ShipmentQuote = {
   validUntil?: unknown;
   handoverDeadlineAt?: unknown;
   versions?: QuoteVersion[];
+  events?: QuoteEvent[];
   currentVersion?: QuoteVersion;
 };
 
@@ -235,6 +245,22 @@ export default function CustomerQuotesPage() {
                         <span>{formatDate(item.validUntil)}</span>
                         <small>{item.versionId === quote.currentVersionId ? "Current version" : item.versionId === quote.acceptedVersionId ? "Accepted version" : "Previous version"}</small>
                       </div>)}
+                    </div>
+                  </div>}
+                  {(quote.events?.length ?? 0) > 0 && <div className="cost-field cost-field-wide">
+                    <strong>Quotation activity history</strong>
+                    <div className="cost-version-list">
+                      {quote.events?.map((event) => (
+                        <div className="cost-version-row" key={event.eventId}>
+                          <strong>{String(event.action ?? "updated").replaceAll("_", " ")}</strong>
+                          <span>{formatDate(event.timestamp)}</span>
+                          <small>
+                            {event.versionId ? `Version reference: ${event.versionId}` : ""}
+                            {event.reason ? ` · Reason: ${event.reason}` : ""}
+                            {event.handoverDeadlineAt ? ` · Handover deadline: ${formatDate(event.handoverDeadlineAt)}` : ""}
+                          </small>
+                        </div>
+                      ))}
                     </div>
                   </div>}
                   {(canDecide || canReissue) && <div className="cost-form-actions" style={{ flexWrap: "wrap" }}>
