@@ -8,6 +8,28 @@ import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
 
 type ServiceCode = "standard" | "express" | "scheduled";
+type RouteEvidenceReviewDetails = {
+  evidenceId: string;
+  originOperationalPointRef: string;
+  destinationOperationalPointRef: string;
+  evidence: {
+    distance: { value: number; unit: string };
+    method: string;
+    source: string;
+    measuredOn?: string;
+    supportingReference?: string;
+    recordedAt: string;
+    recordedBy: string;
+  };
+  review: {
+    status: string;
+    decision: string | null;
+    reviewedBy: string | null;
+    reviewedAt: string | null;
+    validUntil: string | null;
+    reason: string | null;
+  } | null;
+};
 
 function lines(value: string): string[] {
   return value.split("\n").map((item) => item.trim()).filter(Boolean);
@@ -26,6 +48,9 @@ export default function CommercialQuotationReadinessPage() {
   const [routeDecision, setRouteDecision] = useState<"" | "approve" | "revoke">("");
   const [routeReason, setRouteReason] = useState("");
   const [routeValidUntil, setRouteValidUntil] = useState("");
+  const [routeEvidenceDetails, setRouteEvidenceDetails] = useState<RouteEvidenceReviewDetails | null>(null);
+  const [routeEvidenceLoading, setRouteEvidenceLoading] = useState(false);
+  const [routeEvidenceError, setRouteEvidenceError] = useState("");
 
   const [serviceCode, setServiceCode] = useState<ServiceCode | "">("");
   const [termsServiceCode, setTermsServiceCode] = useState<ServiceCode | "">("");
@@ -80,6 +105,8 @@ export default function CommercialQuotationReadinessPage() {
         }
         setToken(idToken);
         setEmail(user.email ?? "");
+        const selectedRouteEvidenceId = new URLSearchParams(window.location.search).get("routeEvidenceId");
+        if (selectedRouteEvidenceId) setRouteEvidenceId(selectedRouteEvidenceId);
       } catch {
         setError("Unable to verify staff access.");
       } finally {
@@ -88,6 +115,37 @@ export default function CommercialQuotationReadinessPage() {
     });
     return () => unsubscribe();
   }, [router]);
+
+  useEffect(() => {
+    if (!token || !routeEvidenceId.trim()) {
+      setRouteEvidenceDetails(null);
+      setRouteEvidenceError("");
+      setRouteEvidenceLoading(false);
+      return;
+    }
+    let active = true;
+    setRouteEvidenceLoading(true);
+    setRouteEvidenceError("");
+    setRouteEvidenceDetails(null);
+    void (async () => {
+      try {
+        const currentToken = await auth.currentUser?.getIdToken();
+        if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
+        const response = await fetch(
+          "/api/staff/commercial-quotation-readiness/route-evidence/" + encodeURIComponent(routeEvidenceId) + "/review",
+          { headers: { Authorization: "Bearer " + currentToken }, cache: "no-store" },
+        );
+        const data = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(data?.error || "Unable to load route evidence.");
+        if (active) setRouteEvidenceDetails(data.evidence as RouteEvidenceReviewDetails);
+      } catch (cause) {
+        if (active) setRouteEvidenceError(cause instanceof Error ? cause.message : "Unable to load route evidence.");
+      } finally {
+        if (active) setRouteEvidenceLoading(false);
+      }
+    })();
+    return () => { active = false; };
+  }, [token, routeEvidenceId]);
 
   async function post(path: string, body: Record<string, unknown>, successMessage: string) {
     if (!token || busy) return;
@@ -105,6 +163,16 @@ export default function CommercialQuotationReadinessPage() {
       const data = await response.json().catch(() => null);
       if (!response.ok) throw new Error(data?.error || "The request could not be completed.");
       setNotice(successMessage);
+      if (path.includes("/route-evidence/") && path.endsWith("/review")) {
+        const refreshed = await fetch(path, {
+          headers: { Authorization: "Bearer " + currentToken },
+          cache: "no-store",
+        });
+        const refreshedData = await refreshed.json().catch(() => null);
+        if (refreshed.ok && refreshedData?.evidence) {
+          setRouteEvidenceDetails(refreshedData.evidence as RouteEvidenceReviewDetails);
+        }
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "The request could not be completed.");
     } finally {
@@ -153,10 +221,30 @@ export default function CommercialQuotationReadinessPage() {
             void post("/api/staff/commercial-quotation-readiness/route-evidence/" + encodeURIComponent(routeEvidenceId) + "/review", { decision: routeDecision, reason: routeReason, ...(routeDecision === "approve" && routeValidUntil ? { validUntil: new Date(routeValidUntil).toISOString() } : {}) }, "Route evidence review recorded.");
           }}>
             <label className="block text-sm font-medium">Route evidence ID<input className="mt-2 w-full rounded-lg border p-3" value={routeEvidenceId} onChange={(event) => setRouteEvidenceId(event.target.value)} required /></label>
+            {routeEvidenceLoading && <p className="text-sm text-gray-600">Loading immutable route evidence details...</p>}
+            {routeEvidenceError && <div className="cost-alert"><strong>Evidence unavailable</strong><span>{routeEvidenceError}</span></div>}
+            {routeEvidenceDetails && (
+              <div className="overflow-x-auto rounded-xl border">
+                <div className="border-b bg-gray-50 px-4 py-3 font-semibold">Immutable measurement under review</div>
+                <table className="w-full text-left text-sm">
+                  <tbody>
+                    <tr className="border-b"><th className="px-4 py-2">Directed route</th><td className="px-4 py-2">{routeEvidenceDetails.originOperationalPointRef} → {routeEvidenceDetails.destinationOperationalPointRef}</td></tr>
+                    <tr className="border-b"><th className="px-4 py-2">Distance</th><td className="px-4 py-2">{routeEvidenceDetails.evidence.distance.value} {routeEvidenceDetails.evidence.distance.unit}</td></tr>
+                    <tr className="border-b"><th className="px-4 py-2">Method / source</th><td className="px-4 py-2">{routeEvidenceDetails.evidence.method} / {routeEvidenceDetails.evidence.source}</td></tr>
+                    <tr className="border-b"><th className="px-4 py-2">Measured on</th><td className="px-4 py-2">{routeEvidenceDetails.evidence.measuredOn || "Not supplied"}</td></tr>
+                    <tr className="border-b"><th className="px-4 py-2">Supporting reference</th><td className="px-4 py-2 break-all">{routeEvidenceDetails.evidence.supportingReference || "Not supplied"}</td></tr>
+                    <tr className="border-b"><th className="px-4 py-2">Recorded by / at</th><td className="px-4 py-2">{routeEvidenceDetails.evidence.recordedBy} / {routeEvidenceDetails.evidence.recordedAt}</td></tr>
+                    <tr className="border-b"><th className="px-4 py-2">Current review</th><td className="px-4 py-2">{routeEvidenceDetails.review?.status || "not_reviewed"}</td></tr>
+                    <tr><th className="px-4 py-2">Reviewer / validity</th><td className="px-4 py-2">{routeEvidenceDetails.review?.reviewedBy || "—"} / {routeEvidenceDetails.review?.validUntil || "—"}</td></tr>
+                  </tbody>
+                </table>
+                {routeEvidenceDetails.review?.reason && <p className="border-t px-4 py-3 text-sm">Previous review reason: {routeEvidenceDetails.review.reason}</p>}
+              </div>
+            )}
             <label className="block text-sm font-medium">Decision<select className="mt-2 w-full rounded-lg border p-3" value={routeDecision} onChange={(event) => setRouteDecision(event.target.value as typeof routeDecision)} required><option value="">Select review decision</option><option value="approve">Approve reviewed measurement</option><option value="revoke">Revoke approval</option></select></label>
             <label className="block text-sm font-medium">Review reason<textarea className="mt-2 w-full rounded-lg border p-3" value={routeReason} onChange={(event) => setRouteReason(event.target.value)} maxLength={2000} required /></label>
             {routeDecision === "approve" && <label className="block text-sm font-medium">Evidence validity end<input className="mt-2 w-full rounded-lg border p-3" type="datetime-local" value={routeValidUntil} onChange={(event) => setRouteValidUntil(event.target.value)} required /></label>}
-            <button className="cost-primary-button" disabled={busy}>{busy ? "Saving..." : "Record route review"}</button>
+            <button className="cost-primary-button" disabled={busy || routeEvidenceLoading || !routeEvidenceDetails}>{busy ? "Saving..." : "Record route review"}</button>
             <p className="text-sm text-gray-600">Straight-line evidence cannot be approved as operational road-route evidence. Approval requires a reviewer-specified validity end and the separate <code>commercial_route_distance.approve</code> permission.</p>
           </form>
         </section>

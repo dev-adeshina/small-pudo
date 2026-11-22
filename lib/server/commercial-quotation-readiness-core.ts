@@ -158,11 +158,16 @@ export function createCommercialQuotationReadinessStore({
           if (evidence.method === "straight_line") {
             throw new Error("Straight-line measurements cannot be approved as operational road-route evidence.");
           }
-          if (typeof evidence.originOperationalPointRef !== "string" ||
-            typeof evidence.destinationOperationalPointRef !== "string" ||
+          if (row.originOperationalPointRef !== evidence.originOperationalPointRef ||
+            row.destinationOperationalPointRef !== evidence.destinationOperationalPointRef ||
             typeof evidence.source !== "string" || !evidence.source.trim() ||
-            typeof evidence.measuredOn !== "string") {
-            throw new Error("Route evidence is missing its endpoint, source or measurement-date provenance.");
+            typeof evidence.measuredOn !== "string" ||
+            typeof evidence.supportingReference !== "string" || !evidence.supportingReference.trim()) {
+            throw new Error("Route evidence is missing consistent endpoint, source, measurement-date or supporting-reference provenance.");
+          }
+          const measuredOn = Date.parse(evidence.measuredOn + "T00:00:00Z");
+          if (!Number.isFinite(measuredOn) || measuredOn > now().getTime()) {
+            throw new Error("Route evidence must have a valid measurement date that is not in the future.");
           }
         }
         const timestamp = serverTimestamp();
@@ -182,6 +187,40 @@ export function createCommercialQuotationReadinessStore({
       });
     },
 
+    async getRouteEvidenceForReview(actorUid: string, evidenceId: string) {
+      assertActor(actorUid);
+      assertId(evidenceId, "Route evidence ID");
+      return db.runTransaction(async (transaction) => {
+        await requirePermission(transaction, actorUid, ROUTE_REVIEW_PERMISSION, "view route-distance evidence for review");
+        const evidenceRef = routeEvidence.doc(evidenceId);
+        const reviewRef = routeReviews.doc(evidenceId);
+        const [evidenceSnapshot, reviewSnapshot] = await Promise.all([
+          transaction.get(evidenceRef),
+          transaction.get(reviewRef),
+        ]);
+        if (!evidenceSnapshot.exists) throw new Error("Route-distance evidence was not found.");
+        const row = evidenceSnapshot.data()!;
+        const evidence = row.evidence as Record<string, unknown> | undefined;
+        if (!evidence || typeof evidence !== "object") throw new Error("Route-distance evidence is malformed.");
+        assertCommercialRouteDistanceEvidence(evidence);
+        const review = reviewSnapshot.exists ? reviewSnapshot.data()! : null;
+        return {
+          evidenceId,
+          originOperationalPointRef: row.originOperationalPointRef,
+          destinationOperationalPointRef: row.destinationOperationalPointRef,
+          evidence,
+          review: review ? {
+            status: review.status ?? "not_reviewed",
+            decision: review.decision ?? null,
+            reviewedBy: review.reviewedBy ?? null,
+            reviewedAt: dateMillis(review.reviewedAt) === null ? null : new Date(dateMillis(review.reviewedAt)!).toISOString(),
+            validUntil: dateMillis(review.validUntil) === null ? null : new Date(dateMillis(review.validUntil)!).toISOString(),
+            reason: review.reason ?? null,
+          } : null,
+        };
+      });
+    },
+
     async getUsableRouteEvidence(originId: string, destinationId: string) {
       assertId(originId, "Origin operational point ID");
       assertId(destinationId, "Destination operational point ID");
@@ -196,7 +235,11 @@ export function createCommercialQuotationReadinessStore({
         const [review, data] = await Promise.all([routeReviews.doc(doc.id).get(), Promise.resolve(doc.data())]);
         const evidence = data.evidence as Record<string, unknown> | undefined;
         const reviewData = review.data();
-        if (!review.exists || reviewData?.status !== "approved" || !evidence) return null;
+        if (!review.exists || reviewData?.status !== "approved" ||
+          reviewData?.decision !== "approve" || reviewData?.evidenceId !== doc.id ||
+          typeof reviewData?.reviewedBy !== "string" || !reviewData.reviewedBy ||
+          !evidence || data.originOperationalPointRef !== originId ||
+          data.destinationOperationalPointRef !== destinationId) return null;
         const reviewExpiry = dateMillis(reviewData.validUntil);
         if (reviewExpiry === null || reviewExpiry <= now().getTime()) return null;
         try {
@@ -207,8 +250,12 @@ export function createCommercialQuotationReadinessStore({
         if (evidence.originOperationalPointRef !== originId ||
           evidence.destinationOperationalPointRef !== destinationId ||
           evidence.method === "straight_line" ||
+          evidence.recordedBy === reviewData.reviewedBy ||
+          typeof evidence.source !== "string" || !evidence.source.trim() ||
+          typeof evidence.supportingReference !== "string" || !evidence.supportingReference.trim() ||
           typeof evidence.measuredOn !== "string" ||
-          !Number.isFinite(Date.parse(evidence.measuredOn)) ||
+          !/^\d{4}-\d{2}-\d{2}$/.test(evidence.measuredOn) ||
+          !Number.isFinite(Date.parse(evidence.measuredOn + "T00:00:00Z")) ||
           canonicalJson(reviewData.evidenceSnapshot) !== canonicalJson(evidence)) return null;
         const measured = Date.parse(evidence.measuredOn + "T00:00:00Z");
         if (measured > now().getTime()) return null;

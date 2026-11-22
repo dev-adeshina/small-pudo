@@ -8,6 +8,23 @@ export const dynamic = "force-dynamic";
 
 type Context = { params: Promise<{ evidenceId: string }> };
 
+export async function GET(request: Request, context: Context) {
+  const auth = await authorizeStaffWorkspace(request);
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.status });
+  try {
+    const { evidenceId } = await context.params;
+    const evidence = await commercialQuotationReadinessStore.getRouteEvidenceForReview(auth.uid, evidenceId);
+    return NextResponse.json({ evidence });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (/not authorised/i.test(message)) return NextResponse.json({ error: message }, { status: 403 });
+    if (/not found/i.test(message)) return NextResponse.json({ error: message }, { status: 404 });
+    if (error instanceof TypeError) return NextResponse.json({ error: message }, { status: 400 });
+    console.error("Route evidence review lookup failed:", error);
+    return NextResponse.json({ error: "Unable to load route evidence for review." }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request, context: Context) {
   const auth = await authorizeStaffWorkspace(request);
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.status });
