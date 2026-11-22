@@ -17,6 +17,9 @@ const STAFF_ACTION_PERMISSIONS = [
   "commercial_pricing.publish",
   "commercial_route_distance.approve",
   "commercial_service_eligibility.approve",
+  "commercial_operational_evidence.record",
+  "commercial_operational_evidence.review",
+  "commercial_operational_evidence.revoke",
   "commercial_pricing.owner_approve",
 ] as const;
 export type StaffActionPermission = typeof STAFF_ACTION_PERMISSIONS[number];
