@@ -388,7 +388,7 @@ export default function App() {
           />
         </div>
         <div className="footer-note">Move anything<br />From your pocket.</div>
-        <div className="footer-links"><a href="#services">Products</a><a href="#industries">Delievery</a><a href="#company"> About US</a><a href="#contact">Contact</a></div>
+        <div className="footer-links"><a href="#services">Products</a><a href="#industries">Delievery</a><a href="#company"> About US</a><a href="#contact">Contact</a><Link href="/pudo-partner/register">Become a PUDO partner</Link></div>
         <div className="copyright">© 2026 VeriLyft</div>
       </footer>
     </main>
