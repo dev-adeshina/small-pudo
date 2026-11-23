@@ -11,6 +11,7 @@ type CaptureMethod = "device" | "manual";
 type Candidate = {
   locationId: string;
   name?: string;
+  partnerBusinessName?: string;
   address?: string;
   registrationNote?: string;
   lifecycle?: "draft" | "submitted";
@@ -36,6 +37,7 @@ export default function PudoLocationEditorPage() {
 
   const [candidate, setCandidate] = useState<Candidate | null>(null);
   const [name, setName] = useState("");
+  const [partnerBusinessName, setPartnerBusinessName] = useState("");
   const [address, setAddress] = useState("");
   const [registrationNote, setRegistrationNote] = useState("");
   const [latitude, setLatitude] = useState("");
@@ -82,6 +84,7 @@ export default function PudoLocationEditorPage() {
         if (!cancelled) {
           setCandidate(item);
           setName(item.name ?? "");
+          setPartnerBusinessName(item.partnerBusinessName ?? "");
           setAddress(item.address ?? "");
           setRegistrationNote(item.registrationNote ?? "");
           setLatitude(item.geo?.latitude?.toString() ?? "");
@@ -120,6 +123,7 @@ export default function PudoLocationEditorPage() {
 
     const payload: Record<string, unknown> = {
       name,
+      partnerBusinessName,
       address,
       registrationNote,
     };
@@ -356,6 +360,18 @@ export default function PudoLocationEditorPage() {
               />
             </div>
 
+            <div className="cost-field">
+              <label htmlFor="pudo-partner-business">Originating partner business</label>
+              <input
+                id="pudo-partner-business"
+                value={partnerBusinessName}
+                onChange={(event) => setPartnerBusinessName(event.target.value)}
+                disabled={isSubmitted || saving}
+                maxLength={160}
+                placeholder="Name of the existing partner business"
+                required
+              />
+            </div>
             <div className="cost-field">
               <label htmlFor="pudo-address">Physical address</label>
               <textarea
