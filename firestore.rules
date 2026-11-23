@@ -77,6 +77,20 @@ service cloud.firestore {
       }
     }
 
+    // Partner account and application records are server-managed. Partner APIs
+    // enforce verified identity and application ownership with the Admin SDK.
+    match /pudoPartnerAccounts/{partnerUid} {
+      allow read, write: if false;
+    }
+
+    match /pudoPartnerApplications/{locationId} {
+      allow read, write: if false;
+
+      match /partnerResponses/{responseId} {
+        allow read, write: if false;
+      }
+    }
+
     match /pudoLocationVerifications/{locationId} {
       allow read, write: if false;
 

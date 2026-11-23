@@ -293,14 +293,19 @@ export function createPudoLocationVerificationStore({
       }
 
       const verificationRef = verifications.doc(locationId);
-      const [verificationSnapshot, inspectionsSnapshot, eventsSnapshot] =
+      const partnerApplicationRef = db.collection("pudoPartnerApplications").doc(locationId);
+      const [verificationSnapshot, inspectionsSnapshot, eventsSnapshot, partnerApplicationSnapshot] =
         await Promise.all([
           verificationRef.get(),
           verificationRef.collection("inspectionRecords")
             .orderBy("recordedAt", "desc").get(),
           verificationRef.collection("auditEvents")
             .orderBy("timestamp", "desc").get(),
+          partnerApplicationRef.get(),
         ]);
+      const partnerResponsesSnapshot = partnerApplicationSnapshot.exists
+        ? await partnerApplicationRef.collection("partnerResponses").orderBy("createdAt", "asc").get()
+        : null;
 
       return {
         locationId,
@@ -308,6 +313,13 @@ export function createPudoLocationVerificationStore({
         verification: verificationSnapshot.exists
           ? verificationSnapshot.data()
           : { status: "pending_inspection" as const },
+        partnerApplication: partnerApplicationSnapshot.exists
+          ? partnerApplicationSnapshot.data()
+          : null,
+        partnerResponses: partnerResponsesSnapshot?.docs.map((doc) => ({
+          responseId: doc.id,
+          ...doc.data(),
+        })) ?? [],
         inspections: inspectionsSnapshot.docs.map((doc) => ({
           inspectionId: doc.id,
           ...doc.data(),
