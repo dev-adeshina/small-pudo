@@ -162,11 +162,11 @@ export function createPudoLocationActivationStore({
         }
         const current = activation.data()!;
         const currentStatus = String(current.status ?? "active") as OperationalStatus;
-        if (currentStatus === "deactivated") {
-          throw new Error("A deactivated PUDO location cannot be reactivated.");
-        }
         if (currentStatus === status) {
           return { locationId, status, unchanged: true as const };
+        }
+        if (currentStatus === "deactivated") {
+          throw new Error("A deactivated PUDO location cannot be reactivated.");
         }
         if (status === "active") {
           const capabilitySnapshot = await transaction.get(
