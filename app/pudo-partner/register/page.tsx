@@ -20,6 +20,7 @@ export default function PudoPartnerRegisterPage() {
     event.preventDefault();
     setBusy(true); setError("");
     let createdUser: typeof auth.currentUser = null;
+    let accountSaved = false;
     try {
       const credential = await createUserWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
       createdUser = credential.user;
@@ -31,11 +32,12 @@ export default function PudoPartnerRegisterPage() {
       });
       const data = await result.json();
       if (!result.ok) throw new Error(data.error || "Unable to create partner account.");
+      accountSaved = true;
       await sendEmailVerification(credential.user);
       setComplete(true);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to register.");
-      if (createdUser) {
+      if (createdUser && !accountSaved) {
         try { await createdUser.delete(); } catch { /* retain account if cleanup is blocked */ }
       }
     } finally {
