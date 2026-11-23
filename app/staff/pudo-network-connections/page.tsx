@@ -49,9 +49,10 @@ export default function PudoNetworkConnectionsPage() {
     const nextLocations = Array.isArray(data.locations) ? data.locations as Location[] : [];
     setLocations(nextLocations);
     setConnections(Array.isArray(data.connections) ? data.connections as Connection[] : []);
-    setOrigin(current => current || nextLocations.find(item => item.capabilities.includes("parcel_handover"))?.locationId || "");
-    setDestination(current => current || nextLocations.find(item => item.capabilities.includes("custody_acceptance") && item.locationId !== origin)?.locationId || "");
-  }, [origin]);
+    const initialOrigin = origin || nextLocations.find(item => item.capabilities.includes("parcel_handover"))?.locationId || "";
+    setOrigin(current => current || initialOrigin);
+    setDestination(current => current || nextLocations.find(item => item.capabilities.includes("custody_acceptance") && item.locationId !== initialOrigin)?.locationId || "");
+  }, []);
 
   useEffect(() => {
     let active = true;
