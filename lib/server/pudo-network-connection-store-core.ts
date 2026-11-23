@@ -83,7 +83,8 @@ export function createPudoNetworkConnectionStore({ db, serverTimestamp }: {
 
     async listEligibleLocations(actorUid: string) {
       assertUid(actorUid);
-      await db.runTransaction(transaction => requirePermission(db, transaction, actorUid, PROPOSE));
+      const canPropose = await db.runTransaction(transaction => hasStaffActionPermissionInTransaction(transaction, db, actorUid, PROPOSE));
+      if (!canPropose) return [];
       const candidates = await db.collection("pudoLocations").where("lifecycle", "==", "active").limit(200).get();
       const rows = await Promise.all(candidates.docs.map(async document => {
         const id = document.id;
