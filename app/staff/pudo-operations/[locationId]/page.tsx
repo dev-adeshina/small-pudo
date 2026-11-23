@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
@@ -68,7 +68,7 @@ export default function PudoOperationsDetailPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  async function load(currentUser: User) {
+  const load = useCallback(async (currentUser: User) => {
     const token = await currentUser.getIdToken();
     const response = await fetch(`/api/staff/pudo-operations/${encodeURIComponent(locationId)}`, {
       headers: { Authorization: `Bearer ${token}` }, cache: "no-store",
@@ -87,7 +87,7 @@ export default function PudoOperationsDetailPage() {
       maximum: String(item.maximum), unit: item.unit, basis: item.basis,
     };
     setCapacity(mapped);
-  }
+  }, [locationId]);
 
   useEffect(() => onAuthStateChanged(auth, (current) => {
     setUser(current);
@@ -100,7 +100,7 @@ export default function PudoOperationsDetailPage() {
     load(user).catch((err) => { if (!cancelled) setError(err instanceof Error ? err.message : "Unable to load PUDO operations."); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [user, locationId]);
+  }, [user, load]);
 
   const enabledOptions = useMemo(() => OPTIONS.filter((item) => data?.capabilities.includes(item.id)), [data]);
   function updateDay(dayOfWeek: number, field: "start" | "end", value: string) {
