@@ -109,6 +109,7 @@ export function createPudoLocationCapabilityStore({
         configuredBy: data?.configuredBy ?? null,
         configuredAt: data?.configuredAt ?? null,
         reason: data?.reason ?? null,
+        canConfigure: permissions[2] === true,
         history: configuration.exists
           ? (await configurations.doc(locationId).collection("versions")
             .orderBy("version", "desc").limit(25).get()).docs.map((item) => ({
