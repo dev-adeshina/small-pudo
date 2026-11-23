@@ -91,6 +91,16 @@ service cloud.firestore {
       }
     }
 
+    // PUDO capability projections and immutable configuration versions are
+    // server-managed; staff APIs enforce action-level permissions.
+    match /pudoLocationCapabilities/{locationId} {
+      allow read, write: if false;
+
+      match /versions/{versionId} {
+        allow read, write: if false;
+      }
+    }
+
     match /pudoLocationVerifications/{locationId} {
       allow read, write: if false;
 
