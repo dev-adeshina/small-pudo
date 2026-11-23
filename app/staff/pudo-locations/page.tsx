@@ -9,6 +9,7 @@ import { StaffActionDialog } from "@/components/staff/StaffActionDialog";
 type Candidate = {
   locationId: string;
   name?: string;
+  partnerBusinessName?: string;
   address?: string;
   lifecycle?: "draft" | "submitted" | "active";
   updatedAt?: unknown;
@@ -73,7 +74,7 @@ export default function PudoLocationsPage() {
     const query = search.trim().toLowerCase();
     return candidates.filter((candidate) => {
       const matchesSearch = !query ||
-        [candidate.name, candidate.address, candidate.locationId]
+        [candidate.name, candidate.partnerBusinessName, candidate.address, candidate.locationId]
           .some((value) => value?.toLowerCase().includes(query));
       const matchesStatus = statusFilter === "all" || (candidate.lifecycle ?? "draft") === statusFilter;
       return matchesSearch && matchesStatus;
@@ -146,11 +147,12 @@ export default function PudoLocationsPage() {
           {!loading && filteredCandidates.length > 0 && (
             <div className="cost-table-wrap">
               <table className="cost-table">
-                <thead><tr><th>Location</th><th>Physical address</th><th>Lifecycle</th><th>Last updated</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Location</th><th>Partner business</th><th>Physical address</th><th>Lifecycle</th><th>Last updated</th><th>Actions</th></tr></thead>
                 <tbody>
                   {filteredCandidates.map((candidate) => (
                     <tr key={candidate.locationId}>
                       <td><strong>{candidate.name || "Untitled location"}</strong><small>{candidate.locationId}</small></td>
+                      <td>{candidate.partnerBusinessName || "Not recorded"}</td>
                       <td>{candidate.address || "Address not provided"}</td>
                       <td><span className="status-badge">{lifecycleLabel(candidate.lifecycle)}</span></td>
                       <td>{displayDate(candidate.updatedAt)}</td>
