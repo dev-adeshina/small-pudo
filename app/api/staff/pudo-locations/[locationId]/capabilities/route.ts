@@ -24,7 +24,9 @@ function errorResponse(error: unknown) {
     return response({ error: message }, 404);
   }
   if (message.includes("approval is required") ||
-    message.includes("Only an approved")) {
+    message.includes("Only an approved") ||
+    message.includes("At least one") ||
+    message.includes("permanent PUDO deactivation")) {
     return response({ error: message }, 409);
   }
   if (error instanceof TypeError) {
