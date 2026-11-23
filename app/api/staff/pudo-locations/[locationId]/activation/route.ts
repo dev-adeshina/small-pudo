@@ -35,9 +35,18 @@ export async function POST(request: Request, context: RouteContext) {
   const auth = await authorizeStaffWorkspace(request);
   if (!auth.ok) return response({ error: auth.error }, auth.status);
 
+  let input: { reason?: unknown };
+  try {
+    input = await request.json() as typeof input;
+  } catch {
+    return response({ error: "A valid JSON body is required." }, 400);
+  }
+
   try {
     const { locationId } = await context.params;
-    return response(await pudoLocationActivationStore.activateLocation(auth.uid, locationId));
+    return response(await pudoLocationActivationStore.activateLocation(
+      auth.uid, locationId, input.reason,
+    ));
   } catch (error) {
     return errorResponse(error);
   }
