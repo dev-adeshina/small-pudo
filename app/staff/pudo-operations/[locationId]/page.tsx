@@ -47,7 +47,7 @@ function parseExceptions(value: string): Availability["exceptions"] {
     if (!dateRaw || !ruleRaw) throw new Error("Each exception must use YYYY-MM-DD | closed or YYYY-MM-DD | HH:mm-HH:mm.");
     if (ruleRaw.toLowerCase() === "closed") return { date: dateRaw, status: "closed" as const, intervals: [] };
     const intervals = ruleRaw.split(",").map((part) => {
-      const match = /^(\\d{2}:\\d{2})-(\\d{2}:\\d{2})$/.exec(part.trim());
+      const match = /^(\d{2}:\d{2})-(\d{2}:\d{2})$/.exec(part.trim());
       if (!match) throw new Error(`Invalid replacement hours for ${dateRaw}.`);
       return { start: match[1], end: match[2] };
     });
