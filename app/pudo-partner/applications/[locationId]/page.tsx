@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -16,6 +16,7 @@ type ApplicationView = {
 
 export default function PudoPartnerApplicationPage() {
   const { locationId } = useParams<{ locationId: string }>();
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [application, setApplication] = useState<ApplicationView | null>(null);
   const [message, setMessage] = useState("");
@@ -23,7 +24,10 @@ export default function PudoPartnerApplicationPage() {
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => onAuthStateChanged(auth, setUser), []);
+  useEffect(() => onAuthStateChanged(auth, current => {
+    setUser(current);
+    if (!current) { setLoading(false); router.replace("/pudo-partner/sign-in"); }
+  }), [router]);
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
