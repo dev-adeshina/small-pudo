@@ -122,7 +122,8 @@ function validateAvailability(value: unknown): Availability {
     if (item.status === "hours" && intervals.length === 0) {
       throw new TypeError("A replacement-hours exception must contain at least one opening interval.");
     }
-    return { date: item.date, status: item.status, intervals };
+    const status: AvailabilityException["status"] = item.status;
+    return { date: item.date, status, intervals };
   }).sort((a, b) => a.date.localeCompare(b.date));
   if (new Set(exceptions.map((item) => item.date)).size !== exceptions.length) {
     throw new TypeError("An availability date can have only one exception.");
