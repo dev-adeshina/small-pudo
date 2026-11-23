@@ -21,7 +21,7 @@ function errorResponse(error: unknown) {
     return response({ error: "You do not have permission to manage PUDO activation." }, 403);
   }
   if (message.includes("not found")) return response({ error: message }, 404);
-  if (message.includes("requires") || message.includes("Only submitted") ||
+  if (message.includes("requires") || message.includes("approval is required") || message.includes("Only submitted") ||
     message.includes("Only an activated") || message.includes("cannot be reactivated") ||
     message.includes("already been activated") || message.includes("At least one")) {
     return response({ error: message }, 409);
