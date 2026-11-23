@@ -14,7 +14,7 @@ type VerificationStatus =
 
 type QueueItem = {
   locationId: string;
-  candidate?: { name?: string; address?: string; registrationNote?: string; submittedAt?: unknown };
+  candidate?: { name?: string; partnerBusinessName?: string; address?: string; registrationNote?: string; submittedAt?: unknown };
   verification?: { status?: VerificationStatus };
 };
 
@@ -76,7 +76,7 @@ export default function PudoVerificationQueuePage() {
     return queue.filter((item) => {
       const status = item.verification?.status ?? "pending_inspection";
       const matchesSearch = !query ||
-        [item.candidate?.name, item.candidate?.address, item.locationId]
+        [item.candidate?.name, item.candidate?.partnerBusinessName, item.candidate?.address, item.locationId]
           .some((value) => value?.toLowerCase().includes(query));
       return matchesSearch && (statusFilter === "all" || status === statusFilter);
     });
@@ -126,13 +126,14 @@ export default function PudoVerificationQueuePage() {
           {!loading && filteredQueue.length > 0 && (
             <div className="cost-table-wrap">
               <table className="cost-table">
-                <thead><tr><th>Location</th><th>Physical address</th><th>Verification status</th><th>Submitted</th><th>Action</th></tr></thead>
+                <thead><tr><th>Location</th><th>Partner business</th><th>Physical address</th><th>Verification status</th><th>Submitted</th><th>Action</th></tr></thead>
                 <tbody>
                   {filteredQueue.map((item) => {
                     const status = item.verification?.status ?? "pending_inspection";
                     return (
                       <tr key={item.locationId}>
                         <td><strong>{item.candidate?.name || "Untitled location"}</strong><small>{item.locationId}</small></td>
+                        <td>{item.candidate?.partnerBusinessName || "Not recorded"}</td>
                         <td>{item.candidate?.address || "Address not provided"}</td>
                         <td><span className="status-badge">{STATUS_LABELS[status] ?? status}</span></td>
                         <td>{displayDate(item.candidate?.submittedAt)}</td>
