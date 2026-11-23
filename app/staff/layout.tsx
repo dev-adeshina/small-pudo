@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import {
   LayoutDashboard, ClipboardList, FileText, Route, ShieldCheck,
-  MapPin, MapPinned, Users, UserRoundCheck, CalendarClock, Compass,
+  MapPin, MapPinned, Users, UserRoundCheck, CalendarClock, Compass, Network,
 } from "lucide-react";
 import { StaffActivationProvider, useStaffActivation } from "@/components/staff/StaffActivationProvider";
 
