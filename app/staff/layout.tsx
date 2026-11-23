@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import {
   LayoutDashboard, ClipboardList, FileText, Route, ShieldCheck,
-  MapPin, MapPinned, Users, UserRoundCheck,
+  MapPin, MapPinned, Users, UserRoundCheck, CalendarClock,
 } from "lucide-react";
 import { StaffActivationProvider, useStaffActivation } from "@/components/staff/StaffActivationProvider";
 
@@ -18,6 +18,7 @@ const navigation = [
   { label: "Quotation readiness", href: "/staff/commercial-quotation-readiness", icon: ShieldCheck, section: "COMMERCIAL" },
   { label: "PUDO locations", href: "/staff/pudo-locations", icon: MapPin, section: "PUDO OPERATIONS" },
   { label: "Verification queue", href: "/staff/pudo-verifications", icon: MapPinned, section: "PUDO OPERATIONS" },
+  { label: "Availability & capacity", href: "/staff/pudo-operations", icon: CalendarClock, section: "PUDO OPERATIONS" },
   { label: "Delegations", href: "/staff/delegations", icon: Users, section: "ACCESS" },
 ];
 
