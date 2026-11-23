@@ -13,7 +13,7 @@ function response(data: unknown, status = 200) {
 export async function POST(request: Request) {
   const match = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i);
   if (!match) return response({ error: "Registration authentication is required." }, 401);
-  let decoded;
+  let decoded: Awaited<ReturnType<typeof adminAuth.verifyIdToken>>;
   try {
     decoded = await adminAuth.verifyIdToken(match[1], true);
   } catch {
