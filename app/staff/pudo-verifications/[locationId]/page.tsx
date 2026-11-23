@@ -877,7 +877,7 @@ export default function PudoVerificationDetailPage() {
                 >
                   {saving ? "Activating location…" : "Activate PUDO location"}
                 </button>
-              </> : candidate.lifecycle === "submitted" ? (
+              </> ) : candidate.lifecycle === "submitted" ? (
                 <p>You can view the approval state, but do not hold the separate PUDO activation permission.</p>
             ) : (
               <p>
