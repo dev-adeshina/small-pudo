@@ -63,9 +63,20 @@ type AuditEvent = {
   timestamp?: unknown;
 };
 
+type PartnerResponse = { responseId: string; message?: string; createdAt?: unknown };
+
+type PartnerApplication = {
+  contactName?: string;
+  email?: string;
+  phone?: string;
+  businessName?: string;
+};
+
 type VerificationData = {
   locationId: string;
   candidate: Candidate;
+  partnerApplication?: PartnerApplication | null;
+  partnerResponses?: PartnerResponse[];
   verification: {
     status?: VerificationStatus;
     decision?: string;
@@ -530,6 +541,29 @@ export default function PudoVerificationDetailPage() {
             </div>
           </div>
         </section>
+
+        {data.partnerApplication && (
+          <section className="cost-panel">
+            <h2>Partner application contact</h2>
+            <div className="cost-form-grid">
+              <div className="cost-field"><strong>Business</strong><p>{data.partnerApplication.businessName || candidate.partnerBusinessName || "Not recorded"}</p></div>
+              <div className="cost-field"><strong>Primary contact</strong><p>{data.partnerApplication.contactName || "Not recorded"}</p></div>
+              <div className="cost-field"><strong>Email</strong><p>{data.partnerApplication.email || "Not recorded"}</p></div>
+              <div className="cost-field"><strong>Phone</strong><p>{data.partnerApplication.phone || "Not recorded"}</p></div>
+            </div>
+          </section>
+        )}
+
+        {(data.partnerResponses?.length ?? 0) > 0 && (
+          <section className="cost-panel">
+            <h2>Partner clarification responses</h2>
+            <ol>
+              {data.partnerResponses!.map((response) => (
+                <li key={response.responseId}><p>{response.message}</p></li>
+              ))}
+            </ol>
+          </section>
+        )}
 
         <section className="cost-panel">
           <div className="cost-page-topline">
