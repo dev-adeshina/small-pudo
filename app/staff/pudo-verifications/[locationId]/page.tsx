@@ -857,7 +857,7 @@ export default function PudoVerificationDetailPage() {
 
             {candidate.lifecycle === "active" ? (
               <p>This PUDO location is active. Activation has already been completed.</p>
-            ) : candidate.lifecycle === "submitted" ? (
+            ) : candidate.lifecycle === "submitted" && capabilityConfiguration?.canManageActivation ? (
               <>
                 <p>
                   Verification approval has been recorded. Configure at least one
@@ -877,7 +877,8 @@ export default function PudoVerificationDetailPage() {
                 >
                   {saving ? "Activating location…" : "Activate PUDO location"}
                 </button>
-              </>
+              </> : candidate.lifecycle === "submitted" ? (
+                <p>You can view the approval state, but do not hold the separate PUDO activation permission.</p>
             ) : (
               <p>
                 Activation is unavailable for the current candidate lifecycle: {candidate.lifecycle || "Unknown"}.
