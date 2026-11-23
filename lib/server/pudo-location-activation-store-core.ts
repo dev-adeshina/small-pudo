@@ -73,9 +73,11 @@ export function createPudoLocationActivationStore({
   }
 
   return {
-    async activateLocation(actorUid: string, locationId: string) {
+    async activateLocation(actorUid: string, locationId: string, reasonValue: unknown) {
       assertActor(actorUid);
       assertLocationId(locationId);
+      assertReason(reasonValue);
+      const reason = reasonValue.trim();
       const candidateRef = candidates.doc(locationId);
       const activationRef = activations.doc(locationId);
       const eventRef = candidateRef.collection("auditEvents").doc();
@@ -103,7 +105,7 @@ export function createPudoLocationActivationStore({
           activatedAt: now,
           statusChangedBy: actorUid,
           statusChangedAt: now,
-          statusReason: "Initial activation after verification and capability configuration.",
+          statusReason: reason,
           verificationStatus: "approved_to_activate" as const,
           schemaVersion: 1,
         });
@@ -121,6 +123,7 @@ export function createPudoLocationActivationStore({
           timestamp: now,
           verificationStatus: "approved_to_activate",
           activationRecordId: activationRef.id,
+          reason,
         });
         return { locationId, lifecycle: "active" as const, status: "active" as const, activatedBy: actorUid };
       });
@@ -145,14 +148,18 @@ export function createPudoLocationActivationStore({
 
       return db.runTransaction(async (transaction) => {
         await requirePermission(actorUid, transaction);
-        const [candidate, activation] = await Promise.all([
+        const [candidate, activation, verification] = await Promise.all([
           transaction.get(candidateRef),
           transaction.get(activationRef),
+          transaction.get(verifications.doc(locationId)),
         ]);
         if (!candidate.exists || candidate.data()?.lifecycle !== "active") {
           throw new Error("Only an activated PUDO location can change operational status.");
         }
         if (!activation.exists) throw new Error("PUDO activation record not found.");
+        if (verification.data()?.status !== "approved_to_activate") {
+          throw new Error("PUDO verification approval is required to manage operational status.");
+        }
         const current = activation.data()!;
         const currentStatus = String(current.status ?? "active") as OperationalStatus;
         if (currentStatus === "deactivated") {
