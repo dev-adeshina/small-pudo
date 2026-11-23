@@ -87,10 +87,11 @@ export function createPudoLocationCapabilityStore({
         throw new Error("You are not authorised to view PUDO location capabilities.");
       }
 
-      const [candidate, verification, configuration] = await Promise.all([
+      const [candidate, verification, configuration, activation] = await Promise.all([
         candidates.doc(locationId).get(),
         verifications.doc(locationId).get(),
         configurations.doc(locationId).get(),
+        db.collection("pudoLocationActivations").doc(locationId).get(),
       ]);
       if (!candidate.exists) throw new Error("PUDO location not found.");
       if (!verification.exists ||
@@ -101,6 +102,8 @@ export function createPudoLocationCapabilityStore({
       const data = configuration.exists ? configuration.data()! : null;
       return {
         locationId,
+        lifecycle: candidate.data()?.lifecycle ?? null,
+        operationalStatus: activation.exists ? activation.data()?.status ?? "active" : "not_activated",
         capabilities: (data?.capabilities ?? []) as PudoLocationCapability[],
         version: typeof data?.version === "number" ? data.version : 0,
         configuredBy: data?.configuredBy ?? null,
