@@ -160,7 +160,7 @@ export default function PudoLocationsPage() {
                         <div className="cost-form-grid">
                           {candidate.lifecycle === "submitted" && <Link className="cost-primary-button" href={`/staff/pudo-verifications/${encodeURIComponent(candidate.locationId)}`}>Inspect</Link>}
                           {candidate.lifecycle === "active" ? (
-                            <Link className="cost-primary-button" href={`/staff/pudo-verifications/${encodeURIComponent(candidate.locationId)}`}>Manage</Link>
+                            <Link className="cost-primary-button" href={`/staff/pudo-operations/${encodeURIComponent(candidate.locationId)}`}>Manage availability &amp; capacity</Link>
                           ) : (
                             <Link className="admin-action" href={`/staff/pudo-locations/${encodeURIComponent(candidate.locationId)}`}>View</Link>
                           )}
