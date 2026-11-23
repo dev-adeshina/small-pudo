@@ -8,6 +8,7 @@ export type PudoLocationLifecycle = "draft" | "submitted" | "active" | "withdraw
 
 export interface PudoLocationInput {
   name?: string;
+  partnerBusinessName?: string;
   address?: string;
   registrationNote?: string;
   geo?: {
@@ -40,13 +41,14 @@ function assertInput(input: PudoLocationInput): void {
     throw new TypeError("A valid PUDO candidate is required.");
   }
 
-  const allowed = ["name", "address", "registrationNote", "geo"];
+  const allowed = ["name", "partnerBusinessName", "address", "registrationNote", "geo"];
   if (Object.keys(input).some((key) => !allowed.includes(key))) {
     throw new TypeError("The candidate contains an unsupported field.");
   }
 
   for (const [value, label, max] of [
     [input.name, "Location name", 160],
+    [input.partnerBusinessName, "Partner business name", 160],
     [input.address, "Physical address", 1000],
     [input.registrationNote, "Registration note", 1000],
   ] as const) {
@@ -100,6 +102,9 @@ function assertInput(input: PudoLocationInput): void {
 function validateSubmission(input: PudoLocationInput): void {
   if (!input.name?.trim()) {
     throw new TypeError("A location name is required before submission.");
+  }
+  if (!input.partnerBusinessName?.trim()) {
+    throw new TypeError("The originating partner business name is required before submission.");
   }
   if (!input.address?.trim()) {
     throw new TypeError("A physical address is required before submission.");
@@ -158,6 +163,7 @@ export function createPudoLocationStore({
 
     return {
       name: input.name?.trim() ?? (previous?.name as string | undefined) ?? "",
+      partnerBusinessName: input.partnerBusinessName?.trim() ?? (previous?.partnerBusinessName as string | undefined) ?? "",
       address: input.address?.trim() ?? (previous?.address as string | undefined) ?? "",
       registrationNote: input.registrationNote?.trim() ??
         (previous?.registrationNote as string | undefined) ?? "",
@@ -359,6 +365,7 @@ export function createPudoLocationStore({
 
         const input: PudoLocationInput = {
           name: previous.name,
+          partnerBusinessName: previous.partnerBusinessName,
           address: previous.address,
           registrationNote: previous.registrationNote,
           ...(storedGeo
