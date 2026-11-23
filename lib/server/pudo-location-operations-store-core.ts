@@ -108,6 +108,7 @@ function validateAvailability(value: unknown): Availability {
   const exceptions = value.exceptions.map((item) => {
     if (!isRecord(item) || typeof item.date !== "string" ||
       !/^\d{4}-\d{2}-\d{2}$/.test(item.date) ||
+      !Number.isFinite(new Date(`${item.date}T00:00:00.000Z`).getTime()) ||
       new Date(`${item.date}T00:00:00.000Z`).toISOString().slice(0, 10) !== item.date) {
       throw new TypeError("Each availability exception must have a real calendar date in YYYY-MM-DD format.");
     }
