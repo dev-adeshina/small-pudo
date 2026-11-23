@@ -21,6 +21,7 @@ type EvidenceAssessment =
 
 type Candidate = {
   name?: string;
+  partnerBusinessName?: string;
   address?: string;
   registrationNote?: string;
   lifecycle?: string;
@@ -484,6 +485,11 @@ export default function PudoVerificationDetailPage() {
             <div className="cost-field">
               <strong>Location name</strong>
               <p>{candidate.name || "Not provided"}</p>
+            </div>
+
+            <div className="cost-field">
+              <strong>Originating partner business</strong>
+              <p>{candidate.partnerBusinessName || "Not recorded"}</p>
             </div>
 
             <div className="cost-field">
