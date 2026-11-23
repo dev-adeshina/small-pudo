@@ -17,7 +17,7 @@ type Capacity = { capabilityId: CapabilityId; maximum: number; unit: string; bas
 type History = { versionId: string; version: number; reason: string; configuredBy: string; configuredAt?: { _seconds?: number } | string; availability?: Availability; capacity?: Capacity[] };
 type Data = {
   location: { locationId: string; name: string; address: string; partnerBusinessName: string; operationalStatus: string };
-  capabilities: CapabilityId[]; availability: Availability | null; capacity: Capacity[]; version: number;
+  capabilities: CapabilityId[]; availability: Availability | null; capacity: Capacity[]; capacityConfigurationStale: boolean; version: number;
   configuredBy?: string | null; reason?: string | null; history: History[];
 };
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -199,6 +199,7 @@ export default function PudoOperationsDetailPage() {
             <section className="cost-panel">
               <h2>Capacity limits</h2>
               <p>Declare the actual maximum the site can handle for each enabled capability. Enter the real unit and whether the limit applies concurrently, per hour or per day. Blank limits remain unconfigured.</p>
+              {data.capacityConfigurationStale && <p className="cost-feedback" role="status">The approved capability configuration has changed since these capacity limits were recorded. Reconfirm the limits and save a new version before relying on them.</p>}
               <div className="cost-table-wrap"><table className="cost-table">
                 <thead><tr><th>Enabled activity</th><th>Maximum</th><th>Unit</th><th>Limit basis</th></tr></thead>
                 <tbody>{enabledOptions.map((item) => <tr key={item.id}>
