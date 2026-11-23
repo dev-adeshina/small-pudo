@@ -183,6 +183,7 @@ export default function PudoVerificationDetailPage() {
   const [capabilityConfiguration, setCapabilityConfiguration] = useState<CapabilityConfiguration | null>(null);
   const [selectedCapabilities, setSelectedCapabilities] = useState<CapabilityId[]>([]);
   const [capabilityReason, setCapabilityReason] = useState("");
+  const [activationReason, setActivationReason] = useState("");
   const [operationalStatusReason, setOperationalStatusReason] = useState("");
 
   const [inspectedSite, setInspectedSite] = useState("");
@@ -438,7 +439,11 @@ export default function PudoVerificationDetailPage() {
         `/api/staff/pudo-locations/${encodeURIComponent(locationId)}/activation`,
         {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ reason: activationReason }),
           cache: "no-store",
         },
       );
@@ -449,6 +454,7 @@ export default function PudoVerificationDetailPage() {
       }
 
       await loadVerification();
+      setActivationReason("");
       setMessage("PUDO location successfully activated.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to activate PUDO location.");
@@ -858,11 +864,16 @@ export default function PudoVerificationDetailPage() {
                   operational capability first. Activation is a separate authorised
                   action and does not itself grant any additional capabilities.
                 </p>
+                <label className="cost-field">
+                  Reason for activation
+                  <textarea required maxLength={1000} value={activationReason}
+                    onChange={(event) => setActivationReason(event.target.value)} disabled={saving} />
+                </label>
                 <button
                   className="cost-primary-button"
                   type="button"
                   onClick={handleActivation}
-                  disabled={saving || !capabilityConfiguration?.capabilities.length}
+                  disabled={saving || !capabilityConfiguration?.capabilities.length || !activationReason.trim()}
                 >
                   {saving ? "Activating location…" : "Activate PUDO location"}
                 </button>
