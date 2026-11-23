@@ -113,7 +113,7 @@ export default function PudoLocationsPage() {
             <h1 className="cost-page-heading">PUDO location candidates</h1>
             <p>Register and maintain proposed PUDO locations. Submission does not make a location operational.</p>
           </div>
-          <Link className="admin-action" href="/staff/pudo-locations/new">Register a location</Link>
+          <Link className="btn btn-primary" href="/staff/pudo-locations/new">Register a location</Link>
         </header>
 
         <section className="cost-panel">
