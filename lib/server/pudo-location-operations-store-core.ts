@@ -127,6 +127,11 @@ function validateAvailability(value: unknown): Availability {
   if (new Set(exceptions.map((item) => item.date)).size !== exceptions.length) {
     throw new TypeError("An availability date can have only one exception.");
   }
+  if (value.status === "available" &&
+    days.every((day) => day.intervals.length === 0) &&
+    exceptions.every((item) => item.status !== "hours")) {
+    throw new TypeError("An available PUDO location must have at least one opening interval in its weekly schedule or date exceptions.");
+  }
   return {
     timezone: timezone.trim(),
     status: value.status,
