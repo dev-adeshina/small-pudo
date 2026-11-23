@@ -333,7 +333,7 @@ export function createPudoLocationVerificationStore({
       const eventRef = verificationRef.collection("auditEvents").doc();
 
       return db.runTransaction(async (transaction) => {
-        await requireVerificationPermission(actorUid);
+        await requireVerificationPermission(actorUid, transaction);
         await requireSubmittedCandidate(transaction, locationId);
 
         const currentSnapshot = await transaction.get(verificationRef);
@@ -393,7 +393,7 @@ export function createPudoLocationVerificationStore({
       const eventRef = verificationRef.collection("auditEvents").doc();
 
       return db.runTransaction(async (transaction) => {
-        await requireVerificationPermission(actorUid);
+        await requireVerificationPermission(actorUid, transaction);
         await requireSubmittedCandidate(transaction, locationId);
 
         const verificationSnapshot = await transaction.get(verificationRef);
