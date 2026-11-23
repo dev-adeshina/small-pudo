@@ -175,6 +175,57 @@ function validateCapacity(value: unknown, capabilities: unknown): CapacityLimit[
   return limits;
 }
 
+const PUDO_DIRECTORY_PERMISSION = "pudo_location.view_directory";
+
+function resolveCurrentAvailability(availability: unknown, now = new Date()):
+  "not_configured" | "temporarily_unavailable" | "open_now" | "closed_now" {
+  if (!isRecord(availability)) return "not_configured";
+  if (availability.status === "unavailable") return "temporarily_unavailable";
+  if (availability.status !== "available" ||
+    typeof availability.timezone !== "string" || !Array.isArray(availability.weeklySchedule)) {
+    return "not_configured";
+  }
+
+  let parts: Record<string, string> = {};
+  try {
+    parts = Object.fromEntries(new Intl.DateTimeFormat("en", {
+      timeZone: availability.timezone,
+      year: "numeric", month: "2-digit", day: "2-digit",
+      weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+    }).formatToParts(now).map((part) => [part.type, part.value]));
+  } catch {
+    return "not_configured";
+  }
+
+  const date = `${parts.year}-${parts.month}-${parts.day}`;
+  const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(parts.weekday);
+  const minuteOfDay = Number(parts.hour) * 60 + Number(parts.minute);
+  if (weekday < 0 || !Number.isFinite(minuteOfDay)) return "not_configured";
+
+  const exceptions = availability.exceptions;
+  const exception = Array.isArray(exceptions)
+    ? exceptions.find((item) => isRecord(item) && item.date === date)
+    : undefined;
+  let intervals: unknown;
+  if (exception && isRecord(exception)) {
+    if (exception.status === "closed") return "closed_now";
+    intervals = exception.status === "hours" ? exception.intervals : undefined;
+  } else {
+    const day = availability.weeklySchedule.find((item) =>
+      isRecord(item) && item.dayOfWeek === weekday);
+    intervals = isRecord(day) ? day.intervals : undefined;
+  }
+
+  if (!Array.isArray(intervals) || intervals.length === 0) return "closed_now";
+  const open = intervals.some((item) => {
+    if (!isRecord(item) || typeof item.start !== "string" || typeof item.end !== "string") return false;
+    const start = Number(item.start.slice(0, 2)) * 60 + Number(item.start.slice(3, 5));
+    const end = Number(item.end.slice(0, 2)) * 60 + Number(item.end.slice(3, 5));
+    return Number.isFinite(start) && Number.isFinite(end) && minuteOfDay >= start && minuteOfDay < end;
+  });
+  return open ? "open_now" : "closed_now";
+}
+
 export function createPudoLocationOperationsStore({ db, serverTimestamp }: Dependencies) {
   const candidates = db.collection("pudoLocations");
   const activations = db.collection("pudoLocationActivations");
@@ -230,6 +281,69 @@ export function createPudoLocationOperationsStore({ db, serverTimestamp }: Depen
         };
       }));
       return locations.filter((item) => item !== null).sort((a, b) => a.name.localeCompare(b.name));
+    },
+
+    async listOperationalDirectory(actorUid: string) {
+      assertActor(actorUid);
+      if (!await hasStaffActionPermission(db, actorUid, PUDO_DIRECTORY_PERMISSION)) {
+        throw new Error("You are not authorised to view the operational PUDO directory.");
+      }
+
+      const snapshot = await candidates.where("lifecycle", "==", "active").limit(200).get();
+      const records = await Promise.all(snapshot.docs.map(async (document) => {
+        const [activation, verification, capability, operation] = await Promise.all([
+          activations.doc(document.id).get(),
+          verifications.doc(document.id).get(),
+          capabilities.doc(document.id).get(),
+          operations.doc(document.id).get(),
+        ]);
+        if (!activation.exists || activation.data()?.status !== "active" ||
+          verification.data()?.status !== "approved_to_activate") return null;
+
+        const enabled = capability.data()?.capabilities;
+        if (!Array.isArray(enabled) || enabled.length === 0) return null;
+
+        const candidate = document.data();
+        const geo = isRecord(candidate.geo) ? candidate.geo : null;
+        const latitude = typeof geo?.latitude === "number" &&
+          Number.isFinite(geo.latitude) && geo.latitude >= -90 && geo.latitude <= 90
+          ? geo.latitude : null;
+        const longitude = typeof geo?.longitude === "number" &&
+          Number.isFinite(geo.longitude) && geo.longitude >= -180 && geo.longitude <= 180
+          ? geo.longitude : null;
+        const operationData = operation.exists ? operation.data()! : null;
+        const capabilityVersion = Number(capability.data()?.version ?? 0);
+        const capacityConfigurationStale = Boolean(operation.exists &&
+          Number(operationData?.capabilityVersion ?? 0) !== capabilityVersion);
+        const availability = operationData?.availability ?? null;
+
+        return {
+          locationId: document.id,
+          name: typeof candidate.name === "string" ? candidate.name : "PUDO location",
+          partnerBusinessName: typeof candidate.partnerBusinessName === "string" ? candidate.partnerBusinessName : "",
+          address: typeof candidate.address === "string" ? candidate.address : "",
+          operationalStatus: "active" as const,
+          geo: latitude !== null && longitude !== null ? {
+            latitude, longitude,
+            captureMethod: geo?.captureMethod === "device" || geo?.captureMethod === "manual"
+              ? geo.captureMethod : null,
+            accuracyMeters: typeof geo?.accuracyMeters === "number" &&
+              Number.isFinite(geo.accuracyMeters) && geo.accuracyMeters >= 0
+              ? geo.accuracyMeters : null,
+          } : null,
+          capabilities: enabled.filter((item): item is Capability =>
+            typeof item === "string" && CAPABILITIES.includes(item as Capability)),
+          availabilityState: resolveCurrentAvailability(availability),
+          availabilityConfigured: Boolean(availability),
+          capacity: capacityConfigurationStale ? [] :
+            (Array.isArray(operationData?.capacity) ? operationData.capacity : []),
+          capacityConfigurationStale,
+          configurationVersion: typeof operationData?.version === "number" ? operationData.version : 0,
+        };
+      }));
+
+      return records.filter((item): item is NonNullable<typeof item> => item !== null)
+        .sort((a, b) => a.name.localeCompare(b.name));
     },
 
     async getOperations(actorUid: string, locationId: string) {
