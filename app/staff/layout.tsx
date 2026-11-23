@@ -20,6 +20,7 @@ const navigation = [
   { label: "Verification queue", href: "/staff/pudo-verifications", icon: MapPinned, section: "PUDO OPERATIONS" },
   { label: "Availability & capacity", href: "/staff/pudo-operations", icon: CalendarClock, section: "PUDO OPERATIONS" },
   { label: "Operational directory", href: "/staff/pudo-directory", icon: Compass, section: "PUDO OPERATIONS" },
+  { label: "Network connections", href: "/staff/pudo-network-connections", icon: Network, section: "PUDO OPERATIONS" },
   { label: "Delegations", href: "/staff/delegations", icon: Users, section: "ACCESS" },
 ];
 
