@@ -143,10 +143,11 @@ export function createPudoLocationCapabilityStore({
 
       return db.runTransaction(async (transaction) => {
         await requireConfigurationPermission(actorUid, transaction, db);
-        const [candidate, verification, current] = await Promise.all([
+        const [candidate, verification, current, activation] = await Promise.all([
           transaction.get(candidateRef),
           transaction.get(verificationRef),
           transaction.get(configurationRef),
+          transaction.get(db.collection("pudoLocationActivations").doc(locationId)),
         ]);
         if (!candidate.exists ||
           !["submitted", "active"].includes(String(candidate.data()?.lifecycle))) {
@@ -155,6 +156,13 @@ export function createPudoLocationCapabilityStore({
         if (!verification.exists ||
           verification.data()?.status !== "approved_to_activate") {
           throw new Error("PUDO verification approval is required before capability configuration.");
+        }
+        if (activation.data()?.status === "deactivated") {
+          throw new Error("Capabilities cannot be changed after permanent PUDO deactivation.");
+        }
+        if (capabilities.length === 0 &&
+          (!activation.exists || activation.data()?.status === "active")) {
+          throw new Error("At least one capability must remain configured. Suspend the location before clearing all capabilities.");
         }
 
         const previous = current.exists
