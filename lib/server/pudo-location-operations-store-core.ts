@@ -1,4 +1,4 @@
-import type { FieldValue, Firestore, Transaction } from "firebase-admin/firestore";
+import type { DocumentReference, FieldValue, Firestore, Transaction } from "firebase-admin/firestore";
 import { hasStaffActionPermission, hasStaffActionPermissionInTransaction } from "./staff-permission-grants-core.ts";
 
 export const PUDO_OPERATIONS_PERMISSION = "pudo_location.manage_operations";
@@ -184,7 +184,7 @@ export function createPudoLocationOperationsStore({ db, serverTimestamp }: Depen
   }
 
   async function activeLocation(locationId: string, transaction?: Transaction) {
-    const read = (ref: FirebaseFirestore.DocumentReference) => transaction ? transaction.get(ref) : ref.get();
+    const read = (ref: DocumentReference) => transaction ? transaction.get(ref) : ref.get();
     const [candidate, activation, verification, capability] = await Promise.all([
       read(candidates.doc(locationId)),
       read(activations.doc(locationId)),
