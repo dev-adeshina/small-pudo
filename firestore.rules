@@ -91,6 +91,15 @@ service cloud.firestore {
       }
     }
 
+    // PUDO activation state and its status-change history are server-managed.
+    match /pudoLocationActivations/{locationId} {
+      allow read, write: if false;
+
+      match /events/{eventId} {
+        allow read, write: if false;
+      }
+    }
+
     // PUDO capability projections and immutable configuration versions are
     // server-managed; staff APIs enforce action-level permissions.
     match /pudoLocationCapabilities/{locationId} {
