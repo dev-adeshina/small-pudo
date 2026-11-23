@@ -237,6 +237,9 @@ export function createPudoLocationOperationsStore({ db, serverTimestamp }: Depen
       const records = await activeLocation(locationId);
       const snapshot = await operations.doc(locationId).get();
       const data = snapshot.exists ? snapshot.data()! : null;
+      const capabilityVersion = Number(records.capability.data()?.version ?? 0);
+      const capacityConfigurationStale = Boolean(snapshot.exists &&
+        Number(data?.capabilityVersion ?? 0) !== capabilityVersion);
       return {
         location: {
           locationId,
@@ -247,7 +250,8 @@ export function createPudoLocationOperationsStore({ db, serverTimestamp }: Depen
         },
         capabilities: records.capability.data()?.capabilities as Capability[],
         availability: data?.availability ?? null,
-        capacity: (data?.capacity ?? []) as CapacityLimit[],
+        capacity: capacityConfigurationStale ? [] : (data?.capacity ?? []) as CapacityLimit[],
+        capacityConfigurationStale,
         version: typeof data?.version === "number" ? data.version : 0,
         configuredBy: data?.configuredBy ?? null,
         configuredAt: data?.configuredAt ?? null,
@@ -300,14 +304,15 @@ export function createPudoLocationOperationsStore({ db, serverTimestamp }: Depen
         const capacity = validateCapacity(input?.capacity, enabled);
         const previous = current.exists ? current.data()! : null;
         const version = Number(previous?.version ?? 0) + 1;
+        const capabilityVersion = Number(capability.data()?.version ?? 0);
         const now = serverTimestamp();
         const versionDocument = versionRef.doc(`v${String(version).padStart(6, "0")}`);
         const versionData = {
-          locationId, version, availability, capacity, reason,
+          locationId, version, capabilityVersion, availability, capacity, reason,
           configuredBy: actorUid, configuredAt: now, schemaVersion: 1,
         };
         transaction.set(operationRef, {
-          locationId, version, availability, capacity, reason,
+          locationId, version, capabilityVersion, availability, capacity, reason,
           configuredBy: actorUid, configuredAt: now, schemaVersion: 1,
         });
         transaction.create(versionDocument, versionData);
