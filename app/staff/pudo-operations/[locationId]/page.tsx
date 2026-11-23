@@ -107,7 +107,7 @@ export default function PudoOperationsDetailPage() {
         if (day.dayOfWeek !== dayOfWeek) return day;
         const interval = day.intervals[0] ?? { start: "", end: "" };
         const next = { ...interval, [field]: value };
-        return { ...day, intervals: next.start && next.end ? [next] : [] };
+        return { ...day, intervals: next.start || next.end ? [next] : [] };
       }),
     }));
   }
