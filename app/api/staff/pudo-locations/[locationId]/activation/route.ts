@@ -23,7 +23,7 @@ function errorResponse(error: unknown) {
   if (message.includes("not found")) return response({ error: message }, 404);
   if (message.includes("requires") || message.includes("Only submitted") ||
     message.includes("Only an activated") || message.includes("cannot be reactivated") ||
-    message.includes("already been activated")) {
+    message.includes("already been activated") || message.includes("At least one")) {
     return response({ error: message }, 409);
   }
   if (error instanceof TypeError) return response({ error: message }, 400);
