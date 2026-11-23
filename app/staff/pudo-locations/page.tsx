@@ -159,7 +159,11 @@ export default function PudoLocationsPage() {
                       <td>
                         <div className="cost-form-grid">
                           {candidate.lifecycle === "submitted" && <Link className="cost-primary-button" href={`/staff/pudo-verifications/${encodeURIComponent(candidate.locationId)}`}>Inspect</Link>}
-                          <Link className="admin-action" href={`/staff/pudo-locations/${encodeURIComponent(candidate.locationId)}`}>View</Link>
+                          {candidate.lifecycle === "active" ? (
+                            <Link className="cost-primary-button" href={`/staff/pudo-verifications/${encodeURIComponent(candidate.locationId)}`}>Manage</Link>
+                          ) : (
+                            <Link className="admin-action" href={`/staff/pudo-locations/${encodeURIComponent(candidate.locationId)}`}>View</Link>
+                          )}
                           {candidate.lifecycle !== "active" && <button className="cost-danger-button" type="button"
                             onClick={() => setWithdrawTarget(candidate)} disabled={withdrawingId !== null}>
                             {withdrawingId === candidate.locationId ? "Withdrawing…" : "Withdraw"}

@@ -72,6 +72,45 @@ type PartnerApplication = {
   businessName?: string;
 };
 
+type CapabilityId =
+  | "walk_in_intake"
+  | "parcel_measurement"
+  | "custody_acceptance"
+  | "payment_collection"
+  | "parcel_handover"
+  | "parcel_release";
+
+type CapabilityConfiguration = {
+  locationId: string;
+  lifecycle: string | null;
+  operationalStatus: "not_activated" | "active" | "suspended" | "deactivated";
+  capabilities: CapabilityId[];
+  version: number;
+  configuredBy?: string | null;
+  configuredAt?: unknown;
+  reason?: string | null;
+  canConfigure: boolean;
+  canManageActivation: boolean;
+  history: Array<{
+    versionId: string;
+    version: number;
+    capabilities: CapabilityId[];
+    previousCapabilities?: CapabilityId[];
+    reason?: string;
+    configuredBy?: string;
+    configuredAt?: unknown;
+  }>;
+};
+
+const CAPABILITY_OPTIONS: Array<{ id: CapabilityId; label: string; description: string }> = [
+  { id: "walk_in_intake", label: "Walk-in parcel intake", description: "Create staff-assisted intake records for parcels physically presented at this location." },
+  { id: "parcel_measurement", label: "Parcel measurement", description: "Record actual parcel weight and dimensions." },
+  { id: "custody_acceptance", label: "Physical custody acceptance", description: "Accept and record physical receipt of parcels." },
+  { id: "payment_collection", label: "Payment collection", description: "Collect and record payment using separately approved methods and evidence." },
+  { id: "parcel_handover", label: "Parcel handover", description: "Record physical handover to an authorized network actor or location." },
+  { id: "parcel_release", label: "Parcel release / collection", description: "Release parcels only to recipients whose collection authority is verified." },
+];
+
 type VerificationData = {
   locationId: string;
   candidate: Candidate;
@@ -141,6 +180,11 @@ export default function PudoVerificationDetailPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [data, setData] = useState<VerificationData | null>(null);
+  const [capabilityConfiguration, setCapabilityConfiguration] = useState<CapabilityConfiguration | null>(null);
+  const [selectedCapabilities, setSelectedCapabilities] = useState<CapabilityId[]>([]);
+  const [capabilityReason, setCapabilityReason] = useState("");
+  const [activationReason, setActivationReason] = useState("");
+  const [operationalStatusReason, setOperationalStatusReason] = useState("");
 
   const [inspectedSite, setInspectedSite] = useState("");
   const [inspectedAt, setInspectedAt] = useState(
@@ -195,7 +239,25 @@ export default function PudoVerificationDetailPage() {
       );
     }
 
-    setData(result as VerificationData);
+    const verificationData = result as VerificationData;
+    setData(verificationData);
+
+    if (verificationData.verification.status === "approved_to_activate") {
+      const capabilityResponse = await fetch(
+        `/api/staff/pudo-locations/${encodeURIComponent(locationId)}/capabilities`,
+        { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" },
+      );
+      const capabilityResult = await capabilityResponse.json();
+      if (!capabilityResponse.ok) {
+        throw new Error(capabilityResult.error || "Unable to retrieve PUDO capabilities.");
+      }
+      const configuration = capabilityResult.configuration as CapabilityConfiguration;
+      setCapabilityConfiguration(configuration);
+      setSelectedCapabilities(configuration.capabilities ?? []);
+    } else {
+      setCapabilityConfiguration(null);
+      setSelectedCapabilities([]);
+    }
   }, [user, locationId]);
 
   useEffect(() => {
@@ -377,7 +439,11 @@ export default function PudoVerificationDetailPage() {
         `/api/staff/pudo-locations/${encodeURIComponent(locationId)}/activation`,
         {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ reason: activationReason }),
           cache: "no-store",
         },
       );
@@ -388,9 +454,77 @@ export default function PudoVerificationDetailPage() {
       }
 
       await loadVerification();
+      setActivationReason("");
       setMessage("PUDO location successfully activated.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to activate PUDO location.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleSaveCapabilities() {
+    setSaving(true);
+    setError("");
+    setMessage("");
+    try {
+      const token = await getToken();
+      const response = await fetch(
+        `/api/staff/pudo-locations/${encodeURIComponent(locationId)}/capabilities`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            capabilities: selectedCapabilities,
+            reason: capabilityReason,
+          }),
+          cache: "no-store",
+        },
+      );
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to save capabilities.");
+      await loadVerification();
+      setCapabilityReason("");
+      setMessage(result.configuration.unchanged
+        ? "No capability changes were needed."
+        : "PUDO capabilities updated and recorded in the configuration history.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to save PUDO capabilities.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleOperationalStatus(status: "active" | "suspended" | "deactivated") {
+    setSaving(true);
+    setError("");
+    setMessage("");
+    try {
+      const token = await getToken();
+      const response = await fetch(
+        `/api/staff/pudo-locations/${encodeURIComponent(locationId)}/activation`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status, reason: operationalStatusReason }),
+          cache: "no-store",
+        },
+      );
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to change PUDO operational status.");
+      await loadVerification();
+      setOperationalStatusReason("");
+      setMessage(result.unchanged
+        ? "The PUDO location already has that operational status."
+        : `PUDO operational status changed to ${status}.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to change PUDO operational status.");
     } finally {
       setSaving(false);
     }
@@ -600,26 +734,151 @@ export default function PudoVerificationDetailPage() {
 
         {status === "approved_to_activate" && (
           <section className="cost-panel">
+            <div className="cost-panel-heading">
+              <div><span className="section-label">PUDO CONFIGURATION</span><h2>Operational capabilities</h2></div>
+            </div>
+            <p>
+              Configure each activity independently. Approval does not grant capabilities,
+              and enabling one activity does not enable another. Changes require the
+              separate PUDO capability-approval permission.
+            </p>
+            {capabilityConfiguration ? (
+              <>
+                <div className="cost-form-grid">
+                  <div className="cost-field"><strong>Configuration version</strong><p>{capabilityConfiguration.version || "Not configured"}</p></div>
+                  <div className="cost-field"><strong>Operational status</strong><p>{capabilityConfiguration.operationalStatus.replaceAll("_", " ")}</p></div>
+                  <div className="cost-field"><strong>Last configured</strong><p>{displayDate(capabilityConfiguration.configuredAt)}</p></div>
+                  <div className="cost-field"><strong>Configured by</strong><p>{capabilityConfiguration.configuredBy || "Not recorded"}</p></div>
+                </div>
+                {capabilityConfiguration.canConfigure ? (
+                  <form onSubmit={(event) => { event.preventDefault(); void handleSaveCapabilities(); }}>
+                    <div className="cost-form-grid">
+                      {CAPABILITY_OPTIONS.map((option) => (
+                        <label className="cost-field" key={option.id}>
+                          <span>
+                            <input
+                              type="checkbox"
+                              checked={selectedCapabilities.includes(option.id)}
+                              disabled={saving}
+                              onChange={(event) => setSelectedCapabilities((current) =>
+                                event.target.checked
+                                  ? [...current, option.id]
+                                  : current.filter((item) => item !== option.id)
+                              )}
+                            />{" "}
+                            <strong>{option.label}</strong>
+                          </span>
+                          <small>{option.description}</small>
+                        </label>
+                      ))}
+                      <label className="cost-field cost-field-wide">
+                        Reason for capability configuration
+                        <textarea required maxLength={1000} value={capabilityReason}
+                          onChange={(event) => setCapabilityReason(event.target.value)} disabled={saving} />
+                      </label>
+                    </div>
+                    <div className="cost-form-actions">
+                      <button className="cost-primary-button" type="submit" disabled={saving || !capabilityReason.trim()}>
+                        {saving ? "Saving…" : "Save capabilities"}
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="cost-field">
+                    <strong>Configured capabilities</strong>
+                    <ul>{capabilityConfiguration.capabilities.map((item) => (
+                      <li key={item}>{CAPABILITY_OPTIONS.find((option) => option.id === item)?.label ?? item}</li>
+                    ))}</ul>
+                    {!capabilityConfiguration.capabilities.length && <p>No capabilities configured.</p>}
+                    <p>You can view this configuration, but do not hold the permission required to change it.</p>
+                  </div>
+                )}
+                {capabilityConfiguration.history.length > 0 && (
+                  <div className="cost-field">
+                    <h3>Capability configuration history</h3>
+                    <div className="cost-table-wrap">
+                      <table className="cost-table">
+                        <thead><tr><th>Version</th><th>Capabilities</th><th>Reason</th><th>Configured by</th><th>Date</th></tr></thead>
+                        <tbody>{capabilityConfiguration.history.map((item) => (
+                          <tr key={item.versionId}>
+                            <td>{item.version}</td>
+                            <td>{item.capabilities.map((id) => CAPABILITY_OPTIONS.find((option) => option.id === id)?.label ?? id).join(", ") || "None"}</td>
+                            <td>{item.reason || "—"}</td>
+                            <td>{item.configuredBy || "—"}</td>
+                            <td>{displayDate(item.configuredAt)}</td>
+                          </tr>
+                        ))}</tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : <p>Loading capability configuration…</p>}
+          </section>
+        )}
+
+        {candidate.lifecycle === "active" && capabilityConfiguration && (
+          <section className="cost-panel">
+            <h2>PUDO operational status</h2>
+            <p><strong>Current status:</strong> {capabilityConfiguration.operationalStatus.replaceAll("_", " ")}</p>
+            {capabilityConfiguration.canManageActivation ? (
+              <>
+                <label className="cost-field">
+                  Reason for status change
+                  <textarea value={operationalStatusReason} maxLength={1000}
+                    onChange={(event) => setOperationalStatusReason(event.target.value)} disabled={saving} />
+                </label>
+                <div className="cost-form-actions">
+                  {capabilityConfiguration.operationalStatus === "active" && (
+                    <button className="admin-action" type="button" disabled={saving || !operationalStatusReason.trim()}
+                      onClick={() => void handleOperationalStatus("suspended")}>Suspend location</button>
+                  )}
+                  {capabilityConfiguration.operationalStatus === "suspended" && (
+                    <button className="cost-primary-button" type="button" disabled={saving || !operationalStatusReason.trim()}
+                      onClick={() => void handleOperationalStatus("active")}>Reactivate location</button>
+                  )}
+                  {capabilityConfiguration.operationalStatus !== "deactivated" && (
+                    <button className="cost-danger-button" type="button" disabled={saving || !operationalStatusReason.trim()}
+                      onClick={() => {
+                        if (window.confirm("Deactivate this PUDO location permanently? This cannot be reversed.")) {
+                          void handleOperationalStatus("deactivated");
+                        }
+                      }}>Deactivate permanently</button>
+                  )}
+                </div>
+              </>
+            ) : <p>You can view operational status, but do not hold the permission required to change it.</p>}
+          </section>
+        )}
+
+        {status === "approved_to_activate" && (
+          <section className="cost-panel">
             <h2>PUDO location activation</h2>
 
             {candidate.lifecycle === "active" ? (
               <p>This PUDO location is active. Activation has already been completed.</p>
-            ) : candidate.lifecycle === "submitted" ? (
+            ) : candidate.lifecycle === "submitted" && capabilityConfiguration?.canManageActivation ? (
               <>
                 <p>
-                  Verification approval has been recorded. Activation is a separate
-                  authorised action and will change the candidate lifecycle to active.
-                  Only staff with the PUDO activation permission can complete this step.
+                  Verification approval has been recorded. Configure at least one
+                  operational capability first. Activation is a separate authorised
+                  action and does not itself grant any additional capabilities.
                 </p>
+                <label className="cost-field">
+                  Reason for activation
+                  <textarea required maxLength={1000} value={activationReason}
+                    onChange={(event) => setActivationReason(event.target.value)} disabled={saving} />
+                </label>
                 <button
                   className="cost-primary-button"
                   type="button"
                   onClick={handleActivation}
-                  disabled={saving}
+                  disabled={saving || !capabilityConfiguration?.capabilities.length || !activationReason.trim()}
                 >
                   {saving ? "Activating location…" : "Activate PUDO location"}
                 </button>
-              </>
+              </> ) : candidate.lifecycle === "submitted" ? (
+                <p>You can view the approval state, but do not hold the separate PUDO activation permission.</p>
             ) : (
               <p>
                 Activation is unavailable for the current candidate lifecycle: {candidate.lifecycle || "Unknown"}.
