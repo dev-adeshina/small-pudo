@@ -189,9 +189,10 @@ export function createPudoPartnerPortalStore({
 
     async listApplications(uid: string) {
       await requirePartner(uid);
-      const snapshot = await applications.where("partnerUid", "==", uid)
-        .orderBy("createdAt", "desc").limit(100).get();
-      return Promise.all(snapshot.docs.map(async (doc) => {
+      // Keep this on the partner ownership filter only; sort the bounded
+      // result set in memory so the portal does not depend on a new index.
+      const snapshot = await applications.where("partnerUid", "==", uid).limit(100).get();
+      const rows = await Promise.all(snapshot.docs.map(async (doc) => {
         const data = doc.data();
         const verification = await verifications.doc(doc.id).get();
         const verificationData = verification.exists ? verification.data()! : null;
@@ -207,6 +208,14 @@ export function createPudoPartnerPortalStore({
           updatedAt: verificationData?.updatedAt ?? data.updatedAt,
         };
       }));
+      const timestamp = (value: unknown): number => {
+        if (value && typeof value === "object" && "toMillis" in value &&
+            typeof value.toMillis === "function") return value.toMillis();
+        if (value instanceof Date) return value.getTime();
+        const parsed = Date.parse(String(value ?? ""));
+        return Number.isFinite(parsed) ? parsed : 0;
+      };
+      return rows.sort((left, right) => timestamp(right.createdAt) - timestamp(left.createdAt));
     },
 
     async getApplication(uid: string, locationId: string) {
