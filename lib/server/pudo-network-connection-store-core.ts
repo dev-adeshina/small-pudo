@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { FieldValue, Firestore, Transaction } from "firebase-admin/firestore";
 import { hasStaffActionPermissionInTransaction } from "./staff-permission-grants-core.ts";
+import { resolveCurrentAvailability } from "./pudo-location-operations-store-core.ts";
 
 const VIEW = "pudo_network_connection.view";
 const PROPOSE = "pudo_network_connection.propose";
@@ -50,8 +51,15 @@ function snapshotTime(value: unknown): string | null {
   return null;
 }
 
-export function createPudoNetworkConnectionStore({ db, serverTimestamp }: {
-  db: Firestore; serverTimestamp: () => FieldValue;
+type UsableRouteEvidence = {
+  evidenceId: string;
+  evidence: Record<string, unknown>;
+} | null;
+
+export function createPudoNetworkConnectionStore({ db, serverTimestamp, getUsableRouteEvidence }: {
+  db: Firestore;
+  serverTimestamp: () => FieldValue;
+  getUsableRouteEvidence: (originId: string, destinationId: string) => Promise<UsableRouteEvidence>;
 }) {
   const connections = db.collection("pudoNetworkConnections");
 
@@ -79,6 +87,118 @@ export function createPudoNetworkConnectionStore({ db, serverTimestamp }: {
           updatedAt: snapshotTime(data.updatedAt),
         };
       });
+    },
+
+    async listOperationalConnections(actorUid: string) {
+      assertUid(actorUid);
+      await db.runTransaction(transaction => requirePermission(db, transaction, actorUid, VIEW));
+
+      const snapshot = await connections.where("status", "==", "active").limit(200).get();
+      return Promise.all(snapshot.docs.map(async document => {
+        const data = document.data();
+        const originId = String(data.originLocationId ?? "");
+        const destinationId = String(data.destinationLocationId ?? "");
+        const endpointState = await db.runTransaction(async transaction => {
+          const refs = [
+            db.collection("pudoLocations").doc(originId),
+            db.collection("pudoLocationActivations").doc(originId),
+            db.collection("pudoLocationVerifications").doc(originId),
+            db.collection("pudoLocationCapabilities").doc(originId),
+            db.collection("pudoLocationOperations").doc(originId),
+            db.collection("pudoLocations").doc(destinationId),
+            db.collection("pudoLocationActivations").doc(destinationId),
+            db.collection("pudoLocationVerifications").doc(destinationId),
+            db.collection("pudoLocationCapabilities").doc(destinationId),
+            db.collection("pudoLocationOperations").doc(destinationId),
+          ];
+          const [oc, oa, ov, ocap, oo, dc, da, dv, dcap, doo] =
+            await Promise.all(refs.map(reference => transaction.get(reference)));
+          const originCapabilities = ocap.data()?.capabilities;
+          const destinationCapabilities = dcap.data()?.capabilities;
+          const originActive = oc.exists && oc.data()?.lifecycle === "active" &&
+            oa.exists && oa.data()?.status === "active" &&
+            ov.exists && ov.data()?.status === "approved_to_activate" &&
+            Array.isArray(originCapabilities) && originCapabilities.includes("parcel_handover");
+          const destinationActive = dc.exists && dc.data()?.lifecycle === "active" &&
+            da.exists && da.data()?.status === "active" &&
+            dv.exists && dv.data()?.status === "approved_to_activate" &&
+            Array.isArray(destinationCapabilities) && destinationCapabilities.includes("custody_acceptance");
+
+          const originOperation = oo.exists ? oo.data()! : null;
+          const destinationOperation = doo.exists ? doo.data()! : null;
+          const originCapabilityVersion = Number(ocap.data()?.version ?? 0);
+          const destinationCapabilityVersion = Number(dcap.data()?.version ?? 0);
+          const originCapacityStale = Boolean(oo.exists &&
+            Number(originOperation?.capabilityVersion ?? 0) !== originCapabilityVersion);
+          const destinationCapacityStale = Boolean(doo.exists &&
+            Number(destinationOperation?.capabilityVersion ?? 0) !== destinationCapabilityVersion);
+          const originAvailability = resolveCurrentAvailability(originOperation?.availability);
+          const destinationAvailability = resolveCurrentAvailability(destinationOperation?.availability);
+
+          return {
+            originActive,
+            destinationActive,
+            originAvailability,
+            destinationAvailability,
+            originCapacity: originCapacityStale ? [] :
+              (Array.isArray(originOperation?.capacity) ? originOperation.capacity : []),
+            destinationCapacity: destinationCapacityStale ? [] :
+              (Array.isArray(destinationOperation?.capacity) ? destinationOperation.capacity : []),
+            originCapacityStale,
+            destinationCapacityStale,
+            originCapacityConfigured: !originCapacityStale && Array.isArray(originOperation?.capacity) &&
+              originOperation.capacity.length > 0,
+            destinationCapacityConfigured: !destinationCapacityStale && Array.isArray(destinationOperation?.capacity) &&
+              destinationOperation.capacity.length > 0,
+          };
+        });
+
+        const routeEvidence = endpointState.originActive && endpointState.destinationActive
+          ? await getUsableRouteEvidence(originId, destinationId)
+          : null;
+        const reasons: string[] = [];
+        if (!endpointState.originActive) reasons.push("Origin is no longer active, Operations-approved or approved for parcel handover.");
+        if (!endpointState.destinationActive) reasons.push("Destination is no longer active, Operations-approved or approved for physical custody acceptance.");
+        if (endpointState.originAvailability !== "open_now") {
+          reasons.push("Origin availability is " + endpointState.originAvailability + ".");
+        }
+        if (endpointState.destinationAvailability !== "open_now") {
+          reasons.push("Destination availability is " + endpointState.destinationAvailability + ".");
+        }
+        if (!routeEvidence) reasons.push("No currently approved, valid operational road-route distance evidence exists for this direction.");
+
+        const distance = routeEvidence?.evidence.distance;
+        return {
+          connectionId: document.id,
+          originLocationId: originId,
+          originName: data.originName ?? "",
+          destinationLocationId: destinationId,
+          destinationName: data.destinationName ?? "",
+          connectionVersion: Number(data.version ?? 1),
+          routeSelectionEligible: reasons.length === 0,
+          exclusionReasons: reasons,
+          originAvailability: endpointState.originAvailability,
+          destinationAvailability: endpointState.destinationAvailability,
+          routeDistanceEvidence: routeEvidence ? {
+            evidenceId: routeEvidence.evidenceId,
+            method: routeEvidence.evidence.method ?? null,
+            distance: distance && typeof distance === "object" ? distance : null,
+            measuredOn: routeEvidence.evidence.measuredOn ?? null,
+            source: routeEvidence.evidence.source ?? null,
+          } : null,
+          capacity: {
+            originDeclaredLimits: endpointState.originCapacity,
+            destinationDeclaredLimits: endpointState.destinationCapacity,
+            originConfigurationStale: endpointState.originCapacityStale,
+            destinationConfigurationStale: endpointState.destinationCapacityStale,
+            originConfigured: endpointState.originCapacityConfigured,
+            destinationConfigured: endpointState.destinationCapacityConfigured,
+            assessment: "declared_limits_only" as const,
+            confirmedAvailableCapacity: false as const,
+          },
+          boundary: "Route-selection eligibility does not reserve capacity, create a booking or dispatch, or record physical custody.",
+        };
+      }));
     },
 
     async listEligibleLocations(actorUid: string) {
