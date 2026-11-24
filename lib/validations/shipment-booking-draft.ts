@@ -70,7 +70,7 @@ export function validateShipmentBookingDraft(
     const phone = typeof contact.phone === "string" ? contact.phone.trim() : "";
     const email = typeof contact.email === "string" ? contact.email.trim() : "";
     if (!name || name.length > 120 || !phone || phone.length > 40 ||
-        (email && (email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)))) return null;
+        (email && (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)))) return null;
     return { name, phone, ...(email ? { email } : {}) };
   }
   const sender = parseContact(candidate.sender);
