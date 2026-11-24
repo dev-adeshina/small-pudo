@@ -232,7 +232,9 @@ export function createCommercialQuotationReadinessStore({
       if (expectedKind === "operating_availability" &&
         (!version.availability || version.availability.status !== "available" ||
           !Array.isArray(version.availability.weeklySchedule) ||
-          !version.availability.weeklySchedule.some((day: { intervals?: unknown[] }) => Array.isArray(day.intervals) && day.intervals.length > 0))) return null;
+          !(version.availability.weeklySchedule.some((day: { intervals?: unknown[] }) => Array.isArray(day.intervals) && day.intervals.length > 0) ||
+            (Array.isArray(version.availability.exceptions) && version.availability.exceptions.some((item: { status?: string; intervals?: unknown[] }) =>
+              item.status === "hours" && Array.isArray(item.intervals) && item.intervals.length > 0))))) return null;
       if (expectedKind === "capacity" &&
         (!Array.isArray(version.capacity) || !version.capacity.length ||
           !version.capacity.some((item: { capabilityId?: string }) => serviceCapability.supportedActions.includes(item.capabilityId)))) return null;
