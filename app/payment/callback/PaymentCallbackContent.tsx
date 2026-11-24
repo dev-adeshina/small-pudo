@@ -8,6 +8,8 @@ type VerificationResult = {
   success?: boolean;
   message?: string;
   orderId?: string;
+  bookingId?: string;
+  bookingReference?: string;
   error?: string;
 };
 
@@ -15,6 +17,7 @@ export default function PaymentCallbackPage() {
   const searchParams = useSearchParams();
   const reference =
     searchParams.get("reference") || searchParams.get("trxref");
+  const isShipmentPayment = searchParams.get("type") === "shipment";
 
   const [status, setStatus] = useState<
     "verifying" | "success" | "failed"
@@ -23,6 +26,7 @@ export default function PaymentCallbackPage() {
     "Please wait while we verify your payment."
   );
   const [orderId, setOrderId] = useState("");
+  const [bookingReference, setBookingReference] = useState("");
 
   useEffect(() => {
     if (!reference) return;
@@ -31,13 +35,16 @@ export default function PaymentCallbackPage() {
 
     async function verifyPayment() {
       try {
-        const response = await fetch("/api/payments/verify", {
+        const response = await fetch(
+          isShipmentPayment ? "/api/payments/shipment/verify" : "/api/payments/verify",
+          {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ reference }),
-        });
+          }
+        );
 
         const data: VerificationResult = await response
           .json()
@@ -60,9 +67,8 @@ export default function PaymentCallbackPage() {
           data.message || "Your payment has been confirmed."
         );
 
-        if (data.orderId) {
-          setOrderId(data.orderId);
-        }
+        if (data.orderId) setOrderId(data.orderId);
+        if (data.bookingReference) setBookingReference(data.bookingReference);
       } catch (error) {
         if (cancelled) return;
 
@@ -79,7 +85,7 @@ export default function PaymentCallbackPage() {
     return () => {
       cancelled = true;
     };
-  }, [reference]);
+  }, [isShipmentPayment, reference]);
 
   const displayedStatus = reference ? status : "failed";
   const displayedMessage = reference
@@ -93,7 +99,7 @@ export default function PaymentCallbackPage() {
           {displayedStatus === "verifying"
             ? "Verifying your payment"
             : displayedStatus === "success"
-              ? "Payment confirmed"
+              ? isShipmentPayment ? "Shipment payment confirmed" : "Payment confirmed"
               : "Payment not confirmed"}
         </h1>
 
@@ -102,6 +108,11 @@ export default function PaymentCallbackPage() {
         {orderId && (
           <p className="mt-4 break-all text-sm text-gray-600">
             Order ID: <strong>{orderId}</strong>
+          </p>
+        )}
+        {bookingReference && (
+          <p className="mt-4 break-all text-sm text-gray-600">
+            Shipment booking reference: <strong>{bookingReference}</strong>
           </p>
         )}
 
@@ -114,10 +125,10 @@ export default function PaymentCallbackPage() {
         {displayedStatus !== "verifying" && (
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
-              href="/"
+              href={isShipmentPayment ? "/account/shipment-bookings" : "/account"}
               className="rounded-lg bg-black px-5 py-3 text-white"
             >
-              Continue shopping
+              {isShipmentPayment ? "View shipment bookings" : "View my account"}
             </Link>
 
             <Link
