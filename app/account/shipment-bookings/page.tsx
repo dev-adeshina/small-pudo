@@ -14,6 +14,7 @@ type ShipmentBooking = {
   bookingId: string;
   bookingReference?: string;
   status?: string;
+  intakeStatus?: string;
   paymentStatus?: string;
   paymentReviewRequired?: boolean;
   createdAt?: unknown;
@@ -79,7 +80,7 @@ export default function CustomerShipmentBookingsPage() {
   }, []);
 
   async function cancelBooking(booking: ShipmentBooking) {
-    if (!user || cancellingBookingId || booking.status !== "confirmed" || booking.paymentStatus === "paid") return;
+    if (!user || cancellingBookingId || booking.status !== "confirmed" || booking.intakeStatus !== "awaiting_physical_intake" || booking.paymentStatus === "paid" || booking.paymentReviewRequired) return;
     const reason = window.prompt("Why are you cancelling this shipment booking?");
     if (!reason?.trim()) return;
     setCancellingBookingId(booking.bookingId);
@@ -229,14 +230,14 @@ export default function CustomerShipmentBookingsPage() {
                             >
                               {payingBookingId === booking.bookingId ? "Connecting..." : "Pay now"}
                             </button>
-                            <button
+                            {booking.intakeStatus === "awaiting_physical_intake" && <button
                               type="button"
                               className="customer-secondary-action"
                               disabled={cancellingBookingId !== "" || payingBookingId !== ""}
                               onClick={() => void cancelBooking(booking)}
                             >
                               {cancellingBookingId === booking.bookingId ? "Cancelling..." : "Cancel booking"}
-                            </button>
+                            </button>}
                           </div>
                         )}
                       </td>
