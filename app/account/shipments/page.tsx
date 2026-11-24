@@ -28,6 +28,9 @@ interface PudoLocationOption {
 interface ShipmentDraft {
   id: string;
   serviceCode?: "standard" | "express" | "scheduled";
+  sender?: { name?: string; phone?: string; email?: string };
+  recipient?: { name?: string; phone?: string; email?: string };
+  originHandoverMode?: "door_pickup" | "pudo_presentation";
   parcelCharacteristics?: Record<string, string>;
   origin: string;
   destination: string;
@@ -51,6 +54,13 @@ const MAX_DRAFTS = 50;
 
 const emptyForm = {
   serviceCode: "standard" as "standard" | "express" | "scheduled",
+  senderName: "",
+  senderPhone: "",
+  senderEmail: "",
+  recipientName: "",
+  recipientPhone: "",
+  recipientEmail: "",
+  originHandoverMode: "door_pickup" as "door_pickup" | "pudo_presentation",
   parcelCharacteristics: {} as Record<string, string>,
   origin: "",
   destination: "",
@@ -233,6 +243,13 @@ export default function ShipmentDraftsPage() {
     setForm({
       ...emptyForm,
       serviceCode: draft.serviceCode ?? "standard",
+      senderName: draft.sender?.name ?? "",
+      senderPhone: draft.sender?.phone ?? "",
+      senderEmail: draft.sender?.email ?? "",
+      recipientName: draft.recipient?.name ?? "",
+      recipientPhone: draft.recipient?.phone ?? "",
+      recipientEmail: draft.recipient?.email ?? "",
+      originHandoverMode: draft.originHandoverMode ?? (draft.originPudoLocationId ? "pudo_presentation" : "door_pickup"),
       parcelCharacteristics: draft.parcelCharacteristics ?? {},
       origin: draft.origin,
       destination: draft.destination,
@@ -270,6 +287,17 @@ export default function ShipmentDraftsPage() {
     const wasEditing = currentEditingId !== null;
     const submittedForm = {
       serviceCode: form.serviceCode,
+      sender: {
+        name: form.senderName,
+        phone: form.senderPhone,
+        ...(form.senderEmail.trim() ? { email: form.senderEmail } : {}),
+      },
+      recipient: {
+        name: form.recipientName,
+        phone: form.recipientPhone,
+        ...(form.recipientEmail.trim() ? { email: form.recipientEmail } : {}),
+      },
+      originHandoverMode: form.originHandoverMode,
       parcelCharacteristics: form.parcelCharacteristics,
       origin: form.origin,
       destination: form.destination,
@@ -447,6 +475,37 @@ export default function ShipmentDraftsPage() {
               </select>
             </label>
 
+            <div className="shipment-form-wide grid gap-4 md:grid-cols-2">
+              <fieldset className="grid gap-3">
+                <legend>Sender contact</legend>
+                <label><span>Full name</span><input value={form.senderName} onChange={(event) => setForm({ ...form, senderName: event.target.value })} maxLength={120} required disabled={saving} /></label>
+                <label><span>Phone number</span><input value={form.senderPhone} onChange={(event) => setForm({ ...form, senderPhone: event.target.value })} maxLength={40} required disabled={saving} /></label>
+                <label><span>Email (optional)</span><input type="email" value={form.senderEmail} onChange={(event) => setForm({ ...form, senderEmail: event.target.value })} maxLength={254} disabled={saving} /></label>
+              </fieldset>
+              <fieldset className="grid gap-3">
+                <legend>Recipient contact</legend>
+                <label><span>Full name</span><input value={form.recipientName} onChange={(event) => setForm({ ...form, recipientName: event.target.value })} maxLength={120} required disabled={saving} /></label>
+                <label><span>Phone number</span><input value={form.recipientPhone} onChange={(event) => setForm({ ...form, recipientPhone: event.target.value })} maxLength={40} required disabled={saving} /></label>
+                <label><span>Email (optional)</span><input type="email" value={form.recipientEmail} onChange={(event) => setForm({ ...form, recipientEmail: event.target.value })} maxLength={254} disabled={saving} /></label>
+              </fieldset>
+            </div>
+
+            <label className="shipment-form-wide">
+              <span>How will the parcel enter VeriLyft?</span>
+              <select
+                value={form.originHandoverMode}
+                onChange={(event) => setForm({
+                  ...form,
+                  originHandoverMode: event.target.value as "door_pickup" | "pudo_presentation",
+                  originPudoLocationId: event.target.value === "door_pickup" ? "" : form.originPudoLocationId,
+                })}
+                disabled={saving}
+              >
+                <option value="door_pickup">Door pickup</option>
+                <option value="pudo_presentation">Present parcel at an origin PUDO</option>
+              </select>
+            </label>
+
             <label>
               <span>Origin</span>
               <input
@@ -473,8 +532,8 @@ export default function ShipmentDraftsPage() {
               <small>{form.destination.length}/180 characters</small>
             </label>
 
-            <label>
-              <span>Origin PUDO (optional)</span>
+            {form.originHandoverMode === "pudo_presentation" && <label>
+              <span>Origin PUDO</span>
               <select
                 value={form.originPudoLocationId}
                 onChange={(event) => setForm({ ...form, originPudoLocationId: event.target.value })}
@@ -487,7 +546,7 @@ export default function ShipmentDraftsPage() {
                   </option>
                 ))}
               </select>
-            </label>
+            </label>}
 
             <label>
               <span>Destination PUDO (optional)</span>
