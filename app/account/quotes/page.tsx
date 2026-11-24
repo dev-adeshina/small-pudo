@@ -22,7 +22,6 @@ type QuoteEvent = {
   action?: string;
   versionId?: string;
   bookingId?: string;
-  bookingReference?: string;
   reason?: string;
   timestamp?: unknown;
   handoverDeadlineAt?: unknown;
