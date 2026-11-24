@@ -124,6 +124,16 @@ service cloud.firestore {
       }
     }
 
+    // Independent reviews are server-managed and bound to one immutable
+    // availability/capacity configuration version.
+    match /pudoLocationOperationsReviews/{reviewId} {
+      allow read, write: if false;
+
+      match /events/{eventId} {
+        allow read, write: if false;
+      }
+    }
+
     match /pudoLocationCapabilities/{locationId} {
       allow read, write: if false;
 
