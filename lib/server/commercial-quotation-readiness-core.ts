@@ -528,7 +528,7 @@ export function createCommercialQuotationReadinessStore({
       });
       assertPermission(permissions.record || permissions.review || permissions.revoke || permissions.eligibilityApproval, "view operational evidence");
       const snapshot = await operationalEvidence.orderBy("recordedAt", "desc").limit(200).get();
-      const rows = await Promise.all(snapshot.docs.map(async (document) => {
+      const rows: Array<Record<string, any>> = await Promise.all(snapshot.docs.map(async (document) => {
         const evidence = document.data();
         const reviewSnapshot = await operationalEvidenceReviews.doc(document.id).get();
         const review = reviewSnapshot.data();
@@ -545,7 +545,8 @@ export function createCommercialQuotationReadinessStore({
           evidenceStart !== null && evidenceStart <= now().getTime() &&
           evidenceExpiry !== null && evidenceExpiry > now().getTime() && reviewExpiry <= evidenceExpiry;
         return {
-          evidenceId: document.id, kind: evidence.kind, serviceCode: evidence.serviceCode,
+          evidenceId: document.id, reference: "commercialOperationalEvidence/" + document.id,
+          kind: evidence.kind, serviceCode: evidence.serviceCode,
           source: evidence.source, supportingReference: evidence.supportingReference,
           scope: evidence.scope, details: evidence.details,
           recordedBy: evidence.recordedBy,
@@ -561,6 +562,128 @@ export function createCommercialQuotationReadinessStore({
           isCurrentApproved: current,
         };
       }));
+
+      // Derive operational evidence from authoritative PUDO records. No duplicate
+      // commercialOperationalEvidence documents are created for these sources.
+      const [operationSnapshot, connectionSnapshot, serviceCapabilitySnapshot] = await Promise.all([
+        db.collection("pudoLocationOperations").limit(200).get(),
+        db.collection("pudoNetworkConnections").where("status", "==", "active").limit(200).get(),
+        capabilities.limit(300).get(),
+      ]);
+      const serviceCapabilitiesByLocation = new Map<string, Array<{ serviceCode: CommercialServiceCode; data: Record<string, any> }>>();
+      for (const item of serviceCapabilitySnapshot.docs) {
+        const data = item.data();
+        if (data.status !== "active" || !SERVICES.has(data.serviceCode)) continue;
+        const expiry = dateMillis(data.validUntil);
+        if (expiry === null || expiry <= now().getTime()) continue;
+        const list = serviceCapabilitiesByLocation.get(String(data.locationId)) ?? [];
+        list.push({ serviceCode: data.serviceCode, data });
+        serviceCapabilitiesByLocation.set(String(data.locationId), list);
+      }
+
+      for (const operationDoc of operationSnapshot.docs) {
+        const operation = operationDoc.data();
+        const locationId = operationDoc.id;
+        const versionId = "v" + String(Number(operation.version ?? 0)).padStart(6, "0");
+        if (!Number(operation.version) || Number(operation.capabilityVersion) <= 0) continue;
+        const reference = "pudoLocationOperations/" + locationId + "/versions/" + versionId;
+        const reviewSnapshot = await db.collection("pudoLocationOperationsReviews").doc(locationId + "__" + versionId).get();
+        const versionSnapshot = await db.doc(reference).get();
+        const [capabilitySnapshot, candidateSnapshot, activationSnapshot, verificationSnapshot] = await Promise.all([
+          db.collection("pudoLocationCapabilities").doc(locationId).get(),
+          locations.doc(locationId).get(), activations.doc(locationId).get(), verifications.doc(locationId).get(),
+        ]);
+        const review = reviewSnapshot.data();
+        const version = versionSnapshot.data();
+        const reviewExpiry = dateMillis(review?.validUntil);
+        const current = Boolean(versionSnapshot.exists && reviewSnapshot.exists &&
+          Number(operation.capabilityVersion) === Number(capabilitySnapshot.data()?.version ?? 0) &&
+          review?.status === "approved" && review?.decision === "approve" &&
+          review?.locationId === locationId && review?.versionId === versionId &&
+          review?.reviewedBy !== version?.configuredBy &&
+          canonicalJson(review?.configurationSnapshot) === canonicalJson(version) &&
+          reviewExpiry !== null && reviewExpiry > now().getTime() &&
+          candidateSnapshot.data()?.lifecycle === "active" &&
+          activationSnapshot.data()?.status === "active" &&
+          verificationSnapshot.data()?.status === "approved_to_activate");
+        if (!current || !version) continue;
+        for (const service of serviceCapabilitiesByLocation.get(locationId) ?? []) {
+          const base = {
+            evidenceId: reference, reference, serviceCode: service.serviceCode,
+            source: "PUDO availability and capacity configuration v" + version.version,
+            supportingReference: reference, recordedBy: version.configuredBy,
+            recordedAt: dateMillis(version.configuredAt) === null ? null : new Date(dateMillis(version.configuredAt)!).toISOString(),
+            validFrom: null, validUntil: reviewExpiry === null ? null : new Date(reviewExpiry).toISOString(),
+            reviewStatus: review.status, reviewedBy: review.reviewedBy,
+            reviewValidUntil: reviewExpiry === null ? null : new Date(reviewExpiry).toISOString(),
+            reviewReason: review.reason ?? null, isCurrentApproved: true,
+          };
+          if (version.availability && version.availability.status === "available") {
+            const availabilityRow = {
+              ...base, kind: "operating_availability",
+              scope: { locationId },
+              details: { availability: version.availability, operatingWindows: version.availability.weeklySchedule, timeZone: version.availability.timezone },
+            };
+            if ((!filters?.kind || filters.kind === availabilityRow.kind) &&
+              (!filters?.serviceCode || filters.serviceCode === service.serviceCode) &&
+              (!filters?.locationId || filters.locationId === locationId)) rows.push(availabilityRow);
+          }
+          const capacity = Array.isArray(version.capacity) ? version.capacity : [];
+          if (capacity.some((item: { capabilityId?: string }) => service.data.supportedActions?.includes(item.capabilityId))) {
+            const capacityRow = {
+              ...base, kind: "capacity",
+              scope: { locationId },
+              details: { capacity, capacityBasis: "approved PUDO capability limits",
+                supportedLoad: capacity.reduce((total: number, item: { maximum?: number }) => total + Number(item.maximum ?? 0), 0),
+                capacityUnit: [...new Set(capacity.map((item: { unit?: string }) => item.unit).filter(Boolean))].join(", ") },
+            };
+            if ((!filters?.kind || filters.kind === capacityRow.kind) &&
+              (!filters?.serviceCode || filters.serviceCode === service.serviceCode) &&
+              (!filters?.locationId || filters.locationId === locationId)) rows.push(capacityRow);
+          }
+        }
+      }
+
+      for (const connectionDoc of connectionSnapshot.docs) {
+        const connection = connectionDoc.data();
+        const originId = String(connection.originLocationId ?? "");
+        const destinationId = String(connection.destinationLocationId ?? "");
+        if (!originId || !destinationId || connection.reviewedBy === connection.proposedBy ||
+          typeof connection.reviewedBy !== "string" || !connection.reviewedBy) continue;
+        const route = await this.getUsableRouteEvidence(originId, destinationId);
+        if (!route) continue;
+        for (const serviceCode of SERVICES) {
+          const [originService, destinationService] = await Promise.all([
+            capabilities.doc(originId + "__" + serviceCode).get(),
+            capabilities.doc(destinationId + "__" + serviceCode).get(),
+          ]);
+          if (!originService.exists || !destinationService.exists ||
+            originService.data()?.status !== "active" || destinationService.data()?.status !== "active") continue;
+          const originExpiry = dateMillis(originService.data()?.validUntil);
+          const destinationExpiry = dateMillis(destinationService.data()?.validUntil);
+          const routeExpiry = dateMillis(route.review.validUntil);
+          if (originExpiry === null || destinationExpiry === null || routeExpiry === null ||
+            Math.min(originExpiry, destinationExpiry, routeExpiry) <= now().getTime()) continue;
+          const row = {
+            evidenceId: "pudoNetworkConnections/" + connectionDoc.id,
+            reference: "pudoNetworkConnections/" + connectionDoc.id,
+            kind: "service_coverage", serviceCode,
+            source: "Active independently reviewed directed PUDO network connection",
+            supportingReference: "pudoNetworkConnections/" + connectionDoc.id,
+            scope: { scopeType: "route", originOperationalPointRef: originId, destinationOperationalPointRef: destinationId },
+            details: { coverageBasis: "Active directed connection, current endpoint service capabilities and approved road-route evidence." },
+            recordedBy: connection.proposedBy, recordedAt: dateMillis(connection.proposedAt) === null ? null : new Date(dateMillis(connection.proposedAt)!).toISOString(),
+            validFrom: null, validUntil: new Date(Math.min(originExpiry, destinationExpiry, routeExpiry)).toISOString(),
+            reviewStatus: "approved", reviewedBy: connection.reviewedBy,
+            reviewValidUntil: new Date(Math.min(originExpiry, destinationExpiry, routeExpiry)).toISOString(),
+            reviewReason: connection.reviewReason ?? null, isCurrentApproved: true,
+          };
+          if ((!filters?.kind || filters.kind === row.kind) &&
+            (!filters?.serviceCode || filters.serviceCode === serviceCode) &&
+            (!filters?.locationId || [originId, destinationId].includes(filters.locationId))) rows.push(row);
+        }
+      }
+
       return {
         items: rows.filter((row): row is NonNullable<typeof row> => row !== null),
         permissions,
