@@ -507,7 +507,9 @@ export function createCommercialQuotationReadinessStore({
         const review = reviewSnapshot.exists ? reviewSnapshot.data()! : null;
         const iso = (value: unknown) => {
           const millis = dateMillis(value);
-          return millis === null ? null : new Date(millis).toISOString();
+          if (millis !== null) return new Date(millis).toISOString();
+          if (typeof value === "string" && Number.isFinite(Date.parse(value))) return new Date(value).toISOString();
+          return null;
         };
         return {
           evidenceId: doc.id,
