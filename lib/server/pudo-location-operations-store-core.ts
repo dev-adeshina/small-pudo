@@ -243,6 +243,17 @@ export function createPudoLocationOperationsStore({ db, serverTimestamp }: Depen
     if (!allowed) throw new Error("You are not authorised to manage PUDO availability and capacity.");
   }
 
+  async function requireOperationsAccess(actorUid: string) {
+    assertActor(actorUid);
+    const [canManage, canReview] = await Promise.all([
+      hasStaffActionPermission(db, actorUid, PUDO_OPERATIONS_PERMISSION),
+      hasStaffActionPermission(db, actorUid, OPERATIONS_REVIEW_PERMISSION),
+    ]);
+    if (!canManage && !canReview) {
+      throw new Error("You are not authorised to view PUDO availability and capacity.");
+    }
+  }
+
   async function activeLocation(locationId: string, transaction?: Transaction) {
     const read = (ref: DocumentReference) => transaction ? transaction.get(ref) : ref.get();
     const [candidate, activation, verification, capability] = await Promise.all([
@@ -268,7 +279,7 @@ export function createPudoLocationOperationsStore({ db, serverTimestamp }: Depen
 
   return {
     async listActiveLocations(actorUid: string) {
-      await requirePermission(actorUid);
+      await requireOperationsAccess(actorUid);
       const snapshot = await candidates.where("lifecycle", "==", "active").limit(200).get();
       const locations = await Promise.all(snapshot.docs.map(async (document) => {
         const activation = await activations.doc(document.id).get();
@@ -350,7 +361,7 @@ export function createPudoLocationOperationsStore({ db, serverTimestamp }: Depen
 
     async getOperations(actorUid: string, locationId: string) {
       assertLocationId(locationId);
-      await requirePermission(actorUid);
+      await requireOperationsAccess(actorUid);
       const records = await activeLocation(locationId);
       const snapshot = await operations.doc(locationId).get();
       const data = snapshot.exists ? snapshot.data()! : null;
