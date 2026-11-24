@@ -97,8 +97,8 @@ export function createShipmentBookingDraftStore({
         return {
           id: document.id,
           serviceCode: data.serviceCode === "express" || data.serviceCode === "scheduled" ? data.serviceCode : "standard",
-          sender: data.sender,
-          recipient: data.recipient,
+          ...(data.sender ? { sender: data.sender } : {}),
+          ...(data.recipient ? { recipient: data.recipient } : {}),
           originHandoverMode: data.originHandoverMode === "pudo_presentation" || (!data.originHandoverMode && typeof data.originPudoLocationId === "string") ? "pudo_presentation" : "door_pickup",
           origin: data.origin,
           destination: data.destination,
@@ -122,9 +122,9 @@ export function createShipmentBookingDraftStore({
         .collection("shipmentBookingDrafts").doc();
       const draftFields = {
         serviceCode: input.serviceCode ?? "standard",
-        sender: input.sender,
-        recipient: input.recipient,
-        originHandoverMode: input.originHandoverMode,
+        ...(input.sender ? { sender: input.sender } : {}),
+        ...(input.recipient ? { recipient: input.recipient } : {}),
+        originHandoverMode: input.originHandoverMode ?? (input.originPudoLocationId ? "pudo_presentation" : "door_pickup"),
         origin: input.origin,
         destination: input.destination,
         ...(input.originPudoLocationId ? { originPudoLocationId: input.originPudoLocationId } : {}),
@@ -159,9 +159,9 @@ export function createShipmentBookingDraftStore({
           () => {
             const draftFields = {
               serviceCode: input.serviceCode ?? "standard",
-              sender: input.sender,
-              recipient: input.recipient,
-              originHandoverMode: input.originHandoverMode,
+              ...(input.sender ? { sender: input.sender } : {}),
+              ...(input.recipient ? { recipient: input.recipient } : {}),
+              originHandoverMode: input.originHandoverMode ?? (input.originPudoLocationId ? "pudo_presentation" : "door_pickup"),
               origin: input.origin,
               destination: input.destination,
               ...(input.originPudoLocationId ? { originPudoLocationId: input.originPudoLocationId } : {}),
