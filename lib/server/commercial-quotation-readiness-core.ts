@@ -259,7 +259,6 @@ export function createCommercialQuotationReadinessStore({
       const connection = connectionSnapshot.data()!;
       const versionId = "v" + String(Number(connection.version ?? 1)).padStart(6, "0");
       const currentVersion = await read(reference + "/versions/" + versionId);
-      const route = await getUsableRouteEvidence(originId, destinationId);
       const expiryA = dateMillis(originService.data()?.validUntil);
       const expiryB = dateMillis(destinationService.data()?.validUntil);
       if (!currentVersion.exists || canonicalJson(currentVersion.data()) !== canonicalJson(connection) ||
@@ -275,13 +274,13 @@ export function createCommercialQuotationReadinessStore({
         !destinationCandidate.exists || destinationCandidate.data()?.lifecycle !== "active" ||
         originActivation.data()?.status !== "active" || destinationActivation.data()?.status !== "active" ||
         originVerification.data()?.status !== "approved_to_activate" ||
-        destinationVerification.data()?.status !== "approved_to_activate" || !route) return null;
+        destinationVerification.data()?.status !== "approved_to_activate") return null;
       const evidence = {
         kind: expectedKind, serviceCode,
         scope: { scopeType: "route", originOperationalPointRef: originId, destinationOperationalPointRef: destinationId },
         details: { coverageBasis: "Active independently reviewed directed PUDO network connection with current service capabilities and approved road-route evidence." },
         recordedBy: connection.proposedBy,
-        validUntil: new Date(Math.min(expiryA, expiryB, dateMillis(route.review.validUntil) ?? 0)),
+        validUntil: new Date(Math.min(expiryA, expiryB)),
       };
       return {
         evidenceId: reference, evidence,
@@ -650,8 +649,24 @@ export function createCommercialQuotationReadinessStore({
         const destinationId = String(connection.destinationLocationId ?? "");
         if (!originId || !destinationId || connection.reviewedBy === connection.proposedBy ||
           typeof connection.reviewedBy !== "string" || !connection.reviewedBy) continue;
-        const route = await this.getUsableRouteEvidence(originId, destinationId);
-        if (!route) continue;
+        const routeDocs = await routeEvidence
+          .where("originOperationalPointRef", "==", originId)
+          .where("destinationOperationalPointRef", "==", destinationId)
+          .limit(100).get();
+        let routeExpiry: number | null = null;
+        for (const routeDoc of routeDocs.docs) {
+          const approved = await hasApprovedRouteEvidence(
+            "commercialRouteDistanceEvidence/" + routeDoc.id,
+            "commercialRouteDistanceReviews/" + routeDoc.id,
+            originId, destinationId,
+          );
+          if (!approved) continue;
+          const routeReview = await routeReviews.doc(routeDoc.id).get();
+          routeExpiry = dateMillis(routeReview.data()?.validUntil);
+          if (routeExpiry !== null && routeExpiry > now().getTime()) break;
+          routeExpiry = null;
+        }
+        if (routeExpiry === null) continue;
         for (const serviceCode of SERVICES) {
           const [originService, destinationService] = await Promise.all([
             capabilities.doc(originId + "__" + serviceCode).get(),
@@ -661,8 +676,7 @@ export function createCommercialQuotationReadinessStore({
             originService.data()?.status !== "active" || destinationService.data()?.status !== "active") continue;
           const originExpiry = dateMillis(originService.data()?.validUntil);
           const destinationExpiry = dateMillis(destinationService.data()?.validUntil);
-          const routeExpiry = dateMillis(route.review.validUntil);
-          if (originExpiry === null || destinationExpiry === null || routeExpiry === null ||
+          if (originExpiry === null || destinationExpiry === null ||
             Math.min(originExpiry, destinationExpiry, routeExpiry) <= now().getTime()) continue;
           const row = {
             evidenceId: "pudoNetworkConnections/" + connectionDoc.id,
