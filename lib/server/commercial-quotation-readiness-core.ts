@@ -671,6 +671,13 @@ export function createCommercialQuotationReadinessStore({
           routeExpiry = null;
         }
         if (routeExpiry === null) continue;
+        const [originActive, destinationActive, originVerification, destinationVerification] = await Promise.all([
+          isActivePudo(originId), isActivePudo(destinationId),
+          verifications.doc(originId).get(), verifications.doc(destinationId).get(),
+        ]);
+        if (!originActive || !destinationActive ||
+          originVerification.data()?.status !== "approved_to_activate" ||
+          destinationVerification.data()?.status !== "approved_to_activate") continue;
         for (const serviceCode of SERVICES) {
           const [originService, destinationService] = await Promise.all([
             capabilities.doc(originId + "__" + serviceCode).get(),
