@@ -247,6 +247,7 @@ export default function CustomerShipmentBookingsPage() {
               </table>
             </div>
             <p className="mt-4 text-sm text-gray-500">Booking confirmation and payment do not create a parcel identity or record physical custody. Those occur only when an authorized operator physically accepts the parcel.</p>
+            <p className="mt-2 text-sm text-gray-500">An unpaid booking may be cancelled before physical acceptance. Completed or review-required payments need support intervention; cancellation does not automatically issue a refund.</p>
           </section>}
 
         <div className="flex flex-wrap gap-3">
