@@ -175,7 +175,7 @@ export function validateShipmentBookingDraft(
       serviceCode,
       ...(sender ? { sender } : {}),
       ...(recipient ? { recipient } : {}),
-      originHandoverMode,
+      ...(candidate.originHandoverMode !== undefined || originPudoLocationId ? { originHandoverMode } : {}),
       origin,
       destination,
       ...(originPudoLocationId ? { originPudoLocationId } : {}),
