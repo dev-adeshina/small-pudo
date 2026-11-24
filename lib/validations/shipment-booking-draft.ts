@@ -3,8 +3,17 @@ export interface ShipmentBookingDraftMeasurement {
   unit: string;
 }
 
+export interface ShipmentBookingContact {
+  name: string;
+  phone: string;
+  email?: string;
+}
+
 export interface ShipmentBookingDraftInput {
   serviceCode?: "standard" | "express" | "scheduled";
+  sender: ShipmentBookingContact;
+  recipient: ShipmentBookingContact;
+  originHandoverMode: "door_pickup" | "pudo_presentation";
   origin: string;
   destination: string;
   originPudoLocationId?: string;
@@ -30,7 +39,7 @@ export function validateShipmentBookingDraft(
 
   const candidate = body as Record<string, unknown>;
   if (Object.keys(candidate).some((key) =>
-    !["serviceCode", "origin", "destination", "originPudoLocationId", "destinationPudoLocationId", "parcelDescription", "declaredMeasurements", "parcelCharacteristics"].includes(key)
+    !["serviceCode", "sender", "recipient", "originHandoverMode", "origin", "destination", "originPudoLocationId", "destinationPudoLocationId", "parcelDescription", "declaredMeasurements", "parcelCharacteristics"].includes(key)
   )) {
     return { success: false, error: "The shipment draft contains an unsupported field." };
   }
@@ -45,6 +54,30 @@ export function validateShipmentBookingDraft(
   const destination = typeof candidate.destination === "string" ? candidate.destination.trim() : "";
   const parcelDescription = typeof candidate.parcelDescription === "string"
     ? candidate.parcelDescription.trim() : "";
+  const originHandoverMode = candidate.originHandoverMode === undefined
+    ? "door_pickup"
+    : candidate.originHandoverMode === "door_pickup" || candidate.originHandoverMode === "pudo_presentation"
+      ? candidate.originHandoverMode : null;
+  if (originHandoverMode === null) {
+    return { success: false, error: "Choose door pickup or PUDO presentation for the shipment origin." };
+  }
+
+  function parseContact(value: unknown, label: string): ShipmentBookingContact | null {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    const contact = value as Record<string, unknown>;
+    if (Object.keys(contact).some((key) => !["name", "phone", "email"].includes(key))) return null;
+    const name = typeof contact.name === "string" ? contact.name.trim() : "";
+    const phone = typeof contact.phone === "string" ? contact.phone.trim() : "";
+    const email = typeof contact.email === "string" ? contact.email.trim() : "";
+    if (!name || name.length > 120 || !phone || phone.length > 40 ||
+        (email && (email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)))) return null;
+    return { name, phone, ...(email ? { email } : {}) };
+  }
+  const sender = parseContact(candidate.sender, "Sender");
+  const recipient = parseContact(candidate.recipient, "Recipient");
+  if (!sender || !recipient) {
+    return { success: false, error: "Enter a valid sender and recipient name and phone number. Email addresses are optional." };
+  }
   const rawOriginPudoLocationId = candidate.originPudoLocationId;
   const rawDestinationPudoLocationId = candidate.destinationPudoLocationId;
 
@@ -72,6 +105,12 @@ export function validateShipmentBookingDraft(
 
   if (originPudoLocationId && originPudoLocationId === destinationPudoLocationId) {
     return { success: false, error: "Origin and destination PUDO locations must be different." };
+  }
+  if (originHandoverMode === "pudo_presentation" && !originPudoLocationId) {
+    return { success: false, error: "Select an active origin PUDO for PUDO presentation." };
+  }
+  if (originHandoverMode === "door_pickup" && originPudoLocationId) {
+    return { success: false, error: "Remove the origin PUDO selection when door pickup is selected." };
   }
 
   let declaredMeasurements: ShipmentBookingDraftInput["declaredMeasurements"];
@@ -129,6 +168,9 @@ export function validateShipmentBookingDraft(
     success: true,
     data: {
       serviceCode,
+      sender,
+      recipient,
+      originHandoverMode,
       origin,
       destination,
       ...(originPudoLocationId ? { originPudoLocationId } : {}),
