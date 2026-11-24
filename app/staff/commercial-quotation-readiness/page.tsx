@@ -10,6 +10,7 @@ import { auth } from "@/lib/firebase";
 type ServiceCode = "standard" | "express" | "scheduled";
 type OperationalEvidenceRow = {
   evidenceId: string;
+  reference: string;
   kind: "service_coverage" | "operating_availability" | "capacity";
   serviceCode: ServiceCode;
   source: string;
@@ -413,7 +414,7 @@ export default function CommercialQuotationReadinessPage() {
             </div>
             <table className="w-full min-w-[900px] text-left text-sm">
               <thead><tr className="border-b"><th className="p-2">ID / category</th><th className="p-2">Service / scope / details</th><th className="p-2">Recorder</th><th className="p-2">Review</th><th className="p-2">Validity</th><th className="p-2">Actions</th></tr></thead>
-              <tbody>{visibleOperationalEvidenceRows.map((row) => <tr key={row.evidenceId} className="border-b align-top">
+              <tbody>{visibleOperationalEvidenceRows.map((row) => <tr key={row.reference + ":" + row.kind} className="border-b align-top">
                 <td className="p-2"><div className="font-medium">{row.evidenceId}</div><div>{row.kind.replaceAll("_", " ")}</div></td>
                 <td className="p-2"><div>{row.serviceCode}</div><div>{String(row.scope.locationId ?? row.scope.areaRef ?? (String(row.scope.originOperationalPointRef ?? "") + " → " + String(row.scope.destinationOperationalPointRef ?? "")))}</div><div className="text-xs text-gray-600">{row.kind === "service_coverage" ? String(row.details.coverageBasis ?? "") : row.kind === "operating_availability" ? String(row.details.operatingWindows ?? []) : String(row.details.supportedLoad ?? "") + " " + String(row.details.capacityUnit ?? "")}</div></td>
                 <td className="p-2">{row.recordedBy}<div>{row.recordedAt ?? "—"}</div></td>
@@ -537,16 +538,16 @@ export default function CommercialQuotationReadinessPage() {
             event.preventDefault();
             const selectedOperationalRefs = [
               ...selectedCoverageIds, ...selectedAvailabilityIds, ...selectedCapacityIds,
-            ].map((id) => "commercialOperationalEvidence/" + id);
+            ];
             void post("/api/staff/commercial-quotation-readiness/eligibility", {
               serviceCode, originType: eligibilityOriginType, destinationType: eligibilityDestinationType,
               ...(eligibilityOriginType === "pudo" ? { originPudoLocationId } : {}),
               ...(eligibilityDestinationType === "pudo" ? { destinationPudoLocationId } : {}),
               outcome: eligibilityOutcome,
               evidenceReferences: [...new Set([...lines(evidenceReferences), ...selectedOperationalRefs])],
-              serviceCoverageEvidenceReferences: selectedCoverageIds.map((id) => "commercialOperationalEvidence/" + id),
-              operatingAvailabilityEvidenceReferences: selectedAvailabilityIds.map((id) => "commercialOperationalEvidence/" + id),
-              capacityEvidenceReferences: selectedCapacityIds.map((id) => "commercialOperationalEvidence/" + id),
+              serviceCoverageEvidenceReferences: selectedCoverageIds,
+              operatingAvailabilityEvidenceReferences: selectedAvailabilityIds,
+              capacityEvidenceReferences: selectedCapacityIds,
               originRequiredActions: lines(originRequiredActions),
               destinationRequiredActions: lines(destinationRequiredActions),
               conditions: lines(conditions), reason: eligibilityReason,
@@ -561,19 +562,19 @@ export default function CommercialQuotationReadinessPage() {
               {eligibilityOriginType === "pudo" && <label className="block text-sm font-medium">Origin PUDO ID<input className="mt-2 w-full rounded-lg border p-3" value={originPudoLocationId} onChange={(event) => setOriginPudoLocationId(event.target.value)} required /></label>}
               {eligibilityDestinationType === "pudo" && <label className="block text-sm font-medium">Destination PUDO ID<input className="mt-2 w-full rounded-lg border p-3" value={destinationPudoLocationId} onChange={(event) => setDestinationPudoLocationId(event.target.value)} required /></label>}
             </div>
-            <p className="text-sm text-gray-600">Select approved coverage, availability and capacity evidence in the scoped selectors below. Those selected records are added to the decision evidence automatically. The all-evidence list is retained for endpoint verification, activation, capability, route review and any conditional evidence references.</p>
+            <p className="text-sm text-gray-600">Select independently approved, current source records in the scoped selectors below. Coverage comes from active directed network connections and approved route evidence; availability and capacity come from reviewed immutable PUDO operations versions. The selected Firestore source paths are added to the decision evidence automatically. The all-evidence list is retained for endpoint verification, activation, capability, route review and any conditional evidence references.</p>
             <label className="block text-sm font-medium">All decision evidence document paths (one Firestore document path per line)<textarea className="mt-2 w-full rounded-lg border p-3" value={evidenceReferences} onChange={(event) => setEvidenceReferences(event.target.value)} rows={5} placeholder={"pudoLocationVerifications/ORIGIN_ID\npudoLocationActivations/ORIGIN_ID\npudoLocationServiceCapabilities/ORIGIN_ID__SELECTED_SERVICE\npudoLocationVerifications/DESTINATION_ID\npudoLocationActivations/DESTINATION_ID\npudoLocationServiceCapabilities/DESTINATION_ID__SELECTED_SERVICE\ncommercialRouteDistanceEvidence/EVIDENCE_ID\ncommercialRouteDistanceReviews/EVIDENCE_ID"} /></label>
             <div className="grid gap-4 md:grid-cols-2">
               <label className="block text-sm font-medium">Approved service coverage evidence<select multiple size={5} className="mt-2 w-full rounded-lg border p-3" value={selectedCoverageIds} onChange={(event) => setSelectedCoverageIds(Array.from(event.target.selectedOptions, (option) => option.value))}>
                 {operationalEvidenceRows.filter((row) => row.kind === "service_coverage" && row.serviceCode === serviceCode && row.isCurrentApproved &&
                   ((row.scope.scopeType === "route" && row.scope.originOperationalPointRef === originPudoLocationId && row.scope.destinationOperationalPointRef === destinationPudoLocationId) ||
                     (row.scope.scopeType === "area" && Array.isArray(row.scope.operationalPointRefs) && row.scope.operationalPointRefs.includes(originPudoLocationId) && row.scope.operationalPointRefs.includes(destinationPudoLocationId))))
-                  .map((row) => <option key={row.evidenceId} value={row.evidenceId}>{row.evidenceId} · {String(row.scope.scopeType)} · {row.source}</option>)}
+                  .map((row) => <option key={row.reference + ":" + row.kind} value={row.reference}>{row.reference} · {String(row.scope.scopeType)} · {row.source}</option>)}
               </select></label>
               <label className="block text-sm font-medium">Approved operating availability (select evidence for both endpoints)<select multiple size={5} className="mt-2 w-full rounded-lg border p-3" value={selectedAvailabilityIds} onChange={(event) => setSelectedAvailabilityIds(Array.from(event.target.selectedOptions, (option) => option.value))}>
                 {operationalEvidenceRows.filter((row) => row.kind === "operating_availability" && row.serviceCode === serviceCode && row.isCurrentApproved &&
                   [originPudoLocationId, destinationPudoLocationId].includes(String(row.scope.locationId)))
-                  .map((row) => <option key={row.evidenceId} value={row.evidenceId}>{row.evidenceId} · {String(row.scope.locationId)} · {row.source}</option>)}
+                  .map((row) => <option key={row.reference + ":" + row.kind} value={row.reference}>{row.reference} · {String(row.scope.locationId)} · {row.source}</option>)}
               </select></label>
               <label className="block text-sm font-medium">Approved capacity evidence (select evidence for both endpoints)<select multiple size={5} className="mt-2 w-full rounded-lg border p-3" value={selectedCapacityIds} onChange={(event) => setSelectedCapacityIds(Array.from(event.target.selectedOptions, (option) => option.value))}>
                 {operationalEvidenceRows.filter((row) => row.kind === "capacity" && row.serviceCode === serviceCode && row.isCurrentApproved &&
