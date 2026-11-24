@@ -396,6 +396,7 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
           serviceCode: quoteSnapshot.serviceCode,
           originPudoLocationId: typeof quoteSnapshot.originPudoLocationId === "string" ? quoteSnapshot.originPudoLocationId : null,
           destinationPudoLocationId: typeof quoteSnapshot.destinationPudoLocationId === "string" ? quoteSnapshot.destinationPudoLocationId : null,
+          originHandoverMode: quoteSnapshot.originHandoverMode,
           intakeStatus: "awaiting_physical_intake",
           status: "confirmed",
           paymentStatus: "pending",
