@@ -41,7 +41,7 @@ export async function POST(request: Request, context: RouteContext) {
     if (result.outcome === "not_authorized") return NextResponse.json({ error: "You are not the booking party for this quotation." }, { status: 403 });
     if (result.outcome === "not_accepted") return NextResponse.json({ error: "Only an accepted quotation can be converted into a booking." }, { status: 409 });
     if (result.outcome === "stale_version") return NextResponse.json({ error: "The accepted quotation version is no longer current. Refresh your quotation." }, { status: 409 });
-    if (result.outcome === "draft_unavailable") return NextResponse.json({ error: "The original shipment draft is no longer available for booking confirmation." }, { status: 409 });
+    if (result.outcome === "draft_unavailable") return NextResponse.json({ error: "The original shipment draft has changed or is missing required sender, recipient or intake details." }, { status: 409 });
     return NextResponse.json({ success: true, result }, { status: result.outcome === "created" ? 201 : 200 });
   } catch (error) {
     console.error("Accepted quotation booking handoff failed:", error);
