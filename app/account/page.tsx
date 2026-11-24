@@ -365,6 +365,11 @@ export default function CustomerAccountPage() {
               View quotations
               <ArrowUpRight size={16} />
             </Link>
+            <Link href="/account/shipment-bookings" className="customer-primary-action" style={{ marginTop: 10 }}>
+              <Package size={17} />
+              Shipment bookings
+              <ArrowUpRight size={16} />
+            </Link>
           </div>
 
           <aside className="customer-welcome-note">
