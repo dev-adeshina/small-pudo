@@ -68,6 +68,7 @@ export function validateShipmentBookingDraft(
     if (Object.keys(contact).some((key) => !["name", "phone", "email"].includes(key))) return null;
     const name = typeof contact.name === "string" ? contact.name.trim() : "";
     const phone = typeof contact.phone === "string" ? contact.phone.trim() : "";
+    if (contact.email !== undefined && typeof contact.email !== "string") return null;
     const email = typeof contact.email === "string" ? contact.email.trim() : "";
     if (!name || name.length > 120 || !phone || phone.length > 40 ||
         (email && (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)))) return null;
