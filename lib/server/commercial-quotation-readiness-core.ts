@@ -134,28 +134,161 @@ export function createCommercialQuotationReadinessStore({
       activation.exists && activation.data()?.status === "active";
   }
 
-  async function loadApprovedOperationalEvidence(reference: string, transaction?: Transaction) {
+  async function loadApprovedOperationalEvidence(
+    reference: string,
+    transaction?: Transaction,
+    expectedKind?: OperationalEvidenceKind,
+    serviceCode?: CommercialServiceCode,
+    originId?: string,
+    destinationId?: string,
+  ) {
+    const read = (path: string) => {
+      const ref = db.doc(path);
+      return transaction ? transaction.get(ref) : ref.get();
+    };
     const segments = reference.split("/");
-    if (segments.length !== 2 || segments[0] !== "commercialOperationalEvidence" || !ID.test(segments[1])) return null;
-    const evidenceRef = operationalEvidence.doc(segments[1]);
-    const reviewRef = operationalEvidenceReviews.doc(segments[1]);
-    const [evidenceSnapshot, reviewSnapshot] = transaction
-      ? await Promise.all([transaction.get(evidenceRef), transaction.get(reviewRef)])
-      : await Promise.all([evidenceRef.get(), reviewRef.get()]);
-    if (!evidenceSnapshot.exists || !reviewSnapshot.exists) return null;
-    const evidence = evidenceSnapshot.data()!;
-    const review = reviewSnapshot.data()!;
-    const evidenceStart = dateMillis(evidence.validFrom);
-    const evidenceEnd = dateMillis(evidence.validUntil);
-    const reviewEnd = dateMillis(review.validUntil);
-    if (review.status !== "approved" || review.decision !== "approve" ||
-      review.evidenceId !== segments[1] || typeof review.reviewedBy !== "string" ||
-      !review.reviewedBy || review.reviewedBy === evidence.recordedBy ||
-      evidenceStart === null || evidenceEnd === null || reviewEnd === null ||
-      evidenceStart > now().getTime() || evidenceEnd <= now().getTime() ||
-      reviewEnd <= now().getTime() || reviewEnd > evidenceEnd ||
-      canonicalJson(review.evidenceSnapshot) !== canonicalJson(evidence)) return null;
-    return { evidenceId: segments[1], evidence, review };
+    if (segments.length === 2 && segments[0] === "commercialOperationalEvidence" && ID.test(segments[1])) {
+      const evidenceRef = operationalEvidence.doc(segments[1]);
+      const reviewRef = operationalEvidenceReviews.doc(segments[1]);
+      const [evidenceSnapshot, reviewSnapshot] = transaction
+        ? await Promise.all([transaction.get(evidenceRef), transaction.get(reviewRef)])
+        : await Promise.all([evidenceRef.get(), reviewRef.get()]);
+      if (!evidenceSnapshot.exists || !reviewSnapshot.exists) return null;
+      const evidence = evidenceSnapshot.data()!;
+      const review = reviewSnapshot.data()!;
+      const evidenceStart = dateMillis(evidence.validFrom);
+      const evidenceEnd = dateMillis(evidence.validUntil);
+      const reviewEnd = dateMillis(review.validUntil);
+      if (review.status !== "approved" || review.decision !== "approve" ||
+        review.evidenceId !== segments[1] || typeof review.reviewedBy !== "string" ||
+        !review.reviewedBy || review.reviewedBy === evidence.recordedBy ||
+        evidenceStart === null || evidenceEnd === null || reviewEnd === null ||
+        evidenceStart > now().getTime() || evidenceEnd <= now().getTime() ||
+        reviewEnd <= now().getTime() || reviewEnd > evidenceEnd ||
+        canonicalJson(review.evidenceSnapshot) !== canonicalJson(evidence)) return null;
+      return { evidenceId: segments[1], evidence, review };
+    }
+
+    if (segments.length === 4 && segments[0] === "pudoLocationOperations" &&
+      segments[2] === "versions" && ID.test(segments[1]) && /^v\\d{6}$/.test(segments[3])) {
+      if (!expectedKind || !serviceCode) return null;
+      const locationId = segments[1];
+      const versionId = segments[3];
+      const reviewPath = "pudoLocationOperationsReviews/" + locationId + "__" + versionId;
+      const [versionSnapshot, reviewSnapshot, currentSnapshot, capabilitySnapshot, candidateSnapshot, activationSnapshot, verificationSnapshot, serviceCapabilitySnapshot] = await Promise.all([
+        read(reference), read(reviewPath), read("pudoLocationOperations/" + locationId),
+        read("pudoLocationCapabilities/" + locationId), read("pudoLocations/" + locationId),
+        read("pudoLocationActivations/" + locationId), read("pudoLocationVerifications/" + locationId),
+        read("pudoLocationServiceCapabilities/" + locationId + "__" + serviceCode),
+      ]);
+      if (!versionSnapshot.exists || !reviewSnapshot.exists || !currentSnapshot.exists ||
+        !capabilitySnapshot.exists || !candidateSnapshot.exists || !activationSnapshot.exists ||
+        !verificationSnapshot.exists || !serviceCapabilitySnapshot.exists) return null;
+      const version = versionSnapshot.data()!;
+      const review = reviewSnapshot.data()!;
+      const current = currentSnapshot.data()!;
+      const capability = capabilitySnapshot.data()!;
+      const serviceCapability = serviceCapabilitySnapshot.data()!;
+      const reviewExpiry = dateMillis(review.validUntil);
+      const serviceExpiry = dateMillis(serviceCapability.validUntil);
+      if (Number(current.version) !== Number(version.version) ||
+        Number(current.capabilityVersion) !== Number(version.capabilityVersion) ||
+        Number(capability.version ?? 0) !== Number(version.capabilityVersion) ||
+        review.locationId !== locationId || review.versionId !== versionId ||
+        review.status !== "approved" || review.decision !== "approve" ||
+        typeof review.reviewedBy !== "string" || !review.reviewedBy ||
+        review.reviewedBy === version.configuredBy ||
+        canonicalJson(review.configurationSnapshot) !== canonicalJson(version) ||
+        reviewExpiry === null || reviewExpiry <= now().getTime() ||
+        candidateSnapshot.data()?.lifecycle !== "active" ||
+        activationSnapshot.data()?.status !== "active" ||
+        verificationSnapshot.data()?.status !== "approved_to_activate" ||
+        serviceCapability.status !== "active" || serviceCapability.locationId !== locationId ||
+        serviceCapability.serviceCode !== serviceCode || !Array.isArray(serviceCapability.supportedActions) ||
+        serviceExpiry === null || serviceExpiry <= now().getTime()) return null;
+      const evidence = expectedKind === "operating_availability"
+        ? {
+            kind: expectedKind, serviceCode, scope: { locationId },
+            details: {
+              availability: version.availability,
+              operatingWindows: version.availability?.weeklySchedule ?? [],
+              timeZone: version.availability?.timezone ?? "",
+            },
+            recordedBy: version.configuredBy, validUntil: review.validUntil,
+          }
+        : expectedKind === "capacity"
+          ? {
+              kind: expectedKind, serviceCode, scope: { locationId },
+              details: {
+                capacity: version.capacity ?? [],
+                capacityBasis: "approved PUDO capability limits",
+                supportedLoad: (version.capacity ?? []).reduce((total: number, item: { maximum?: number }) => total + Number(item.maximum ?? 0), 0),
+                capacityUnit: (version.capacity ?? []).map((item: { unit?: string }) => item.unit).filter(Boolean).join(", "),
+              },
+              recordedBy: version.configuredBy, validUntil: review.validUntil,
+            }
+          : null;
+      if (!evidence) return null;
+      if (expectedKind === "operating_availability" &&
+        (!version.availability || version.availability.status !== "available" ||
+          !Array.isArray(version.availability.weeklySchedule) ||
+          !version.availability.weeklySchedule.some((day: { intervals?: unknown[] }) => Array.isArray(day.intervals) && day.intervals.length > 0))) return null;
+      if (expectedKind === "capacity" &&
+        (!Array.isArray(version.capacity) || !version.capacity.length ||
+          !version.capacity.some((item: { capabilityId?: string }) => serviceCapability.supportedActions.includes(item.capabilityId)))) return null;
+      return {
+        evidenceId: reference,
+        evidence,
+        review: { reviewedBy: review.reviewedBy, validUntil: review.validUntil, status: review.status, decision: review.decision },
+      };
+    }
+
+    if (segments.length === 2 && segments[0] === "pudoNetworkConnections" && ID.test(segments[1]) &&
+      expectedKind === "service_coverage" && serviceCode && originId && destinationId) {
+      const connectionId = segments[1];
+      const [connectionSnapshot, originService, destinationService, originCandidate, destinationCandidate, originActivation, destinationActivation, originVerification, destinationVerification, versionSnapshot] = await Promise.all([
+        read(reference),
+        read("pudoLocationServiceCapabilities/" + originId + "__" + serviceCode),
+        read("pudoLocationServiceCapabilities/" + destinationId + "__" + serviceCode),
+        read("pudoLocations/" + originId), read("pudoLocations/" + destinationId),
+        read("pudoLocationActivations/" + originId), read("pudoLocationActivations/" + destinationId),
+        read("pudoLocationVerifications/" + originId), read("pudoLocationVerifications/" + destinationId),
+        read(reference + "/versions/v" + String(0).padStart(6, "0")),
+      ]);
+      if (!connectionSnapshot.exists) return null;
+      const connection = connectionSnapshot.data()!;
+      const versionId = "v" + String(Number(connection.version ?? 1)).padStart(6, "0");
+      const currentVersion = await read(reference + "/versions/" + versionId);
+      const route = await getUsableRouteEvidence(originId, destinationId);
+      const expiryA = dateMillis(originService.data()?.validUntil);
+      const expiryB = dateMillis(destinationService.data()?.validUntil);
+      if (!currentVersion.exists || canonicalJson(currentVersion.data()) !== canonicalJson(connection) ||
+        connection.status !== "active" || connection.originLocationId !== originId ||
+        connection.destinationLocationId !== destinationId ||
+        typeof connection.proposedBy !== "string" || typeof connection.reviewedBy !== "string" ||
+        !connection.reviewedBy || connection.reviewedBy === connection.proposedBy ||
+        !originService.exists || !destinationService.exists ||
+        originService.data()?.status !== "active" || destinationService.data()?.status !== "active" ||
+        originService.data()?.serviceCode !== serviceCode || destinationService.data()?.serviceCode !== serviceCode ||
+        expiryA === null || expiryA <= now().getTime() || expiryB === null || expiryB <= now().getTime() ||
+        !originCandidate.exists || originCandidate.data()?.lifecycle !== "active" ||
+        !destinationCandidate.exists || destinationCandidate.data()?.lifecycle !== "active" ||
+        originActivation.data()?.status !== "active" || destinationActivation.data()?.status !== "active" ||
+        originVerification.data()?.status !== "approved_to_activate" ||
+        destinationVerification.data()?.status !== "approved_to_activate" || !route) return null;
+      const evidence = {
+        kind: expectedKind, serviceCode,
+        scope: { scopeType: "route", originOperationalPointRef: originId, destinationOperationalPointRef: destinationId },
+        details: { coverageBasis: "Active independently reviewed directed PUDO network connection with current service capabilities and approved road-route evidence." },
+        recordedBy: connection.proposedBy,
+        validUntil: new Date(Math.min(expiryA, expiryB, dateMillis(route.review.validUntil) ?? 0)),
+      };
+      return {
+        evidenceId: reference, evidence,
+        review: { reviewedBy: connection.reviewedBy, validUntil: evidence.validUntil, status: "approved", decision: "approve" },
+      };
+    }
+    return null;
   }
 
   function operationalEvidenceMatches(
