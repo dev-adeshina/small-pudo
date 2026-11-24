@@ -61,6 +61,25 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Shipment quotations and confirmed bookings are server-managed. Customer,
+    // partner and staff APIs enforce their own identity and action permissions.
+    match /shipmentQuotes/{quoteId} {
+      allow read, write: if false;
+      match /versions/{versionId} {
+        allow read, write: if false;
+        match /internalEvidence/{evidenceId} {
+          allow read, write: if false;
+        }
+      }
+      match /events/{eventId} {
+        allow read, write: if false;
+      }
+    }
+
+    match /shipmentBookings/{bookingId} {
+      allow read, write: if false;
+    }
+
     match /operationalCostDefinitions/{definitionId} {
       allow read, write: if false;
 
