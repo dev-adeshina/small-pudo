@@ -362,7 +362,11 @@ export default function ShipmentDraftsPage() {
   async function requestQuote(draftId: string) {
     if (!user || requestingQuoteId) return;
     const draft = drafts.find((item) => item.id === draftId);
-    const serviceCode = draft?.serviceCode ?? "standard";
+    if (!draft?.sender?.name || !draft.sender.phone || !draft.recipient?.name || !draft.recipient.phone) {
+      setQuoteRequestError("Edit this draft and complete the sender and recipient contact details before requesting a quotation.");
+      return;
+    }
+    const serviceCode = draft.serviceCode ?? "standard";
     setRequestingQuoteId(draftId);
     setQuoteRequestError("");
     setQuoteRequestNotice("");
