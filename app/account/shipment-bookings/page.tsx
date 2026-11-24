@@ -184,7 +184,7 @@ export default function CustomerShipmentBookingsPage() {
                       </td>
                       <td className="py-4 pr-4">
                         <span className={"customer-status " + statusClass(booking.status ?? "unknown")}>{(booking.status ?? "unknown").replaceAll("_", " ")}</span>
-                        <div className="mt-2 text-xs text-gray-500">Awaiting physical intake</div>
+                        <div className="mt-2 text-xs text-gray-500">Awaiting physical acceptance</div>
                       </td>
                       <td className="py-4 pr-4">
                         <span className={"customer-status " + statusClass(booking.paymentReviewRequired ? "review_required" : paymentStatus)}>
