@@ -528,7 +528,7 @@ export function createCommercialQuotationReadinessStore({
       });
       assertPermission(permissions.record || permissions.review || permissions.revoke || permissions.eligibilityApproval, "view operational evidence");
       const snapshot = await operationalEvidence.orderBy("recordedAt", "desc").limit(200).get();
-      const rows: Array<Record<string, any>> = await Promise.all(snapshot.docs.map(async (document) => {
+      const rows: Array<Record<string, any> | null> = await Promise.all(snapshot.docs.map(async (document) => {
         const evidence = document.data();
         const reviewSnapshot = await operationalEvidenceReviews.doc(document.id).get();
         const review = reviewSnapshot.data();
