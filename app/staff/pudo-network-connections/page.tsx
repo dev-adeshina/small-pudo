@@ -16,6 +16,32 @@ type Connection = {
   version: number; reason: string; proposedBy: string; proposedAt: string | null;
   reviewedBy: string | null; reviewedAt: string | null; reviewReason: string | null;
 };
+type OperationalConnection = {
+  connectionId: string;
+  originName: string;
+  destinationName: string;
+  routeSelectionEligible: boolean;
+  exclusionReasons: string[];
+  originAvailability: string;
+  destinationAvailability: string;
+  routeDistanceEvidence: {
+    evidenceId: string;
+    method: string | null;
+    distance: { value: number; unit: string } | null;
+    measuredOn: string | null;
+    source: string | null;
+  } | null;
+  capacity: {
+    originDeclaredLimits: { capabilityId: string; maximum: number; unit: string; basis: string }[];
+    destinationDeclaredLimits: { capabilityId: string; maximum: number; unit: string; basis: string }[];
+    originConfigurationStale: boolean;
+    destinationConfigurationStale: boolean;
+    originConfigured: boolean;
+    destinationConfigured: boolean;
+    assessment: "declared_limits_only";
+    confirmedAvailableCapacity: false;
+  };
+};
 function headers(token: string): HeadersInit { return { Authorization: "Bearer " + token, "Content-Type": "application/json" }; }
 function date(value: string | null) {
   if (!value) return "—";
@@ -31,6 +57,7 @@ export default function PudoNetworkConnectionsPage() {
   const [token, setToken] = useState("");
   const [locations, setLocations] = useState<Location[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
+  const [operationalConnections, setOperationalConnections] = useState<OperationalConnection[]>([]);
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [reason, setReason] = useState("");
@@ -49,6 +76,8 @@ export default function PudoNetworkConnectionsPage() {
     const nextLocations = Array.isArray(data.locations) ? data.locations as Location[] : [];
     setLocations(nextLocations);
     setConnections(Array.isArray(data.connections) ? data.connections as Connection[] : []);
+    setOperationalConnections(Array.isArray(data.operationalConnections)
+      ? data.operationalConnections as OperationalConnection[] : []);
     const initialOrigin = origin || nextLocations.find(item => item.capabilities.includes("parcel_handover"))?.locationId || "";
     setOrigin(current => current || initialOrigin);
     setDestination(current => current || nextLocations.find(item => item.capabilities.includes("custody_acceptance") && item.locationId !== initialOrigin)?.locationId || "");
@@ -211,6 +240,50 @@ export default function PudoNetworkConnectionsPage() {
           <label className="mt-5 block text-sm font-medium">Decision reason (required for approve, reject, suspend or reactivate)
             <textarea className="mt-2 w-full rounded-lg border p-3" rows={2} maxLength={1000} value={decisionReason} onChange={event => setDecisionReason(event.target.value)} placeholder="Enter the reason before choosing a decision." />
           </label>
+        </section>
+        <section className="cost-panel">
+          <div className="cost-panel-heading"><div><span className="section-label">03 / LIVE OPERATIONAL ELIGIBILITY</span><h2>Connections available for route selection</h2></div></div>
+          <p className="mb-4 text-sm text-gray-600">
+            This is a live eligibility assessment, not a booking or capacity reservation. It rechecks both PUDOs,
+            their required capabilities, current opening state and approved road-route distance evidence.
+          </p>
+          {loading ? <p>Checking current network eligibility...</p> : operationalConnections.length === 0 ? (
+            <p>No approved active network connections are available for operational assessment.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
+                <thead className="bg-gray-50 text-xs uppercase text-gray-600"><tr>
+                  <th className="px-3 py-3">Directed connection</th>
+                  <th className="px-3 py-3">Current eligibility</th>
+                  <th className="px-3 py-3">Availability</th>
+                  <th className="px-3 py-3">Approved road distance</th>
+                  <th className="px-3 py-3">Capacity evidence</th>
+                </tr></thead>
+                <tbody className="divide-y divide-gray-100">
+                  {operationalConnections.map(item => <tr key={item.connectionId}>
+                    <td className="px-3 py-3"><strong>{item.originName}</strong><span className="block text-xs text-gray-500">→ {item.destinationName}</span></td>
+                    <td className="px-3 py-3">
+                      <span className="rounded-full bg-gray-100 px-2 py-1 text-xs">{item.routeSelectionEligible ? "Route eligible now" : "Not eligible now"}</span>
+                      {item.exclusionReasons.length > 0 && <ul className="mt-2 list-disc pl-4 text-xs text-gray-600">{item.exclusionReasons.map(reason => <li key={reason}>{reason}</li>)}</ul>}
+                    </td>
+                    <td className="px-3 py-3 text-xs">Origin: {statusLabel(item.originAvailability)}<span className="block">Destination: {statusLabel(item.destinationAvailability)}</span></td>
+                    <td className="px-3 py-3 text-xs">
+                      {item.routeDistanceEvidence
+                        ? <><strong>{item.routeDistanceEvidence.distance ? item.routeDistanceEvidence.distance.value + " " + item.routeDistanceEvidence.distance.unit : "Distance recorded"}</strong><span className="block">{item.routeDistanceEvidence.method ?? "—"} · measured {item.routeDistanceEvidence.measuredOn ?? "date unavailable"}</span><span className="block text-gray-500">{item.routeDistanceEvidence.source ?? ""}</span></>
+                        : "No currently valid approved road-route evidence"}
+                    </td>
+                    <td className="px-3 py-3 text-xs">
+                      <strong>Declared limits only</strong>
+                      <span className="block">Origin: {item.capacity.originConfigured ? item.capacity.originDeclaredLimits.length + " limit(s)" : "Not configured"}</span>
+                      <span className="block">Destination: {item.capacity.destinationConfigured ? item.capacity.destinationDeclaredLimits.length + " limit(s)" : "Not configured"}</span>
+                      {(item.capacity.originConfigurationStale || item.capacity.destinationConfigurationStale) && <span className="block text-amber-700">Configuration requires reconfirmation</span>}
+                      <span className="block text-gray-500">Live available capacity is not confirmed.</span>
+                    </td>
+                  </tr>)}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
         <div className="cost-notice"><Network size={16} /><span>Only an approved connection is an active network relationship. It does not reserve capacity, create a shipment, prove a dispatch, or transfer custody. Physical custody remains recorded only by the appropriate operational event.</span></div>
       </div>
