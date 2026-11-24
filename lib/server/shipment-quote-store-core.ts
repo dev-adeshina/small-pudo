@@ -363,6 +363,9 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         const draft = draftDocument.data() as Record<string, unknown>;
         if (draft.bookingPartyUid !== bookingPartyUid || draft.status !== "draft" ||
             draft.serviceCode !== quoteSnapshot.serviceCode ||
+            JSON.stringify(draft.sender ?? null) !== JSON.stringify(quoteSnapshot.sender ?? null) ||
+            JSON.stringify(draft.recipient ?? null) !== JSON.stringify(quoteSnapshot.recipient ?? null) ||
+            draft.originHandoverMode !== quoteSnapshot.originHandoverMode ||
             draft.origin !== quoteSnapshot.origin || draft.destination !== quoteSnapshot.destination ||
             draft.parcelDescription !== quoteSnapshot.parcelDescription ||
             (draft.originPudoLocationId ?? null) !== (quoteSnapshot.originPudoLocationId ?? null) ||
