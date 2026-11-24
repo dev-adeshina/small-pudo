@@ -493,6 +493,44 @@ export function createCommercialQuotationReadinessStore({
       });
     },
 
+    async listRouteEvidenceForReview(actorUid: string) {
+      assertActor(actorUid);
+      await db.runTransaction(async (transaction) => {
+        await requirePermission(transaction, actorUid, ROUTE_REVIEW_PERMISSION, "view the route-distance evidence review queue");
+      });
+      const snapshot = await routeEvidence.orderBy("recordedAt", "desc").limit(100).get();
+      const items = await Promise.all(snapshot.docs.map(async (doc) => {
+        const row = doc.data();
+        const evidence = row.evidence as Record<string, unknown> | undefined;
+        if (!evidence || typeof evidence !== "object") return null;
+        const reviewSnapshot = await routeReviews.doc(doc.id).get();
+        const review = reviewSnapshot.exists ? reviewSnapshot.data()! : null;
+        const iso = (value: unknown) => {
+          const millis = dateMillis(value);
+          return millis === null ? null : new Date(millis).toISOString();
+        };
+        return {
+          evidenceId: doc.id,
+          originOperationalPointRef: row.originOperationalPointRef ?? evidence.originOperationalPointRef ?? null,
+          destinationOperationalPointRef: row.destinationOperationalPointRef ?? evidence.destinationOperationalPointRef ?? null,
+          distance: evidence.distance ?? null,
+          method: evidence.method ?? null,
+          source: evidence.source ?? null,
+          measuredOn: evidence.measuredOn ?? null,
+          supportingReference: evidence.supportingReference ?? null,
+          recordedBy: evidence.recordedBy ?? null,
+          recordedAt: iso(evidence.recordedAt ?? row.recordedAt),
+          reviewStatus: review?.status ?? "pending_review",
+          decision: review?.decision ?? null,
+          reviewedBy: review?.reviewedBy ?? null,
+          reviewedAt: iso(review?.reviewedAt),
+          validUntil: iso(review?.validUntil),
+          reason: review?.reason ?? null,
+        };
+      }));
+      return { items: items.filter((item): item is NonNullable<typeof item> => item !== null) };
+    },
+
     async getRouteEvidenceForReview(actorUid: string, evidenceId: string) {
       assertActor(actorUid);
       assertId(evidenceId, "Route evidence ID");
