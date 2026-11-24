@@ -436,10 +436,11 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
       const snapshot = await db.collection("shipmentBookings")
         .where("bookingPartyUid", "==", bookingPartyUid)
         .get();
-      return snapshot.docs.map((document) => ({
+      const bookings: Array<Record<string, unknown>> = snapshot.docs.map((document) => ({
         bookingId: document.id,
         ...document.data(),
-      })).sort((left, right) => {
+      }));
+      return bookings.sort((left, right) => {
         const leftDate = dateValue(left.createdAt)?.getTime() ?? 0;
         const rightDate = dateValue(right.createdAt)?.getTime() ?? 0;
         return rightDate - leftDate;
