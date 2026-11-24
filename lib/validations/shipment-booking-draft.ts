@@ -62,7 +62,7 @@ export function validateShipmentBookingDraft(
     return { success: false, error: "Choose door pickup or PUDO presentation for the shipment origin." };
   }
 
-  function parseContact(value: unknown, label: string): ShipmentBookingContact | null {
+  function parseContact(value: unknown): ShipmentBookingContact | null {
     if (!value || typeof value !== "object" || Array.isArray(value)) return null;
     const contact = value as Record<string, unknown>;
     if (Object.keys(contact).some((key) => !["name", "phone", "email"].includes(key))) return null;
@@ -73,8 +73,8 @@ export function validateShipmentBookingDraft(
         (email && (email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)))) return null;
     return { name, phone, ...(email ? { email } : {}) };
   }
-  const sender = parseContact(candidate.sender, "Sender");
-  const recipient = parseContact(candidate.recipient, "Recipient");
+  const sender = parseContact(candidate.sender);
+  const recipient = parseContact(candidate.recipient);
   if (!sender || !recipient) {
     return { success: false, error: "Enter a valid sender and recipient name and phone number. Email addresses are optional." };
   }
