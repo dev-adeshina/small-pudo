@@ -40,6 +40,14 @@ function dateLabel(value: unknown) {
   }
   return "—";
 }
+function isReviewCurrent(review: History["review"] | undefined) {
+  if (review?.status !== "approved") return false;
+  const value = review.validUntil;
+  const expiry = typeof value === "string" ? Date.parse(value)
+    : value && typeof value === "object" && "_seconds" in value && typeof value._seconds === "number"
+      ? value._seconds * 1000 : Number.NaN;
+  return Number.isFinite(expiry) && expiry > Date.now();
+}
 function parseExceptions(value: string): Availability["exceptions"] {
   if (!value.trim()) return [];
   return value.split("\n").map((line) => {
@@ -251,7 +259,7 @@ export default function PudoOperationsDetailPage() {
               <h2>Configuration history</h2>
               {data.history.length === 0 ? <p>No configuration versions recorded yet.</p> : <div className="cost-table-wrap"><table className="cost-table">
                 <thead><tr><th>Version</th><th>Availability</th><th>Capacity limits</th><th>Reason</th><th>Configured by</th><th>Configured at</th><th>Independent review</th><th>Action</th></tr></thead>
-                <tbody>{data.history.map((item) => <tr key={item.versionId}><td>v{item.version}</td><td>{item.availability?.status ?? "—"}</td><td>{item.capacity?.length ?? 0} activities</td><td>{item.reason}</td><td>{item.configuredBy}</td><td>{dateLabel(item.configuredAt)}</td><td>{item.review?.status ?? "pending_review"}<small>{item.review?.reviewedBy ?? "Not reviewed"}</small></td><td>{item.version === data.version && item.configuredBy !== user.uid && item.review?.status !== "approved" && <button type="button" className="cost-secondary-button" onClick={() => { setReviewVersionId(item.versionId); setReviewDecision("approve"); }}>Review current version</button>}</td></tr>)}</tbody>
+                <tbody>{data.history.map((item) => <tr key={item.versionId}><td>v{item.version}</td><td>{item.availability?.status ?? "—"}</td><td>{item.capacity?.length ?? 0} activities</td><td>{item.reason}</td><td>{item.configuredBy}</td><td>{dateLabel(item.configuredAt)}</td><td>{item.review?.status ?? "pending_review"}<small>{item.review?.reviewedBy ?? "Not reviewed"}</small></td><td>{item.version === data.version && item.configuredBy !== user.uid && !isReviewCurrent(item.review) && <button type="button" className="cost-secondary-button" onClick={() => { setReviewVersionId(item.versionId); setReviewDecision("approve"); }}>Review current version</button>}</td></tr>)}</tbody>
               </table></div>}
               {reviewVersionId && <form className="mt-5 space-y-3 border-t pt-5" onSubmit={(event) => { event.preventDefault(); void submitReview(); }}>
                 <h3 className="font-semibold">Independent review of {reviewVersionId}</h3>
