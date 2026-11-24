@@ -247,6 +247,9 @@ export default function PudoNetworkConnectionsPage() {
             This is a live eligibility assessment, not a booking or capacity reservation. It rechecks both PUDOs,
             their required capabilities, current opening state and approved road-route distance evidence.
           </p>
+          <p className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+            Need another staff member to review a recorded route measurement? <Link className="font-semibold underline" href="/staff/commercial-quotation-readiness#route-evidence-review">Open the route-distance evidence review queue</Link>. Reviewers need the separate <code>commercial_route_distance.approve</code> permission; the recorder cannot approve their own evidence.
+          </p>
           {loading ? <p>Checking current network eligibility...</p> : operationalConnections.length === 0 ? (
             <p>No approved active network connections are available for operational assessment.</p>
           ) : (
