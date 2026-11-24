@@ -498,7 +498,7 @@ export function createCommercialQuotationReadinessStore({
       await db.runTransaction(async (transaction) => {
         await requirePermission(transaction, actorUid, ROUTE_REVIEW_PERMISSION, "view the route-distance evidence review queue");
       });
-      const snapshot = await routeEvidence.orderBy("recordedAt", "desc").limit(100).get();
+      const snapshot = await routeEvidence.limit(100).get();
       const items = await Promise.all(snapshot.docs.map(async (doc) => {
         const row = doc.data();
         const evidence = row.evidence as Record<string, unknown> | undefined;
@@ -528,7 +528,7 @@ export function createCommercialQuotationReadinessStore({
           reason: review?.reason ?? null,
         };
       }));
-      return { items: items.filter((item): item is NonNullable<typeof item> => item !== null) };
+      return { items: items.filter((item): item is NonNullable<typeof item> => item !== null)\n        .sort((a, b) => (b.recordedAt ? Date.parse(b.recordedAt) : 0) - (a.recordedAt ? Date.parse(a.recordedAt) : 0)) };
     },
 
     async getRouteEvidenceForReview(actorUid: string, evidenceId: string) {
