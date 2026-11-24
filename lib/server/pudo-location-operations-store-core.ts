@@ -232,6 +232,8 @@ export function createPudoLocationOperationsStore({ db, serverTimestamp }: Depen
   const verifications = db.collection("pudoLocationVerifications");
   const capabilities = db.collection("pudoLocationCapabilities");
   const operations = db.collection("pudoLocationOperations");
+  const operationsReviews = db.collection("pudoLocationOperationsReviews");
+  const OPERATIONS_REVIEW_PERMISSION = "commercial_operational_evidence.review";
 
   async function requirePermission(actorUid: string, transaction?: Transaction) {
     assertActor(actorUid);
@@ -372,12 +374,85 @@ export function createPudoLocationOperationsStore({ db, serverTimestamp }: Depen
         configuredAt: data?.configuredAt ?? null,
         reason: data?.reason ?? null,
         history: snapshot.exists
-          ? (await operations.doc(locationId).collection("versions")
-            .orderBy("version", "desc").limit(25).get()).docs.map((item) => ({
-              versionId: item.id, ...item.data(),
+          ? await Promise.all((await operations.doc(locationId).collection("versions")
+            .orderBy("version", "desc").limit(25).get()).docs.map(async (item) => {
+              const review = await operationsReviews.doc(locationId + "__" + item.id).get();
+              const reviewData = review.data();
+              return {
+                versionId: item.id, ...item.data(),
+                review: review.exists ? {
+                  status: reviewData?.status ?? "pending_review",
+                  reviewedBy: reviewData?.reviewedBy ?? null,
+                  validUntil: reviewData?.validUntil ?? null,
+                  reason: reviewData?.reason ?? null,
+                } : { status: "pending_review", reviewedBy: null, validUntil: null, reason: null },
+              };
             }))
           : [],
       };
+    },
+
+    async reviewOperationsVersion(actorUid: string, locationId: string, versionId: string, input: {
+      decision: "approve" | "reject"; reason: string; validUntil?: Date;
+    }) {
+      assertActor(actorUid);
+      assertLocationId(locationId);
+      if (typeof versionId !== "string" || !/^v\\d{6}$/.test(versionId)) {
+        throw new TypeError("A valid immutable PUDO operations version is required.");
+      }
+      if (input.decision !== "approve" && input.decision !== "reject") {
+        throw new TypeError("Choose approve or reject for the operational configuration review.");
+      }
+      const reason = requiredReason(input.reason);
+      if (input.decision === "approve" &&
+        (!(input.validUntil instanceof Date) || !Number.isFinite(input.validUntil.getTime()) || input.validUntil <= new Date())) {
+        throw new TypeError("Approval requires an explicit future validity end.");
+      }
+      const versionRef = operations.doc(locationId).collection("versions").doc(versionId);
+      const operationRef = operations.doc(locationId);
+      const reviewRef = operationsReviews.doc(locationId + "__" + versionId);
+      const eventRef = reviewRef.collection("events").doc();
+      return db.runTransaction(async (transaction) => {
+        if (!await hasStaffActionPermissionInTransaction(transaction, db, actorUid, OPERATIONS_REVIEW_PERMISSION)) {
+          throw new Error("You are not authorised to review PUDO availability and capacity.");
+        }
+        const [versionSnapshot, current, candidate, activation, verification, capability, previous] = await Promise.all([
+          transaction.get(versionRef), transaction.get(operationRef),
+          transaction.get(candidates.doc(locationId)), transaction.get(activations.doc(locationId)),
+          transaction.get(verifications.doc(locationId)), transaction.get(capabilities.doc(locationId)),
+          transaction.get(reviewRef),
+        ]);
+        if (!versionSnapshot.exists) throw new Error("PUDO operations configuration version not found.");
+        const version = versionSnapshot.data()!;
+        if (!current.exists || Number(current.data()?.version) !== Number(version.version) ||
+          Number(current.data()?.capabilityVersion) !== Number(version.capabilityVersion) ||
+          Number(capability.data()?.version ?? 0) !== Number(version.capabilityVersion)) {
+          throw new Error("Only the current configuration with its current approved capability version can be reviewed.");
+        }
+        if (!candidate.exists || candidate.data()?.lifecycle !== "active" ||
+          !activation.exists || activation.data()?.status !== "active" ||
+          verification.data()?.status !== "approved_to_activate") {
+          throw new Error("PUDO operations review requires an active, physically verified and activated location.");
+        }
+        if (version.configuredBy === actorUid) {
+          throw new Error("PUDO availability and capacity review must be independent of the configuration author.");
+        }
+        if (previous.data()?.status === "revoked") {
+          throw new Error("A revoked configuration review cannot be reinstated; save a new configuration version.");
+        }
+        const timestamp = serverTimestamp();
+        transaction.set(reviewRef, {
+          schemaVersion: 1, locationId, versionId, decision: input.decision,
+          status: input.decision === "approve" ? "approved" : "rejected",
+          configurationSnapshot: version,
+          validUntil: input.decision === "approve" ? input.validUntil : null,
+          reason, reviewedBy: actorUid, reviewedAt: timestamp, updatedAt: timestamp,
+        });
+        transaction.create(eventRef, {
+          action: input.decision, locationId, versionId, actorUid, reason, timestamp,
+        });
+        return { locationId, versionId, status: input.decision === "approve" ? "approved" : "rejected" };
+      });
     },
 
     async saveOperations(actorUid: string, locationId: string, input: {
