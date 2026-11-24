@@ -43,3 +43,25 @@ export async function PUT(request: Request, context: RouteContext) {
     }));
   } catch (error) { return errorResponse(error); }
 }
+
+export async function POST(request: Request, context: RouteContext) {
+  const auth = await authorizeStaffWorkspace(request);
+  if (!auth.ok) return response({ error: auth.error }, auth.status);
+  let input: { versionId?: unknown; decision?: unknown; reason?: unknown; validUntil?: unknown };
+  try { input = await request.json() as typeof input; }
+  catch { return response({ error: "A valid JSON body is required." }, 400); }
+  try {
+    const { locationId } = await context.params;
+    const result = await pudoLocationOperationsStore.reviewOperationsVersion(
+      auth.uid,
+      locationId,
+      String(input.versionId ?? ""),
+      {
+        decision: input.decision as "approve" | "reject",
+        reason: String(input.reason ?? ""),
+        ...(typeof input.validUntil === "string" ? { validUntil: new Date(input.validUntil) } : {}),
+      },
+    );
+    return response({ result });
+  } catch (error) { return errorResponse(error); }
+}
