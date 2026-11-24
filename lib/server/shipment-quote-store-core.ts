@@ -353,6 +353,14 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
           throw new Error("The accepted quotation version has no valid immutable shipment snapshot");
         }
         const quoteSnapshot = snapshot as Record<string, unknown>;
+        const validContact = (value: unknown) => Boolean(value && typeof value === "object" &&
+          !Array.isArray(value) && typeof (value as Record<string, unknown>).name === "string" &&
+          typeof (value as Record<string, unknown>).phone === "string");
+        if (!validContact(quoteSnapshot.sender) || !validContact(quoteSnapshot.recipient) ||
+            !["door_pickup", "pudo_presentation"].includes(String(quoteSnapshot.originHandoverMode)) ||
+            (quoteSnapshot.originHandoverMode === "pudo_presentation" && typeof quoteSnapshot.originPudoLocationId !== "string")) {
+          return { outcome: "draft_unavailable" } as const;
+        }
         const draftId = quoteSnapshot.draftId;
         if (typeof draftId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(draftId)) {
           throw new Error("The accepted quotation does not reference a valid shipment draft");
