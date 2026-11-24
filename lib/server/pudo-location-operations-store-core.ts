@@ -397,7 +397,7 @@ export function createPudoLocationOperationsStore({ db, serverTimestamp }: Depen
     }) {
       assertActor(actorUid);
       assertLocationId(locationId);
-      if (typeof versionId !== "string" || !/^v\\d{6}$/.test(versionId)) {
+      if (typeof versionId !== "string" || !/^v\d{6}$/.test(versionId)) {
         throw new TypeError("A valid immutable PUDO operations version is required.");
       }
       if (input.decision !== "approve" && input.decision !== "reject") {
