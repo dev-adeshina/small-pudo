@@ -15,6 +15,7 @@ type ShipmentBooking = {
   bookingReference?: string;
   status?: string;
   paymentStatus?: string;
+  paymentReviewRequired?: boolean;
   createdAt?: unknown;
   shipmentSnapshot?: Record<string, unknown>;
 };
@@ -55,6 +56,7 @@ export default function CustomerShipmentBookingsPage() {
   const [bookings, setBookings] = useState<ShipmentBooking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [payingBookingId, setPayingBookingId] = useState("");
 
   const loadBookings = useCallback(async (currentUser: User) => {
     setLoading(true);
@@ -74,6 +76,31 @@ export default function CustomerShipmentBookingsPage() {
       setLoading(false);
     }
   }, []);
+
+  async function initializePayment(booking: ShipmentBooking) {
+    if (!user || payingBookingId || booking.paymentStatus === "paid" || booking.paymentReviewRequired) return;
+    setPayingBookingId(booking.bookingId);
+    setError("");
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch(
+        `/api/account/shipment-bookings/${encodeURIComponent(booking.bookingId)}/payment/initialize`,
+        {
+          method: "POST",
+          headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok || !data.success || typeof data.authorizationUrl !== "string") {
+        throw new Error(data.error ?? "Unable to initialize shipment payment.");
+      }
+      window.location.assign(data.authorizationUrl);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to initialize shipment payment.");
+      setPayingBookingId("");
+    }
+  }
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
@@ -160,7 +187,21 @@ export default function CustomerShipmentBookingsPage() {
                         <div className="mt-2 text-xs text-gray-500">Awaiting physical intake</div>
                       </td>
                       <td className="py-4 pr-4">
-                        <span className={"customer-status " + statusClass(paymentStatus)}>{paymentStatus.replaceAll("_", " ")}</span>
+                        <span className={"customer-status " + statusClass(booking.paymentReviewRequired ? "review_required" : paymentStatus)}>
+                          {booking.paymentReviewRequired ? "review required" : paymentStatus.replaceAll("_", " ")}
+                        </span>
+                        {paymentStatus !== "paid" && !booking.paymentReviewRequired && (
+                          <div className="mt-2">
+                            <button
+                              type="button"
+                              className="customer-secondary-action"
+                              disabled={payingBookingId !== "" || booking.status !== "confirmed"}
+                              onClick={() => void initializePayment(booking)}
+                            >
+                              {payingBookingId === booking.bookingId ? "Connecting..." : "Pay now"}
+                            </button>
+                          </div>
+                        )}
                       </td>
                       <td className="py-4">{formatDate(booking.createdAt)}</td>
                     </tr>;
