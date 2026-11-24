@@ -57,6 +57,7 @@ export default function CustomerShipmentBookingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [payingBookingId, setPayingBookingId] = useState("");
+  const [cancellingBookingId, setCancellingBookingId] = useState("");
 
   const loadBookings = useCallback(async (currentUser: User) => {
     setLoading(true);
@@ -76,6 +77,32 @@ export default function CustomerShipmentBookingsPage() {
       setLoading(false);
     }
   }, []);
+
+  async function cancelBooking(booking: ShipmentBooking) {
+    if (!user || cancellingBookingId || booking.status !== "confirmed" || booking.paymentStatus === "paid") return;
+    const reason = window.prompt("Why are you cancelling this shipment booking?");
+    if (!reason?.trim()) return;
+    setCancellingBookingId(booking.bookingId);
+    setError("");
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch(
+        "/api/account/shipment-bookings/" + encodeURIComponent(booking.bookingId) + "/cancel",
+        {
+          method: "POST",
+          headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+          body: JSON.stringify({ reason }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error ?? "Unable to cancel shipment booking.");
+      await loadBookings(user);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to cancel shipment booking.");
+    } finally {
+      setCancellingBookingId("");
+    }
+  }
 
   async function initializePayment(booking: ShipmentBooking) {
     if (!user || payingBookingId || booking.paymentStatus === "paid" || booking.paymentReviewRequired) return;
@@ -190,15 +217,23 @@ export default function CustomerShipmentBookingsPage() {
                         <span className={"customer-status " + statusClass(booking.paymentReviewRequired ? "review_required" : paymentStatus)}>
                           {booking.paymentReviewRequired ? "review required" : paymentStatus.replaceAll("_", " ")}
                         </span>
-                        {paymentStatus !== "paid" && !booking.paymentReviewRequired && (
-                          <div className="mt-2">
+                        {paymentStatus !== "paid" && !booking.paymentReviewRequired && booking.status === "confirmed" && (
+                          <div className="mt-2 flex flex-wrap gap-2">
                             <button
                               type="button"
                               className="customer-secondary-action"
-                              disabled={payingBookingId !== "" || booking.status !== "confirmed"}
+                              disabled={payingBookingId !== "" || cancellingBookingId !== ""}
                               onClick={() => void initializePayment(booking)}
                             >
                               {payingBookingId === booking.bookingId ? "Connecting..." : "Pay now"}
+                            </button>
+                            <button
+                              type="button"
+                              className="customer-secondary-action"
+                              disabled={cancellingBookingId !== "" || payingBookingId !== ""}
+                              onClick={() => void cancelBooking(booking)}
+                            >
+                              {cancellingBookingId === booking.bookingId ? "Cancelling..." : "Cancel booking"}
                             </button>
                           </div>
                         )}
