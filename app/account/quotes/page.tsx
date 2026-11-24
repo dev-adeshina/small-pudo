@@ -261,6 +261,9 @@ export default function CustomerQuotesPage() {
                   <div className="cost-version-list">
                     {snapshot.origin !== undefined && <div className="cost-version-row"><strong>Origin</strong><span>{displayValue(snapshot.origin)}</span></div>}
                     {snapshot.destination !== undefined && <div className="cost-version-row"><strong>Destination</strong><span>{displayValue(snapshot.destination)}</span></div>}
+                    {snapshot.sender && typeof snapshot.sender === "object" && <div className="cost-version-row"><strong>Sender</strong><span>{displayValue((snapshot.sender as Record<string, unknown>).name)} · {displayValue((snapshot.sender as Record<string, unknown>).phone)}</span></div>}
+                    {snapshot.recipient && typeof snapshot.recipient === "object" && <div className="cost-version-row"><strong>Recipient</strong><span>{displayValue((snapshot.recipient as Record<string, unknown>).name)} · {displayValue((snapshot.recipient as Record<string, unknown>).phone)}</span></div>}
+                    {snapshot.originHandoverMode !== undefined && <div className="cost-version-row"><strong>Origin handover</strong><span>{displayValue(snapshot.originHandoverMode).replaceAll("_", " ")}</span></div>}
                     {components.map((component, index) => <div className="cost-version-row" key={String(component.key ?? index)}><strong>{displayValue(component.label ?? component.key)}</strong><span>{displayValue(component.value)} {displayValue(component.unit)}</span></div>)}
                   </div>
                   {pricing.total !== undefined && <p><strong>Total: {displayValue(pricing.total)} {displayValue(pricing.unit ?? pricing.currency)}</strong></p>}
