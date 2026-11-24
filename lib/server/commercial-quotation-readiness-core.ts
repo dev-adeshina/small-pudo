@@ -246,7 +246,7 @@ export function createCommercialQuotationReadinessStore({
     if (segments.length === 2 && segments[0] === "pudoNetworkConnections" && ID.test(segments[1]) &&
       expectedKind === "service_coverage" && serviceCode && originId && destinationId) {
       const connectionId = segments[1];
-      const [connectionSnapshot, originService, destinationService, originCandidate, destinationCandidate, originActivation, destinationActivation, originVerification, destinationVerification, versionSnapshot] = await Promise.all([
+      const [connectionSnapshot, originService, destinationService, originCandidate, destinationCandidate, originActivation, destinationActivation, originVerification, destinationVerification] = await Promise.all([
         read(reference),
         read("pudoLocationServiceCapabilities/" + originId + "__" + serviceCode),
         read("pudoLocationServiceCapabilities/" + destinationId + "__" + serviceCode),
@@ -944,7 +944,9 @@ export function createCommercialQuotationReadinessStore({
             { refs: capacityEvidenceReferences, kind: "capacity" },
           ];
           for (const category of categoryDefinitions) {
-            const loaded = await Promise.all(category.refs.map((reference) => loadApprovedOperationalEvidence(reference, transaction)));
+            const loaded = await Promise.all(category.refs.map((reference) => loadApprovedOperationalEvidence(
+              reference, transaction, category.kind, serviceCode, originPudoLocationId!, destinationPudoLocationId!,
+            )));
             if (loaded.some((item) => !item)) {
               throw new TypeError("Positive DEC-047 eligibility requires independently approved, current typed operational evidence for every evidence category.");
             }
@@ -1147,7 +1149,9 @@ export function createCommercialQuotationReadinessStore({
       ];
       const typedOperationalEvidence: Array<Record<string, unknown>> = [];
       for (const category of categoryDefinitions) {
-        const loaded = await Promise.all(category.refs.map((reference) => loadApprovedOperationalEvidence(reference)));
+        const loaded = await Promise.all(category.refs.map((reference) => loadApprovedOperationalEvidence(
+          reference, undefined, category.kind, serviceCode, endpoints[0], endpoints[1],
+        )));
         if (loaded.some((item) => !item)) {
           return { eligible: false as const, outcome: "pending_verification" as const, reason: "A required typed operational evidence record is missing, unapproved, expired, revoked or changed since review." };
         }
