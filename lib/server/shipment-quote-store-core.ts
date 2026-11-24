@@ -384,6 +384,7 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
           draftId,
           serviceCode: quoteSnapshot.serviceCode,
           status: "confirmed",
+          paymentStatus: "pending",
           confirmationSource: "accepted_customer_quotation",
           shipmentSnapshot: { ...quoteSnapshot },
           ...(handoverDeadlineAt ? { handoverDeadlineAt } : {}),
