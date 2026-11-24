@@ -69,6 +69,19 @@ service cloud.firestore {
       }
     }
 
+    // Network connection records, version history and events are server-managed.
+    match /pudoNetworkConnections/{connectionId} {
+      allow read, write: if false;
+
+      match /versions/{versionId} {
+        allow read, write: if false;
+      }
+
+      match /events/{eventId} {
+        allow read, write: if false;
+      }
+    }
+
     match /pudoLocations/{locationId} {
       allow read, write: if false;
 

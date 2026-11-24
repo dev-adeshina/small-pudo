@@ -26,6 +26,24 @@ type OperationalEvidenceRow = {
   reviewReason: string | null;
   isCurrentApproved: boolean;
 };
+type RouteEvidenceQueueItem = {
+  evidenceId: string;
+  originOperationalPointRef: string | null;
+  destinationOperationalPointRef: string | null;
+  distance: { value?: number; unit?: string } | null;
+  method: string | null;
+  source: string | null;
+  measuredOn: string | null;
+  supportingReference: string | null;
+  recordedBy: string | null;
+  recordedAt: string | null;
+  reviewStatus: string;
+  decision: string | null;
+  reviewedBy: string | null;
+  reviewedAt: string | null;
+  validUntil: string | null;
+  reason: string | null;
+};
 type RouteEvidenceReviewDetails = {
   evidenceId: string;
   originOperationalPointRef: string;
@@ -69,6 +87,9 @@ export default function CommercialQuotationReadinessPage() {
   const [routeEvidenceDetails, setRouteEvidenceDetails] = useState<RouteEvidenceReviewDetails | null>(null);
   const [routeEvidenceLoading, setRouteEvidenceLoading] = useState(false);
   const [routeEvidenceError, setRouteEvidenceError] = useState("");
+  const [routeEvidenceQueue, setRouteEvidenceQueue] = useState<RouteEvidenceQueueItem[]>([]);
+  const [routeEvidenceQueueLoading, setRouteEvidenceQueueLoading] = useState(false);
+  const [routeEvidenceQueueError, setRouteEvidenceQueueError] = useState("");
 
   const [serviceCode, setServiceCode] = useState<ServiceCode | "">("");
   const [termsServiceCode, setTermsServiceCode] = useState<ServiceCode | "">("");
@@ -197,6 +218,30 @@ export default function CommercialQuotationReadinessPage() {
     return () => { active = false; };
   }, [token, routeEvidenceId]);
 
+  const refreshRouteEvidenceQueue = useCallback(async () => {
+    if (!token) return;
+    setRouteEvidenceQueueLoading(true);
+    setRouteEvidenceQueueError("");
+    try {
+      const currentToken = await auth.currentUser?.getIdToken();
+      if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
+      const response = await fetch("/api/staff/commercial-quotation-readiness/route-evidence/queue", {
+        headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(data?.error || "Unable to load route evidence.");
+      setRouteEvidenceQueue(Array.isArray(data?.result?.items) ? data.result.items as RouteEvidenceQueueItem[] : []);
+    } catch (cause) {
+      setRouteEvidenceQueueError(cause instanceof Error ? cause.message : "Unable to load route evidence.");
+    } finally {
+      setRouteEvidenceQueueLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (token) void refreshRouteEvidenceQueue();
+  }, [refreshRouteEvidenceQueue]);
+
   const refreshOperationalEvidence = useCallback(async () => {
     if (!token) return;
     setOperationalEvidenceLoading(true);
@@ -248,6 +293,7 @@ export default function CommercialQuotationReadinessPage() {
         }
       }
       if (path.includes("/route-evidence/") && path.endsWith("/review")) {
+        await refreshRouteEvidenceQueue();
         const refreshed = await fetch(path, {
           headers: { Authorization: "Bearer " + currentToken },
           cache: "no-store",
@@ -398,7 +444,33 @@ export default function CommercialQuotationReadinessPage() {
           </div>
         </section>
 
-        <section className="cost-panel">
+        <section className="cost-panel" id="route-evidence-review">
+          <div className="cost-panel-heading flex flex-wrap items-center justify-between gap-3">
+            <div><span className="section-label">ROUTE EVIDENCE / REVIEW QUEUE</span><h2>Find route measurements awaiting independent review</h2></div>
+            <button type="button" className="cost-secondary-button" onClick={() => void refreshRouteEvidenceQueue()} disabled={routeEvidenceQueueLoading}>{routeEvidenceQueueLoading ? "Refreshing..." : "Refresh queue"}</button>
+          </div>
+          <p className="mb-4 text-sm text-gray-600">Reviewers with <code>commercial_route_distance.approve</code> can browse recorded measurements here. Selecting a row loads its immutable evidence into the review form below. Evidence is never edited or deleted.</p>
+          {routeEvidenceQueueError && <div className="cost-alert mb-4">{routeEvidenceQueueError}</div>}
+          {routeEvidenceQueueLoading && <p className="text-sm text-gray-600">Loading route evidence...</p>}
+          {!routeEvidenceQueueLoading && routeEvidenceQueue.length === 0 && !routeEvidenceQueueError && <p className="rounded-lg border p-4 text-sm text-gray-600">No route measurements are currently recorded. A staff member with route-evidence recording permission must record the measurement before it can be reviewed.</p>}
+          {routeEvidenceQueue.length > 0 && <div className="overflow-x-auto rounded-xl border">
+            <table className="w-full min-w-[980px] text-left text-sm">
+              <thead className="bg-gray-50"><tr>
+                <th className="px-3 py-3">Directed route</th><th className="px-3 py-3">Distance / method</th><th className="px-3 py-3">Source / measured</th><th className="px-3 py-3">Recorder</th><th className="px-3 py-3">Review status</th><th className="px-3 py-3">Action</th>
+              </tr></thead>
+              <tbody>{routeEvidenceQueue.map((item) => <tr key={item.evidenceId} className="border-t">
+                <td className="px-3 py-3"><div>{item.originOperationalPointRef || "—"} → {item.destinationOperationalPointRef || "—"}</div><div className="mt-1 text-xs text-gray-500">{item.evidenceId}</div></td>
+                <td className="px-3 py-3">{item.distance?.value ?? "—"} {item.distance?.unit ?? ""}<div className="text-xs text-gray-500">{item.method || "Method not supplied"}</div></td>
+                <td className="px-3 py-3">{item.source || "—"}<div className="text-xs text-gray-500">{item.measuredOn || "Date not supplied"}</div></td>
+                <td className="px-3 py-3">{item.recordedBy || "—"}<div className="text-xs text-gray-500">{item.recordedAt || "—"}</div></td>
+                <td className="px-3 py-3"><span className="font-medium">{item.reviewStatus}</span>{item.reviewedBy && <div className="text-xs text-gray-500">by {item.reviewedBy}</div>}</td>
+                <td className="px-3 py-3"><button type="button" className="cost-secondary-button" onClick={() => { setRouteEvidenceId(item.evidenceId); setRouteDecision(""); setRouteReason(""); setRouteValidUntil(""); document.getElementById("route-evidence-review-form")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>Open review</button></td>
+              </tr>)}</tbody>
+            </table>
+          </div>}
+        </section>
+
+        <section className="cost-panel" id="route-evidence-review-form">
           <div className="cost-panel-heading"><div><span className="section-label">01 / ROUTE EVIDENCE</span><h2>Review a recorded route measurement</h2></div></div>
           <form className="space-y-4" onSubmit={(event) => {
             event.preventDefault();

@@ -177,7 +177,7 @@ function validateCapacity(value: unknown, capabilities: unknown): CapacityLimit[
 
 const PUDO_DIRECTORY_PERMISSION = "pudo_location.view_directory";
 
-function resolveCurrentAvailability(availability: unknown, now = new Date()):
+export function resolveCurrentAvailability(availability: unknown, now = new Date()):
   "not_configured" | "temporarily_unavailable" | "open_now" | "closed_now" {
   if (!isRecord(availability)) return "not_configured";
   if (availability.status === "unavailable") return "temporarily_unavailable";
