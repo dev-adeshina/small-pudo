@@ -648,6 +648,9 @@ export function createCommercialQuotationReadinessStore({
         const destinationId = String(connection.destinationLocationId ?? "");
         if (!originId || !destinationId || connection.reviewedBy === connection.proposedBy ||
           typeof connection.reviewedBy !== "string" || !connection.reviewedBy) continue;
+        const connectionVersionId = "v" + String(Number(connection.version ?? 1)).padStart(6, "0");
+        const connectionVersion = await db.doc("pudoNetworkConnections/" + connectionDoc.id + "/versions/" + connectionVersionId).get();
+        if (!connectionVersion.exists || canonicalJson(connectionVersion.data()) !== canonicalJson(connection)) continue;
         const routeDocs = await routeEvidence
           .where("originOperationalPointRef", "==", originId)
           .where("destinationOperationalPointRef", "==", destinationId)
