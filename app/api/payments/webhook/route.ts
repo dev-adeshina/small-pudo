@@ -104,6 +104,106 @@ export async function POST(request: Request) {
   const reference = payment.reference;
 
   try {
+    // Shipment bookings use their own payment lifecycle and remain separate
+    // from storefront orders. Payment confirmation never creates parcel custody.
+    const shipmentBookings = await adminDb
+      .collection("shipmentBookings")
+      .where("paymentReference", "==", reference)
+      .limit(1)
+      .get();
+
+    if (!shipmentBookings.empty) {
+      const bookingRef = shipmentBookings.docs[0].ref;
+      const eventKey = createHash("sha256")
+        .update(`charge.success:shipment:${reference}:${String(payment.id)}`)
+        .digest("hex");
+      const eventRef = adminDb.collection("paymentWebhookEvents").doc(eventKey);
+
+      await adminDb.runTransaction(async (transaction) => {
+        const [eventSnapshot, bookingSnapshot] = await Promise.all([
+          transaction.get(eventRef),
+          transaction.get(bookingRef),
+        ]);
+        if (eventSnapshot.exists) return;
+        if (!bookingSnapshot.exists) throw new Error("SHIPMENT_BOOKING_NOT_FOUND");
+
+        const booking = bookingSnapshot.data()!;
+        if (booking.paymentReference !== reference) throw new Error("SHIPMENT_REFERENCE_MISMATCH");
+
+        const total = booking.shipmentSnapshot?.pricing?.total;
+        const expectedAmount = typeof total === "number" && Number.isFinite(total) ? total * 100 : NaN;
+        const amountMatches = Number.isSafeInteger(expectedAmount) && expectedAmount > 0 &&
+          payment.amount === expectedAmount;
+        const currencyMatches = booking.shipmentSnapshot?.pricing?.currency === "NGN" &&
+          payment.currency === "NGN";
+
+        if (!amountMatches || !currencyMatches) {
+          transaction.update(bookingRef, {
+            paymentReviewRequired: true,
+            paymentReviewReason: "Successful Paystack shipment payment does not match the accepted quotation amount or currency.",
+            updatedAt: FieldValue.serverTimestamp(),
+          });
+          transaction.create(eventRef, {
+            event: "charge.success",
+            paymentType: "shipment_booking",
+            reference,
+            transactionId: payment.id,
+            outcome: "review_required",
+            receivedAt: FieldValue.serverTimestamp(),
+          });
+          return;
+        }
+
+        if (booking.paymentStatus === "paid") {
+          transaction.create(eventRef, {
+            event: "charge.success",
+            paymentType: "shipment_booking",
+            reference,
+            transactionId: payment.id,
+            outcome: "already_paid",
+            receivedAt: FieldValue.serverTimestamp(),
+          });
+          return;
+        }
+
+        if (booking.status !== "confirmed" || booking.paymentStatus !== "pending" ||
+            booking.paymentReviewRequired === true) {
+          transaction.update(bookingRef, {
+            paymentReviewRequired: true,
+            paymentReviewReason: "Successful payment received while the shipment booking was not in a payable state.",
+            paystackTransactionId: payment.id,
+            updatedAt: FieldValue.serverTimestamp(),
+          });
+          transaction.create(eventRef, {
+            event: "charge.success",
+            paymentType: "shipment_booking",
+            reference,
+            transactionId: payment.id,
+            outcome: "status_conflict",
+            receivedAt: FieldValue.serverTimestamp(),
+          });
+          return;
+        }
+
+        transaction.update(bookingRef, {
+          paymentStatus: "paid",
+          paystackTransactionId: payment.id,
+          paidAt: FieldValue.serverTimestamp(),
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+        transaction.create(eventRef, {
+          event: "charge.success",
+          paymentType: "shipment_booking",
+          reference,
+          transactionId: payment.id,
+          outcome: "paid",
+          receivedAt: FieldValue.serverTimestamp(),
+        });
+      });
+
+      return NextResponse.json({ received: true });
+    }
+
     // Find the order associated with this payment.
     const orders = await adminDb
       .collection("orders")
