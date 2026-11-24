@@ -97,6 +97,9 @@ export function createShipmentBookingDraftStore({
         return {
           id: document.id,
           serviceCode: data.serviceCode === "express" || data.serviceCode === "scheduled" ? data.serviceCode : "standard",
+          sender: data.sender,
+          recipient: data.recipient,
+          originHandoverMode: data.originHandoverMode === "pudo_presentation" ? "pudo_presentation" : "door_pickup",
           origin: data.origin,
           destination: data.destination,
           ...(typeof data.originPudoLocationId === "string" ? { originPudoLocationId: data.originPudoLocationId } : {}),
@@ -119,6 +122,9 @@ export function createShipmentBookingDraftStore({
         .collection("shipmentBookingDrafts").doc();
       const draftFields = {
         serviceCode: input.serviceCode ?? "standard",
+        sender: input.sender,
+        recipient: input.recipient,
+        originHandoverMode: input.originHandoverMode,
         origin: input.origin,
         destination: input.destination,
         ...(input.originPudoLocationId ? { originPudoLocationId: input.originPudoLocationId } : {}),
@@ -153,6 +159,9 @@ export function createShipmentBookingDraftStore({
           () => {
             const draftFields = {
               serviceCode: input.serviceCode ?? "standard",
+              sender: input.sender,
+              recipient: input.recipient,
+              originHandoverMode: input.originHandoverMode,
               origin: input.origin,
               destination: input.destination,
               ...(input.originPudoLocationId ? { originPudoLocationId: input.originPudoLocationId } : {}),
