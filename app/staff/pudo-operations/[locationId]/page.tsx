@@ -14,7 +14,7 @@ type Availability = {
   exceptions: Array<{ date: string; status: "closed" | "hours"; intervals: Interval[] }>;
 };
 type Capacity = { capabilityId: CapabilityId; maximum: number; unit: string; basis: "at_a_time" | "per_hour" | "per_day" };
-type History = { versionId: string; version: number; reason: string; configuredBy: string; configuredAt?: { _seconds?: number } | string; availability?: Availability; capacity?: Capacity[] };
+type History = { versionId: string; version: number; reason: string; configuredBy: string; configuredAt?: { _seconds?: number } | string; availability?: Availability; capacity?: Capacity[]; review?: { status: string; reviewedBy?: string | null; validUntil?: unknown; reason?: string | null } };
 type Data = {
   location: { locationId: string; name: string; address: string; partnerBusinessName: string; operationalStatus: string };
   capabilities: CapabilityId[]; availability: Availability | null; capacity: Capacity[]; capacityConfigurationStale: boolean; version: number;
@@ -67,6 +67,10 @@ export default function PudoOperationsDetailPage() {
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [reviewVersionId, setReviewVersionId] = useState("");
+  const [reviewDecision, setReviewDecision] = useState<"approve" | "reject">("approve");
+  const [reviewReason, setReviewReason] = useState("");
+  const [reviewValidUntil, setReviewValidUntil] = useState("");
 
   const load = useCallback(async (currentUser: User) => {
     const token = await currentUser.getIdToken();
@@ -143,6 +147,29 @@ export default function PudoOperationsDetailPage() {
       setMessage(`Availability and capacity configuration saved as version ${result.version}.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to save PUDO operations.");
+    } finally { setSaving(false); }
+  }
+
+  async function submitReview() {
+    if (!user || !reviewVersionId) return;
+    setSaving(true); setError(""); setMessage("");
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch(`/api/staff/pudo-operations/${encodeURIComponent(locationId)}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          versionId: reviewVersionId, decision: reviewDecision, reason: reviewReason,
+          ...(reviewDecision === "approve" ? { validUntil: new Date(reviewValidUntil).toISOString() } : {}),
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unable to review PUDO operations configuration.");
+      await load(user);
+      setReviewVersionId(""); setReviewReason(""); setReviewValidUntil("");
+      setMessage(`PUDO operations configuration ${result.result.status}.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to review PUDO operations configuration.");
     } finally { setSaving(false); }
   }
 
@@ -223,9 +250,17 @@ export default function PudoOperationsDetailPage() {
             <section className="cost-panel">
               <h2>Configuration history</h2>
               {data.history.length === 0 ? <p>No configuration versions recorded yet.</p> : <div className="cost-table-wrap"><table className="cost-table">
-                <thead><tr><th>Version</th><th>Availability</th><th>Capacity limits</th><th>Reason</th><th>Configured by</th><th>Configured at</th></tr></thead>
-                <tbody>{data.history.map((item) => <tr key={item.versionId}><td>v{item.version}</td><td>{item.availability?.status ?? "—"}</td><td>{item.capacity?.length ?? 0} activities</td><td>{item.reason}</td><td>{item.configuredBy}</td><td>{dateLabel(item.configuredAt)}</td></tr>)}</tbody>
+                <thead><tr><th>Version</th><th>Availability</th><th>Capacity limits</th><th>Reason</th><th>Configured by</th><th>Configured at</th><th>Independent review</th><th>Action</th></tr></thead>
+                <tbody>{data.history.map((item) => <tr key={item.versionId}><td>v{item.version}</td><td>{item.availability?.status ?? "—"}</td><td>{item.capacity?.length ?? 0} activities</td><td>{item.reason}</td><td>{item.configuredBy}</td><td>{dateLabel(item.configuredAt)}</td><td>{item.review?.status ?? "pending_review"}<small>{item.review?.reviewedBy ?? "Not reviewed"}</small></td><td>{item.version === data.version && item.configuredBy !== user.uid && item.review?.status !== "approved" && <button type="button" className="cost-secondary-button" onClick={() => { setReviewVersionId(item.versionId); setReviewDecision("approve"); }}>Review current version</button>}</td></tr>)}</tbody>
               </table></div>}
+              {reviewVersionId && <form className="mt-5 space-y-3 border-t pt-5" onSubmit={(event) => { event.preventDefault(); void submitReview(); }}>
+                <h3 className="font-semibold">Independent review of {reviewVersionId}</h3>
+                <label className="block text-sm font-medium">Decision<select className="mt-2 w-full rounded-lg border p-3" value={reviewDecision} onChange={(event) => setReviewDecision(event.target.value as "approve" | "reject")}><option value="approve">Approve</option><option value="reject">Reject</option></select></label>
+                {reviewDecision === "approve" && <label className="block text-sm font-medium">Approval validity end<input className="mt-2 w-full rounded-lg border p-3" type="datetime-local" value={reviewValidUntil} onChange={(event) => setReviewValidUntil(event.target.value)} required /></label>}
+                <label className="block text-sm font-medium">Review reason<textarea className="mt-2 w-full rounded-lg border p-3" value={reviewReason} onChange={(event) => setReviewReason(event.target.value)} required maxLength={1000} /></label>
+                <div className="flex gap-2"><button className="cost-primary-button" disabled={saving || !reviewReason.trim() || (reviewDecision === "approve" && !reviewValidUntil)}>{saving ? "Recording…" : "Record independent review"}</button><button type="button" className="cost-secondary-button" onClick={() => setReviewVersionId("")}>Cancel</button></div>
+                <p className="text-xs text-gray-600">Requires <code>commercial_operational_evidence.review</code>. The reviewer must be different from the configuration author. Approval applies only to this exact immutable version and expires at the stated time.</p>
+              </form>}
             </section>
           </>
         )}
