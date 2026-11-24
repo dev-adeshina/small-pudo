@@ -16,11 +16,15 @@ export async function GET(request: Request) {
   const auth = await authorizeStaffWorkspace(request);
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.status });
   try {
-    const [connections, locations] = await Promise.all([
+    const [connections, locations, operationalConnections] = await Promise.all([
       pudoNetworkConnectionStore.list(auth.uid),
       pudoNetworkConnectionStore.listEligibleLocations(auth.uid),
+      pudoNetworkConnectionStore.listOperationalConnections(auth.uid),
     ]);
-    return NextResponse.json({ connections, locations }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json(
+      { connections, locations, operationalConnections },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   } catch (error) { return failure(error); }
 }
 
