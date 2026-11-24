@@ -434,7 +434,6 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
       assertBookingPartyUid(bookingPartyUid);
       const snapshot = await db.collection("shipmentBookings")
         .where("bookingPartyUid", "==", bookingPartyUid)
-        .limit(100)
         .get();
       return snapshot.docs.map((document) => ({
         bookingId: document.id,
@@ -443,7 +442,7 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         const leftDate = dateValue(left.createdAt)?.getTime() ?? 0;
         const rightDate = dateValue(right.createdAt)?.getTime() ?? 0;
         return rightDate - leftDate;
-      });
+      }).slice(0, 100);
     },
 
     async reviseIssuedQuote(input: {
