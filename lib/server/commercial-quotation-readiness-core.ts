@@ -170,7 +170,7 @@ export function createCommercialQuotationReadinessStore({
     }
 
     if (segments.length === 4 && segments[0] === "pudoLocationOperations" &&
-      segments[2] === "versions" && ID.test(segments[1]) && /^v\\d{6}$/.test(segments[3])) {
+      segments[2] === "versions" && ID.test(segments[1]) && /^v\d{6}$/.test(segments[3])) {
       if (!expectedKind || !serviceCode) return null;
       const locationId = segments[1];
       const versionId = segments[3];
@@ -253,7 +253,6 @@ export function createCommercialQuotationReadinessStore({
         read("pudoLocations/" + originId), read("pudoLocations/" + destinationId),
         read("pudoLocationActivations/" + originId), read("pudoLocationActivations/" + destinationId),
         read("pudoLocationVerifications/" + originId), read("pudoLocationVerifications/" + destinationId),
-        read(reference + "/versions/v" + String(0).padStart(6, "0")),
       ]);
       if (!connectionSnapshot.exists) return null;
       const connection = connectionSnapshot.data()!;
