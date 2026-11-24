@@ -76,6 +76,11 @@ export async function POST(request: Request) {
     if (!draftSnapshot.exists || draftSnapshot.data()?.status !== "draft") return NextResponse.json({ error: "The shipment draft was not found or is no longer editable." }, { status: 404 });
     const draft = draftSnapshot.data()!;
     if (draft.bookingPartyUid !== customer.uid) return NextResponse.json({ error: "The shipment draft is not owned by the authenticated booking party." }, { status: 404 });
+    if (!draft.sender || typeof draft.sender !== "object" || !draft.recipient || typeof draft.recipient !== "object" ||
+        !["door_pickup", "pudo_presentation"].includes(String(draft.originHandoverMode)) ||
+        (draft.originHandoverMode === "pudo_presentation" && typeof draft.originPudoLocationId !== "string")) {
+      return NextResponse.json({ error: "Complete sender and recipient contact details and choose door pickup or an origin PUDO before requesting a quotation." }, { status: 409 });
+    }
     const serviceCode = input.serviceCode as "standard" | "express" | "scheduled";
     if (draft.serviceCode !== undefined && draft.serviceCode !== serviceCode) {
       return NextResponse.json({ error: "The quotation service must match the service selected for this shipment draft. Update the draft first." }, { status: 409 });
@@ -158,6 +163,9 @@ export async function POST(request: Request) {
       schemaVersion: 1,
       serviceCode,
       draftId: input.draftId,
+      sender: draft.sender,
+      recipient: draft.recipient,
+      originHandoverMode: draft.originHandoverMode,
       origin: draft.origin,
       destination: draft.destination,
       originPudoLocationId: draft.originPudoLocationId ?? null,
@@ -216,6 +224,9 @@ export async function POST(request: Request) {
       draft: {
         draftId: input.draftId,
         bookingPartyUid: customer.uid,
+        sender: draft.sender,
+        recipient: draft.recipient,
+        originHandoverMode: draft.originHandoverMode,
         origin: draft.origin,
         destination: draft.destination,
         originPudoLocationId: draft.originPudoLocationId ?? null,
