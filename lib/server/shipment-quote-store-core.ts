@@ -310,8 +310,8 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
       acceptedVersionId: string;
       bookingPartyUid: string;
     }): Promise<
-      | { outcome: "created"; bookingId: string }
-      | { outcome: "already_created"; bookingId: string }
+      | { outcome: "created"; bookingId: string; bookingReference: string }
+      | { outcome: "already_created"; bookingId: string; bookingReference: string }
       | { outcome: "not_found" | "not_authorized" | "not_accepted" | "stale_version" | "draft_unavailable" }
     > {
       const { quoteId, acceptedVersionId, bookingPartyUid } = input;
@@ -331,7 +331,13 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         if (lineage.bookingPartyUid !== bookingPartyUid) return { outcome: "not_authorized" } as const;
 
         if (typeof lineage.bookingId === "string" && lineage.bookingId.length > 0) {
-          return { outcome: "already_created", bookingId: lineage.bookingId } as const;
+          const existingBooking = await transaction.get(db.collection("shipmentBookings").doc(lineage.bookingId));
+          const bookingReference = existingBooking.data()?.bookingReference;
+          return {
+            outcome: "already_created",
+            bookingId: lineage.bookingId,
+            bookingReference: typeof bookingReference === "string" ? bookingReference : lineage.bookingId,
+          } as const;
         }
         if (lineage.status !== "accepted" || lineage.acceptedVersionId !== acceptedVersionId) {
           return { outcome: "not_accepted" } as const;
@@ -366,9 +372,12 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
 
         const timestamp = serverTimestamp();
         const handoverDeadlineAt = dateValue(lineage.handoverDeadlineAt);
+        const bookingDate = now().toISOString().slice(0, 10).replaceAll("-", "");
+        const bookingReference = `VLY-${bookingDate}-${bookingRef.id.slice(0, 12).toUpperCase()}`;
         transaction.create(bookingRef, {
           schemaVersion: 1,
           bookingPartyUid,
+          bookingReference,
           quoteId,
           acceptedQuoteVersionId: acceptedVersionId,
           draftId,
@@ -400,7 +409,23 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
           actorUid: bookingPartyUid,
           timestamp,
         });
-        return { outcome: "created", bookingId: bookingRef.id } as const;
+        return { outcome: "created", bookingId: bookingRef.id, bookingReference } as const;
+      });
+    },
+
+    async listCustomerBookings(bookingPartyUid: string): Promise<Array<Record<string, unknown>>> {
+      assertBookingPartyUid(bookingPartyUid);
+      const snapshot = await db.collection("shipmentBookings")
+        .where("bookingPartyUid", "==", bookingPartyUid)
+        .limit(100)
+        .get();
+      return snapshot.docs.map((document) => ({
+        bookingId: document.id,
+        ...document.data(),
+      })).sort((left, right) => {
+        const leftDate = dateValue(left.createdAt)?.getTime() ?? 0;
+        const rightDate = dateValue(right.createdAt)?.getTime() ?? 0;
+        return rightDate - leftDate;
       });
     },
 
