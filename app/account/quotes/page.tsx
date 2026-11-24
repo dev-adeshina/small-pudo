@@ -34,6 +34,7 @@ type ShipmentQuote = {
   currentVersionId?: string;
   acceptedVersionId?: string;
   bookingId?: string;
+  bookingReference?: string;
   validUntil?: unknown;
   handoverDeadlineAt?: unknown;
   versions?: QuoteVersion[];
