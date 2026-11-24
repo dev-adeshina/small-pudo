@@ -11,9 +11,9 @@ export interface ShipmentBookingContact {
 
 export interface ShipmentBookingDraftInput {
   serviceCode?: "standard" | "express" | "scheduled";
-  sender: ShipmentBookingContact;
-  recipient: ShipmentBookingContact;
-  originHandoverMode: "door_pickup" | "pudo_presentation";
+  sender?: ShipmentBookingContact;
+  recipient?: ShipmentBookingContact;
+  originHandoverMode?: "door_pickup" | "pudo_presentation";
   origin: string;
   destination: string;
   originPudoLocationId?: string;
@@ -55,7 +55,7 @@ export function validateShipmentBookingDraft(
   const parcelDescription = typeof candidate.parcelDescription === "string"
     ? candidate.parcelDescription.trim() : "";
   const originHandoverMode = candidate.originHandoverMode === undefined
-    ? "door_pickup"
+    ? (typeof candidate.originPudoLocationId === "string" && candidate.originPudoLocationId ? "pudo_presentation" : "door_pickup")
     : candidate.originHandoverMode === "door_pickup" || candidate.originHandoverMode === "pudo_presentation"
       ? candidate.originHandoverMode : null;
   if (originHandoverMode === null) {
@@ -73,9 +73,14 @@ export function validateShipmentBookingDraft(
         (email && (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)))) return null;
     return { name, phone, ...(email ? { email } : {}) };
   }
-  const sender = parseContact(candidate.sender);
-  const recipient = parseContact(candidate.recipient);
-  if (!sender || !recipient) {
+  const hasSender = candidate.sender !== undefined;
+  const hasRecipient = candidate.recipient !== undefined;
+  if (hasSender !== hasRecipient) {
+    return { success: false, error: "Enter both sender and recipient details together." };
+  }
+  const sender = hasSender ? parseContact(candidate.sender) : undefined;
+  const recipient = hasRecipient ? parseContact(candidate.recipient) : undefined;
+  if ((hasSender && !sender) || (hasRecipient && !recipient)) {
     return { success: false, error: "Enter a valid sender and recipient name and phone number. Email addresses are optional." };
   }
   const rawOriginPudoLocationId = candidate.originPudoLocationId;
@@ -168,8 +173,8 @@ export function validateShipmentBookingDraft(
     success: true,
     data: {
       serviceCode,
-      sender,
-      recipient,
+      ...(sender ? { sender } : {}),
+      ...(recipient ? { recipient } : {}),
       originHandoverMode,
       origin,
       destination,
