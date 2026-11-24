@@ -99,7 +99,7 @@ export function createShipmentBookingDraftStore({
           serviceCode: data.serviceCode === "express" || data.serviceCode === "scheduled" ? data.serviceCode : "standard",
           sender: data.sender,
           recipient: data.recipient,
-          originHandoverMode: data.originHandoverMode === "pudo_presentation" ? "pudo_presentation" : "door_pickup",
+          originHandoverMode: data.originHandoverMode === "pudo_presentation" || (!data.originHandoverMode && typeof data.originPudoLocationId === "string") ? "pudo_presentation" : "door_pickup",
           origin: data.origin,
           destination: data.destination,
           ...(typeof data.originPudoLocationId === "string" ? { originPudoLocationId: data.originPudoLocationId } : {}),
