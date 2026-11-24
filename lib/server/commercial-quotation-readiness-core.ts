@@ -222,8 +222,6 @@ export function createCommercialQuotationReadinessStore({
               details: {
                 capacity: version.capacity ?? [],
                 capacityBasis: "approved PUDO capability limits",
-                supportedLoad: (version.capacity ?? []).reduce((total: number, item: { maximum?: number }) => total + Number(item.maximum ?? 0), 0),
-                capacityUnit: (version.capacity ?? []).map((item: { unit?: string }) => item.unit).filter(Boolean).join(", "),
               },
               recordedBy: version.configuredBy, validUntil: review.validUntil,
             }
@@ -634,8 +632,7 @@ export function createCommercialQuotationReadinessStore({
               ...base, kind: "capacity",
               scope: { locationId },
               details: { capacity, capacityBasis: "approved PUDO capability limits",
-                supportedLoad: capacity.reduce((total: number, item: { maximum?: number }) => total + Number(item.maximum ?? 0), 0),
-                capacityUnit: [...new Set(capacity.map((item: { unit?: string }) => item.unit).filter(Boolean))].join(", ") },
+ },
             };
             if ((!filters?.kind || filters.kind === capacityRow.kind) &&
               (!filters?.serviceCode || filters.serviceCode === service.serviceCode) &&
