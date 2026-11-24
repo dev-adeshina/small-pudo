@@ -13,6 +13,7 @@ interface QuoteLineageData {
   currentVersionId?: unknown;
   acceptedVersionId?: unknown;
   bookingId?: unknown;
+  bookingReference?: unknown;
   handoverDeadlineAt?: unknown;
   status?: unknown;
   validUntil?: unknown;
@@ -393,6 +394,7 @@ export function createShipmentQuoteStore({ db, serverTimestamp, now = () => new 
         transaction.update(quoteRef, {
           status: "booked",
           bookingId: bookingRef.id,
+          bookingReference,
           bookingCreatedAt: timestamp,
           updatedAt: timestamp,
         });
