@@ -1,5 +1,8 @@
 interface ShipmentBookingDraftInput {
   serviceCode?: "standard" | "express" | "scheduled";
+  sender: { name: string; phone: string; email?: string };
+  recipient: { name: string; phone: string; email?: string };
+  originHandoverMode: "door_pickup" | "pudo_presentation";
   origin: string;
   destination: string;
   originPudoLocationId?: string;
