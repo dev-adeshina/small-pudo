@@ -530,7 +530,8 @@ export function createCommercialQuotationReadinessStore({
           reason: review?.reason ?? null,
         };
       }));
-      return { items: items.filter((item): item is NonNullable<typeof item> => item !== null)\n        .sort((a, b) => (b.recordedAt ? Date.parse(b.recordedAt) : 0) - (a.recordedAt ? Date.parse(a.recordedAt) : 0)) };
+      return { items: items.filter((item): item is NonNullable<typeof item> => item !== null)
+        .sort((a, b) => (b.recordedAt ? Date.parse(b.recordedAt) : 0) - (a.recordedAt ? Date.parse(a.recordedAt) : 0)) };
     },
 
     async getRouteEvidenceForReview(actorUid: string, evidenceId: string) {
