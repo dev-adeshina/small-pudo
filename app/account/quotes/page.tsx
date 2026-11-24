@@ -22,6 +22,7 @@ type QuoteEvent = {
   action?: string;
   versionId?: string;
   bookingId?: string;
+  bookingReference?: string;
   reason?: string;
   timestamp?: unknown;
   handoverDeadlineAt?: unknown;
@@ -265,7 +266,7 @@ export default function CustomerQuotesPage() {
                   {pricing.total !== undefined && <p><strong>Total: {displayValue(pricing.total)} {displayValue(pricing.unit ?? pricing.currency)}</strong></p>}
                   {rounding.mode !== undefined && <p className="text-sm text-gray-600">Total rounding: {displayValue(rounding.mode)} · {displayValue(rounding.decimalPlaces)} decimal places.</p>}
                   {status === "accepted" && <p><CheckCircle2 size={16} /> Accepted version: {quote.acceptedVersionId ?? "—"} · Handover deadline: {formatDate(quote.handoverDeadlineAt)}</p>}
-                  {quote.bookingId && <p><CheckCircle2 size={16} /> Booking confirmed · Booking reference: {quote.bookingId}</p>}
+                  {quote.bookingId && <p><CheckCircle2 size={16} /> Booking confirmed · Booking reference: {quote.bookingReference ?? quote.bookingId}</p>}
                   {(quote.versions?.length ?? 0) > 1 && <div className="cost-field cost-field-wide">
                     <strong>Quotation version history</strong>
                     <div className="cost-version-list">
