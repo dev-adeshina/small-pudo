@@ -579,7 +579,7 @@ export default function CommercialQuotationReadinessPage() {
               <label className="block text-sm font-medium">Approved capacity evidence (select evidence for both endpoints)<select multiple size={5} className="mt-2 w-full rounded-lg border p-3" value={selectedCapacityIds} onChange={(event) => setSelectedCapacityIds(Array.from(event.target.selectedOptions, (option) => option.value))}>
                 {operationalEvidenceRows.filter((row) => row.kind === "capacity" && row.serviceCode === serviceCode && row.isCurrentApproved &&
                   [originPudoLocationId, destinationPudoLocationId].includes(String(row.scope.locationId)))
-                  .map((row) => <option key={row.evidenceId} value={row.evidenceId}>{row.evidenceId} · {String(row.scope.locationId)} · {row.source}</option>)}
+                  .map((row) => <option key={row.reference + ":" + row.kind} value={row.reference}>{row.reference} · {String(row.scope.locationId)} · {row.source}</option>)}
               </select></label>
               <label className="block text-sm font-medium">Origin required actions<textarea className="mt-2 w-full rounded-lg border p-3" value={originRequiredActions} onChange={(event) => setOriginRequiredActions(event.target.value)} rows={3} /></label>
               <label className="block text-sm font-medium">Destination required actions<textarea className="mt-2 w-full rounded-lg border p-3" value={destinationRequiredActions} onChange={(event) => setDestinationRequiredActions(event.target.value)} rows={3} /></label>
