@@ -612,9 +612,9 @@ export function createCommercialQuotationReadinessStore({
             supportingReference: reference, recordedBy: version.configuredBy,
             recordedAt: dateMillis(version.configuredAt) === null ? null : new Date(dateMillis(version.configuredAt)!).toISOString(),
             validFrom: null, validUntil: reviewExpiry === null ? null : new Date(reviewExpiry).toISOString(),
-            reviewStatus: review.status, reviewedBy: review.reviewedBy,
+            reviewStatus: review?.status ?? null, reviewedBy: review?.reviewedBy ?? null,
             reviewValidUntil: reviewExpiry === null ? null : new Date(reviewExpiry).toISOString(),
-            reviewReason: review.reason ?? null, isCurrentApproved: true,
+            reviewReason: review?.reason ?? null, isCurrentApproved: true,
           };
           if (version.availability && version.availability.status === "available") {
             const availabilityRow = {
