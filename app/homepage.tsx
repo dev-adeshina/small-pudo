@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useState, type FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
   ArrowRight, ArrowUpRight, Package, MapPin, Truck, ShoppingBag,
-  ClipboardList, Search, ShieldCheck, Clock3, Globe2, Menu, X,
-  CheckCircle2, ChevronRight, Sparkles, Box, Plane, Warehouse
+  ClipboardList, Search, ShieldCheck, Globe2, Menu, X,
+  CheckCircle2, Sparkles, Box
 } from 'lucide-react';
 import './homepage.css';
 
