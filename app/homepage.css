@@ -103,3 +103,7 @@
  .vl-track-search input{font-size:11px}
  .vl-track-search button{padding:0 10px;font-size:10px;gap:5px}
 }
+
+
+.vl-quote-cta{background:#fff;color:#17282d;border:1px solid #cbd5d0;text-decoration:none}
+.vl-quote-cta:hover{background:#f1f5f2;border-color:#17282d}
