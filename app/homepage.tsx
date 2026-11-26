@@ -8,6 +8,7 @@ import {
   ClipboardList, Search, ShieldCheck, Globe2, Menu, X,
   CheckCircle2, Sparkles, Box
 } from 'lucide-react';
+import NigerianLocationField from './components/nigerian-location-field';
 import './homepage.css';
 
 type Journey = 'send' | 'pickup' | 'quote' | 'track' | null;
@@ -40,6 +41,14 @@ export default function HomePage() {
 
   function submitDemo(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const unselected = Array.from(event.currentTarget.querySelectorAll<HTMLInputElement>('[data-location-input]'))
+      .find((input) => input.dataset.locationValid !== 'true');
+    if (unselected) {
+      unselected.setCustomValidity('Choose a city from the suggestions so its state can be confirmed.');
+      unselected.reportValidity();
+      unselected.focus();
+      return;
+    }
     setResult(true);
   }
 
@@ -173,7 +182,7 @@ export default function HomePage() {
             {journey === 'track' ? <label>Tracking reference<input required value={trackingRef} onChange={(e) => setTrackingRef(e.target.value)} placeholder="e.g. VL-123456" /></label> : <>
               <div className="vl-form-row"><label>{journey === 'pickup' ? 'Your name' : 'Full name'}<input required minLength={2} placeholder="Enter your name" /></label><label>Phone number<input required type="tel" minLength={7} placeholder="+234 ..." /></label></div>
               <label>Email address<input required type="email" placeholder="you@example.com" /></label>
-              {journey !== 'pickup' && <div className="vl-form-row"><label>From<input required placeholder="Pickup city or area" /></label><label>To<input required placeholder="Destination city or area" /></label></div>}
+              {journey !== 'pickup' && <div className="vl-form-row vl-location-row"><NigerianLocationField label="From" placeholder="Start typing a Nigerian city" /><NigerianLocationField label="To" placeholder="Start typing a Nigerian city" /></div>}
               {journey === 'pickup' && <><label>Pickup location<input required placeholder="Enter pickup address or area" /></label><label>Preferred collection date<input required type="date" min={new Date().toISOString().split('T')[0]} /></label></>}
               {journey === 'send' && <div className="vl-form-row"><label>Item type<select required defaultValue=""><option value="" disabled>Select item</option><option>Document</option><option>Parcel</option><option>Box or package</option><option>Other</option></select></label><label>Approx. weight<select defaultValue=""><option value="" disabled>Select weight</option><option>Under 1 kg</option><option>1–5 kg</option><option>5–10 kg</option><option>10–20 kg</option><option>Above 20 kg</option></select></label></div>}
               {journey === 'quote' && <div className="vl-form-row"><label>Item type<select required defaultValue=""><option value="" disabled>Select item</option><option>Document</option><option>Parcel</option><option>Box or package</option></select></label><label>Approx. weight<select defaultValue=""><option value="" disabled>Select weight</option><option>Under 1 kg</option><option>1–5 kg</option><option>5–10 kg</option><option>10–20 kg</option><option>Above 20 kg</option></select></label></div>}
