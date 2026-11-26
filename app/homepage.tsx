@@ -78,6 +78,7 @@ export default function HomePage() {
           <p>Send, receive, shop and keep things moving. Start with what you need today.</p>
           <div className="vl-hero-actions">
             <button className="vl-button vl-button-dark" onClick={() => openJourney('send')}>Send an item <ArrowUpRight size={18} /></button>
+            <button className="vl-button vl-quote-cta" onClick={() => openJourney('quote')}>Get a quote <ArrowUpRight size={18} /></button>
             <Link className="vl-button vl-store-cta" href="/products">Explore the store <ArrowRight size={17} /></Link>
           </div>
           <form className="vl-track-search" onSubmit={(event) => { event.preventDefault(); openJourney('track'); }}><Search size={19} /><input aria-label="Tracking reference" value={trackingRef} onChange={(event) => setTrackingRef(event.target.value)} placeholder="Enter your tracking number" /><button type="submit">Track item <ArrowRight size={16} /></button></form><div className="vl-hero-trust"><ShieldCheck size={17} /><span>A clearer, more convenient way to move items.</span></div>
