@@ -107,3 +107,52 @@
 
 .vl-quote-cta{background:#fff;color:#17282d;border:1px solid #cbd5d0;text-decoration:none}
 .vl-quote-cta:hover{background:#f1f5f2;border-color:#17282d}
+
+
+/* Hero actions: balanced sizing on desktop and a deliberate mobile layout. */
+.vl-hero-actions{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:26px;
+}
+.vl-hero-actions .vl-button{
+  min-height:48px;
+  padding:0 16px;
+  gap:10px;
+  font-size:12px;
+  line-height:1.2;
+  white-space:nowrap;
+}
+.vl-hero-actions .vl-button svg{width:16px;height:16px;flex:0 0 auto}
+
+@media(max-width:800px){
+  .vl-hero-copy{min-width:0}
+  .vl-hero-actions{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    width:100%;
+    margin-top:24px;
+  }
+  .vl-hero-actions .vl-button{
+    width:100%;
+    min-width:0;
+    min-height:50px;
+    padding:0 10px;
+    gap:7px;
+    font-size:clamp(10px,2.8vw,12px);
+  }
+  .vl-hero-actions .vl-store-cta{grid-column:1/-1}
+  .vl-track-search{margin-top:16px}
+}
+
+@media(max-width:380px){
+  .vl-hero-actions{gap:8px}
+  .vl-hero-actions .vl-button{padding:0 7px;font-size:10px;gap:5px}
+  .vl-hero-actions .vl-button svg{width:14px;height:14px}
+  .vl-track-search{gap:6px;padding-left:9px}
+  .vl-track-search input{font-size:10px}
+  .vl-track-search button{padding:0 8px;font-size:9px}
+}
