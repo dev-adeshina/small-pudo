@@ -26,9 +26,10 @@ export async function GET() {
     const states = (statesResult.data as { states?: ApiState[] } | undefined)?.states ?? [];
     if (!states.length) throw new Error('No Nigerian states were returned');
 
+    const failedStates: string[] = [];
     const locations = await Promise.all(states.map(async ({ name }) => {
       if (!name) return [];
-      const stateName = name.replace(/\\s+State$/i, '').trim();
+      const stateName = name.replace(/\s+State$/i, '').trim();
       try {
         const cityResult = await post<ApiResponse>('state/cities/q', {
           country: 'Nigeria',
@@ -38,6 +39,7 @@ export async function GET() {
         return cities.filter((city): city is string => typeof city === 'string' && city.trim().length > 0)
           .map((city) => ({ city: city.trim(), state: name, country: 'Nigeria' }));
       } catch {
+        failedStates.push(name);
         return [];
       }
     }));
@@ -46,7 +48,15 @@ export async function GET() {
     for (const item of locations.flat()) {
       unique.set(`${item.city.toLocaleLowerCase()}|${item.state.toLocaleLowerCase()}`, item);
     }
-    return NextResponse.json({ locations: [...unique.values()], source: 'CountriesNow' });
+    const result = [...unique.values()];
+    if (!result.length) {
+      throw new Error('The location provider returned no Nigerian cities. Please retry the lookup.');
+    }
+    return NextResponse.json({
+      locations: result,
+      source: 'CountriesNow',
+      failedStates,
+    });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unable to load Nigerian locations' },
