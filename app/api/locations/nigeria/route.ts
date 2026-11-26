@@ -30,7 +30,7 @@ export async function GET() {
       if (!name) return [];
       const stateName = name.replace(/\\s+State$/i, '').trim();
       try {
-        const cityResult = await post<ApiResponse>('state/cities', {
+        const cityResult = await post<ApiResponse>('state/cities/q', {
           country: 'Nigeria',
           state: stateName,
         });
