@@ -49,7 +49,7 @@ export default function HomePage() {
     <main className="vl-home">
       <header className="vl-nav">
         <Link href="/" className="vl-brand" aria-label="VeriLyft home">
-          <Image src="/logo.svg" alt="VeriLyft" width={142} height={42} priority />
+          <Image src="/logo.svg" alt="" width={46} height={38} priority /><span className="vl-brand-name">VERILYFT</span>
         </Link>
         <button className="vl-mobile-toggle" onClick={() => setMobileOpen(!mobileOpen)} aria-label={mobileOpen ? 'Close menu' : 'Open menu'}>
           {mobileOpen ? <X /> : <Menu />}
@@ -74,13 +74,13 @@ export default function HomePage() {
         </div>
         <div className="vl-hero-copy">
           <span className="vl-eyebrow"><span /> LOGISTICS, MADE MORE HUMAN</span>
-          <h1>Move what<br />matters<span>.</span></h1>
+          <h1>Move anything<br />from your pocket<span>.</span></h1>
           <p>Send, receive, shop and keep things moving. Start with what you need today.</p>
           <div className="vl-hero-actions">
             <button className="vl-button vl-button-dark" onClick={() => openJourney('send')}>Send an item <ArrowUpRight size={18} /></button>
-            <Link className="vl-text-link" href="/products">Explore the store <ArrowRight size={17} /></Link>
+            <Link className="vl-button vl-store-cta" href="/products">Explore the store <ArrowRight size={17} /></Link>
           </div>
-          <div className="vl-hero-trust"><ShieldCheck size={17} /><span>A clearer, more convenient way to move items.</span></div>
+          <form className="vl-track-search" onSubmit={(event) => { event.preventDefault(); openJourney('track'); }}><Search size={19} /><input aria-label="Tracking reference" value={trackingRef} onChange={(event) => setTrackingRef(event.target.value)} placeholder="Enter your tracking number" /><button type="submit">Track item <ArrowRight size={16} /></button></form><div className="vl-hero-trust"><ShieldCheck size={17} /><span>A clearer, more convenient way to move items.</span></div>
         </div>
       </section>
 
@@ -157,7 +157,7 @@ export default function HomePage() {
       </section>
 
       <footer className="vl-footer">
-        <div className="vl-footer-main"><Link href="/" className="vl-footer-brand"><Image src="/logo.svg" alt="VeriLyft" width={126} height={38} /> <span>Beyond Borders.</span></Link><p>Simple. Convenient. Connected.</p><div className="vl-footer-links"><div><strong>Explore</strong><Link href="/products">Online store</Link><Link href="/about">About us</Link><Link href="/contact">Contact</Link></div><div><strong>Get started</strong><button onClick={() => openJourney('send')}>Send an item</button><button onClick={() => openJourney('quote')}>Get a quote</button><Link href="/account/sign-in">Sign in</Link></div><div><strong>Account</strong><Link href="/account/register">Create account</Link><Link href="/cart">Shopping cart</Link><Link href="/pudo-partner/register">Become a PUDO partner</Link></div></div></div>
+        <div className="vl-footer-main"><Link href="/" className="vl-footer-brand"><span className="vl-footer-brand-lockup"><Image src="/logo.svg" alt="" width={38} height={32} /><strong>VERILYFT</strong></span><span>Beyond Borders.</span></Link><p>Simple. Convenient. Connected.</p><div className="vl-footer-links"><div><strong>Explore</strong><Link href="/products">Online store</Link><Link href="/about">About us</Link><Link href="/contact">Contact</Link></div><div><strong>Get started</strong><button onClick={() => openJourney('send')}>Send an item</button><button onClick={() => openJourney('quote')}>Get a quote</button><Link href="/account/sign-in">Sign in</Link></div><div><strong>Account</strong><Link href="/account/register">Create account</Link><Link href="/cart">Shopping cart</Link><Link href="/pudo-partner/register">Become a PUDO partner</Link></div></div></div>
         <div className="vl-footer-bottom"><span>© {new Date().getFullYear()} VeriLyft. All rights reserved.</span><span>Move what matters.</span></div>
       </footer>
 
