@@ -235,3 +235,30 @@
   }
   .vl-footer-bottom{gap:24px}
 }
+
+
+/* Nigerian city autocomplete used by the Send and Quote previews. */
+.vl-location-field{position:relative;display:grid;gap:8px;min-width:0}
+.vl-location-city-label{display:grid;gap:7px;font-size:11px;font-weight:750;color:#344247}
+.vl-location-input-wrap{height:44px;display:flex;align-items:center;gap:9px;border:1px solid #dbe2df;background:#fff;padding:0 11px}
+.vl-location-input-wrap:focus-within{border-color:#ad841d;box-shadow:0 0 0 2px #f4bd2833}
+.vl-location-input-wrap>svg{flex:0 0 auto;color:#a47b16}
+.vl-location-input-wrap input{height:40px!important;border:0!important;box-shadow:none!important;padding:0!important;outline:0!important}
+.vl-location-spinner{flex:0 0 auto;color:#a47b16;animation:vl-location-spin 1s linear infinite}
+@keyframes vl-location-spin{to{transform:rotate(360deg)}}
+.vl-location-suggestions{position:absolute;z-index:30;top:69px;left:0;right:0;max-height:235px;overflow:auto;background:#fff;border:1px solid #dbe2df;box-shadow:0 12px 28px #17282d1c}
+.vl-location-suggestions button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border:0;border-bottom:1px solid #edf0ed;background:#fff;text-align:left;cursor:pointer}
+.vl-location-suggestions button:hover,.vl-location-suggestions button:focus{background:#f8f5e9;outline:0}
+.vl-location-suggestions button strong{font-size:12px;color:#26383b}
+.vl-location-suggestions button span{font-size:10px;color:#7d8985;text-align:right}
+.vl-location-suggestions p{padding:12px;margin:0;font-size:11px;line-height:1.5;color:#7d8985}
+.vl-location-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vl-location-meta label{display:grid;gap:5px;font-size:10px;font-weight:700;color:#7b8782}
+.vl-location-meta input{height:36px!important;background:#f4f6f3!important;color:#66736e!important;font-size:10px!important}
+.vl-location-confirmed{font-size:9px;color:#527a58;font-weight:700}
+@media(max-width:520px){
+ .vl-location-row{gap:14px}
+ .vl-location-meta{gap:7px}
+ .vl-location-meta input{padding:0 8px!important}
+ .vl-location-suggestions{top:69px}
+}
