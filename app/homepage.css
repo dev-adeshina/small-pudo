@@ -196,3 +196,42 @@
   }
   .vl-track-search input{flex:1 1 auto;width:0}
 }
+
+
+/* Desktop footer: full-bleed background with a contained, balanced content grid. */
+@media(min-width:801px){
+  .vl-footer{
+    display:block;
+    width:100%;
+    max-width:none;
+    margin:0;
+    padding:56px 5% 22px;
+    box-sizing:border-box;
+  }
+  .vl-footer-main,
+  .vl-footer-bottom{
+    width:100%;
+    max-width:1320px;
+    margin-left:auto;
+    margin-right:auto;
+    min-width:0;
+  }
+  .vl-footer-main{
+    grid-template-columns:minmax(190px,1fr) minmax(180px,1fr) minmax(0,2fr);
+    gap:clamp(24px,3vw,48px);
+    align-items:start;
+  }
+  .vl-footer-main>*,
+  .vl-footer-links,
+  .vl-footer-links>div{min-width:0}
+  .vl-footer-links{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:clamp(16px,2vw,32px);
+  }
+  .vl-footer-links a,
+  .vl-footer-links button{
+    line-height:1.5;
+    overflow-wrap:anywhere;
+  }
+  .vl-footer-bottom{gap:24px}
+}
