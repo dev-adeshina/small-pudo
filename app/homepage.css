@@ -185,3 +185,14 @@
   .vl-hero-actions .vl-store-cta{grid-column:1/-1}
   .vl-hero-actions .vl-button{font-size:11px;padding:0 12px}
 }
+
+
+/* Keep the desktop tracking field aligned with the full hero action row. */
+@media(min-width:801px){
+  .vl-track-search{
+    width:100%;
+    max-width:590px;
+    box-sizing:border-box;
+  }
+  .vl-track-search input{flex:1 1 auto;width:0}
+}
