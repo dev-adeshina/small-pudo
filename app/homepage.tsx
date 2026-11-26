@@ -74,7 +74,7 @@ export default function HomePage() {
         </div>
         <div className="vl-hero-copy">
           <span className="vl-eyebrow"><span /> LOGISTICS, MADE MORE HUMAN</span>
-          <h1>Move anything<br />from your pocket<span>.</span></h1>
+          <h1>MOVE ANYTHING<br />FROM YOUR POCKET<span>.</span></h1>
           <p>Send, receive, shop and keep things moving. Start with what you need today.</p>
           <div className="vl-hero-actions">
             <button className="vl-button vl-button-dark" onClick={() => openJourney('send')}>Send an item <ArrowUpRight size={18} /></button>
