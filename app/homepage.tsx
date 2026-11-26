@@ -32,9 +32,13 @@ export default function HomePage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [result, setResult] = useState(false);
   const [trackingRef, setTrackingRef] = useState('');
+  const [itemType, setItemType] = useState('');
+  const [boxSize, setBoxSize] = useState('');
 
   function openJourney(next: Journey) {
     setResult(false);
+    setItemType('');
+    setBoxSize('');
     setJourney(next);
     setMobileOpen(false);
   }
@@ -184,8 +188,25 @@ export default function HomePage() {
               <label>Email address<input required type="email" placeholder="you@example.com" /></label>
               {journey !== 'pickup' && <div className="vl-form-row vl-location-row"><NigerianLocationField label="From" placeholder="Start typing a Nigerian city" /><NigerianLocationField label="To" placeholder="Start typing a Nigerian city" /></div>}
               {journey === 'pickup' && <><label>Pickup location<input required placeholder="Enter pickup address or area" /></label><label>Preferred collection date<input required type="date" min={new Date().toISOString().split('T')[0]} /></label></>}
-              {journey === 'send' && <div className="vl-form-row"><label>Item type<select required defaultValue=""><option value="" disabled>Select item</option><option>Document</option><option>Parcel</option><option>Box or package</option><option>Other</option></select></label><label>Approx. weight<select defaultValue=""><option value="" disabled>Select weight</option><option>Under 1 kg</option><option>1–5 kg</option><option>5–10 kg</option><option>10–20 kg</option><option>Above 20 kg</option></select></label></div>}
-              {journey === 'quote' && <div className="vl-form-row"><label>Item type<select required defaultValue=""><option value="" disabled>Select item</option><option>Document</option><option>Parcel</option><option>Box or package</option></select></label><label>Approx. weight<select defaultValue=""><option value="" disabled>Select weight</option><option>Under 1 kg</option><option>1–5 kg</option><option>5–10 kg</option><option>10–20 kg</option><option>Above 20 kg</option></select></label></div>}
+              {(journey === 'send' || journey === 'quote') && <>
+                <div className="vl-form-row">
+                  <label>Item type<select required value={itemType} onChange={(event) => { setItemType(event.target.value); setBoxSize(''); }}><option value="" disabled>Select item</option><option value="Document">Document</option><option value="Parcel">Parcel</option><option value="Box or package">Box or package</option><option value="Other">Other</option></select></label>
+                  <label>Approx. weight<select defaultValue=""><option value="" disabled>Select weight</option><option>Under 1 kg</option><option>1–5 kg</option><option>5–10 kg</option><option>10–20 kg</option><option>Above 20 kg</option></select></label>
+                </div>
+                {itemType === 'Box or package' && <div className="vl-package-options">
+                  <label>Choose a box size<select required value={boxSize} onChange={(event) => setBoxSize(event.target.value)}><option value="" disabled>Select package size</option><option value="Small Box">Small Box</option><option value="Medium Box">Medium Box</option><option value="Large Box">Large Box</option><option value="Extra-Large Box">Extra-Large Box</option><option value="Custom Size">Custom Size</option><option value="Custom Dimensions">Custom Dimensions</option></select></label>
+                  {boxSize && boxSize !== 'Custom Size' && boxSize !== 'Custom Dimensions' && <div className="vl-box-size-summary">
+                    <strong>{boxSize}</strong>
+                    <span>{boxSize === 'Small Box' ? 'Phone accessories, jewelry, shoes' : boxSize === 'Medium Box' ? 'Books, kitchenware, folded clothes' : boxSize === 'Large Box' ? 'Backpack, home decor, toys' : 'Household appliances, bulky apparel'}</span>
+                    <small>L × W × H: {boxSize === 'Small Box' ? '33.7 × 18.2 × 10' : boxSize === 'Medium Box' ? '33.7 × 32.2 × 18' : boxSize === 'Large Box' ? '33.7 × 32.2 × 34.5' : '41.7 × 35.9 × 36.9'} cm</small>
+                  </div>}
+                  {boxSize === 'Custom Size' && <label>Describe your custom package size<input required placeholder="e.g. Long narrow carton" /></label>}
+                  {boxSize === 'Custom Dimensions' && <div className="vl-custom-dimensions">
+                    <span>Enter dimensions in centimetres (cm)</span>
+                    <div className="vl-form-row"><label>Length (cm)<input required type="number" min="1" step="0.1" placeholder="Length" /></label><label>Width (cm)<input required type="number" min="1" step="0.1" placeholder="Width" /></label><label>Height (cm)<input required type="number" min="1" step="0.1" placeholder="Height" /></label></div>
+                  </div>}
+                </div>}
+              </>}
             </>}
             <button className="vl-button vl-button-dark vl-form-submit" type="submit">{journey === 'track' ? 'View demo tracking' : journey === 'quote' ? 'Show illustrative estimate' : 'Preview details'} <ArrowUpRight size={18} /></button>
             <small className="vl-form-footnote"><ShieldCheck size={14} /> Demo only · Your entries are not sent to a server or stored.</small>
