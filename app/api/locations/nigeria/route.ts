@@ -5,7 +5,7 @@ export const revalidate = 86400;
 type ApiState = { name?: string };
 type ApiResponse = { error?: boolean; data?: { states?: ApiState[] } | string[] };
 
-const API = 'https://countriesnow.space/api/v0.1/countries';
+const API = 'https://countriesnow.space/v0.1/countries';
 
 async function post<T>(path: string, body: Record<string, string>): Promise<T> {
   const response = await fetch(`${API}/${path}`, {
@@ -22,7 +22,7 @@ async function post<T>(path: string, body: Record<string, string>): Promise<T> {
 
 export async function GET() {
   try {
-    const statesResult = await post<ApiResponse>('states', { country: 'Nigeria' });
+    const statesResult = await post<ApiResponse>('states/q', { country: 'Nigeria' });
     const states = (statesResult.data as { states?: ApiState[] } | undefined)?.states ?? [];
     if (!states.length) throw new Error('No Nigerian states were returned');
 
