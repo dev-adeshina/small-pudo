@@ -2,64 +2,112 @@ import { NextResponse } from 'next/server';
 
 export const revalidate = 86400;
 
-type ApiState = { name?: string };
-type ApiResponse = { error?: boolean; data?: { states?: ApiState[] } | string[] };
+type PlacedbRegion = {
+  id: number;
+  name: string;
+};
 
-const API = 'https://countriesnow.space/v0.1/countries';
+type PlacedbRegionsResponse = {
+  country: string;
+  regions: PlacedbRegion[];
+  release?: string;
+};
 
-async function post<T>(path: string, body: Record<string, string>): Promise<T> {
+type PlacedbSettlement = {
+  id: number;
+  name: string;
+  type?: string;
+};
+
+type PlacedbSettlementsResponse = {
+  country: string;
+  region: number;
+  settlements: PlacedbSettlement[];
+  release?: string;
+};
+
+type NigerianLocation = {
+  city: string;
+  state: string;
+  country: 'Nigeria';
+};
+
+const API = 'https://api.placedb.org/v1';
+
+async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(`${API}/${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    headers: { Accept: 'application/json' },
     next: { revalidate: 86400 },
   });
-  if (!response.ok) throw new Error(`Location provider returned ${response.status}`);
-  const result = await response.json();
-  if (result.error) throw new Error(result.msg || 'Location provider returned an error');
-  return result as T;
+
+  if (!response.ok) {
+    throw new Error(`Location provider returned ${response.status} for ${path}`);
+  }
+
+  return response.json() as Promise<T>;
 }
 
 export async function GET() {
   try {
-    const statesResult = await post<ApiResponse>('states/q', { country: 'Nigeria' });
-    const states = (statesResult.data as { states?: ApiState[] } | undefined)?.states ?? [];
-    if (!states.length) throw new Error('No Nigerian states were returned');
+    // ISO 3166-1 alpha-2 code for Nigeria.
+    const regionsResult = await getJson<PlacedbRegionsResponse>('regions/NG.json');
+    const regions = regionsResult.regions ?? [];
+
+    if (!regions.length) {
+      throw new Error('The location provider returned no Nigerian states.');
+    }
 
     const failedStates: string[] = [];
-    const locations = await Promise.all(states.map(async ({ name }) => {
-      if (!name) return [];
-      const stateName = name.replace(/\s+State$/i, '').trim();
-      try {
-        const cityResult = await post<ApiResponse>('state/cities/q', {
-          country: 'Nigeria',
-          state: stateName,
-        });
-        const cities = Array.isArray(cityResult.data) ? cityResult.data : [];
-        return cities.filter((city): city is string => typeof city === 'string' && city.trim().length > 0)
-          .map((city) => ({ city: city.trim(), state: name, country: 'Nigeria' }));
-      } catch {
-        failedStates.push(name);
-        return [];
-      }
-    }));
+    const stateResults = await Promise.all(
+      regions.map(async (region) => {
+        try {
+          const result = await getJson<PlacedbSettlementsResponse>(
+            `cities/NG/${region.id}.json`,
+          );
 
-    const unique = new Map<string, { city: string; state: string; country: string }>();
-    for (const item of locations.flat()) {
-      unique.set(`${item.city.toLocaleLowerCase()}|${item.state.toLocaleLowerCase()}`, item);
+          return (result.settlements ?? [])
+            .filter((place) => typeof place.name === 'string' && place.name.trim())
+            .map((place): NigerianLocation => ({
+              city: place.name.trim(),
+              state: region.name,
+              country: 'Nigeria',
+            }));
+        } catch {
+          failedStates.push(region.name);
+          return [];
+        }
+      }),
+    );
+
+    const unique = new Map<string, NigerianLocation>();
+    for (const location of stateResults.flat()) {
+      unique.set(
+        `${location.city.toLocaleLowerCase()}|${location.state.toLocaleLowerCase()}`,
+        location,
+      );
     }
-    const result = [...unique.values()];
-    if (!result.length) {
-      throw new Error('The location provider returned no Nigerian cities. Please retry the lookup.');
+
+    const locations = [...unique.values()].sort((a, b) =>
+      a.city.localeCompare(b.city) || a.state.localeCompare(b.state),
+    );
+
+    if (!locations.length) {
+      throw new Error('The location provider returned no Nigerian cities. Please retry.');
     }
+
     return NextResponse.json({
-      locations: result,
-      source: 'CountriesNow',
+      locations,
+      source: 'placedb',
+      release: regionsResult.release ?? null,
       failedStates,
     });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unable to load Nigerian locations' },
+      {
+        error: error instanceof Error
+          ? error.message
+          : 'Unable to load Nigerian locations',
+      },
       { status: 502 },
     );
   }
