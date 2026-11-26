@@ -68,3 +68,38 @@
 @media(max-width:800px){.vl-nav{height:74px;padding:0 5%}.vl-mobile-toggle{display:grid;place-items:center}.vl-nav-links{display:none;position:absolute;top:74px;left:0;right:0;background:#fff;padding:18px 5% 24px;box-shadow:0 18px 28px #17282d15;align-items:stretch;gap:0}.vl-nav-links.is-open{display:flex;flex-direction:column}.vl-nav-links>a{padding:13px 0;border-bottom:1px solid #edf0ed}.vl-nav-links .vl-nav-cta{justify-content:center;margin-top:12px;padding:14px}.vl-hero{grid-template-columns:1fr;gap:25px;padding:0 5% 45px}.vl-hero-copy{padding:55px 0 0}.vl-hero h1{font-size:clamp(62px,12vw,94px);margin-top:20px}.vl-hero-image{min-height:390px;margin:0}.vl-hero-trust{margin-top:30px}.vl-choose,.vl-services{padding:70px 5%}.vl-section-top{align-items:flex-start;flex-direction:column;gap:14px}.vl-section-top>p{max-width:520px}.vl-journey-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vl-journey-card{min-height:190px;border-bottom:1px solid var(--vl-line)}.vl-journey-card:nth-child(2n){border-right:0}.vl-journey-card:last-child{grid-column:1/-1;border-bottom:0}.vl-how{grid-template-columns:1fr;gap:42px;padding:75px 0}.vl-how-visual{height:350px}.vl-how-copy{padding:0 3%}.vl-highlight-grid{grid-template-columns:repeat(2,1fr)}.vl-highlight:nth-child(2){border-right:0}.vl-highlight:nth-child(n+3){border-top:1px solid #d1dbd4;padding-top:25px}.vl-store{grid-template-columns:1fr;margin:65px 5%}.vl-store-copy{padding:42px 32px 20px}.vl-store-art{min-height:300px}.vl-about{grid-template-columns:1fr;gap:24px;margin:0 5% 75px}.vl-contact{padding:60px 5%;align-items:flex-start;flex-direction:column;gap:24px}.vl-footer{padding:45px 5% 18px}.vl-footer-main{grid-template-columns:1fr 1fr}.vl-footer-links{grid-column:1/-1}}
 @media(max-width:520px){.vl-brand img{width:125px}.vl-hero-copy{padding-top:40px}.vl-hero h1{font-size:64px}.vl-hero-copy>p{font-size:15px}.vl-hero-actions{gap:18px;flex-wrap:wrap}.vl-button{min-height:49px;padding:0 16px}.vl-hero-image{min-height:330px}.vl-choose,.vl-services{padding:58px 5%}.vl-section-top h2,.vl-how h2,.vl-store h2,.vl-about h2,.vl-contact h2{font-size:40px}.vl-journey-grid{grid-template-columns:1fr 1fr}.vl-journey-card{min-height:175px;padding:16px 12px}.vl-journey-title{font-size:14px}.vl-journey-detail{font-size:10px}.vl-journey-action{font-size:10px}.vl-journey-icon{width:38px;height:38px;margin:15px 0 13px}.vl-how-visual{height:300px}.orbit-one{width:270px;height:155px}.orbit-two{width:330px;height:210px}.vl-orbit-core{width:125px;height:125px}.node-one{left:12%;top:35px}.node-two{right:8%}.node-three{left:15%;bottom:38px}.vl-highlight{padding-right:12px;min-height:195px}.vl-highlight:not(:first-child){padding-left:14px}.vl-highlight-no{right:10px}.vl-highlight h3{font-size:15px}.vl-highlight p{font-size:10px}.vl-store{margin:50px 4%}.vl-store-copy{padding:35px 22px 10px}.vl-store-art{min-height:260px}.vl-store-sun{width:180px;height:180px}.box-a{width:110px;height:110px}.box-b{width:75px;height:85px}.vl-footer-main{grid-template-columns:1fr;gap:24px}.vl-footer-links{grid-column:auto;gap:12px}.vl-footer-bottom{gap:12px;flex-direction:column}.vl-modal{padding:34px 20px 25px}.vl-modal-heading h2{font-size:30px}.vl-form-row{grid-template-columns:1fr}.vl-demo-form{gap:12px}}
 @media(prefers-reduced-motion:reduce){.vl-home *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+
+/* Brand and hero refinements */
+.vl-brand{gap:10px;flex-shrink:0}
+.vl-brand img{display:block;width:43px;height:36px;object-fit:contain}
+.vl-brand-name{font-size:21px;font-weight:850;letter-spacing:.13em;color:#17282d}
+.vl-footer-brand-lockup{display:flex;align-items:center;gap:9px}
+.vl-footer-brand-lockup img{width:36px;height:30px;filter:brightness(0) invert(1)}
+.vl-footer-brand-lockup strong{font-size:17px;letter-spacing:.13em;color:#fff}
+.vl-hero h1{font-size:clamp(52px,5.6vw,81px);letter-spacing:-.075em;line-height:.99;text-transform:uppercase}
+.vl-hero-copy{max-width:620px}
+.vl-hero-copy>p{max-width:480px}
+.vl-store-cta{background:#ffc900;color:#17282d;border:1px solid #ffc900;text-decoration:none}
+.vl-store-cta:hover{background:#f0bd00;border-color:#f0bd00}
+.vl-track-search{height:58px;max-width:510px;width:100%;display:flex;align-items:center;gap:12px;padding:6px 7px 6px 16px;margin-top:22px;background:#fff;border:1px solid #dce3df;box-shadow:0 8px 22px #1b34300a}
+.vl-track-search>svg{flex-shrink:0;color:#9a791f}
+.vl-track-search input{height:42px;min-width:0;flex:1;border:0;outline:0;background:transparent;color:#243438;font-size:12px}
+.vl-track-search input::placeholder{color:#929c99}
+.vl-track-search button{height:44px;padding:0 15px;display:flex;align-items:center;gap:9px;background:#17282d;color:white;border:0;border-radius:2px;font-size:11px;font-weight:750;cursor:pointer;white-space:nowrap}
+.vl-track-search button:hover{background:#29484d}
+.vl-hero-trust{margin-top:22px}
+@media(max-width:800px){
+ .vl-brand img{width:40px;height:34px}
+ .vl-brand-name{font-size:19px}
+ .vl-hero h1{font-size:clamp(44px,9vw,68px);line-height:1.02}
+ .vl-track-search{max-width:100%;margin-top:20px}
+}
+@media(max-width:520px){
+ .vl-brand img{width:36px;height:30px}
+ .vl-brand-name{font-size:17px}
+ .vl-hero h1{font-size:clamp(37px,9vw,49px);letter-spacing:-.07em}
+ .vl-track-search{height:54px;gap:7px;padding-left:11px}
+ .vl-track-search input{font-size:11px}
+ .vl-track-search button{padding:0 10px;font-size:10px;gap:5px}
+}
