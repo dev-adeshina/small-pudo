@@ -14,6 +14,7 @@ This directory contains the coordinated planning baseline for the new VeriLyft i
 5. [Design System & Dashboard Experience Specification](./05-verilyft-design-system-dashboard-experience.md)
 6. [Firestore Inventory and Legacy Data Assessment](./06-firestore-inventory-and-data-assessment.md)
 7. [Existing Data Adaptation and Replacement Matrix](./07-existing-data-adaptation-and-replacement-matrix.md)
+8. [Final Minimal Firestore Schema — Decision Draft](./08-final-minimal-firestore-schema.md)
 
 ## Supporting utility
 
@@ -44,7 +45,7 @@ These documents capture planning decisions; they are not evidence that a databas
 - Existing store data must be preserved. Preserving historical data does not require reusing its current schema.
 - The new implementation is intended to use a separately identified Firestore database; do not create or deploy it until its ID, location, rules and environment strategy are approved.
 - Build the simplest data structure that fully supports the approved VeriLyft workflows. Do not carry forward complexity simply because it already exists.
-- The adaptation matrix determines which legacy concepts are kept, adapted, consolidated, replaced in the new application or left untouched.
+- The adaptation matrix determines which legacy concepts are kept, adapted, consolidated, replaced in the new application or left untouched. The Final Minimal Firestore Schema decision draft translates the product-owner's answers into a proposed field-level model and records the remaining decisions that must be clarified before the schema is final.
 - No migration, production Firestore data change, rules deployment or index deployment is authorised by this planning package.
 - Every physical parcel intake requires a photograph.
 - Initial scope is deliberately minimal; advanced automation is deferred.
