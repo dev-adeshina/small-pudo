@@ -13,7 +13,7 @@ interface RouteContext {
 export async function POST(request: Request, context: RouteContext) {
   const customer = await authenticateVerifiedCustomer(
     request.headers.get("authorization"),
-    (token) => adminAuth.verifyIdToken(token),
+    (token) => adminAuth.verifyIdToken(token, true),
   );
   if (!customer.success) return NextResponse.json({ error: customer.error }, { status: customer.status });
 
