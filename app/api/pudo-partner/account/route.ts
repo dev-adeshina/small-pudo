@@ -20,6 +20,7 @@ export async function POST(request: Request) {
     return response({ error: "Your registration session is invalid or expired." }, 401);
   }
   if (!decoded.email) return response({ error: "A valid email address is required." }, 400);
+  if (decoded.email_verified !== true) return response({ error: "Verify your email address before registering a PUDO partner account." }, 403);
   let body: unknown;
   try { body = await request.json(); } catch { return response({ error: "A valid JSON body is required." }, 400); }
   try {
