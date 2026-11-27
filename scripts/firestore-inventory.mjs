@@ -59,8 +59,8 @@ function positiveInteger(value, fallback, name) {
 function valueType(value) {
   if (value === null) return "null";
   if (value instanceof Date) return "timestamp";
-  if (value?._seconds !== undefined && value?._nanoseconds !== undefined) return "timestamp";
-  if (value?._latitude !== undefined && value?._longitude !== undefined) return "geopoint";
+  if ((value?._seconds !== undefined && value?._nanoseconds !== undefined) || (typeof value?.toDate === "function" && Number.isFinite(value?.seconds) && Number.isFinite(value?.nanoseconds))) return "timestamp";
+  if ((value?._latitude !== undefined && value?._longitude !== undefined) || (Number.isFinite(value?.latitude) && Number.isFinite(value?.longitude) && typeof value?.toJSON === "function")) return "geopoint";
   if (value && typeof value.path === "string" && typeof value.get === "function") {
     return "document_reference";
   }
@@ -95,18 +95,23 @@ function flattenFields(data, prefix = "", output = []) {
     if (value && typeof value === "object" && !Array.isArray(value)
         && !(value instanceof Date) && !(value instanceof Uint8Array)
         && typeof value.path !== "string"
-        && !(value?._seconds !== undefined && value?._nanoseconds !== undefined)
-        && !(value?._latitude !== undefined && value?._longitude !== undefined)) {
-      output.push({ path, type: "map" });
+        && !((value?._seconds !== undefined && value?._nanoseconds !== undefined) || (typeof value?.toDate === "function" && Number.isFinite(value?.seconds) && Number.isFinite(value?.nanoseconds)))
+        && !((value?._latitude !== undefined && value?._longitude !== undefined) || (Number.isFinite(value?.latitude) && Number.isFinite(value?.longitude) && typeof value?.toJSON === "function"))) {
+      output.push({ path, type: "map", value });
       flattenFields(value, path, output);
       continue;
     }
 
     const type = valueType(value);
-    output.push({ path, type });
+    output.push({ path, type, value });
     if (type === "array" && value.length > 0) {
       const itemTypes = [...new Set(value.slice(0, 25).map(valueType))].sort();
       output.push({ path: `${path}[]`, type: `array_item:${itemTypes.join("|")}` });
+      for (const item of value.slice(0, 25)) {
+        if (item && typeof item.path === "string" && typeof item.get === "function") {
+          output.push({ path: `${path}[]`, type: "document_reference", value: item });
+        }
+      }
     }
   }
   return output;
@@ -181,6 +186,7 @@ async function main() {
       documentCount: null,
       documentsInspectedForSchema: 0,
       schemaComplete: true,
+      subcollectionDiscoveryComplete: true,
       fields: {},
       relationshipCandidates: {},
       subcollections: [],
@@ -220,20 +226,18 @@ async function main() {
           entry.fields[field.path] = stats;
         }
 
-        for (const [fieldPath, value] of Object.entries(document.data())) {
-          for (const field of flattenFields({ [fieldPath]: value })) {
-            const relationship = inferRelationship(field.path, value);
-            if (!relationship) continue;
-            const key = `${relationship.kind}:${relationship.fieldPath}:${relationship.targetCollectionPath ?? ""}`;
-            const candidate = entry.relationshipCandidates[key] ?? {
-              fieldPath: relationship.fieldPath,
-              kind: relationship.kind,
-              targetCollectionPath: relationship.targetCollectionPath ?? null,
-              occurrences: 0,
-            };
-            candidate.occurrences += 1;
-            entry.relationshipCandidates[key] = candidate;
-          }
+        for (const field of flattenFields(document.data())) {
+          const relationship = inferRelationship(field.path, field.value);
+          if (!relationship) continue;
+          const key = `${relationship.kind}:${relationship.fieldPath}:${relationship.targetCollectionPath ?? ""}`;
+          const candidate = entry.relationshipCandidates[key] ?? {
+            fieldPath: relationship.fieldPath,
+            kind: relationship.kind,
+            targetCollectionPath: relationship.targetCollectionPath ?? null,
+            occurrences: 0,
+          };
+          candidate.occurrences += 1;
+          entry.relationshipCandidates[key] = candidate;
         }
 
         try {
@@ -254,6 +258,7 @@ async function main() {
     if (Number.isFinite(maxDocs) && entry.documentCount !== null
         && entry.documentsInspectedForSchema < entry.documentCount) {
       entry.schemaComplete = false;
+      entry.subcollectionDiscoveryComplete = false;
     }
     for (const stats of Object.values(entry.fields)) stats.types.sort();
     entry.subcollections.sort();
