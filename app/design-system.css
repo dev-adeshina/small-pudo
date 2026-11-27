@@ -1,0 +1,148 @@
+/* VeriLyft shared design-system foundation.
+   Existing storefront and dashboard styles remain intact; new shared components
+   consume these semantic tokens instead of introducing page-specific values. */
+:root {
+  --vl-brand: var(--yellow, #ffc900);
+  --vl-brand-strong: #e6b500;
+  --vl-brand-contrast: #111111;
+  --vl-danger: var(--red, #d40511);
+  --vl-success: #23623c;
+  --vl-warning: #80520a;
+  --vl-info: #245a78;
+  --vl-neutral: #59616b;
+
+  --vl-canvas: #f5f5f3;
+  --vl-surface: #ffffff;
+  --vl-surface-subtle: #f8f8f6;
+  --vl-surface-raised: #ffffff;
+  --vl-text: #171717;
+  --vl-text-secondary: #555b62;
+  --vl-text-muted: #737980;
+  --vl-border: #dedfdb;
+  --vl-border-strong: #b9bcb7;
+  --vl-focus: #173d43;
+
+  --vl-radius-sm: 8px;
+  --vl-radius-md: 12px;
+  --vl-radius-lg: 18px;
+  --vl-radius-pill: 999px;
+  --vl-shadow-sm: 0 1px 3px rgb(0 0 0 / 7%);
+  --vl-shadow-md: 0 12px 32px rgb(0 0 0 / 10%);
+
+  --vl-space-1: 4px;
+  --vl-space-2: 8px;
+  --vl-space-3: 12px;
+  --vl-space-4: 16px;
+  --vl-space-5: 20px;
+  --vl-space-6: 24px;
+  --vl-space-8: 32px;
+  --vl-space-10: 40px;
+  --vl-content-max: 1440px;
+  --vl-sidebar-width: 256px;
+}
+
+.vl-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid transparent;
+  border-radius: var(--vl-radius-pill);
+  padding: 0 18px;
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease;
+}
+.vl-button:focus-visible,
+.vl-breadcrumbs a:focus-visible,
+.vl-workspace-nav a:focus-visible,
+.vl-workspace-menu-button:focus-visible {
+  outline: 3px solid var(--vl-focus);
+  outline-offset: 3px;
+}
+.vl-button:disabled,
+.vl-button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: .55;
+}
+.vl-button--primary { background: var(--vl-brand); color: var(--vl-brand-contrast); }
+.vl-button--primary:hover:not(:disabled) { background: var(--vl-brand-strong); }
+.vl-button--secondary { background: var(--vl-surface); border-color: var(--vl-border-strong); color: var(--vl-text); }
+.vl-button--secondary:hover:not(:disabled) { background: var(--vl-surface-subtle); border-color: var(--vl-text-secondary); }
+.vl-button--outline { background: transparent; border-color: var(--vl-border-strong); color: var(--vl-text); }
+.vl-button--outline:hover:not(:disabled) { background: var(--vl-surface-subtle); }
+.vl-button--ghost { background: transparent; color: var(--vl-text-secondary); }
+.vl-button--ghost:hover:not(:disabled) { background: var(--vl-surface-subtle); color: var(--vl-text); }
+.vl-button--danger { background: var(--vl-danger); color: #fff; }
+.vl-button--danger:hover:not(:disabled) { filter: brightness(.92); }
+.vl-button--sm { min-height: 34px; padding-inline: 13px; font-size: .82rem; }
+.vl-button--lg { min-height: 50px; padding-inline: 23px; font-size: .96rem; }
+
+.vl-breadcrumbs { min-width: 0; color: var(--vl-text-muted); font-size: .82rem; }
+.vl-breadcrumbs ol { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.vl-breadcrumbs li { display: inline-flex; min-width: 0; align-items: center; gap: 8px; }
+.vl-breadcrumbs a { color: var(--vl-text-secondary); text-decoration: none; }
+.vl-breadcrumbs a:hover { color: var(--vl-text); text-decoration: underline; text-underline-offset: 3px; }
+.vl-breadcrumbs [aria-current="page"] { overflow: hidden; color: var(--vl-text); font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+
+.vl-page-header { display: flex; min-width: 0; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.vl-page-header__copy { min-width: 0; }
+.vl-page-header__eyebrow { display: block; margin-bottom: 7px; color: var(--vl-text-muted); font-size: .7rem; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+.vl-page-header h1 { margin: 0; color: var(--vl-text); font-family: 'Space Grotesk', var(--font-geist-sans), sans-serif; font-size: clamp(1.65rem, 3vw, 2.35rem); font-weight: 650; letter-spacing: -.045em; line-height: 1.12; }
+.vl-page-header p { max-width: 720px; margin: 9px 0 0; color: var(--vl-text-secondary); font-size: .94rem; line-height: 1.6; }
+.vl-page-header__actions { display: flex; flex: 0 0 auto; flex-wrap: wrap; gap: 10px; }
+
+.vl-status { display: inline-flex; min-height: 25px; align-items: center; gap: 6px; border-radius: var(--vl-radius-pill); padding: 4px 9px; font-size: .73rem; font-weight: 750; line-height: 1.2; }
+.vl-status--success { background: #e7f5ec; color: var(--vl-success); }
+.vl-status--warning { background: #fff2d8; color: var(--vl-warning); }
+.vl-status--danger { background: #fdebec; color: #a21d27; }
+.vl-status--info { background: #e9f2f8; color: var(--vl-info); }
+.vl-status--neutral { background: #eff0ef; color: var(--vl-neutral); }
+
+.vl-feedback { display: flex; align-items: flex-start; gap: 13px; border: 1px solid var(--vl-border); border-radius: var(--vl-radius-md); background: var(--vl-surface); padding: 18px; }
+.vl-feedback__content { min-width: 0; }
+.vl-feedback__title { margin: 0; color: var(--vl-text); font-size: .96rem; font-weight: 750; }
+.vl-feedback__description { margin: 5px 0 0; color: var(--vl-text-secondary); font-size: .88rem; line-height: 1.55; }
+.vl-feedback--error { border-color: #efc5c8; background: #fffafa; }
+.vl-feedback--empty { background: var(--vl-surface-subtle); }
+.vl-feedback--loading { color: var(--vl-text-secondary); }
+
+.vl-workspace { min-height: 100vh; background: var(--vl-canvas); color: var(--vl-text); }
+.vl-workspace__sidebar { position: fixed; z-index: 50; inset: 0 auto 0 0; display: flex; width: var(--vl-sidebar-width); flex-direction: column; border-right: 1px solid var(--vl-border); background: var(--vl-surface); padding: 22px 16px; }
+.vl-workspace__brand { display: flex; align-items: center; gap: 11px; padding: 3px 8px 22px; color: var(--vl-text); font-weight: 800; }
+.vl-workspace__brand-mark { display: grid; width: 38px; height: 38px; flex: 0 0 auto; place-items: center; border-radius: 11px; background: var(--vl-brand); color: var(--vl-brand-contrast); font-size: 1.1rem; }
+.vl-workspace__brand small { display: block; margin-top: 3px; color: var(--vl-text-muted); font-size: .62rem; font-weight: 750; letter-spacing: .11em; }
+.vl-workspace-nav { min-height: 0; flex: 1; overflow-y: auto; padding-top: 12px; }
+.vl-workspace-nav__group + .vl-workspace-nav__group { margin-top: 22px; }
+.vl-workspace-nav__label { display: block; padding: 0 10px 8px; color: var(--vl-text-muted); font-size: .65rem; font-weight: 800; letter-spacing: .12em; }
+.vl-workspace-nav a { display: flex; min-height: 42px; align-items: center; gap: 11px; border-radius: 9px; padding: 0 11px; color: var(--vl-text-secondary); font-size: .86rem; font-weight: 600; text-decoration: none; }
+.vl-workspace-nav a:hover { background: var(--vl-surface-subtle); color: var(--vl-text); }
+.vl-workspace-nav a[aria-current="page"] { background: #fff7d6; color: var(--vl-text); font-weight: 750; }
+.vl-workspace__main { min-width: 0; min-height: 100vh; margin-left: var(--vl-sidebar-width); }
+.vl-workspace__topbar { display: flex; min-height: 66px; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--vl-border); background: var(--vl-surface); padding: 12px 30px; }
+.vl-workspace__content { width: min(100%, var(--vl-content-max)); margin-inline: auto; padding: 24px 30px 48px; }
+.vl-workspace__mobile-nav { display: none; }
+
+@media (max-width: 760px) {
+  .vl-page-header { flex-direction: column; }
+  .vl-page-header__actions { width: 100%; }
+  .vl-page-header__actions > * { flex: 1 1 auto; }
+  .vl-workspace__sidebar { position: static; width: 100%; height: auto; padding: 12px 14px; }
+  .vl-workspace__brand { padding: 0 4px 10px; }
+  .vl-workspace-nav { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 2px; }
+  .vl-workspace-nav__group { display: contents; }
+  .vl-workspace-nav__label { display: none; }
+  .vl-workspace-nav a { min-height: 38px; flex: 0 0 auto; border: 1px solid var(--vl-border); padding-inline: 11px; white-space: nowrap; }
+  .vl-workspace__main { margin-left: 0; }
+  .vl-workspace__topbar { min-height: 56px; padding-inline: 18px; }
+  .vl-workspace__content { padding: 20px 18px 36px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vl-button { transition: none; }
+  html { scroll-behavior: auto; }
+}
