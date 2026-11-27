@@ -16,7 +16,7 @@ function fixture({ status = "Submitted", customerId = "customer-1", currentQuote
       getByReference: async () => null,
       update: async (_tx, id, patch) => { assert.equal(id, "shipment-1"); state.updates.push(patch); state.shipment = { ...state.shipment, ...patch }; },
     },
-    parcels: { createMany: async () => {}, listByShipment: async () => [], getById: async () => null },
+    parcels: { createMany: async () => {}, listByShipment: async () => [], getById: async () => null, update: async () => {} },
     quotes: {
       createLineage: async (_tx, id, value) => state.lineages.push({ id, value }),
       appendRevision: async (_tx, id, value) => { state.revisions.push({ id, value }); state.currentQuote = value; },
