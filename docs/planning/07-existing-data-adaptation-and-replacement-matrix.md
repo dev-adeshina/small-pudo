@@ -54,6 +54,8 @@ The classifications below are the proposed treatment for the new application. Th
 | --- | ---: | --- | --- |
 | `users` | 6 | **Adapt** | Map authenticated customer identity to the minimal customer profile. Do not make the legacy user document the shipment aggregate. Keep staff and PUDO identity separate. |
 | `users/*/shipmentBookingDrafts` | 9 nested | **Replace** | Drafts become the draft state of the authoritative `shipments` record. Avoid a second shipment lifecycle hidden under each user. Preserve old drafts in the source. |
+| `shipmentQuotes` | Not observed in inventory; present in application code | **Adapt** | Keep one quote lineage with the current quote state and only the necessary revision history. Preserve quote snapshot, pricing inputs/version, validity, issuer and customer decision. Avoid the legacy nested evidence/event complexity where a compact quote event history is sufficient. |
+| `shipmentBookings` | Not observed in inventory; referenced by quote application code | **Replace** | Booking confirmation becomes the booking state/reference on the authoritative `shipments` record. Do not create a second top-level shipment/booking record for the same consignment unless a later confirmed workflow demonstrates a distinct aggregate is necessary. |
 | `pudoLocations` | 7 | **Adapt** | Keep as the location concept, but simplify the target location document around identity, address/coordinates and current lifecycle/operating summary. |
 | `pudoPartnerAccounts` | 3 | **Adapt** | Represent partner identity/profile separately from the station record. Avoid duplicate business/contact fields across account and location unless a distinct ownership relationship requires them. |
 | `pudoPartnerApplications` | 3 | **Consolidate** | Fold application/registration state into the PUDO location onboarding lifecycle where possible; retain partner identity separately. Do not keep parallel application and location state machines without a clear need. |
@@ -104,7 +106,7 @@ The first code cross-check confirms that the current application has direct depe
 - PUDO location, verification, activation, capability, operations, partner and network stores.
 - Staff directory, invitation, permission grant and staff audit records.
 
-This confirms why schema inventory alone cannot determine migration or replacement. The new implementation must be decoupled from these legacy stores deliberately. The code cross-check is a first-pass review of the current repository, not a claim that every read/write path, scheduled process, Storage object or security rule has been exhaustively traced.
+The code-only references to `shipmentQuotes` and `shipmentBookings` were not present as collections in the point-in-time inventory; they are therefore treated as application dependencies, not as verified populated legacy collections. This confirms why schema inventory alone cannot determine migration or replacement. The new implementation must be decoupled from these legacy stores deliberately. The code cross-check is a first-pass review of the current repository, not a claim that every read/write path, scheduled process, Storage object or security rule has been exhaustively traced.
 
 ## 8. Non-negotiable simplification safeguards
 
