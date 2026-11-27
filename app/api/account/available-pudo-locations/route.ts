@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 export async function GET(request: NextRequest) {
   const customer = await authenticateVerifiedCustomer(
     request.headers.get("authorization"),
-    (token) => adminAuth.verifyIdToken(token),
+    (token) => adminAuth.verifyIdToken(token, true),
   );
   if (!customer.success) {
     return Response.json({ error: customer.error }, { status: customer.status });
