@@ -223,3 +223,90 @@
   .vl-pudo-form-wide, .vl-pudo-form-actions { grid-column: auto; }
   .vl-pudo-form-actions .vl-button { width: 100%; }
 }
+
+
+/* Customer dashboard integration */
+.vl-customer-dashboard {
+  min-height: calc(100vh - 66px);
+  padding: 0 0 28px;
+  background: transparent;
+}
+.vl-customer-dashboard .customer-shell {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+.vl-customer-dashboard > .customer-shell > .vl-page-header {
+  margin: 4px 0 18px;
+}
+.vl-customer-dashboard .customer-stats {
+  margin-top: 22px;
+}
+.vl-customer-dashboard .customer-panel,
+.vl-customer-dashboard .customer-stat-card {
+  border-color: var(--vl-border);
+  border-radius: var(--vl-radius-lg);
+  box-shadow: var(--vl-shadow-sm);
+}
+.vl-customer-dashboard .customer-panel {
+  background: var(--vl-surface);
+}
+.vl-customer-dashboard .customer-stat-card {
+  background: var(--vl-surface);
+}
+.vl-customer-dashboard .customer-panel-heading {
+  border-color: var(--vl-border);
+}
+.vl-customer-dashboard .customer-footer {
+  border-top: 1px solid var(--vl-border);
+  margin-top: 24px;
+}
+.vl-customer-topbar {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 14px;
+}
+.vl-customer-identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+}
+.vl-customer-identity .customer-email {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vl-customer-account-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--vl-text-secondary);
+  font-size: .82rem;
+}
+.vl-customer-account-state > svg {
+  color: var(--vl-success);
+}
+.vl-customer-dashboard .vl-page-header__actions .vl-button {
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .vl-customer-dashboard {
+    padding-bottom: 18px;
+  }
+  .vl-customer-topbar {
+    gap: 6px;
+  }
+  .vl-customer-identity .customer-email {
+    max-width: 125px;
+    font-size: .72rem;
+  }
+  .vl-customer-dashboard .customer-welcome {
+    padding-top: 28px;
+  }
+  .vl-customer-dashboard .customer-stats {
+    grid-template-columns: 1fr;
+  }
+}
