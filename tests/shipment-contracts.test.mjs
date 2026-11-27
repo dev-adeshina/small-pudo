@@ -122,7 +122,7 @@ test("repository ports require transaction boundary and all aggregate repositori
   })) for (const method of methods) ports[name][method] = async () => {};
   ports.transaction = { run: async callback => callback({}) };
   assert.equal(assertRepositoryPorts(ports), ports);
-  const missingShipmentCreate = structuredClone(ports);
+  const missingShipmentCreate = { ...ports, shipments: { ...ports.shipments } };
   delete missingShipmentCreate.shipments.create;
   assert.throws(() => assertRepositoryPorts(missingShipmentCreate), /Repository port shipments\\.create is required/);
 });
