@@ -332,7 +332,7 @@ export default function CustomerProfilePage() {
         </div>
       }
     >
-      <main className="customer-page">
+      <div className="customer-page">
             <header className="customer-header">
                 <Link href="/" className="customer-logo" aria-label="VeriLyft home">
                     <Image
@@ -518,7 +518,7 @@ export default function CustomerProfilePage() {
                     )}
                 </section>
             </div>
-        </main>
+        </div>
     </WorkspaceShell>
     );
 }
