@@ -113,7 +113,7 @@ The complete command layer still requires a final cross-command review and adapt
 - **Notification intent:** shipment and recipient-specific target, channel, template, deduplication key, payload and minimal delivery state.
 - **Notification attempt:** immutable attempt identity/time, delivered/failed result and provider/error metadata.
 
-The adapter exposes `intakes`, `assignments`, `documents` and `notifications` repositories. Intake/document records and notification attempts are create-only. Assignment updates are limited to status. Notification intent is protected by a deterministic deduplication index; only delivery-state fields can be updated.
+The adapter exposes `intakes`, `assignments`, `documents` and `notifications` repositories. Intake/document records and notification attempts are create-only. Assignment updates are limited to status. Notification intent is protected by a deterministic deduplication index; only delivery-state fields can be updated. The record commands require injected trusted Storage verifiers to confirm intake photos and generated document objects before entering retryable Firestore transactions; absent a verifier, they fail closed.
 
 ## 12. Existing identity and operational authorities
 
