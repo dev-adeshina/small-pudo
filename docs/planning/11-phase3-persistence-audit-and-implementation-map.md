@@ -167,3 +167,39 @@ Firestore transactions require all reads before writes. Adapter methods must be 
 ## 9. Explicit non-goals for this step
 
 This audit does not implement a Firestore adapter, API routes, Paystack calls/webhooks, email delivery, tracking UI, document PDF generation, Storage rules, Firestore rules/indexes, database provisioning, migration, backfill or live data writes. Those must not be smuggled into the persistence audit.
+
+
+## 10. Approved environment boundary — 27 November 2026
+
+**Decision: Option A approved — separate Firebase projects for staging and main/production.** This section supersedes the unresolved database-boundary alternatives in sections 1, 7.1 and 8.
+
+| Environment | Firebase project | Firestore target |
+|---|---|---|
+| Staging | A dedicated staging Firebase project to be provisioned/configured separately | Its own Firestore database (normally the project's `(default)` database unless a later reviewed requirement says otherwise) |
+| Main/production | Existing `verilyft-4e691` project | Preserve and use its existing Firestore database |
+
+The same shipment domain, contracts, repository ports and adapter design must be usable in both environments. Firebase project selection, credentials and runtime configuration must be environment-specific and explicit; no shipment adapter may silently inherit the default Admin SDK instance or fall back to another project/database.
+
+### Environment isolation requirements
+
+- Staging and production have separate Firebase project IDs, service credentials, Authentication users/providers, Firestore data, Storage buckets and project-scoped services/configuration.
+- Staging test data is not copied into production by default. Any later migration or promotion of data requires a separately reviewed and explicitly approved procedure.
+- Existing production records in `verilyft-4e691` remain untouched by staging implementation and testing.
+- Production application work will be completed independently after the staging system is completed; code changes are not automatically a production deployment.
+- Keep secrets out of source control. Runtime configuration must validate the expected Firebase project ID and database ID and fail closed on mismatch.
+- Do not create or modify Firebase projects, databases, Authentication settings, Storage, Firestore rules/indexes, credentials or production data as part of this architecture decision alone.
+
+### Remaining infrastructure details
+
+The architecture decision is settled, but resource-specific configuration is not yet provisioned or approved: staging Firebase project ID, project ownership/billing, Firestore location/database ID, Authentication providers, Storage requirements, service-account/runtime credentials and deployment bindings must be reviewed before resource creation or connection. The existing production project/database ID and location should be inspected from authoritative project configuration rather than guessed.
+
+The legacy `shipmentQuotes` collision is isolated by the separate Firebase project boundary between staging and production. Within each environment, the new shipment quote model must still have a clearly owned collection/path and must not overwrite or reinterpret any legacy quote records that exist in that environment. Prefer a collision-safe shipment namespace where needed until the legacy store's status is confirmed.
+
+### Updated Step 1 exit criteria
+
+- [x] Environment boundary selected: separate Firebase projects for staging and production.
+- [x] Existing `verilyft-4e691` reserved for main/production.
+- [x] Staging must use a dedicated Firebase project; no separate staging database inside the production project is planned.
+- [ ] Staging project ID, ownership/billing and resource configuration reviewed before provisioning.
+- [ ] Exact Firestore database ID/location and runtime binding confirmed for each environment before adapter connection.
+- [ ] Collection/path ownership checked against legacy records within the staging project before writes.
