@@ -7,7 +7,7 @@ type PaginationProps = {
   onPageChange: (page: number) => void;
 };
 
-export function Pagination({ page, totalItems, pageSize = 10, onPageChange }: PaginationProps) {
+export function Pagination({ page, totalItems, pageSize = 5, onPageChange }: PaginationProps) {
   const pageCount = Math.ceil(totalItems / pageSize);
   if (pageCount <= 1) return null;
   const start = (page - 1) * pageSize + 1;
