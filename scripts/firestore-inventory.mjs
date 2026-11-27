@@ -73,13 +73,17 @@ function valueType(value) {
   return typeof value;
 }
 
+function safeStructuralPath(path) {
+  return path.split("/").map((segment, index) => index % 2 === 1 ? "*" : segment).join("/");
+}
+
 function inferRelationship(fieldPath, value) {
   if (value && typeof value.path === "string" && typeof value.get === "function") {
     const parts = value.path.split("/");
     return {
       fieldPath,
       kind: "document_reference",
-      targetCollectionPath: parts.length > 1 ? parts.slice(0, -1).join("/") : "unknown",
+      targetCollectionPath: parts.length > 1 ? safeStructuralPath(parts.slice(0, -1).join("/")) : "unknown",
     };
   }
   if (/(^|[A-Z_])(id|ids|ref|refs|reference|references)$/i.test(fieldPath)
@@ -180,9 +184,9 @@ async function main() {
     seenCollections.add(path);
 
     const entry = {
-      path,
+      path: safeStructuralPath(path),
       depth,
-      parentDocumentPath: depth > 0 ? path.split("/").slice(0, -1).join("/") : null,
+      parentDocumentPath: depth > 0 ? safeStructuralPath(path.split("/").slice(0, -1).join("/")) : null,
       documentCount: null,
       documentsInspectedForSchema: 0,
       schemaComplete: true,
@@ -199,8 +203,8 @@ async function main() {
       entry.documentCount = countSnapshot.data().count;
       report.summary.documentCountTotal += entry.documentCount;
     } catch (error) {
-      entry.warnings.push(`Count aggregation failed: ${error.message}`);
-      report.warnings.push(`Count unavailable for ${path}`);
+      entry.warnings.push("Count aggregation failed; inspect access and query permissions.");
+      report.warnings.push("A collection count was unavailable; see the affected collection entry.");
     }
 
     let lastDocument = null;
@@ -247,7 +251,7 @@ async function main() {
             await inspectCollection(child, depth + 1);
           }
         } catch (error) {
-          entry.warnings.push(`Could not enumerate a nested collection: ${error.message}`);
+          entry.warnings.push("Could not enumerate a nested collection for one or more documents.");
         }
       }
 
