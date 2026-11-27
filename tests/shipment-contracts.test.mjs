@@ -7,6 +7,7 @@ import {
 } from "../lib/shipment/contracts.mjs";
 import { generateShipmentReference, reserveUniqueShipmentReference } from "../lib/shipment/references.mjs";
 import { assertRepositoryPorts, runIdempotentCommand } from "../lib/shipment/repositories.mjs";
+import { createParcelIntakeContract, createShipmentAssignmentContract, createShipmentDocumentContract, createNotificationContract, createNotificationAttemptContract } from "../lib/shipment/records.mjs";
 
 const baseShipment = {
   shipmentReference: "VLY-20261127-ABC234", customerId: "customer-1",
@@ -140,4 +141,63 @@ test("idempotent command returns prior result and only executes handler once", a
   assert.deepEqual(await runIdempotentCommand(args), { shipmentId: "s1", count: 1 });
   assert.deepEqual(await runIdempotentCommand(args), { shipmentId: "s1", count: 1 });
   assert.equal(executions, 1);
+});
+
+test("full parcel intake contract requires completion and photo evidence", () => {
+  const input = {
+    intakeId: "intake-1", shipmentId: "shipment-1", parcelIds: ["parcel-1"],
+    intakeType: "station_drop_off", receivingLocationType: "pudo", pudoLocationId: "pudo-1",
+    receivedBy: { type: "pudo_partner", id: "partner-1" },
+    receivedAt: "2026-11-27T10:00:00Z", recordedAt: "2026-11-27T10:00:00Z",
+    condition: "Good", measurements: [], discrepancies: [], photoEvidenceRefs: ["private/intake.jpg"],
+    status: "completed", completedAt: "2026-11-27T10:01:00Z",
+  };
+  assert.equal(createParcelIntakeContract(input).photoEvidenceRefs.length, 1);
+  assert.throws(() => createParcelIntakeContract({ ...input, photoEvidenceRefs: [] }), /at least one photo/);
+  assert.throws(() => createParcelIntakeContract({ ...input, status: "draft" }), /must be completed/);
+});
+
+test("assignment contract captures bounded responsibility periods without custody claims", () => {
+  const assignment = createShipmentAssignmentContract({
+    assignmentId: "assignment-1", shipmentId: "shipment-1", activityType: "pickup",
+    assignee: { type: "operator", id: "operator-1" }, assignedBy: { type: "admin", id: "admin-1" },
+    startsAt: "2026-11-27T10:00:00Z", endsAt: "2026-11-27T11:00:00Z",
+    status: "active", createdAt: "2026-11-27T09:00:00Z",
+  });
+  assert.equal(assignment.status, "active");
+  assert.throws(() => createShipmentAssignmentContract({
+    ...assignment, endsAt: "2026-11-27T09:00:00Z",
+  }), /endsAt must be later/);
+});
+
+test("document metadata requires protected storage path, checksum and access classification", () => {
+  const document = createShipmentDocumentContract({
+    documentId: "document-1", shipmentId: "shipment-1", documentType: "waybill", version: 1,
+    storagePath: "private/shipments/s1/waybill.pdf", contentType: "application/pdf",
+    sizeBytes: 100, checksum: "sha256:abc", generatedAt: "2026-11-27T10:00:00Z",
+    generatedBy: { type: "admin", id: "admin-1" }, access: ["customer", "admin"],
+  });
+  assert.equal(document.version, 1);
+  assert.throws(() => createShipmentDocumentContract({
+    ...document, access: [],
+  }), /access must not be empty/);
+});
+
+test("notification contracts define recipient-specific deduplicated intent and immutable attempts", () => {
+  const notification = createNotificationContract({
+    notificationId: "notification-1", shipmentId: "shipment-1",
+    recipientType: "customer", recipientId: "customer-1", channel: "email",
+    templateKey: "shipment_submitted", deduplicationKey: "shipment-1:submitted:customer-1",
+    payload: { shipmentReference: "VLY-1" }, createdAt: "2026-11-27T10:00:00Z",
+  });
+  assert.equal(notification.status, "pending");
+  const attempt = createNotificationAttemptContract({
+    attemptId: "attempt-1", notificationId: notification.notificationId,
+    attemptedAt: "2026-11-27T10:01:00Z", status: "failed", provider: "email-provider",
+    errorCode: "TEMPORARY",
+  });
+  assert.equal(attempt.status, "failed");
+  assert.throws(() => createNotificationAttemptContract({
+    ...attempt, status: "pending",
+  }), /must be delivered or failed/);
 });
