@@ -27,7 +27,7 @@ export function TextField({
         id={id}
         aria-invalid={error ? true : inputProps["aria-invalid"]}
         aria-describedby={describedBy}
-        className={["vl-field__input", error ? "is-invalid" : "", inputProps.className ?? ""].filter(Boolean).join(" ")}
+        className={["vl-field__input", error ? "is-invalid" : ""].filter(Boolean).join(" ")}
       />
       {hint && <small className="vl-field__hint" id={hintId}>{hint}</small>}
       {error && <small className="vl-field__error" id={errorId}>{error}</small>}
