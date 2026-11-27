@@ -7,7 +7,7 @@
 
 ## 1. Scope
 
-This audit covers the three current workspaces, their shared authentication helpers, representative account/partner APIs, the current Firestore rules boundary, and the newly added PUDO personnel roster workflow. It does not claim a line-by-line review of every Admin API or constitute a penetration test.
+This audit covers all route handlers currently present under `app/api/account`, `app/api/admin` and `app/api/pudo-partner`, their shared authentication/permission helpers, the current Firestore rules boundary, and the newly added PUDO personnel roster workflow. It is a source-level access-control review, not a penetration test or a substitute for running the full test suite.
 
 ## 2. Identity and authority boundaries
 
@@ -41,9 +41,12 @@ Boundary:
 
 ## 4. Admin access review
 
-Reviewed:
+Reviewed all 18 Admin API route handlers, including authentication claim/verification, store orders, uploads, staff permission administration, commercial pricing, route-distance evidence and operational-cost workflows, plus:
 - `lib/server/admin-authorization-core.ts`
 - `lib/server/admin-authorization.ts`
+- `lib/server/commercial-pricing-request-auth.ts`
+- `lib/server/operational-cost-definition-request-auth.ts`
+- `lib/server/staff-management-auth.ts`
 - `tests/admin-authorization.test.mjs`
 - Current `firestore.rules` server-managed Admin and operational record boundaries.
 
@@ -57,11 +60,15 @@ The shared Admin authorizer requires:
 
 Failure to configure the allowlist fails closed. Admin access is not granted merely because a person can sign in.
 
-Existing route-level action permissions remain additional controls where required. The Admin workspace shell and navigation do not grant permissions.
+Store order and image-upload APIs use the full Admin request authorizer. Staff permission-administration APIs additionally require the designated Staff Permission Administrator authority, which composes the full Admin check.
+
+**Legacy permission boundary:** commercial-pricing and operational-cost routes use the existing audited staff-action-permission grant model after revocation-aware token verification. Those grants are managed through the protected permission-administration workflow and support the existing independent review/approval requirements (including the four-person operational-cost control). They are not the new minimal Admin identity model. Preserve these legacy controls while the existing commercial workflows remain active, but do not reuse these helpers for new shipment APIs without an explicit authorization design. The Admin `/auth/verify` endpoint is a workspace bootstrap check; authoritative data APIs still enforce their server-side access checks.
+
+The Admin workspace shell and navigation do not grant permissions.
 
 ## 5. PUDO partner access review
 
-Reviewed:
+Reviewed all four current PUDO partner API route handlers and:
 - `lib/server/pudo-partner-workspace-auth.ts`
 - `lib/server/pudo-partner-portal-store-core.ts`
 - `app/api/pudo-partner/account/route.ts`
@@ -115,7 +122,9 @@ No Firestore rules were changed in this branch.
 - [x] Customer, Admin, PUDO Partner and PUDO Personnel authority are kept distinct.
 - [ ] Local automated test suite and production build pass on this branch.
 - [ ] User performs live browser verification of partner personnel workflow.
-- [ ] Full route-by-route authorization regression remains a release-hardening activity, especially as new shipment/recipient APIs are added.
+- [x] Source-level route inventory and authorization review completed for all current Customer, Admin and PUDO Partner API route handlers.
+- [ ] Automated test suite, local production build and live browser verification remain pending.
+- [ ] Recipient shipment-access authorization must be designed before tracking/document APIs are exposed.
 
 ## 9. Explicitly not implemented in Phase 2
 
