@@ -18,7 +18,7 @@ const handlers = createShipmentBookingDraftHandlers({
   authenticateCustomer: (authorization) =>
     authenticateVerifiedCustomer(
       authorization,
-      (token) => adminAuth.verifyIdToken(token)
+      (token) => adminAuth.verifyIdToken(token, true)
     ),
   validateDraft: validateShipmentBookingDraft,
 });
