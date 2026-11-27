@@ -737,8 +737,8 @@ export default function CustomerAccountPage() {
                     </div>
                   </article>
                 ))}
+                <Pagination page={currentOrdersPage} totalItems={orders.length} pageSize={pageSize} onPageChange={setOrdersPage} />
               </div>
-              <Pagination page={currentOrdersPage} totalItems={orders.length} pageSize={pageSize} onPageChange={setOrdersPage} />
             )}
           </div>
 
