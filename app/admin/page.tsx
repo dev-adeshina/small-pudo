@@ -1,161 +1,169 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import {
+  Activity,
   ArrowUpRight,
+  Boxes,
+  CheckCircle2,
+  Clock3,
+  FileText,
+  FolderKanban,
+  Home,
+  LogOut,
+  MapPinned,
   Package,
+  Route,
+  Settings2,
+  ShieldCheck,
+  ShoppingBag,
+  Tags,
+  Truck,
   Users,
   Wallet,
-  Clock3,
-  LogOut,
-  Truck,
-  Tags,
-  ClipboardList,
 } from "lucide-react";
 
 import { auth } from "@/lib/firebase";
 import { logoutAdmin } from "@/lib/auth";
-
 import { verifyAdminAccess } from "@/lib/admin-auth";
+import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
+import { PageHeader } from "@/components/design-system/PageHeader";
+import { Button } from "@/components/design-system/Button";
+import { StatusBadge } from "@/components/design-system/StatusBadge";
+import { FeedbackState } from "@/components/design-system/FeedbackState";
+import { SurfaceCard } from "@/components/design-system/SurfaceCard";
 
-const stats = [
-  {
-    label: "TOTAL ORDERS",
-    value: "248",
-    change: "+12.4%",
-    icon: Package,
-  },
-  {
-    label: "CUSTOMERS",
-    value: "1,284",
-    change: "+8.2%",
-    icon: Users,
-  },
-  {
-    label: "REVENUE",
-    value: "₦4.82M",
-    change: "+14.8%",
-    icon: Wallet,
-  },
-  {
-    label: "PENDING",
-    value: "18",
-    change: "Needs attention",
-    icon: Clock3,
-  },
+type StoreOrder = {
+  id: string;
+  customer: { name?: string; email?: string; phone?: string } | null;
+  items: Array<{ name?: string; quantity?: number }>;
+  total: number;
+  currency: string;
+  paymentStatus: string;
+  orderStatus: string;
+  createdAt: string | null;
+};
+
+const storeNavigation = [
+  { label: "Store orders", href: "/admin/orders", section: "STORE", icon: ShoppingBag },
+  { label: "Products", href: "/admin/products", section: "STORE", icon: Package },
+  { label: "Categories", href: "/admin/categories", section: "STORE", icon: Tags },
 ];
 
-const recentOrders = [
-  {
-    id: "#VL-10248",
-    customer: "Adebayo Stores",
-    service: "Standard Delivery",
-    status: "In Transit",
-    amount: "₦8,500",
-  },
-  {
-    id: "#VL-10247",
-    customer: "Tola Kitchen",
-    service: "Express Delivery",
-    status: "Delivered",
-    amount: "₦12,000",
-  },
-  {
-    id: "#VL-10246",
-    customer: "Mide Fashion",
-    service: "Pickup",
-    status: "Pending",
-    amount: "₦5,500",
-  },
-  {
-    id: "#VL-10245",
-    customer: "Green Basket",
-    service: "Standard Delivery",
-    status: "Delivered",
-    amount: "₦7,200",
-  },
+const commercialNavigation = [
+  { label: "Pricing definitions", href: "/admin/commercial-pricing-definitions", section: "COMMERCIAL", icon: Wallet },
+  { label: "Operational costs", href: "/admin/operational-cost-definitions", section: "COMMERCIAL", icon: Settings2 },
+  { label: "Route distance evidence", href: "/admin/commercial-route-distance", section: "COMMERCIAL", icon: Route },
 ];
+
+const plannedAreas = [
+  { title: "Customers", description: "Customer profiles, shipment history and authorised account details.", icon: Users },
+  { title: "Shipments", description: "Review and manage shipment requests across all approved channels.", icon: Package },
+  { title: "Bookings & transactions", description: "Confirmed shipment bookings, payment attempts and transaction records.", icon: Wallet },
+  { title: "PUDO network", description: "Partner locations, verification, station personnel and operational readiness.", icon: MapPinned },
+  { title: "Routing & delivery", description: "Collection, delivery and transfer assignments with operational progress.", icon: Truck },
+  { title: "Messages & documents", description: "Shipment conversations, quotations, receipts and delivery documents.", icon: FileText },
+];
+
+function formatMoney(amount: number, currency = "NGN") {
+  try {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  } catch {
+    return `${currency} ${amount.toLocaleString("en-NG")}`;
+  }
+}
+
+function formatDate(value: string | null) {
+  if (!value) return "Date unavailable";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Date unavailable";
+  return new Intl.DateTimeFormat("en-NG", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+function orderTone(status: string): "success" | "warning" | "danger" | "info" | "neutral" {
+  const value = status.toLowerCase();
+  if (["delivered", "paid"].includes(value)) return "success";
+  if (["pending", "processing", "confirmed"].includes(value)) return "warning";
+  if (["cancelled", "failed", "refunded"].includes(value)) return "danger";
+  if (["shipped", "ready_for_shipping"].includes(value)) return "info";
+  return "neutral";
+}
+
+function readableStatus(status: string) {
+  return status.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
 
 export default function AdminDashboard() {
   const router = useRouter();
-
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [admin, setAdmin] = useState<User | null>(null);
   const [adminEmail, setAdminEmail] = useState("");
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [orders, setOrders] = useState<StoreOrder[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [ordersError, setOrdersError] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  const loadOrders = useCallback(async (currentUser: User, quiet = false) => {
+    if (quiet) setRefreshing(true);
+    else setOrdersLoading(true);
+    setOrdersError("");
 
-  //     if (!user) {
-  //       router.replace("/admin/sign-in");
-  //       return;
-  //     }
-
-  //     if (!user.emailVerified) {
-  //       router.replace(
-  //         `/admin/verify-email?email=${encodeURIComponent(
-  //           user.email ?? ""
-  //         )}`
-  //       );
-  //       return;
-  //     }
-
-  //     setAdminEmail(user.email ?? "");
-  //     setCheckingAuth(false);
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [router]);
+    try {
+      const token = await currentUser.getIdToken();
+      const response = await fetch("/api/admin/orders", {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(typeof data?.error === "string" ? data.error : "Unable to load recent store orders.");
+      }
+      setOrders(Array.isArray(data?.orders) ? data.orders : []);
+    } catch (cause) {
+      setOrdersError(cause instanceof Error ? cause.message : "Unable to load recent store orders.");
+    } finally {
+      setOrdersLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
     let active = true;
-
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!active) return;
-
       if (!user) {
         router.replace("/admin/sign-in");
         return;
       }
-
       if (!user.emailVerified) {
-        router.replace(
-          `/admin/verify-email?email=${encodeURIComponent(
-            user.email ?? ""
-          )}`
-        );
+        router.replace(`/admin/verify-email?email=${encodeURIComponent(user.email ?? "")}`);
         return;
       }
 
       try {
         const email = await verifyAdminAccess(user);
-
         if (!active) return;
-
+        setAdmin(user);
         setAdminEmail(email);
         setCheckingAuth(false);
+        void loadOrders(user);
       } catch (error) {
         if (!active) return;
-
         if (error instanceof Error && error.name === "NotAdmin") {
-          // Do not sign the customer out of Firebase.
           router.replace("/account");
           return;
         }
-
-        if (
-          error instanceof Error &&
-          error.name === "AdminAuthUnavailable"
-        ) {
-          // Avoid displaying the admin workspace when its authorization
-          // configuration cannot be verified.
-          router.replace("/admin/sign-in");
-          return;
-        }
-
         router.replace("/admin/sign-in");
       }
     });
@@ -164,194 +172,223 @@ export default function AdminDashboard() {
       active = false;
       unsubscribe();
     };
-  }, [router]);
+  }, [loadOrders, router]);
 
   async function handleLogout() {
-    await logoutAdmin();
-    router.replace("/admin/sign-in");
+    setSigningOut(true);
+    try {
+      await logoutAdmin();
+      router.replace("/admin/sign-in");
+    } finally {
+      setSigningOut(false);
+    }
   }
 
+  const summary = useMemo(() => {
+    const awaitingPayment = orders.filter((order) => order.paymentStatus.toLowerCase() === "pending").length;
+    const paid = orders.filter((order) => order.paymentStatus.toLowerCase() === "paid").length;
+    const inProgress = orders.filter((order) => ["confirmed", "processing", "ready_for_shipping", "shipped"].includes(order.orderStatus.toLowerCase())).length;
+    const customers = new Set(
+      orders.map((order) => order.customer?.email || order.customer?.phone || order.customer?.name).filter(Boolean)
+    ).size;
+    return { awaitingPayment, paid, inProgress, customers };
+  }, [orders]);
+
+  const firstName = admin?.displayName?.trim().split(/\s+/)[0] || adminEmail.split("@")[0] || "Administrator";
+  const today = new Intl.DateTimeFormat("en-NG", { dateStyle: "full" }).format(new Date());
+
   if (checkingAuth) {
-    return (
-      <main className="admin-loading">
-        <span>Loading workspace...</span>
-      </main>
-    );
+    return <main className="admin-loading"><span>Verifying administrator access...</span></main>;
   }
 
   return (
-    <main className="admin-page">
-      <header className="admin-header">
-        <Link href="/" className="admin-logo">
-          <Image
-            src="/logo.svg"
-            width={60}
-            height={20}
-            alt="VeriLyft"
-            priority
-          />
-        </Link>
-
-        <div className="admin-header-right">
-          <span className="admin-email">{adminEmail}</span>
-
-          <button
-            type="button"
-            className="admin-logout"
+    <WorkspaceShell
+      workspaceName="VeriLyft"
+      workspaceLabel="Admin workspace"
+      navigation={[
+        { label: "Dashboard", href: "/admin", section: "OVERVIEW", icon: Home },
+        ...storeNavigation,
+        ...commercialNavigation,
+      ]}
+      breadcrumbs={[
+        { label: "Home", href: "/" },
+        { label: "Admin", href: "/admin" },
+        { label: "Dashboard" },
+      ]}
+      topbarContent={
+        <div className="vl-admin-topbar">
+          <span className="vl-admin-identity" title={adminEmail}>{adminEmail}</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            leadingIcon={<LogOut size={16} />}
             onClick={handleLogout}
+            loading={signingOut}
             aria-label="Sign out"
           >
-            <LogOut size={17} />
-          </button>
+            Sign out
+          </Button>
         </div>
-      </header>
+      }
+    >
+      <div className="vl-admin-dashboard">
+        <PageHeader
+          eyebrow="ADMINISTRATION"
+          title={`Good to see you, ${firstName}.`}
+          description="A clear view of the store operations already available and the operational workspaces being brought online."
+          actions={
+            <Button
+              variant="secondary"
+              leadingIcon={<Activity size={16} />}
+              onClick={() => admin && void loadOrders(admin, true)}
+              loading={refreshing}
+            >
+              Refresh overview
+            </Button>
+          }
+        />
 
-      <div className="admin-shell">
-        <section className="admin-welcome">
-          <div>
-            <span className="eyebrow">ADMIN / DASHBOARD</span>
+        <div className="vl-admin-date-line">
+          <span><ShieldCheck size={15} /> Verified administrator session</span>
+          <time>{today}</time>
+        </div>
 
-            <h1>
-              Good morning.
-              <br />
-              <em>Let&apos;s move.</em>
-            </h1>
-
-            <p>
-              Manage your VeriLyft operations, orders and customers from one
-              place.
-            </p>
-          </div>
-
-          <div className="admin-date">
-            <span>02 / OCTOBER / 2026</span>
-            <strong>VERILYFT HQ</strong>
-          </div>
+        <section className="vl-admin-metrics" aria-label="Recent store order summary">
+          <article className="vl-admin-metric">
+            <span>STORE ORDERS LOADED</span>
+            <strong>{ordersLoading ? "—" : ordersError ? "—" : orders.length}</strong>
+            <small>Latest records returned (up to 100)</small>
+            <ShoppingBag size={19} />
+          </article>
+          <article className="vl-admin-metric">
+            <span>AWAITING PAYMENT</span>
+            <strong>{ordersLoading || ordersError ? "—" : summary.awaitingPayment}</strong>
+            <small>Within the loaded store orders</small>
+            <Clock3 size={19} />
+          </article>
+          <article className="vl-admin-metric">
+            <span>PAID STORE ORDERS</span>
+            <strong>{ordersLoading || ordersError ? "—" : summary.paid}</strong>
+            <small>Within the loaded store orders</small>
+            <CheckCircle2 size={19} />
+          </article>
+          <article className="vl-admin-metric">
+            <span>CUSTOMERS IN RECENT ORDERS</span>
+            <strong>{ordersLoading || ordersError ? "—" : summary.customers}</strong>
+            <small>Distinct contacts in loaded records</small>
+            <Users size={19} />
+          </article>
         </section>
 
-        <section className="admin-stats">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-
-            return (
-              <article className="admin-stat-card" key={stat.label}>
-                <div className="admin-stat-top">
-                  <span>{stat.label}</span>
-                  <Icon size={19} strokeWidth={1.8} />
-                </div>
-
-                <strong>{stat.value}</strong>
-
-                <small>{stat.change}</small>
-              </article>
-            );
-          })}
-        </section>
-
-        <section className="admin-content-grid">
-          <div className="admin-panel admin-orders">
-            <div className="admin-panel-heading">
+        <section className="vl-admin-main-grid">
+          <SurfaceCard className="vl-admin-recent-orders">
+            <div className="vl-admin-section-heading">
               <div>
-                <span className="section-label">01 / ORDERS</span>
-                <h2>Recent orders</h2>
+                <span className="vl-admin-section-label">STORE OPERATIONS</span>
+                <h2>Recent store orders</h2>
+                <p>Store orders remain separate from shipment bookings.</p>
               </div>
-
-              <Link href="/admin/orders">
-                View all
-                <ArrowUpRight size={16} />
-              </Link>
+              <Link href="/admin/orders" className="vl-admin-text-link">View all <ArrowUpRight size={15} /></Link>
             </div>
 
-            <div className="orders-list">
-              {recentOrders.map((order) => (
-                <div className="order-row" key={order.id}>
-                  <div className="order-id">
-                    <strong>{order.id}</strong>
-                    <span>{order.customer}</span>
-                  </div>
+            {ordersError ? (
+              <FeedbackState
+                variant="error"
+                title="Recent orders could not be loaded"
+                description={ordersError}
+                action={
+                  <Button size="sm" variant="secondary" onClick={() => admin && void loadOrders(admin)}>
+                    Try again
+                  </Button>
+                }
+              />
+            ) : ordersLoading ? (
+              <FeedbackState variant="loading" title="Loading recent store orders..." />
+            ) : orders.length === 0 ? (
+              <FeedbackState
+                variant="empty"
+                title="No store orders to display"
+                description="New store orders will appear here when they are recorded."
+              />
+            ) : (
+              <div className="vl-admin-order-list">
+                {orders.slice(0, 6).map((order) => (
+                  <Link href="/admin/orders" className="vl-admin-order-row" key={order.id}>
+                    <span className="vl-admin-order-icon"><Package size={17} /></span>
+                    <span className="vl-admin-order-main">
+                      <strong>{order.id}</strong>
+                      <small>{order.customer?.name || order.customer?.email || "Customer details unavailable"} · {formatDate(order.createdAt)}</small>
+                    </span>
+                    <span className="vl-admin-order-state">
+                      <StatusBadge label={readableStatus(order.orderStatus)} tone={orderTone(order.orderStatus)} />
+                      <small>{readableStatus(order.paymentStatus)}</small>
+                    </span>
+                    <strong className="vl-admin-order-total">{formatMoney(order.total, order.currency)}</strong>
+                  </Link>
+                ))}
+              </div>
+            )}
+            <div className="vl-admin-list-footnote">Summary is based on the latest 100 store orders returned by the existing Admin orders service.</div>
+          </SurfaceCard>
 
-                  <div className="order-service">
-                    <Truck size={16} />
-                    <span>{order.service}</span>
-                  </div>
-
-                  <span
-                    className={`order-status ${order.status
-                      .toLowerCase()
-                      .replace(" ", "-")}`}
-                  >
-                    {order.status}
-                  </span>
-
-                  <strong className="order-amount">{order.amount}</strong>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <aside className="admin-side">
-            <div className="admin-panel quick-actions">
-              <div className="admin-panel-heading">
+          <aside className="vl-admin-side-column">
+            <SurfaceCard>
+              <div className="vl-admin-section-heading">
                 <div>
-                  <span className="section-label">02 / ACTIONS</span>
-                  <h2>Quick actions</h2>
+                  <span className="vl-admin-section-label">QUICK ACCESS</span>
+                  <h2>Store management</h2>
                 </div>
               </div>
-
-              <Link href="/admin/orders" className="admin-action">
-                <span>
-                  <Package size={18} />
-                  Manage orders
-                </span>
-                <ArrowUpRight size={17} />
-              </Link>
-
-              <Link
-                href="/admin/products"
-                className="admin-action"
-              >
-                <span>
-                  <Package size={18} />
-                  Manage products
-                </span>
-
-                <ArrowUpRight size={17} />
-              </Link>
-
-              <Link href="/admin/categories" className="admin-action">
-                <span>
-                  <Tags size={18} />
-                  Manage categories
-                </span>
-
-                <ArrowUpRight size={17} />
-              </Link>
-
-              <Link href="/admin/staff" className="admin-action">
-                <span>
-                  <Users size={18} />
-                  Staff and permissions
-                </span>
-                <ArrowUpRight size={17} />
-              </Link>
-            </div>
-
-            <div className="admin-panel admin-notice">
-              <span className="section-label">03 / STATUS</span>
-
-              <div className="status-indicator">
-                <span />
-                All systems operational
+              <div className="vl-admin-quick-links">
+                <Link href="/admin/orders"><ShoppingBag size={17} /><span>Manage store orders</span><ArrowUpRight size={15} /></Link>
+                <Link href="/admin/products"><Package size={17} /><span>Manage products</span><ArrowUpRight size={15} /></Link>
+                <Link href="/admin/categories"><Tags size={17} /><span>Manage categories</span><ArrowUpRight size={15} /></Link>
               </div>
+            </SurfaceCard>
 
-              <p>
-                VeriLyft services are running normally. No critical issues
-                require your attention.
-              </p>
-            </div>
+            <SurfaceCard>
+              <div className="vl-admin-section-heading">
+                <div>
+                  <span className="vl-admin-section-label">COMMERCIAL CONTROLS</span>
+                  <h2>Pricing & evidence</h2>
+                </div>
+              </div>
+              <div className="vl-admin-quick-links">
+                <Link href="/admin/commercial-pricing-definitions"><Wallet size={17} /><span>Pricing definitions</span><ArrowUpRight size={15} /></Link>
+                <Link href="/admin/operational-cost-definitions"><Settings2 size={17} /><span>Operational costs</span><ArrowUpRight size={15} /></Link>
+                <Link href="/admin/commercial-route-distance"><Route size={17} /><span>Route distance evidence</span><ArrowUpRight size={15} /></Link>
+              </div>
+            </SurfaceCard>
           </aside>
         </section>
+
+        <section className="vl-admin-planned-section">
+          <div className="vl-admin-section-heading">
+            <div>
+              <span className="vl-admin-section-label">VERILyFT OPERATIONS</span>
+              <h2>Operational workspaces</h2>
+              <p>These areas are part of the approved Admin experience and will be connected as their workflows are implemented.</p>
+            </div>
+            <StatusBadge label="Implementation in progress" tone="info" />
+          </div>
+          <div className="vl-admin-planned-grid">
+            {plannedAreas.map((area) => {
+              const Icon = area.icon;
+              return (
+                <article className="vl-admin-planned-card" key={area.title}>
+                  <span className="vl-admin-planned-icon"><Icon size={19} /></span>
+                  <div><h3>{area.title}</h3><p>{area.description}</p></div>
+                  <StatusBadge label="Planned" tone="neutral" />
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <p className="vl-admin-boundary-note">
+          Store management shown here continues to use the existing store data. Shipment bookings, PUDO operations and store orders are separate workflows and will not be combined into one record type.
+        </p>
       </div>
-    </main>
+    </WorkspaceShell>
   );
 }
