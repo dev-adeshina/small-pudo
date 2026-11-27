@@ -1,6 +1,6 @@
 # VeriLyft Planning Package
 
-**Baseline:** v1.1  
+**Baseline:** v1.2  
 **Date:** 27 November 2026
 
 This directory contains the coordinated planning baseline for the new VeriLyft implementation.
@@ -13,6 +13,7 @@ This directory contains the coordinated planning baseline for the new VeriLyft i
 4. [Business Workflows and Rules](./04-verilyft-business-workflows.md)
 5. [Design System & Dashboard Experience Specification](./05-verilyft-design-system-dashboard-experience.md)
 6. [Firestore Inventory and Legacy Data Assessment](./06-firestore-inventory-and-data-assessment.md)
+7. [Existing Data Adaptation and Replacement Matrix](./07-existing-data-adaptation-and-replacement-matrix.md)
 
 ## Supporting utility
 
@@ -37,16 +38,17 @@ VeriLyft is **one application**, with one shared authentication infrastructure a
 
 These documents capture planning decisions; they are not evidence that a database, collection, page, feature, integration or workflow has been implemented.
 
-## Data preservation and safety boundaries
+## Data preservation and minimal-model boundaries
 
 - The existing main-version database must remain untouched by the new implementation unless a separately approved integration decision says otherwise.
-- Existing store data must be preserved.
-- The store integration boundary (read-through, controlled copy or migration) remains to be decided based on inventory and ownership review.
+- Existing store data must be preserved. Preserving historical data does not require reusing its current schema.
 - The new implementation is intended to use a separately identified Firestore database; do not create or deploy it until its ID, location, rules and environment strategy are approved.
+- Build the simplest data structure that fully supports the approved VeriLyft workflows. Do not carry forward complexity simply because it already exists.
+- The adaptation matrix determines which legacy concepts are kept, adapted, consolidated, replaced in the new application or left untouched.
 - No migration, production Firestore data change, rules deployment or index deployment is authorised by this planning package.
 - Every physical parcel intake requires a photograph.
 - Initial scope is deliberately minimal; advanced automation is deferred.
 
 ## Status and use
 
-Review the PRD, data architecture, UI/UX blueprint, business workflows and design system together. Use the inventory report and application-code review to classify existing collections before deciding what to retain, reuse, reference, copy, migrate or exclude. Open decisions must be resolved before implementing the affected functionality.
+Review the PRD, data architecture, UI/UX blueprint, business workflows and design system together. Use the inventory and application-code cross-check to map only the required business information into the approved minimal target model. Open decisions must be resolved before implementing the affected functionality.
