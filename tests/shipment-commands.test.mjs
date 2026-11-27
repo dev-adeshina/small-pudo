@@ -75,7 +75,7 @@ test("customer submission derives actor/channel, creates shipment, parcels and i
   const result = await commands.submitShipment({
     actor: { type: "customer", id: "customer-1" },
     idempotencyKey: "submit-001",
-    shipment: { ...shipmentInput, customerId: "attacker-supplied-customer" },
+    shipment: { ...shipmentInput, customerId: "attacker-supplied-customer", measurementReviewStatus: "closed" },
     parcels: [parcelInput],
   });
   assert.equal(result.customerId, "customer-1");
