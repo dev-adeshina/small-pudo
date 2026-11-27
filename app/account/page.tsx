@@ -45,6 +45,11 @@ interface CustomerOrderItem {
   subtotal: number;
 }
 
+interface CustomerQuote {
+  quoteId: string;
+  status: string;
+}
+
 interface CustomerOrder {
   id: string;
   items: CustomerOrderItem[];
@@ -133,6 +138,11 @@ export default function CustomerAccountPage() {
   const [draftsLoading, setDraftsLoading] = useState(true);
   const [draftsError, setDraftsError] = useState("");
   const [draftReloadKey, setDraftReloadKey] = useState(0);
+
+  const [quotes, setQuotes] = useState<CustomerQuote[]>([]);
+  const [quotesLoading, setQuotesLoading] = useState(true);
+  const [quotesError, setQuotesError] = useState("");
+  const [quoteReloadKey, setQuoteReloadKey] = useState(0);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
@@ -270,6 +280,54 @@ export default function CustomerAccountPage() {
     };
   }, [user, draftReloadKey]);
 
+  useEffect(() => {
+    if (!user) return;
+
+    let active = true;
+
+    async function fetchQuotes() {
+      setQuotesLoading(true);
+      setQuotesError("");
+
+      try {
+        const idToken = await user!.getIdToken();
+        const response = await fetch("/api/account/shipment-quotes", {
+          headers: { Authorization: `Bearer ${idToken}` },
+          cache: "no-store",
+        });
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok || !data?.success) {
+          throw new Error(
+            typeof data?.error === "string"
+              ? data.error
+              : "Unable to load your quotations."
+          );
+        }
+
+        if (active) {
+          setQuotes(Array.isArray(data.quotes) ? data.quotes : []);
+        }
+      } catch (loadError) {
+        if (active) {
+          setQuotesError(
+            loadError instanceof Error
+              ? loadError.message
+              : "Unable to load your quotations. Please try again."
+          );
+        }
+      } finally {
+        if (active) setQuotesLoading(false);
+      }
+    }
+
+    void fetchQuotes();
+
+    return () => {
+      active = false;
+    };
+  }, [user, quoteReloadKey]);
+
   async function handleSignOut() {
     setError("");
     setSigningOut(true);
@@ -295,6 +353,9 @@ export default function CustomerAccountPage() {
 
   const completedOrders = orders.filter(
     (order) => order.orderStatus.toLowerCase() === "delivered"
+  ).length;
+  const quotationsAwaitingDecision = quotes.filter(
+    (quote) => quote.status === "issued"
   ).length;
 
   const pendingOrders = orders.filter((order) =>
@@ -405,6 +466,25 @@ export default function CustomerAccountPage() {
             <strong>{ordersLoading ? "—" : completedOrders}</strong>
 
             <small>Successfully delivered orders</small>
+          </article>
+          <article className="customer-stat-card">
+            <div className="customer-stat-top">
+              <span>QUOTATIONS AWAITING ACTION</span>
+              <FileText size={19} />
+            </div>
+            <strong>{quotesLoading ? "—" : quotesError ? "!" : quotationsAwaitingDecision}</strong>
+            <small>
+              {quotesError ? "Quotation summary unavailable" : "Issued quotations to review"}
+            </small>
+            {quotesError ? (
+              <button
+                type="button"
+                className="vl-customer-inline-retry"
+                onClick={() => setQuoteReloadKey((key) => key + 1)}
+              >
+                Retry
+              </button>
+            ) : null}
           </article>
         </section>
 
