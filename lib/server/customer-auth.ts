@@ -7,7 +7,7 @@ export type CustomerAuthenticationResult =
   | { success: true; uid: string }
   | { success: false; status: 401 | 403; error: string };
 
-type TokenVerifier = (token: string) => Promise<VerifiedCustomer>;
+type TokenVerifier = (token: string, checkRevoked: boolean) => Promise<VerifiedCustomer>;
 
 /**
  * Verify a Firebase bearer token and require a verified customer email.
@@ -36,7 +36,7 @@ export async function authenticateVerifiedCustomer(
   }
 
   try {
-    const decodedToken = await verifyIdToken(token);
+    const decodedToken = await verifyIdToken(token, true);
 
     if (decodedToken.email_verified !== true) {
       return {
