@@ -23,7 +23,7 @@ function fixture({ status = "Submitted", customerId = "customer-1", currentQuote
       getCurrent: async () => state.currentQuote,
       withdraw: async () => {},
     },
-    payments: { createAttempt: async () => {}, getByProviderReference: async () => null, updateAttempt: async () => {} },
+    payments: { createAttempt: async () => {}, getById: async () => null, getByProviderReference: async () => null, updateAttempt: async () => {} },
     events: { append: async (_tx, event) => state.events.push(event), listByShipment: async () => [] },
     idempotency: {
       get: async (_tx, key) => state.idempotency.get(key) ?? null,
