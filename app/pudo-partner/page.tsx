@@ -21,7 +21,7 @@ const navigation: WorkspaceNavigationItem[] = [
   { label: "Shipments", href: "/pudo-partner#shipments", section: "OPERATIONS", icon: Package },
   { label: "Parcel intake", href: "/pudo-partner#intake", section: "OPERATIONS", icon: Camera },
   { label: "Door pickup", href: "/pudo-partner#door-pickup", section: "OPERATIONS", icon: Bike },
-  { label: "Personnel", href: "/pudo-partner#personnel", section: "STATION", icon: Activity },
+  { label: "Personnel", href: "/pudo-partner/personnel", section: "STATION", icon: Activity },
   { label: "Assignments", href: "/pudo-partner#assignments", section: "STATION", icon: CalendarClock },
   { label: "Station profile", href: "/pudo-partner#locations", section: "STATION", icon: MapPin },
 ];
@@ -200,7 +200,7 @@ export default function PudoPartnerDashboard() {
           <article className="vl-pudo-operation-card"><span className="vl-pudo-operation-icon"><Package size={19} /></span><div><h3>Shipments</h3><p>View only shipments assigned to your authorised station.</p><span className="vl-pudo-coming">Operational module upcoming</span></div></article>
           <article className="vl-pudo-operation-card" id="intake"><span className="vl-pudo-operation-icon"><Camera size={19} /></span><div><h3>Parcel intake</h3><p>Receive and record parcels with mandatory photo evidence, condition and measurements.</p><span className="vl-pudo-coming">Operational module upcoming</span></div></article>
           <article className="vl-pudo-operation-card" id="door-pickup"><span className="vl-pudo-operation-icon"><Bike size={19} /></span><div><h3>Door pickup</h3><p>See pickup requests, customer addresses, schedules and responsible personnel.</p><span className="vl-pudo-coming">Operational module upcoming</span></div></article>
-          <article className="vl-pudo-operation-card" id="personnel"><span className="vl-pudo-operation-icon"><Activity size={19} /></span><div><h3>Personnel</h3><p>Maintain the people registered to work for this PUDO location and their operational roles.</p><span className="vl-pudo-coming">Operational module upcoming</span></div></article>
+          <article className="vl-pudo-operation-card" id="personnel"><span className="vl-pudo-operation-icon"><Activity size={19} /></span><div><h3>Personnel</h3><p>Maintain the people registered to work for this PUDO location and their operational roles.</p><Link className="vl-button vl-button--secondary vl-button--sm" href="/pudo-partner/personnel">Manage personnel</Link></div></article>
           <article className="vl-pudo-operation-card" id="assignments"><span className="vl-pudo-operation-icon"><CalendarClock size={19} /></span><div><h3>Assignments</h3><p>See who is assigned, the activity and the scheduled start and end times.</p><span className="vl-pudo-coming">Operational module upcoming</span></div></article>
           <article className="vl-pudo-operation-card"><span className="vl-pudo-operation-icon"><ClipboardList size={19} /></span><div><h3>Recent activity</h3><p>Review station events and operational updates in chronological order.</p><span className="vl-pudo-coming">Operational module upcoming</span></div></article>
         </section>

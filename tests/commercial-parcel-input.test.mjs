@@ -52,7 +52,7 @@ describe("commercial parcel input evidence contract", () => {
   it("requires at least one declared or actual evidence record", () => {
     assert.throws(
       () => assertCommercialParcelInput({ schemaVersion: 1, handlingCharacteristics: [] }),
-      /requires declared or actual/
+      /requires measurement evidence or customer-declared characteristics/
     );
   });
 

@@ -12,6 +12,9 @@ import {
   createPudoLocationActivationStore,
 } from "../lib/server/pudo-location-activation-store-core.ts";
 import {
+  createPudoLocationCapabilityStore,
+} from "../lib/server/pudo-location-capability-store-core.ts";
+import {
   createStaffManagementStore,
 } from "../lib/server/staff-management-core.ts";
 
@@ -31,6 +34,7 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
   let registrationStore;
   let verificationStore;
   let activationStore;
+  let capabilityStore;
   let staffStore;
 
   after(async () => {
@@ -49,6 +53,11 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
 
       await verificationRef.delete();
       await db.collection("pudoLocationActivations").doc(locationId).delete();
+
+      const capabilityRef = db.collection("pudoLocationCapabilities").doc(locationId);
+      const capabilityVersions = await capabilityRef.collection("versions").listDocuments();
+      await Promise.all(capabilityVersions.map((ref) => ref.delete()));
+      await capabilityRef.delete();
     }
 
     for (const uid of [registerUid, verifierUid, activatorUid, deniedUid]) {
@@ -96,6 +105,11 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
       serverTimestamp: () => FieldValue.serverTimestamp(),
     });
 
+    capabilityStore = createPudoLocationCapabilityStore({
+      db,
+      serverTimestamp: () => FieldValue.serverTimestamp(),
+    });
+
     staffStore = createStaffManagementStore({
       db,
       serverTimestamp: () => FieldValue.serverTimestamp(),
@@ -133,6 +147,14 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
     });
 
     await staffStore.setPermission({
+      targetUid: activatorUid,
+      actorUid: adminUid,
+      permissionId: "pudo_location.capability_approve",
+      status: "active",
+      reason: "Activation test capability configuration access",
+    });
+
+    await staffStore.setPermission({
       targetUid: deniedUid,
       actorUid: adminUid,
       permissionId: "pudo_location.register",
@@ -144,6 +166,7 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
   async function createCandidate(name = "Activation test PUDO") {
     const created = await registrationStore.saveCandidate(registerUid, {
       name,
+      partnerBusinessName: "Synthetic Activation Partner",
       address: "12 Example Street, Test District",
       registrationNote: "Synthetic activation test",
       geo: {
@@ -183,16 +206,23 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
     );
   }
 
+  async function configureApprovedCapabilities(locationId) {
+    await capabilityStore.configureCapabilities(activatorUid, locationId, {
+      capabilities: ["walk_in_intake", "parcel_measurement"],
+      reason: "Synthetic activation test capability approval",
+    });
+  }
+
   it("requires the separate activation permission", async () => {
     const locationId = await createCandidate();
 
     await assert.rejects(
-      activationStore.activateLocation(verifierUid, locationId),
+      activationStore.activateLocation(verifierUid, locationId, "Synthetic activation test"),
       /not authorised to activate PUDO locations/,
     );
 
     await assert.rejects(
-      activationStore.activateLocation(deniedUid, locationId),
+      activationStore.activateLocation(deniedUid, locationId, "Synthetic activation test"),
       /not authorised to activate PUDO locations/,
     );
   });
@@ -201,7 +231,7 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
     const locationId = await createCandidate();
 
     await assert.rejects(
-      activationStore.activateLocation(activatorUid, locationId),
+      activationStore.activateLocation(activatorUid, locationId, "Synthetic activation test"),
       /verification approval is required/,
     );
 
@@ -215,15 +245,18 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
   it("activates an approved candidate with attributable audit evidence", async () => {
     const locationId = await createCandidate();
     await approveCandidate(locationId);
+    await configureApprovedCapabilities(locationId);
 
     const result = await activationStore.activateLocation(
       activatorUid,
       locationId,
+      "Synthetic activation test",
     );
 
     assert.deepEqual(result, {
       locationId,
       lifecycle: "active",
+      status: "active",
       activatedBy: activatorUid,
     });
 
@@ -255,7 +288,7 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
     assert.equal(event.verificationStatus, "approved_to_activate");
 
     await assert.rejects(
-      activationStore.activateLocation(activatorUid, locationId),
+      activationStore.activateLocation(activatorUid, locationId, "Synthetic activation test"),
       /already been activated/,
     );
   });
@@ -263,13 +296,14 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
   it("rejects activation of a draft candidate", async () => {
     const created = await registrationStore.saveCandidate(registerUid, {
       name: "Draft candidate",
+      partnerBusinessName: "Synthetic Activation Partner",
       address: "12 Example Street, Test District",
     });
 
     locationIds.push(created.locationId);
 
     await assert.rejects(
-      activationStore.activateLocation(activatorUid, created.locationId),
+      activationStore.activateLocation(activatorUid, created.locationId, "Synthetic activation test"),
       /Only submitted PUDO candidates/,
     );
   });

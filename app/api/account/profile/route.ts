@@ -18,7 +18,7 @@ async function authenticateCustomer(request: NextRequest) {
 
   try {
     const idToken = authorization.slice("Bearer ".length);
-    const decodedToken = await adminAuth.verifyIdToken(idToken);
+    const decodedToken = await adminAuth.verifyIdToken(idToken, true);
 
     if (decodedToken.email_verified !== true) {
       return {
@@ -218,7 +218,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const idToken = authorization.slice("Bearer ".length);
-    decodedToken = await adminAuth.verifyIdToken(idToken);
+    decodedToken = await adminAuth.verifyIdToken(idToken, true);
   } catch {
     return NextResponse.json(
       { error: "Your registration session is invalid or expired." },

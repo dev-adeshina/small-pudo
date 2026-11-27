@@ -433,6 +433,7 @@ describe(
           versionId: created.versionId,
           versionNumber: 1,
           ...typedConfiguration,
+          approvalWorkflow: { state: "draft" },
           createdAt: retrieved.versions[0].createdAt,
           createdBy: retrieved.versions[0].createdBy,
         }

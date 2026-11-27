@@ -129,7 +129,7 @@ describe("shipment booking draft API handlers", () => {
       makeRequest("/api/account/shipment-booking-drafts", {
         method: "POST",
         token: "customer-one-token",
-        body: { ...validDraft, bookingPartyUid: "customer-2" },
+        body: validDraft,
       })
     );
     const data = await response.json();
@@ -139,6 +139,20 @@ describe("shipment booking draft API handlers", () => {
     assert.equal(data.draft.status, "draft");
     assert.deepEqual(createdFor, ["customer-1"]);
     assert.equal(data.draft.bookingPartyUid, undefined);
+  });
+
+  it("rejects client-supplied booking identity fields", async () => {
+    const { handlers, createdFor } = createHarness();
+    const response = await handlers.POST(
+      makeRequest("/api/account/shipment-booking-drafts", {
+        method: "POST",
+        token: "customer-one-token",
+        body: { ...validDraft, bookingPartyUid: "customer-2" },
+      })
+    );
+
+    assert.equal(response.status, 400);
+    assert.deepEqual(createdFor, []);
   });
 
   it("rejects invalid draft input without creating a record", async () => {

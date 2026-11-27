@@ -40,7 +40,7 @@ export async function GET(request: Request) {
   let decodedToken;
 
   try {
-    decodedToken = await adminAuth.verifyIdToken(idToken);
+    decodedToken = await adminAuth.verifyIdToken(idToken, true);
   } catch {
     return NextResponse.json(
       { error: "Your session is invalid or expired. Please sign in again." },

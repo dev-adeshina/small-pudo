@@ -49,6 +49,7 @@ describe("PUDO physical verification store", { skip: !enabled }, () => {
     async function createSubmittedCandidate(name = "Test PUDO location") {
         const created = await registrationStore.saveCandidate(registerUid, {
             name,
+            partnerBusinessName: "Synthetic Verification Partner",
             address: "12 Example Street, Test District",
             registrationNote: "Synthetic PUDO verification test",
             geo: {
