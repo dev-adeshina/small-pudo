@@ -137,6 +137,27 @@ test("only Admin may amend declared parcel measurements while review is open", a
   assert.equal(state.events[0].eventType, "declared_measurements_amended");
 });
 
+test("missing measurement review state fails closed for amendments and closure", async () => {
+  const missingParcelState = fixture({ parcels: [{
+    parcelId: "parcel-1", shipmentId: "shipment-1", parcelReference: "VLY-01",
+    description: "Carton", quantity: 1, declaredWeight: 2, weightUnit: "kg",
+    dimensions: { length: 10, width: 8, height: 5, unit: "cm" },
+    declaredValueMinor: 10000, currency: "NGN",
+  }] });
+  await assert.rejects(missingParcelState.commands.amendDeclaredMeasurements({
+    actor: { type: "admin", id: "admin-1" }, idempotencyKey: "missing-parcel-state",
+    shipmentId: "shipment-1", parcelId: "parcel-1", measurements: { declaredWeight: 3 },
+  }), error => error.code === "MEASUREMENT_REVIEW_LOCKED");
+
+  const missingShipmentState = fixture({ shipment: {
+    shipmentId: "shipment-1", customerId: "customer-1", status: "Quoted", quoteId: "quote-1",
+  } });
+  await assert.rejects(missingShipmentState.commands.closeDeclaredMeasurementReview({
+    actor: { type: "admin", id: "admin-1" }, idempotencyKey: "missing-shipment-state",
+    shipmentId: "shipment-1",
+  }), error => error.code === "MEASUREMENT_REVIEW_NOT_OPEN");
+});
+
 test("measurement review closure locks every parcel and later amendments are rejected", async () => {
   const { state, commands } = fixture();
   const result = await commands.closeDeclaredMeasurementReview({
