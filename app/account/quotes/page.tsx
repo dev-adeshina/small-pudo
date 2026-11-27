@@ -233,7 +233,7 @@ export default function CustomerQuotesPage() {
         </div>
       }
     >
-      <main className="customer-page">
+      <div className="customer-page">
       <header className="customer-header">
         <Link href="/" className="customer-logo" aria-label="VeriLyft home">
           <Image src="/logo.svg" alt="VeriLyft" width={150} height={40} priority style={{ width: "auto", height: "auto" }} />
@@ -339,7 +339,7 @@ export default function CustomerQuotesPage() {
           <p>Each decision is bound to the current immutable quotation version. Expired quotations cannot be accepted; a new version is required. Earlier versions remain in the quotation record.</p>
         </section>
       </div>
-    </main>
+    </div>
     </WorkspaceShell>
   );
 }
