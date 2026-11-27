@@ -7,11 +7,9 @@ import { useRouter } from "next/navigation";
 import {
   Activity,
   ArrowUpRight,
-  Boxes,
   CheckCircle2,
   Clock3,
   FileText,
-  FolderKanban,
   Home,
   LogOut,
   MapPinned,
@@ -365,7 +363,7 @@ export default function AdminDashboard() {
         <section className="vl-admin-planned-section">
           <div className="vl-admin-section-heading">
             <div>
-              <span className="vl-admin-section-label">VERILyFT OPERATIONS</span>
+              <span className="vl-admin-section-label">VERILYFT OPERATIONS</span>
               <h2>Operational workspaces</h2>
               <p>These areas are part of the approved Admin experience and will be connected as their workflows are implemented.</p>
             </div>
