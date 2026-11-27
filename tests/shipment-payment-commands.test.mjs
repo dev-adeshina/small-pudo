@@ -185,3 +185,20 @@ test("browser/client claims alone are not accepted as payment verification", asy
     providerReference: "client-supplied-reference",
   }), error => error.code === "PAYMENT_NOT_VERIFIED");
 });
+
+test("failed or abandoned attempts cannot later confirm a booking through a stale success response", async () => {
+  const { state, commands } = fixture();
+  const attempt = await commands.createPaymentAttempt({
+    actor: { type: "customer", id: "customer-1" },
+    idempotencyKey: "create-then-fail",
+    shipmentId: "shipment-1",
+  });
+  state.payments.set(attempt.paymentId, {
+    ...state.payments.get(attempt.paymentId),
+    status: "abandoned",
+  });
+  await assert.rejects(commands.confirmVerifiedPayment({
+    providerReference: attempt.providerReference,
+  }), error => error.code === "PAYMENT_STATE_INVALID");
+  assert.equal(state.shipment.status, "Awaiting Payment");
+});
