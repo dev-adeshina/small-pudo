@@ -43,7 +43,7 @@ function fixture() {
       listByShipment: async () => [], getById: async () => null,
     },
     quotes: { createLineage: async () => {}, appendRevision: async () => {}, getCurrent: async () => null, withdraw: async () => {} },
-    payments: { createAttempt: async () => {}, getByProviderReference: async () => null, updateAttempt: async () => {} },
+    payments: { createAttempt: async () => {}, getById: async () => null, getByProviderReference: async () => null, updateAttempt: async () => {} },
     events: {
       append: async (tx, value) => { state.transactionTokens.push(tx); state.events.push(value); },
       listByShipment: async () => [],
