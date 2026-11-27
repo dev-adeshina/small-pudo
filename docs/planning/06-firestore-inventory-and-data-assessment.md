@@ -93,8 +93,7 @@ It:
 Example invocation:
 
 ```bash
-GOOGLE_APPLICATION_CREDENTIALS=/secure/path/to/read-only-service-account.json \
-  node scripts/firestore-inventory.mjs \
+node scripts/firestore-inventory.mjs \
   --project verilyft-4e691 \
   --database '(default)' \
   --read-only \
