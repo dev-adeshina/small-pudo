@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createShipmentFirestorePorts, SHIPMENT_FIRESTORE_PATHS } from "../lib/shipment/firestore-adapter.mjs";
 import { resolveShipmentFirebaseConfig } from "../lib/shipment/firestore-runtime.mjs";
 import { createShipmentCommands } from "../lib/shipment/commands.mjs";
+import { assertCompleteShipmentRepositoryPorts } from "../lib/shipment/repositories.mjs";
 
 class FakeSnapshot {
   constructor(id, value) {
@@ -313,4 +314,95 @@ test("shipment submission uses Firestore transaction reads before writes and rep
   assert.equal((await ports.transaction.run(tx => ports.shipments.getById(tx, first.shipmentId))).shipmentReference, first.shipmentReference);
   assert.equal((await ports.transaction.run(tx => ports.parcels.listByShipment(tx, first.shipmentId))).length, 1);
   assert.equal((await ports.transaction.run(tx => ports.events.listByShipment(tx, first.shipmentId))).length, 1);
+});
+
+test("complete Phase 3 adapter exposes all foundational repositories", () => {
+  const ports = portsFor(new FakeFirestore());
+  assert.equal(assertCompleteShipmentRepositoryPorts(ports), ports);
+  for (const name of ["intakes", "assignments", "documents", "notifications"]) assert.ok(ports[name]);
+});
+
+test("completed parcel intakes require photos and remain immutable with linked corrections", async () => {
+  const ports = portsFor(new FakeFirestore());
+  const record = {
+    intakeId: "intake-1", shipmentId: "shipment-1", parcelIds: ["parcel-1"],
+    intakeType: "station_drop_off", receivingLocationType: "pudo", pudoLocationId: "pudo-1",
+    receivedBy: { type: "pudo_partner", id: "partner-1" }, receivedAt: "2026-11-27T10:00:00.000Z",
+    recordedAt: "2026-11-27T10:00:00.000Z", condition: "Good", measurements: [],
+    discrepancies: [], photoEvidenceRefs: ["storage/intake-1.jpg"], status: "completed",
+    completedAt: "2026-11-27T10:00:00.000Z",
+  };
+  await ports.transaction.run(tx => ports.intakes.create(tx, record));
+  await assert.rejects(ports.transaction.run(tx => ports.intakes.create(tx, { ...record, photoEvidenceRefs: [] })), /photo evidence/);
+  await ports.transaction.run(tx => ports.intakes.appendCorrection(tx, "intake-1", {
+    ...record, intakeId: "intake-2", correctionOfIntakeId: "intake-1", notes: "Corrected condition note",
+  }));
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.intakes.listByShipment(tx, "shipment-1")).length, 2);
+    assert.equal((await ports.intakes.getById(tx, "intake-1")).notes, undefined);
+  });
+});
+
+test("assignments are shipment-scoped, status-limited and distinct from custody", async () => {
+  const ports = portsFor(new FakeFirestore());
+  const record = {
+    assignmentId: "assignment-1", shipmentId: "shipment-1", activityType: "origin_intake",
+    assignee: { type: "pudo_location", id: "pudo-1" },
+    assignedBy: { type: "admin", id: "admin-1" },
+    startsAt: "2026-11-27T10:00:00.000Z", endsAt: null, status: "active",
+    createdAt: "2026-11-27T10:00:00.000Z",
+  };
+  await ports.transaction.run(tx => ports.assignments.create(tx, "shipment-1", record));
+  await ports.transaction.run(tx => ports.assignments.updateStatus(tx, "shipment-1", "assignment-1", "completed", "2026-11-27T11:00:00.000Z"));
+  await assert.rejects(ports.transaction.run(tx => ports.assignments.updateStatus(tx, "shipment-1", "assignment-1", "custody_received", "2026-11-27T11:00:00.000Z")), /Unsupported assignment status/);
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.assignments.getById(tx, "shipment-1", "assignment-1")).status, "completed");
+    assert.equal((await ports.assignments.listByShipment(tx, "shipment-1")).length, 1);
+  });
+});
+
+test("shipment document metadata is immutable and contains protected storage references", async () => {
+  const ports = portsFor(new FakeFirestore());
+  const record = {
+    documentId: "document-1", shipmentId: "shipment-1", documentType: "waybill", version: 1,
+    storagePath: "private/shipments/shipment-1/waybill.pdf", contentType: "application/pdf",
+    sizeBytes: 1024, checksum: "sha256:abc", generatedAt: "2026-11-27T10:00:00.000Z",
+    generatedBy: { type: "admin", id: "admin-1" }, access: ["customer", "admin"],
+  };
+  await ports.transaction.run(tx => ports.documents.create(tx, "shipment-1", record));
+  await assert.rejects(ports.transaction.run(tx => ports.documents.create(tx, "shipment-1", record)), /ALREADY_EXISTS/);
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.documents.getById(tx, "shipment-1", "document-1")).storagePath, record.storagePath);
+    assert.equal((await ports.documents.listByShipment(tx, "shipment-1")).length, 1);
+  });
+});
+
+test("notification intents deduplicate and delivery attempts are append-only", async () => {
+  const ports = portsFor(new FakeFirestore());
+  const record = {
+    notificationId: "notification-1", shipmentId: "shipment-1", recipientType: "customer",
+    recipientId: "customer-1", channel: "email", templateKey: "shipment_submitted",
+    deduplicationKey: "shipment-1:shipment_submitted:customer-1", payload: { reference: "VLY-1" },
+    status: "pending", createdAt: "2026-11-27T10:00:00.000Z", updatedAt: "2026-11-27T10:00:00.000Z",
+  };
+  await ports.transaction.run(tx => ports.notifications.create(tx, record));
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.notifications.findByDeduplicationKey(tx, record.deduplicationKey)).notificationId, "notification-1");
+  });
+  await assert.rejects(ports.transaction.run(tx => ports.notifications.create(tx, {
+    ...record, notificationId: "notification-2",
+  })), /ALREADY_EXISTS/);
+  const attempt = {
+    attemptId: "attempt-1", notificationId: "notification-1",
+    attemptedAt: "2026-11-27T10:01:00.000Z", status: "failed",
+    provider: "email-provider", errorCode: "TEMPORARY", errorMessage: "Retry later",
+  };
+  await ports.transaction.run(tx => ports.notifications.appendAttempt(tx, "notification-1", attempt));
+  await ports.transaction.run(tx => ports.notifications.updateStatus(tx, "notification-1", {
+    status: "failed", updatedAt: "2026-11-27T10:01:00.000Z", payload: { tampered: true },
+  }));
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.notifications.getById(tx, "notification-1")).payload.reference, "VLY-1");
+    assert.equal((await ports.notifications.listAttempts(tx, "notification-1")).length, 1);
+  });
 });
