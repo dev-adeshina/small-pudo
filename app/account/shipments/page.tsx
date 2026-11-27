@@ -369,7 +369,7 @@ export default function ShipmentDraftsPage() {
     router.replace("/account/sign-in");
   }
 
-  const draftsPageSize = 10;
+  const draftsPageSize = 5;
   const currentDraftsPage = Math.min(draftsPage, Math.max(1, Math.ceil(drafts.length / draftsPageSize)));
   const visibleDrafts = drafts.slice((currentDraftsPage - 1) * draftsPageSize, currentDraftsPage * draftsPageSize);
 
