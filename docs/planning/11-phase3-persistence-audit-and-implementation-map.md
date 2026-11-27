@@ -62,12 +62,12 @@ Use the following as the working target mapping, subject to the database-boundar
 
 | Approved data structure | Recommended logical path | Ownership and persistence notes |
 |---|---|---|
-| Customers | `customers/{customerId}` | Minimal shipment customer profile/reference. Link to Auth UID when registered. PUDO walk-in profile remains pending registration with no Auth UID. Reconcile with existing `users/{uid}`; do not duplicate full account data. |
+| Customers | Existing `users/{uid}`; namespaced `walkInCustomers/{customerId}` for PUDO walk-ins | Registered customer identity remains in `users`; only minimal pending-registration walk-in profiles are stored in the shipment namespace. |
 | Admins | `admins/{adminId}` logical reference only if needed | `adminAccess/{uid}` remains the existing authority source. Do not create parallel permissions. A profile projection is optional and must not grant authority. |
 | PUDO partners | Existing `pudoPartnerAccounts/{uid}` or a stable reference | Do not create a second partner account collection. Preserve separation from Admins and roster personnel. |
 | PUDO locations | Existing `pudoLocations/{locationId}` plus approved evidence references | Keep verification, activation, capabilities, availability and capacity under their existing workflows/records. |
 | Shipments | `shipments/{shipmentId}` | Sole authoritative shipment aggregate; one origin, one destination, sender/recipient snapshots, channel/actor attribution and current lifecycle summary. |
-| Shipment quotes | `shipmentQuotes/{quoteId}` with `revisions/{revisionId}` | One immutable quote lineage per shipment. Because the legacy collection already exists in the current default database, use only after resolving database selection or an explicit namespace. |
+| Shipment quotes | Namespaced `quoteLineages/{quoteId}/revisions/{revisionId}` | One immutable quote lineage per shipment. Do not reuse or reinterpret the legacy `shipmentQuotes` collection. |
 | Payments | `payments/{paymentId}` | One immutable attempt identity per provider attempt; retries create new documents. Do not overwrite failed attempts. |
 | Shipment events | `shipments/{shipmentId}/events/{eventId}` | Append-only timeline; corrections are new compensating events. Use collection-group queries only where global monitoring requires them. |
 | Parcel intakes | `parcelIntakes/{intakeId}` | Separate physical intake record linked to shipment, parcel(s), PUDO, receiving actor/person and immutable photo/measurement evidence. |
@@ -75,7 +75,7 @@ Use the following as the working target mapping, subject to the database-boundar
 | Shipment documents | `shipments/{shipmentId}/documents/{documentId}` | Firestore metadata and protected Storage object path/version/access class; binary remains in Storage. |
 | Notifications | `notifications/{notificationId}` | Recipient-specific notification intent and minimum delivery/retry state. Do not build a messaging platform in this phase. |
 
-Parcels remain under `shipments/{shipmentId}/parcels/{parcelId}`. This keeps shipment-owned repeating records together while allowing intake evidence to remain an independently attributable physical event.
+Parcels are stored in a namespaced root `parcels/{parcelId}` collection with a required `shipmentId` field. This preserves the current repository-port contract, which reads and updates parcels by globally unique parcel ID without requiring the parent shipment ID. Shipment-scoped listing queries filter by `shipmentId`. Intake evidence remains an independently attributable physical event.
 
 ### 3.1 Why this layout
 
