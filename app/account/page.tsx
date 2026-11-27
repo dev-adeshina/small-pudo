@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,6 +12,7 @@ import {
   Clock3,
   FileText,
   LogOut,
+  Home,
   Package,
   ShieldCheck,
   ShoppingBag,
@@ -22,6 +22,10 @@ import {
 
 import { auth } from "@/lib/firebase";
 import { signOutCustomer } from "@/lib/customer-auth";
+import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
+import { PageHeader } from "@/components/design-system/PageHeader";
+import { StatusBadge } from "@/components/design-system/StatusBadge";
+import { Button } from "@/components/design-system/Button";
 
 interface ShipmentDraft {
   id: string;
@@ -305,82 +309,63 @@ export default function CustomerAccountPage() {
     "there";
 
   return (
-    <main className="customer-page">
-      <header className="customer-header">
-        <Link href="/" className="customer-logo" aria-label="VeriLyft home">
-          <Image
-            src="/logo.svg"
-            alt="VeriLyft"
-            width={150}
-            height={40}
-            priority
-            style={{ width: "auto", height: "auto" }}
-          />
-        </Link>
-
-        <div className="customer-header-right">
-          <div className="customer-identity">
-            <span className="customer-avatar">
-              <UserRound size={17} />
-            </span>
-
+    <WorkspaceShell
+      workspaceName="VeriLyft"
+      workspaceLabel="Customer workspace"
+      navigation={[
+        { label: "Overview", href: "/account", section: "HOME", icon: Home },
+        { label: "Shipments", href: "/account/shipments", section: "SHIPPING", icon: Package },
+        { label: "Quotations", href: "/account/quotes", section: "SHIPPING", icon: FileText },
+        { label: "My orders", href: "/account#orders", section: "STORE", icon: ShoppingBag },
+        { label: "My profile", href: "/account/profile", section: "ACCOUNT", icon: UserRound },
+        { label: "Browse store", href: "/products", section: "STORE", icon: ArrowUpRight },
+      ]}
+      breadcrumbs={[
+        { label: "Home", href: "/" },
+        { label: "Customer account", href: "/account" },
+        { label: "Overview" },
+      ]}
+      topbarContent={
+        <div className="vl-customer-topbar">
+          <span className="vl-customer-identity">
+            <span className="customer-avatar"><UserRound size={16} /></span>
             <span className="customer-email">{user.email}</span>
-          </div>
-
-          <button
-            type="button"
-            className="customer-logout"
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            leadingIcon={<LogOut size={16} />}
             onClick={handleSignOut}
-            disabled={signingOut}
+            loading={signingOut}
             aria-label="Sign out"
-            title="Sign out"
           >
-            <LogOut size={17} />
-          </button>
+            Sign out
+          </Button>
         </div>
-      </header>
-
-      <div className="customer-shell">
-        <section className="customer-welcome">
-          <div>
-            <span className="eyebrow">VERILYFT / MY ACCOUNT</span>
-
-            <h1>
-              Welcome back,
-              <br />
-              <em>{firstName}.</em>
-            </h1>
-
-            <p>
-              Your orders, deliveries, and account details—all in one place.
-            </p>
-
-            <Link href="/account/shipments" className="customer-primary-action">
-              <Package size={17} />
-              Prepare a shipment
-              <ArrowUpRight size={16} />
-            </Link>
-            <Link href="/account/quotes" className="customer-primary-action" style={{ marginTop: 10 }}>
-              <FileText size={17} />
-              View quotations
-              <ArrowUpRight size={16} />
-            </Link>
+      }
+    >
+      <div className="customer-page vl-customer-dashboard">
+        <div className="customer-shell">
+          <PageHeader
+            eyebrow="CUSTOMER ACCOUNT"
+            title={`Welcome back, ${firstName}.`}
+            description="Your shipments, quotations, orders and account details—all in one place."
+            actions={
+              <>
+                <Link href="/account/shipments" className="vl-button vl-button--primary">
+                  <Package size={16} /> Prepare a shipment
+                </Link>
+                <Link href="/account/quotes" className="vl-button vl-button--secondary">
+                  <FileText size={16} /> View quotations
+                </Link>
+              </>
+            }
+          />
+          <div className="vl-customer-account-state">
+            <ShieldCheck size={17} />
+            <span>Your account is verified</span>
+            <StatusBadge label="Verified" tone="success" />
           </div>
-
-          <aside className="customer-welcome-note">
-            <span className="customer-note-icon">
-              <ShieldCheck size={23} />
-            </span>
-            <strong>Your account is verified</strong>
-            <p>
-              You are signed in with your verified email address.
-            </p>
-            <span className="customer-verified-label">
-              <CheckCircle2 size={15} />
-              VERIFIED ACCOUNT
-            </span>
-          </aside>
-        </section>
 
         {error && (
           <p className="customer-error" role="alert">
@@ -754,7 +739,8 @@ export default function CustomerAccountPage() {
           <span>VERILyFT — BEYOND BORDERS</span>
           <Link href="/">Return to store <ArrowRight size={14} /></Link>
         </footer>
+        </div>
       </div>
-    </main>
+    </WorkspaceShell>
   );
 }
