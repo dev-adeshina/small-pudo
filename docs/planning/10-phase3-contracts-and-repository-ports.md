@@ -61,3 +61,14 @@ No Firestore SDK, Admin SDK, repository adapter, Firebase configuration, databas
 - The command does not create Auth users, issue quotes, initialise payments, select a Firestore database, or write to any live database. It is not yet wired to HTTP routes or a persistence adapter.
 
 The command tests use in-memory injected ports to verify channel derivation, ownership binding, walk-in profile behavior, transaction-handle propagation and idempotent replay. These are unit tests, not evidence of database transaction isolation; the eventual adapter must separately prove those guarantees.
+
+## 8. Quote lifecycle command orchestration
+
+`lib/shipment/quote-commands.mjs` adds database-independent Admin quote issuance and customer quote acceptance.
+
+- Only a verified Admin actor may issue a quote. The command loads the shipment, validates its lifecycle state, creates a quote lineage when needed, appends an immutable revision, updates the shipment to `Quoted`, and appends an attributable event in one transaction.
+- Revisions increase from the current revision number and retain the pricing version, integer minor-unit line items, reconciled total and validity window through the canonical quote contract.
+- Only the owning customer may accept the current, unexpired revision. Acceptance records the exact revision and actor/time on the shipment, moves it to `Awaiting Payment`, and appends an event in one transaction.
+- Both commands use actor/command-scoped idempotency. The repository adapter must implement `quotes.getCurrent(tx, quoteId)` as the current immutable revision and enforce transaction/concurrency guarantees.
+- Acceptance does not initialise payment or confirm a booking. Payment initiation and verified provider confirmation remain separate commands.
+- Focused unit tests cover issuance, role/ownership boundaries, stale revisions, expiry and lifecycle transitions. These tests use injected in-memory ports and do not prove database isolation.
