@@ -101,3 +101,30 @@ Paystack initialization, webhook signature verification, provider API credential
 - Focused tests cover ownership, roles, quote withdrawal, active-payment restrictions, measurement edits and review locking. They use in-memory ports and do not prove persistence isolation.
 
 The complete command layer still requires a final cross-command review and adapter-level concurrency tests before it can be connected to a database.
+
+
+## 11. Remaining foundational records — completed code baseline
+
+`lib/shipment/records.mjs` defines the remaining canonical records:
+
+- **Parcel intake:** shipment and parcel links, intake type, receiving location, authenticated actor, optional named PUDO roster person, physical condition, separate measured observations, discrepancies, timestamps and mandatory photo evidence references. Only a completed intake record is persisted; a correction is a new record linked to the original.
+- **Shipment assignment:** shipment link, activity, assignee type/ID, assigning actor, bounded responsibility period and lifecycle status. Assignment status cannot represent custody.
+- **Shipment document:** immutable metadata, document type/version, protected Storage path, content type, byte size, checksum, generator and explicit access classification. Firestore does not store binary contents or public download URLs.
+- **Notification intent:** shipment and recipient-specific target, channel, template, deduplication key, payload and minimal delivery state.
+- **Notification attempt:** immutable attempt identity/time, delivered/failed result and provider/error metadata.
+
+The adapter exposes `intakes`, `assignments`, `documents` and `notifications` repositories. Intake/document records and notification attempts are create-only. Assignment updates are limited to status. Notification intent is protected by a deterministic deduplication index; only delivery-state fields can be updated.
+
+## 12. Existing identity and operational authorities
+
+The adapter exposes read-only `authorities` lookups for the existing `users`, `adminAccess`, `pudoPartnerAccounts` and `pudoLocations` collections. These records are not copied into duplicate shipment-owned identity authorities. The existing PUDO verification, activation, capability and operations evidence remain separate authoritative workflows and are referenced by location ID/evidence references where required.
+
+All authority reads and shipment writes participating in one Firestore transaction must use the same Firestore database instance. Firestore transactions cannot span database instances. Each environment therefore needs its own project-local identity authorities and shipment namespace in the same selected database. The adapter rejects a separately injected identity database rather than implying cross-database atomicity.
+
+## 13. Complete repository-port verification
+
+`assertCompleteShipmentRepositoryPorts` extends the existing command-port check with the complete Phase 3 repository surface: existing identity authorities, intakes, assignments, documents and notifications. The original narrower `assertRepositoryPorts` remains available to domain command factories that only need their aggregate dependencies; complete persistence verification must use the complete assertion.
+
+## 14. Remaining infrastructure and live-verification gate
+
+The complete adapter remains dependency-injected and is not invoked by application routes. Unit tests use a fake Firestore implementation. They verify path boundaries, create-only evidence records, deduplication, protected field updates, read-before-write ordering and repository relationships, but do not prove production Firestore isolation or contention behavior. Live verification requires the separately provisioned staging Firebase project and its project-local identity records, approved database ID/location and credentials. No Storage bucket configuration, Firestore rules/index deployment, migration, production data change or PR merge is included.
