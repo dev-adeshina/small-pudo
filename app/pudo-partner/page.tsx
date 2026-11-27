@@ -51,6 +51,7 @@ export default function PudoPartnerDashboard() {
   const [loading, setLoading] = useState(true);
   const [reloadKey, setReloadKey] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const [error, setError] = useState("");
   const [locationName, setLocationName] = useState("");
   const [address, setAddress] = useState("");
@@ -115,8 +116,15 @@ export default function PudoPartnerDashboard() {
   }
 
   async function handleSignOut() {
-    await signOut(auth);
-    router.replace("/pudo-partner/sign-in");
+    setSigningOut(true);
+    setError("");
+    try {
+      await signOut(auth);
+      router.replace("/pudo-partner/sign-in");
+    } catch {
+      setError("We could not sign you out. Please try again.");
+      setSigningOut(false);
+    }
   }
 
   if (loading) return <main className="vl-workspace"><div className="vl-workspace__content"><FeedbackState variant="loading" title="Loading your PUDO workspace" description="Checking your partner account and location applications." /></div></main>;
@@ -149,7 +157,7 @@ export default function PudoPartnerDashboard() {
       workspaceName="VeriLyft"
       workspaceLabel="PUDO PARTNER"
       navigation={navigation}
-      topbarContent={<Button variant="outline" size="sm" leadingIcon={<LogOut size={15} />} onClick={handleSignOut}>Sign out</Button>}
+      topbarContent={<Button variant="outline" size="sm" leadingIcon={<LogOut size={15} />} onClick={handleSignOut} loading={signingOut}>Sign out</Button>}
       breadcrumbs={[{ label: "PUDO workspace" }, { label: "Overview" }]}
     >
       <div className="vl-pudo-dashboard" id="overview">
