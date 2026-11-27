@@ -217,7 +217,6 @@ export default function CustomerQuotesPage() {
         </div>
       </main>
     );
-    );
   }
 
   return (
