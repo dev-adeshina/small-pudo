@@ -368,7 +368,8 @@ export default function AdminOrdersPage() {
     });
   }, [orders, search, statusFilter]);
 
-  const visibleOrders = filteredOrders.slice((ordersPage - 1) * ordersPageSize, ordersPage * ordersPageSize);
+  const currentOrdersPage = Math.min(ordersPage, Math.max(1, Math.ceil(filteredOrders.length / ordersPageSize)));
+  const visibleOrders = filteredOrders.slice((currentOrdersPage - 1) * ordersPageSize, currentOrdersPage * ordersPageSize);
   const paidCount = orders.filter((order) => order.paymentStatus === "paid").length;
   const fulfilmentCount = orders.filter((order) => ["processing", "ready_for_shipping", "shipped"].includes(order.orderStatus)).length;
 
@@ -512,7 +513,7 @@ export default function AdminOrdersPage() {
             </div>
           )}
           {!loading && !error && filteredOrders.length > 0 && (
-            <Pagination page={Math.min(ordersPage, Math.max(1, Math.ceil(filteredOrders.length / ordersPageSize)))} totalItems={filteredOrders.length} pageSize={ordersPageSize} onPageChange={setOrdersPage} />
+            <Pagination page={currentOrdersPage} totalItems={filteredOrders.length} pageSize={ordersPageSize} onPageChange={setOrdersPage} />
           )}
         </section>
 

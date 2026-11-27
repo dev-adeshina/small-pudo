@@ -379,8 +379,10 @@ export default function CustomerAccountPage() {
     user.email?.split("@")[0] ||
     "there";
   const pageSize = 10;
-  const visibleOrders = orders.slice((ordersPage - 1) * pageSize, ordersPage * pageSize);
-  const visibleDrafts = drafts.slice((draftsPage - 1) * pageSize, draftsPage * pageSize);
+  const currentOrdersPage = Math.min(ordersPage, Math.max(1, Math.ceil(orders.length / pageSize)));
+  const currentDraftsPage = Math.min(draftsPage, Math.max(1, Math.ceil(drafts.length / pageSize)));
+  const visibleOrders = orders.slice((currentOrdersPage - 1) * pageSize, currentOrdersPage * pageSize);
+  const visibleDrafts = drafts.slice((currentDraftsPage - 1) * pageSize, currentDraftsPage * pageSize);
 
   return (
     <WorkspaceShell
@@ -571,7 +573,7 @@ export default function CustomerAccountPage() {
                   View and manage drafts <ArrowRight size={16} />
                 </Link>
               </div>
-              <Pagination page={Math.min(draftsPage, Math.max(1, Math.ceil(drafts.length / pageSize)))} totalItems={drafts.length} pageSize={pageSize} onPageChange={setDraftsPage} />
+              <Pagination page={currentDraftsPage} totalItems={drafts.length} pageSize={pageSize} onPageChange={setDraftsPage} />
             </>
           )}
         </section>
@@ -736,7 +738,7 @@ export default function CustomerAccountPage() {
                   </article>
                 ))}
               </div>
-              <Pagination page={Math.min(ordersPage, Math.max(1, Math.ceil(orders.length / pageSize)))} totalItems={orders.length} pageSize={pageSize} onPageChange={setOrdersPage} />
+              <Pagination page={currentOrdersPage} totalItems={orders.length} pageSize={pageSize} onPageChange={setOrdersPage} />
             )}
           </div>
 
@@ -759,7 +761,7 @@ export default function CustomerAccountPage() {
               <Link href="/account/shipments" className="customer-action">
                 <span>
                   <Package size={18} />
-                  Prepare a shipment
+                  Send an item
                 </span>
                 <ArrowUpRight size={17} />
               </Link>

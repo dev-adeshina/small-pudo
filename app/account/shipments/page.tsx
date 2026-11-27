@@ -23,6 +23,7 @@ import { customerWorkspaceNavigation } from "@/components/design-system/workspac
 import { Button } from "@/components/design-system/Button";
 import { FeedbackState } from "@/components/design-system/FeedbackState";
 import { Pagination } from "@/components/design-system/Pagination";
+import { Pagination } from "@/components/design-system/Pagination";
 
 interface PudoLocationOption {
   locationId: string;
@@ -94,6 +95,7 @@ export default function ShipmentDraftsPage() {
   const [user, setUser] = useState<User | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [drafts, setDrafts] = useState<ShipmentDraft[]>([]);
+  const [draftsPage, setDraftsPage] = useState(1);
   const [pudoLocations, setPudoLocations] = useState<PudoLocationOption[]>([]);
   const [pudoLocationsError, setPudoLocationsError] = useState("");
   const [characteristicOptions, setCharacteristicOptions] = useState<ParcelCharacteristicOptionGroup[]>([]);
@@ -367,6 +369,10 @@ export default function ShipmentDraftsPage() {
     await signOutCustomer();
     router.replace("/account/sign-in");
   }
+
+  const draftsPageSize = 10;
+  const currentDraftsPage = Math.min(draftsPage, Math.max(1, Math.ceil(drafts.length / draftsPageSize)));
+  const visibleDrafts = drafts.slice((currentDraftsPage - 1) * draftsPageSize, currentDraftsPage * draftsPageSize);
 
   if (checkingAuth || !user) {
     return (
@@ -675,7 +681,7 @@ export default function ShipmentDraftsPage() {
             </div>
           ) : (
             <div className="shipment-draft-list">
-              {drafts.map((draft) => (
+              {visibleDrafts.map((draft) => (
                 <article className="shipment-draft-row" key={draft.id}>
                   <div>
                     <span className="shipment-draft-status">DRAFT · NOT CONFIRMED</span>
@@ -705,6 +711,9 @@ export default function ShipmentDraftsPage() {
                 </article>
               ))}
             </div>
+          )}
+          {!loading && !loadError && drafts.length > 0 && (
+            <Pagination page={currentDraftsPage} totalItems={drafts.length} pageSize={draftsPageSize} onPageChange={setDraftsPage} />
           )}
         </section>
 
