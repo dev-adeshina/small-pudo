@@ -204,7 +204,17 @@ export default function AdminDashboard() {
   const today = new Intl.DateTimeFormat("en-NG", { dateStyle: "full" }).format(new Date());
 
   if (checkingAuth) {
-    return <main className="admin-loading"><span>Verifying administrator access...</span></main>;
+    return (
+      <main className="vl-workspace">
+        <div className="vl-workspace__content">
+          <FeedbackState
+            variant="loading"
+            title="Verifying administrator access"
+            description="Confirming your Admin session and permissions."
+          />
+        </div>
+      </main>
+    );
   }
 
   return (
