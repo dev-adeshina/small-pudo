@@ -277,7 +277,7 @@ The initial persistence gap list has now been addressed at the code-contract/rep
 | Command orchestration | Transaction-scoped commands for intake, assignment, document metadata, notification intent and delivery attempts |
 | Verification | Complete repository-port assertion and fake-Firestore tests for relationships, immutable records, deduplication and command orchestration |
 
-PUDO partner location authorisation is injected and evaluated before entering retryable Firestore transaction callbacks; no external resolver/network work is run from inside a transaction callback. Physical intake timestamps and generated record IDs are server-derived. PUDO-origin station drop-off updates the shipment to `Received at PUDO` only after a completed photo-evidenced intake and matching origin PUDO. Assignment remains separate from custody.
+PUDO partner location authorisation and protected Storage object verification are injected and evaluated before entering retryable Firestore transaction callbacks; no external resolver/network work is run from inside a transaction callback. Intake photos and document objects must be verified by a trusted Storage adapter; absent those verifiers, commands fail closed. Physical intake timestamps and generated record IDs are server-derived. PUDO-origin station drop-off updates the shipment to `Received at PUDO` only after a completed photo-evidenced intake and matching origin PUDO. Assignment remains separate from custody.
 
 ## 13. Data model relationship and authority checks
 
