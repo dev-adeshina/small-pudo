@@ -122,7 +122,7 @@ test("repository ports require transaction boundary and all aggregate repositori
   })) for (const method of methods) ports[name][method] = async () => {};
   ports.transaction = { run: async callback => callback({}) };
   assert.equal(assertRepositoryPorts(ports), ports);
-  assert.throws(() => assertRepositoryPorts({}), /Repository ports/);
+  assert.throws(() => assertRepositoryPorts({}), /Repository port shipments\\.create is required/);
 });
 
 test("idempotent command returns prior result and only executes handler once", async () => {
