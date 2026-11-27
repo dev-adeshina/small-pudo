@@ -23,7 +23,6 @@ import { customerWorkspaceNavigation } from "@/components/design-system/workspac
 import { Button } from "@/components/design-system/Button";
 import { FeedbackState } from "@/components/design-system/FeedbackState";
 import { Pagination } from "@/components/design-system/Pagination";
-import { Pagination } from "@/components/design-system/Pagination";
 
 interface PudoLocationOption {
   locationId: string;
