@@ -42,7 +42,7 @@ function fixture({
         state.shipment = { ...state.shipment, ...patch };
       },
     },
-    parcels: { createMany: async () => {}, listByShipment: async () => [], getById: async () => null },
+    parcels: { createMany: async () => {}, listByShipment: async () => [], getById: async () => null, update: async () => {} },
     quotes: {
       createLineage: async () => {}, appendRevision: async () => {},
       getCurrent: async () => state.quote, withdraw: async () => {},
