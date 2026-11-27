@@ -4,6 +4,7 @@ import { createShipmentFirestorePorts, SHIPMENT_FIRESTORE_PATHS } from "../lib/s
 import { resolveShipmentFirebaseConfig } from "../lib/shipment/firestore-runtime.mjs";
 import { createShipmentCommands } from "../lib/shipment/commands.mjs";
 import { assertCompleteShipmentRepositoryPorts } from "../lib/shipment/repositories.mjs";
+import { createShipmentRecordCommands } from "../lib/shipment/record-commands.mjs";
 
 class FakeSnapshot {
   constructor(id, value) {
@@ -422,4 +423,80 @@ test("existing customer, Admin, PUDO partner and location authorities are read w
     assert.equal((await ports.authorities.getPudoLocationById(tx, "pudo-1")).partnerId, "partner-1");
   });
   assert.equal(shipmentDb.records.size, before);
+});
+
+test("record commands persist photo-evidenced intake, assignment, document and notification history", async () => {
+  const db = new FakeFirestore();
+  const ports = portsFor(db);
+  await ports.transaction.run(async tx => {
+    await ports.shipments.create(tx, "shipment-records", {
+      shipmentId: "shipment-records", customerId: "customer-1", status: "Awaiting Collection",
+      serviceType: "pudo_to_pudo", origin: { type: "pudo", pudoLocationId: "pudo-origin" },
+      destination: { type: "pudo", pudoLocationId: "pudo-destination" },
+    });
+    await ports.parcels.createMany(tx, "shipment-records", [{
+      parcelId: "parcel-records", shipmentId: "shipment-records", description: "Box",
+    }]);
+  });
+  let sequence = 0;
+  const commands = createShipmentRecordCommands({
+    ports,
+    idFactory: prefix => `${prefix}-${++sequence}`,
+    clock: () => new Date("2026-11-27T12:00:00.000Z"),
+    authorizePudoLocation: async (partnerId, locationId) => partnerId === "partner-1" && locationId === "pudo-origin",
+  });
+  const actor = { type: "pudo_partner", id: "partner-1" };
+  const intake = await commands.recordParcelIntake({
+    actor, idempotencyKey: "intake-command-1",
+    intake: {
+      shipmentId: "shipment-records", parcelIds: ["parcel-records"],
+      intakeType: "station_drop_off", receivingLocationType: "pudo",
+      pudoLocationId: "pudo-origin", condition: "Good", measurements: [],
+      discrepancies: [], photoEvidenceRefs: ["private/intake/photo-1.jpg"],
+    },
+  });
+  assert.equal(intake.status, "Received at PUDO");
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.shipments.getById(tx, "shipment-records")).status, "Received at PUDO");
+    assert.equal((await ports.intakes.getById(tx, intake.intakeId)).photoEvidenceRefs.length, 1);
+    assert.equal((await ports.events.listByShipment(tx, "shipment-records")).length, 1);
+  });
+
+  const assignment = await commands.createAssignment({
+    actor, idempotencyKey: "assignment-command-1",
+    assignment: {
+      shipmentId: "shipment-records", activityType: "origin_handling",
+      assignee: { type: "pudo_location", id: "pudo-origin" },
+      startsAt: "2026-11-27T12:00:00.000Z", status: "active", endsAt: null,
+    },
+  });
+  assert.ok(assignment.assignmentId);
+
+  const document = await commands.createShipmentDocument({
+    actor: { type: "admin", id: "admin-1" }, idempotencyKey: "document-command-1",
+    document: {
+      shipmentId: "shipment-records", documentType: "intake_receipt", version: 1,
+      storagePath: "private/shipments/shipment-records/intake.pdf",
+      contentType: "application/pdf", sizeBytes: 100, checksum: "sha256:receipt",
+      access: ["customer", "admin"],
+    },
+  });
+  assert.ok(document.documentId);
+
+  const notification = await commands.queueShipmentNotification({
+    actor: { type: "system", id: "notification-service" }, idempotencyKey: "notification-command-1",
+    notification: {
+      shipmentId: "shipment-records", recipientType: "customer", recipientId: "customer-1",
+      channel: "email", templateKey: "intake_completed",
+      deduplicationKey: "shipment-records:intake_completed:customer-1",
+      payload: { shipmentReference: "VLY-RECORDS" },
+    },
+  });
+  assert.equal(notification.deduplicated, false);
+  const attempt = await commands.recordNotificationAttempt({
+    actor: { type: "system", id: "notification-service" }, idempotencyKey: "notification-attempt-1",
+    notificationId: notification.notificationId,
+    attempt: { status: "delivered", provider: "test-provider", providerMessageId: "msg-1" },
+  });
+  assert.equal(attempt.status, "delivered");
 });
