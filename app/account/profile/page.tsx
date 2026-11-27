@@ -197,7 +197,6 @@ export default function CustomerProfilePage() {
         </div>
       </main>
     );
-        );
     }
 
     //   return (
