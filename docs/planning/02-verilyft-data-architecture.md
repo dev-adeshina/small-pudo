@@ -16,35 +16,35 @@
 
 ## 2. Firebase and database boundary
 
-- Firebase project: `verilyft-4e691`.
-- Existing default Firestore database: remains the current legacy/store data boundary and must not be modified by the new shipment implementation.
-- New shipment data: intended for a separately named Firestore database within the existing Firebase project. Its database ID, location and runtime configuration remain pending explicit approval.
-- Do not create a separate Stage Firestore database. A Git branch named `staging` does not imply a separate database.
-- Do not write new shipment data into the existing default database as a temporary workaround.
-- Do not create the new database, deploy rules/indexes, change Storage configuration or write production data without explicit approval.
-- Firebase Authentication may continue to use the existing project-level UID namespace. A shared UID does not imply shared permissions: Customer, Admin and PUDO Partner profiles and authorization are separate.
-- Existing store records remain authoritative in the existing database. The new shipment application may access selected store information only through an approved server-side read boundary. No copying or dual-writing is implied.
+- Staging and production use separate Firebase projects. Existing `verilyft-4e691` remains the production project; staging must use a dedicated project.
+- Do not create a separate staging Firestore database inside the production Firebase project. A Git branch does not select a Firebase project.
+- The new shipment model uses the versioned `verilyftShipmentData/v1` namespace inside the explicitly selected Firestore database in each environment. The database ID (including an explicit `(default)` choice), location and runtime credentials must be confirmed for each project before live connection.
+- Existing store collections and existing customer, Admin, PUDO partner, PUDO location and operational evidence authorities are not overwritten, copied or dual-written by the shipment model.
+- The shipment adapter receives an explicitly selected Firestore instance and refuses implicit fallback to the application's default Firebase Admin connection.
+- Existing identity authorities are read-only references in the same environment-specific database transaction boundary. Firestore transactions cannot span database instances.
+- Firebase Authentication may continue to use each environment's project-local UID namespace. A shared UID does not imply shared permissions: Customer, Admin and PUDO Partner profiles and authorisation remain separate.
+- No database provisioning, rules/index deployment, Storage configuration, migration, backfill or production data change is authorised by this architecture document.
 
 ## 3. Minimal logical model
 
-The following are logical records for the new shipment database. Nested records are used where they have one clear owner.
+The following table maps the 12 approved logical structures to their actual authorities and the versioned shipment namespace. Parcels are separately modelled as required by the shipment relationship.
 
-| Record | Location | Purpose |
+| Logical record | Authoritative source/path | Phase 3 treatment |
 |---|---|---|
-| Customer | `customers/{customerId}` | Customer profile linked to Firebase Auth UID. |
-| Admin | `admins/{adminId}` | Admin identity/access profile; privileged permissions are enforced server-side. |
-| PUDO Partner | `pudoPartners/{partnerId}` | Partner account/profile, separate from Admin. |
-| PUDO Location | `pudoLocations/{locationId}` | Current station identity, address, lifecycle, shared default capabilities and operational summary. |
-| PUDO Personnel | `pudoLocations/{locationId}/personnel/{personnelId}` | Roster-only named worker record with role and active/inactive state. No individual login in the initial release. |
-| Shipment | `shipments/{shipmentId}` | Single authoritative shipment across Customer, Admin-assisted and PUDO walk-in channels. |
-| Shipment Parcels | `shipments/{shipmentId}/parcels/{parcelId}` | Repeating parcel records belonging to one shipment. |
-| Shipment Events | `shipments/{shipmentId}/events/{eventId}` | One append-only chronological shipment timeline, including material operational/custody events. |
-| Shipment Quote | `shipmentQuotes/{quoteId}` | One quote lineage per shipment, with revisions nested beneath it. |
-| Payment | `payments/{paymentId}` | One provider transaction/attempt, linked to its shipment and quote snapshot. |
-| Parcel Intake | `parcelIntakes/{intakeId}` | One record per actual physical intake, linked to shipment, parcel and PUDO. Photo metadata may be nested beneath it. |
-| Shipment Assignment | `shipments/{shipmentId}/assignments/{assignmentId}` | Repeating assignment responsibility records; not proof of physical custody. |
-| Shipment Document | `shipments/{shipmentId}/documents/{documentId}` | Generated document metadata and protected Storage reference. |
-| Notification | `notifications/{notificationId}` | Minimum recipient-specific delivery state and retry evidence. |
+| Customer | Existing `users/{uid}`; walk-in profiles at `verilyftShipmentData/v1/walkInCustomers/{customerId}` | Preserve registered customer authority; walk-ins remain pending and do not create Auth users. |
+| Admin | Existing `adminAccess/{uid}` | Read-only authority reference; no duplicate Admin profile or permissions collection. |
+| PUDO Partner | Existing `pudoPartnerAccounts/{uid}` | Read-only partner identity; remains distinct from Admin and PUDO personnel. |
+| PUDO Location | Existing `pudoLocations/{locationId}` and existing evidence collections | Preserve current location, verification, activation, capability and operational authorities. |
+| PUDO Personnel | Existing `pudoLocations/{locationId}/personnel/{personnelId}` | Roster-only named worker; no individual Auth login. |
+| Shipment | `verilyftShipmentData/v1/shipments/{shipmentId}` | Single authoritative shipment across all creation channels. |
+| Shipment Parcels | `verilyftShipmentData/v1/parcels/{parcelId}` | Separately modelled parcel records with a required shipmentId relationship. |
+| Shipment Events | `verilyftShipmentData/v1/shipments/{shipmentId}/events/{eventId}` | Append-only shipment timeline, including physical custody evidence events. |
+| Shipment Quote | `verilyftShipmentData/v1/quoteLineages/{quoteId}/revisions/{revisionId}` | One quote lineage per shipment; immutable revision documents. Legacy `shipmentQuotes` remains separate. |
+| Payment | `verilyftShipmentData/v1/payments/{paymentId}` | One immutable provider attempt identity linked to shipment and accepted quote revision. |
+| Parcel Intake | `verilyftShipmentData/v1/parcelIntakes/{intakeId}` | Completed physical intake record, linked to shipment and parcel IDs, with mandatory photo evidence references. |
+| Shipment Assignment | `verilyftShipmentData/v1/shipments/{shipmentId}/assignments/{assignmentId}` | Retained responsibility history; not proof of physical custody. |
+| Shipment Document | `verilyftShipmentData/v1/shipments/{shipmentId}/documents/{documentId}` | Immutable versioned metadata and protected Storage reference; binary remains in Storage. |
+| Notification | `verilyftShipmentData/v1/notifications/{notificationId}` | Recipient-specific deduplicated intent; delivery attempts are append-only subrecords. |
 
 Do not introduce standalone collections for quote calculations, booking copies, custody ledgers, photo registries, assignment calendars, worker accounts or delivery personnel unless a demonstrated query/security requirement justifies them. The collection list is a minimum logical model, not an instruction to create every collection at once.
 
@@ -118,7 +118,7 @@ The lifecycle is a set of permitted transitions, not a requirement that every sh
 - Existing store collections (including categories, products, orders and historical payment/webhook evidence) remain untouched.
 - Legacy shipment drafts and quote stores are not the new authoritative shipment schema. Reuse business logic selectively through reviewed adapters; do not copy legacy collections wholesale.
 - The prior `shipmentBookings` implementation is not a second source of truth. Booking becomes a shipment lifecycle fact.
-- Existing PUDO network verification/activation/capability and commercial evidence workflows remain governed by their existing decisions until a separate migration/replacement is approved.
+- Existing PUDO network verification/activation/capability and commercial evidence workflows remain authoritative and are referenced; shipment records do not duplicate or override them.
 - No migration, dual write or backfill is part of Phase 3 foundation work.
 
 ## 9. Storage, indexes and deployment
@@ -132,11 +132,11 @@ The lifecycle is a set of permitted transitions, not a requirement that every sh
 
 ## 10. Implementation order
 
-1. Complete Phase 2 access gaps and audit.
-2. Confirm the remaining business decisions in document 08.
-3. Implement the shipment data contracts, validation and pure business transition logic without binding to a production database.
-4. Obtain explicit approval for database ID/location and infrastructure setup.
-5. Wire the approved database adapter and server-side transactions.
-6. Build customer, Admin and PUDO workflows in their roadmap phases.
+1. Complete Phase 2 access gaps and audit — completed in the staging baseline.
+2. Resolve the shipment workflow decisions — recorded as approved in document 08.
+3. Implement the canonical shipment contracts, validation, business commands and repository ports — Phase 3 code foundation.
+4. Implement the injected Firestore adapter and environment guards without connecting to production — Phase 3 code foundation.
+5. Provision/confirm the separate staging Firebase project and its explicit database/runtime configuration before live staging integration.
+6. Build customer, Admin and PUDO workflows in their roadmap phases; these are not part of the Phase 3 data foundation.
 
 The [Final Minimal Firestore Schema](./08-final-minimal-firestore-schema.md) is the field-level baseline. If a feature cannot be traced to an approved workflow, do not add it to the initial schema.
