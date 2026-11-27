@@ -378,7 +378,7 @@ export default function CustomerAccountPage() {
     user.displayName?.trim().split(/\s+/)[0] ||
     user.email?.split("@")[0] ||
     "there";
-  const pageSize = 10;
+  const pageSize = 5;
   const currentOrdersPage = Math.min(ordersPage, Math.max(1, Math.ceil(orders.length / pageSize)));
   const currentDraftsPage = Math.min(draftsPage, Math.max(1, Math.ceil(drafts.length / pageSize)));
   const visibleOrders = orders.slice((currentOrdersPage - 1) * pageSize, currentOrdersPage * pageSize);
