@@ -408,18 +408,18 @@ test("notification intents deduplicate and delivery attempts are append-only", a
 });
 
 test("existing customer, Admin, PUDO partner and location authorities are read without duplicate writes", async () => {
-  const identityDb = new FakeFirestore();
-  identityDb.records.set("users/customer-1", { displayName: "Customer" });
-  identityDb.records.set("adminAccess/admin-1", { active: true, permissions: ["shipment.quote"] });
-  identityDb.records.set("pudoPartnerAccounts/partner-1", { status: "active", locationIds: ["pudo-1"] });
-  identityDb.records.set("pudoLocations/pudo-1", { status: "active", partnerId: "partner-1" });
   const shipmentDb = new FakeFirestore();
-  const ports = createShipmentFirestorePorts({ db: shipmentDb, identityDb });
+  shipmentDb.records.set("users/customer-1", { displayName: "Customer" });
+  shipmentDb.records.set("adminAccess/admin-1", { active: true, permissions: ["shipment.quote"] });
+  shipmentDb.records.set("pudoPartnerAccounts/partner-1", { status: "active", locationIds: ["pudo-1"] });
+  shipmentDb.records.set("pudoLocations/pudo-1", { status: "active", partnerId: "partner-1" });
+  const before = shipmentDb.records.size;
+  const ports = createShipmentFirestorePorts({ db: shipmentDb });
   await ports.transaction.run(async tx => {
     assert.equal((await ports.authorities.getCustomerByAuthUid(tx, "customer-1")).displayName, "Customer");
     assert.equal((await ports.authorities.getAdminAccessByAuthUid(tx, "admin-1")).active, true);
     assert.equal((await ports.authorities.getPudoPartnerByAuthUid(tx, "partner-1")).status, "active");
     assert.equal((await ports.authorities.getPudoLocationById(tx, "pudo-1")).partnerId, "partner-1");
   });
-  assert.equal(shipmentDb.records.size, 0);
+  assert.equal(shipmentDb.records.size, before);
 });
