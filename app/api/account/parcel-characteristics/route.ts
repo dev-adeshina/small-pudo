@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   const customer = await authenticateVerifiedCustomer(
     request.headers.get("authorization"),
-    (token) => adminAuth.verifyIdToken(token)
+    (token) => adminAuth.verifyIdToken(token, true)
   );
   if (!customer.success) {
     return NextResponse.json({ error: customer.error }, { status: customer.status });
