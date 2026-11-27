@@ -40,7 +40,7 @@ function fixture() {
     },
     parcels: {
       createMany: async (tx, id, values) => { state.transactionTokens.push(tx); state.parcels.set(id, values); },
-      listByShipment: async () => [], getById: async () => null,
+      listByShipment: async () => [], getById: async () => null, update: async () => {},
     },
     quotes: { createLineage: async () => {}, appendRevision: async () => {}, getCurrent: async () => null, withdraw: async () => {} },
     payments: { createAttempt: async () => {}, getById: async () => null, getByProviderReference: async () => null, updateAttempt: async () => {} },
