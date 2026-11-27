@@ -112,7 +112,7 @@ No Firestore rules were changed in this branch.
 - [x] PUDO partner registration/sign-in and partner ownership checks exist.
 - [x] PUDO named personnel roster exists without worker login.
 - [x] Customer API token verification checks revocation consistently in the reviewed account routes.
-- [x] PUDO partner registration requires verified email.
+- [x] PUDO partner workspace access requires verified email.
 - [x] Customer, Admin, PUDO Partner and PUDO Personnel authority are kept distinct.
 - [ ] Local automated test suite and production build pass on this branch.
 - [ ] User performs live browser verification of partner personnel workflow.
