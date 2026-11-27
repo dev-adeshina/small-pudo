@@ -1,5 +1,5 @@
 import type { FieldValue, Firestore } from "firebase-admin/firestore";
-import { assertCommercialPricingConfiguration } from "./commercial-pricing-engine-core";
+import { assertCommercialPricingConfiguration } from "./commercial-pricing-engine-core.ts";
 
 // import { hasStaffActionPermission } from "./staff-permission-grants-core.ts";
 import {
