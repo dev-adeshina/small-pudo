@@ -15,24 +15,21 @@ import {
   CheckCircle2,
   Clock3,
   FileText,
-  Home,
   LogOut,
   MapPinned,
   Package,
-  Route,
-  Settings2,
   ShieldCheck,
   ShoppingBag,
   Tags,
   Truck,
   Users,
-  Wallet,
 } from "lucide-react";
 
 import { auth } from "@/lib/firebase";
 import { logoutAdmin } from "@/lib/auth";
 import { verifyAdminAccess } from "@/lib/admin-auth";
 import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
+import { adminWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
 import { PageHeader } from "@/components/design-system/PageHeader";
 import { Button } from "@/components/design-system/Button";
 import { StatusBadge } from "@/components/design-system/StatusBadge";
@@ -49,18 +46,6 @@ type StoreOrder = {
   orderStatus: string;
   createdAt: string | null;
 };
-
-const storeNavigation = [
-  { label: "Store orders", href: "/admin/orders", section: "STORE", icon: ShoppingBag },
-  { label: "Products", href: "/admin/products", section: "STORE", icon: Package },
-  { label: "Categories", href: "/admin/categories", section: "STORE", icon: Tags },
-];
-
-const commercialNavigation = [
-  { label: "Pricing definitions", href: "/admin/commercial-pricing-definitions", section: "COMMERCIAL", icon: Wallet },
-  { label: "Operational costs", href: "/admin/operational-cost-definitions", section: "COMMERCIAL", icon: Settings2 },
-  { label: "Route distance evidence", href: "/admin/commercial-route-distance", section: "COMMERCIAL", icon: Route },
-];
 
 const plannedAreas = [
   { title: "Customers", description: "Customer profiles, shipment history and authorised account details.", icon: Users },
@@ -221,11 +206,7 @@ export default function AdminDashboard() {
     <WorkspaceShell
       workspaceName="VeriLyft"
       workspaceLabel="Admin workspace"
-      navigation={[
-        { label: "Dashboard", href: "/admin", section: "OVERVIEW", icon: Home },
-        ...storeNavigation,
-        ...commercialNavigation,
-      ]}
+      navigation={adminWorkspaceNavigation}
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: "Admin", href: "/admin" },
@@ -362,19 +343,6 @@ export default function AdminDashboard() {
               </div>
             </SurfaceCard>
 
-            <SurfaceCard>
-              <div className="vl-admin-section-heading">
-                <div>
-                  <span className="vl-admin-section-label">COMMERCIAL CONTROLS</span>
-                  <h2>Pricing & evidence</h2>
-                </div>
-              </div>
-              <div className="vl-admin-quick-links">
-                <Link href="/admin/commercial-pricing-definitions"><Wallet size={17} /><span>Pricing definitions</span><ArrowUpRight size={15} /></Link>
-                <Link href="/admin/operational-cost-definitions"><Settings2 size={17} /><span>Operational costs</span><ArrowUpRight size={15} /></Link>
-                <Link href="/admin/commercial-route-distance"><Route size={17} /><span>Route distance evidence</span><ArrowUpRight size={15} /></Link>
-              </div>
-            </SurfaceCard>
           </aside>
         </section>
 
@@ -401,6 +369,9 @@ export default function AdminDashboard() {
           </div>
         </section>
 
+        <p className="vl-admin-boundary-note">
+          Commercial pricing, operational cost definitions and route-distance evidence remain on their existing permission-protected legacy screens while their migration into the Admin workspace is planned. No records or permissions have been changed.
+        </p>
         <p className="vl-admin-boundary-note">
           Store management shown here continues to use the existing store data. Shipment bookings, PUDO operations and store orders are separate workflows and will not be combined into one record type.
         </p>
