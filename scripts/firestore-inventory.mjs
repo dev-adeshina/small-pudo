@@ -28,7 +28,7 @@ function parseArgs(argv) {
     const token = argv[i];
     if (!token.startsWith("--")) throw new Error(`Unexpected argument: ${token}`);
     const key = token.slice(2);
-    if (["read-only"].includes(key)) {
+    if (["read-only", "help"].includes(key)) {
       options[key] = true;
       continue;
     }
@@ -247,7 +247,8 @@ async function main() {
         try {
           const children = await document.ref.listCollections();
           for (const child of children) {
-            if (!entry.subcollections.includes(child.path)) entry.subcollections.push(child.path);
+            const safeChildPath = safeStructuralPath(child.path);
+            if (!entry.subcollections.includes(safeChildPath)) entry.subcollections.push(safeChildPath);
             await inspectCollection(child, depth + 1);
           }
         } catch (error) {
