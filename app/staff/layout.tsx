@@ -42,7 +42,7 @@ function StaffWorkspaceShell({ children }: { children: ReactNode }) {
   for (const segment of pathname.split("/").filter(Boolean).slice(1)) {
     breadcrumbPath += `/${segment}`;
     const match = navigation.find((item) => item.href === breadcrumbPath);
-    const label = match?.label ?? segment.replace(/[-_]+/g, " ").replace(/\\b\\w/g, (letter) => letter.toUpperCase());
+    const label = match?.label ?? segment.replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
     breadcrumbItems.push({ label, href: match ? breadcrumbPath : undefined });
   }
 
