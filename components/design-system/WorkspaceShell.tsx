@@ -39,9 +39,25 @@ export function WorkspaceShell({
   }, [pathname]);
 
   const sections = [...new Set(navigation.map((item) => item.section))];
-  const firstItemForPath = navigation.find(
-    (item) => item.href.split("#")[0] === pathname
+  const matchingNavigation = navigation.filter((item) => {
+    const itemPath = item.href.split("#")[0];
+    return pathname === itemPath || pathname.startsWith(itemPath + "/");
+  });
+  const hashMatch = currentHash
+    ? matchingNavigation.find((item) => item.href.split("#")[1] === currentHash.slice(1))
+    : undefined;
+  const longestPathLength = Math.max(
+    0,
+    ...matchingNavigation.map((item) => item.href.split("#")[0].length)
   );
+  const activeNavigation =
+    hashMatch ??
+    matchingNavigation
+      .filter((item) => item.href.split("#")[0].length === longestPathLength)
+      .find((item) => !item.href.includes("#")) ??
+    matchingNavigation.find(
+      (item) => item.href.split("#")[0].length === longestPathLength
+    );
 
   return (
     <div className="vl-workspace">
@@ -56,13 +72,7 @@ export function WorkspaceShell({
               <span className="vl-workspace-nav__label">{section}</span>
               {navigation.filter((item) => item.section === section).map((item) => {
                 const Icon = item.icon;
-                const [itemPath, itemHash] = item.href.split("#");
-                const active = itemHash
-                  ? pathname === itemPath &&
-                    (currentHash === `#${itemHash}` ||
-                      (!currentHash && firstItemForPath === item))
-                  : pathname === itemPath ||
-                    (itemPath !== "/" && pathname.startsWith(itemPath + "/"));
+                const active = activeNavigation === item;
                 return (
                   <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}>
                     {Icon && <Icon size={17} aria-hidden="true" />}
