@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createShipmentFirestorePorts, SHIPMENT_FIRESTORE_PATHS } from "../lib/shipment/firestore-adapter.mjs";
 import { resolveShipmentFirebaseConfig } from "../lib/shipment/firestore-runtime.mjs";
+import { createShipmentCommands } from "../lib/shipment/commands.mjs";
 
 class FakeSnapshot {
   constructor(id, value) {
@@ -238,4 +239,54 @@ test("Firebase runtime configuration requires distinct explicit staging and prod
     () => resolveShipmentFirebaseConfig({ ...base, STAGING_FIREBASE_PROJECT_ID: "verilyft-4e691" }),
     /must be different/
   );
+});
+
+test("shipment submission uses Firestore transaction reads before writes and replays idempotently", async () => {
+  const db = new FakeFirestore();
+  db.records.set("users/customer-1", { displayName: "Test Customer" });
+  const ports = portsFor(db);
+  let sequence = 0;
+  const commands = createShipmentCommands({
+    ports,
+    idFactory: prefix => `${prefix}-${++sequence}`,
+    clock: () => new Date("2026-11-27T12:00:00.000Z"),
+  });
+  const input = {
+    actor: { type: "customer", id: "customer-1" },
+    idempotencyKey: "submit-once",
+    shipment: {
+      serviceType: "door_to_door",
+      sender: { fullName: "Sender", phone: "+2348000000001" },
+      recipient: { fullName: "Recipient", phone: "+2348000000002" },
+      origin: {
+        type: "address",
+        country: "Nigeria",
+        state: "Lagos",
+        city: "Lagos",
+        addressDescription: "Origin address",
+      },
+      destination: {
+        type: "address",
+        country: "Nigeria",
+        state: "Oyo",
+        city: "Ibadan",
+        addressDescription: "Destination address",
+      },
+    },
+    parcels: [{
+      description: "Documents",
+      declaredWeight: 1,
+      measurements: { length: 20, width: 15, height: 2 },
+      declaredValueMinor: 0,
+      currency: "NGN",
+    }],
+  };
+
+  const first = await commands.submitShipment(input);
+  const replay = await commands.submitShipment(input);
+  assert.deepEqual(replay, first);
+  assert.equal(first.status, "Submitted");
+  assert.equal((await ports.transaction.run(tx => ports.shipments.getById(tx, first.shipmentId))).shipmentReference, first.shipmentReference);
+  assert.equal((await ports.transaction.run(tx => ports.parcels.listByShipment(tx, first.shipmentId))).length, 1);
+  assert.equal((await ports.transaction.run(tx => ports.events.listByShipment(tx, first.shipmentId))).length, 1);
 });
