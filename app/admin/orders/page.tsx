@@ -370,14 +370,12 @@ export default function AdminOrdersPage() {
 
   if (checkingAuth) {
     return (
-      <WorkspaceShell
-      workspaceName="VeriLyft"
-      workspaceLabel="Admin"
-      navigation={adminWorkspaceNavigation}
-      breadcrumbs={[{ label: "Admin", href: "/admin" }]}
-    >
-      <FeedbackState variant="loading" title="Verifying administrator access" description="Confirming your Admin session and permissions." />
-    </WorkspaceShell>
+      <main className="vl-workspace">
+        <div className="vl-workspace__content">
+          <FeedbackState variant="loading" title="Verifying administrator access" description="Confirming your Admin session and permissions." />
+        </div>
+      </main>
+    );
     );
   }
 
