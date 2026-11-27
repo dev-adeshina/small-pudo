@@ -256,6 +256,7 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
     assert.deepEqual(result, {
       locationId,
       lifecycle: "active",
+      status: "active",
       activatedBy: activatorUid,
     });
 
