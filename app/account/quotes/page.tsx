@@ -9,6 +9,10 @@ import { ArrowLeft, CheckCircle2, Clock3, FileText, UserRound } from "lucide-rea
 
 import { auth } from "@/lib/firebase";
 import { signOutCustomer } from "@/lib/customer-auth";
+import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
+import { customerWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
+import { Button } from "@/components/design-system/Button";
+import { FeedbackState } from "@/components/design-system/FeedbackState";
 
 type QuoteVersion = {
   versionId: string;
@@ -200,12 +204,35 @@ export default function CustomerQuotesPage() {
     }
   }
 
+  async function handleWorkspaceSignOut() {
+    await signOutCustomer();
+    router.replace("/account/sign-in");
+  }
+
   if (checking || !user) {
-    return <main className="customer-loading"><span>Checking your account...</span></main>;
+    return (
+      <main className="vl-workspace">
+        <div className="vl-workspace__content">
+          <FeedbackState variant="loading" title="Checking your customer account" description="Verifying your sign-in before opening your workspace." />
+        </div>
+      </main>
+    );
   }
 
   return (
-    <main className="customer-page">
+    <WorkspaceShell
+      workspaceName="VeriLyft"
+      workspaceLabel="Customer"
+      navigation={customerWorkspaceNavigation}
+      breadcrumbs={[{ label: "Customer", href: "/account" }, { label: "Quotations" }]}
+      topbarContent={
+        <div className="vl-workspace__account-actions">
+          <span>{user.email}</span>
+          <Button variant="outline" size="sm" onClick={handleWorkspaceSignOut}>Sign out</Button>
+        </div>
+      }
+    >
+      <div className="customer-page">
       <header className="customer-header">
         <Link href="/" className="customer-logo" aria-label="VeriLyft home">
           <Image src="/logo.svg" alt="VeriLyft" width={150} height={40} priority style={{ width: "auto", height: "auto" }} />
@@ -311,6 +338,7 @@ export default function CustomerQuotesPage() {
           <p>Each decision is bound to the current immutable quotation version. Expired quotations cannot be accepted; a new version is required. Earlier versions remain in the quotation record.</p>
         </section>
       </div>
-    </main>
+    </div>
+    </WorkspaceShell>
   );
 }

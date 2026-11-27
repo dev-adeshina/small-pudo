@@ -20,6 +20,10 @@ import { auth } from "@/lib/firebase";
 import { logoutAdmin } from "@/lib/auth";
 
 import { verifyAdminAccess } from "@/lib/admin-auth";
+import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
+import { adminWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
+import { Button } from "@/components/design-system/Button";
+import { FeedbackState } from "@/components/design-system/FeedbackState";
 
 import type { Category } from "@/lib/types/category";
 
@@ -260,14 +264,28 @@ export default function CategoriesPage() {
 
   if (checkingAuth) {
     return (
-      <main className="admin-loading">
-        <span>Loading workspace...</span>
+      <main className="vl-workspace">
+        <div className="vl-workspace__content">
+          <FeedbackState variant="loading" title="Verifying administrator access" description="Confirming your Admin session and permissions." />
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="admin-page">
+    <WorkspaceShell
+      workspaceName="VeriLyft"
+      workspaceLabel="Admin"
+      navigation={adminWorkspaceNavigation}
+      breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Categories" }]}
+      topbarContent={
+        <div className="vl-workspace__account-actions">
+          <span>{adminEmail}</span>
+          <Button variant="outline" size="sm" onClick={handleLogout}>Sign out</Button>
+        </div>
+      }
+    >
+      <div className="admin-page">
       {/* =====================================================
           ADMIN HEADER
           ===================================================== */}
@@ -526,6 +544,7 @@ export default function CategoriesPage() {
           onCancel={() => setDeletingCategory(null)}
         />
       )}
-    </main>
+    </div>
+    </WorkspaceShell>
   );
 }

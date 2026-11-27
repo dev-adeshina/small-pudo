@@ -18,6 +18,11 @@ import {
 
 import { auth } from "@/lib/firebase";
 import { signOutCustomer } from "@/lib/customer-auth";
+import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
+import { customerWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
+import { Button } from "@/components/design-system/Button";
+import { FeedbackState } from "@/components/design-system/FeedbackState";
+import { Pagination } from "@/components/design-system/Pagination";
 
 interface PudoLocationOption {
   locationId: string;
@@ -89,6 +94,7 @@ export default function ShipmentDraftsPage() {
   const [user, setUser] = useState<User | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [drafts, setDrafts] = useState<ShipmentDraft[]>([]);
+  const [draftsPage, setDraftsPage] = useState(1);
   const [pudoLocations, setPudoLocations] = useState<PudoLocationOption[]>([]);
   const [pudoLocationsError, setPudoLocationsError] = useState("");
   const [characteristicOptions, setCharacteristicOptions] = useState<ParcelCharacteristicOptionGroup[]>([]);
@@ -358,16 +364,39 @@ export default function ShipmentDraftsPage() {
     }
   }
 
+  async function handleWorkspaceSignOut() {
+    await signOutCustomer();
+    router.replace("/account/sign-in");
+  }
+
+  const draftsPageSize = 5;
+  const currentDraftsPage = Math.min(draftsPage, Math.max(1, Math.ceil(drafts.length / draftsPageSize)));
+  const visibleDrafts = drafts.slice((currentDraftsPage - 1) * draftsPageSize, currentDraftsPage * draftsPageSize);
+
   if (checkingAuth || !user) {
     return (
-      <main className="customer-loading">
-        <span>Checking your account...</span>
+      <main className="vl-workspace">
+        <div className="vl-workspace__content">
+          <FeedbackState variant="loading" title="Checking your customer account" description="Verifying your sign-in before opening your workspace." />
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="customer-page">
+    <WorkspaceShell
+      workspaceName="VeriLyft"
+      workspaceLabel="Customer"
+      navigation={customerWorkspaceNavigation}
+      breadcrumbs={[{ label: "Customer", href: "/account" }, { label: "Shipments" }]}
+      topbarContent={
+        <div className="vl-workspace__account-actions">
+          <span>{user.email}</span>
+          <Button variant="outline" size="sm" onClick={handleWorkspaceSignOut}>Sign out</Button>
+        </div>
+      }
+    >
+      <div className="customer-page">
       <header className="customer-header">
         <Link href="/" className="customer-logo" aria-label="VeriLyft home">
           <Image
@@ -395,7 +424,7 @@ export default function ShipmentDraftsPage() {
       <div className="customer-shell shipment-shell">
         <div className="shipment-heading">
           <span className="eyebrow">VERILYFT / SHIPMENT BOOKING</span>
-          <h1>Prepare a <em>shipment.</em></h1>
+          <h1>Send an <em>item.</em></h1>
           <p>
             Save your shipment details first. A saved draft is not a confirmed
             booking, a quotation, a payment request, or proof that a parcel has
@@ -404,7 +433,7 @@ export default function ShipmentDraftsPage() {
         </div>
 
         <div className="shipment-policy-note" role="note">
-          <strong>Prepare first, request a quotation when available</strong>
+          <strong>Add item details first, request a quotation when available</strong>
           <p>
             Saving a draft does not create a booking, payment obligation or custody record.
             Quotation requests are checked against current service eligibility, route evidence
@@ -651,7 +680,7 @@ export default function ShipmentDraftsPage() {
             </div>
           ) : (
             <div className="shipment-draft-list">
-              {drafts.map((draft) => (
+              {visibleDrafts.map((draft) => (
                 <article className="shipment-draft-row" key={draft.id}>
                   <div>
                     <span className="shipment-draft-status">DRAFT · NOT CONFIRMED</span>
@@ -682,12 +711,16 @@ export default function ShipmentDraftsPage() {
               ))}
             </div>
           )}
+          {!loading && !loadError && drafts.length > 0 && (
+            <Pagination page={currentDraftsPage} totalItems={drafts.length} pageSize={draftsPageSize} onPageChange={setDraftsPage} />
+          )}
         </section>
 
         <Link href="/account" className="shipment-back-link">
           <ArrowLeft size={16} /> Back to my account
         </Link>
       </div>
-    </main>
+    </div>
+    </WorkspaceShell>
   );
 }

@@ -1,6 +1,8 @@
 "use client"
 
 import Image from "next/image"
+import { useState } from "react"
+import { Pagination } from "@/components/design-system/Pagination"
 import {
   Edit,
   Trash2,
@@ -32,6 +34,11 @@ export function ProductTable({
   onDelete,
   onChanged,
 }: Props) {
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const pageCount = Math.max(1, Math.ceil(products.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const visibleProducts = products.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const categoryMap = new Map(
     categories.map((category) => [
       category.id,
@@ -71,7 +78,7 @@ export function ProductTable({
           </thead>
 
           <tbody>
-            {products.map((product) => (
+            {visibleProducts.map((product) => (
               <tr key={product.id}>
                 <td>
                   <div className="product-table-identity">
@@ -176,6 +183,7 @@ export function ProductTable({
           </tbody>
         </table>
       </div>
+      <Pagination page={currentPage} totalItems={products.length} pageSize={pageSize} onPageChange={setPage} />
     </div>
   )
 }

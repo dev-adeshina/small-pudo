@@ -7,6 +7,11 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
 import { verifyAdminAccess } from "@/lib/admin-auth";
+import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
+import { adminWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
+import { Button } from "@/components/design-system/Button";
+import { FeedbackState } from "@/components/design-system/FeedbackState";
+import { Pagination } from "@/components/design-system/Pagination";
 
 import {
   ArrowLeft,
@@ -125,6 +130,8 @@ export default function AdminOrdersPage() {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const [savingShipping, setSavingShipping] = useState<string | null>(null);
+  const [ordersPage, setOrdersPage] = useState(1);
+  const ordersPageSize = 10;
 
   // useEffect(() => {
   //   const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -361,15 +368,35 @@ export default function AdminOrdersPage() {
     });
   }, [orders, search, statusFilter]);
 
+  const currentOrdersPage = Math.min(ordersPage, Math.max(1, Math.ceil(filteredOrders.length / ordersPageSize)));
+  const visibleOrders = filteredOrders.slice((currentOrdersPage - 1) * ordersPageSize, currentOrdersPage * ordersPageSize);
   const paidCount = orders.filter((order) => order.paymentStatus === "paid").length;
   const fulfilmentCount = orders.filter((order) => ["processing", "ready_for_shipping", "shipped"].includes(order.orderStatus)).length;
 
   if (checkingAuth) {
-    return <main className="admin-loading"><span>Loading workspace...</span></main>;
+    return (
+      <main className="vl-workspace">
+        <div className="vl-workspace__content">
+          <FeedbackState variant="loading" title="Verifying administrator access" description="Confirming your Admin session and permissions." />
+        </div>
+      </main>
+    );
   }
 
   return (
-    <main className="admin-page admin-orders-page">
+    <WorkspaceShell
+      workspaceName="VeriLyft"
+      workspaceLabel="Admin"
+      navigation={adminWorkspaceNavigation}
+      breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Store orders" }]}
+      topbarContent={
+        <div className="vl-workspace__account-actions">
+          <span>{adminEmail}</span>
+          <Button variant="outline" size="sm" onClick={handleLogout}>Sign out</Button>
+        </div>
+      }
+    >
+      <div className="admin-page admin-orders-page">
       <header className="admin-header">
         <Link href="/" className="admin-logo">
           <Image src="/logo.svg" width={60} height={20} alt="VeriLyft" priority />
@@ -427,7 +454,7 @@ export default function AdminOrdersPage() {
               <table className="orders-table">
                 <thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Payment</th><th>Fulfilment</th><th><span className="sr-only">Actions</span></th></tr></thead>
                 <tbody>
-                  {filteredOrders.map((order) => {
+                  {visibleOrders.map((order) => {
                     const next = nextStatus(order.orderStatus);
                     const isExpanded = expandedOrder === order.id;
                     return (
@@ -485,10 +512,14 @@ export default function AdminOrdersPage() {
               </table>
             </div>
           )}
+          {!loading && !error && filteredOrders.length > 0 && (
+            <Pagination page={currentOrdersPage} totalItems={filteredOrders.length} pageSize={ordersPageSize} onPageChange={setOrdersPage} />
+          )}
         </section>
 
         <p className="orders-page-footnote">Status updates are restricted to paid orders and must follow the fulfilment sequence. Payment status is managed by the payment verification and webhook flow.</p>
       </div>
-    </main>
+    </div>
+    </WorkspaceShell>
   );
 }

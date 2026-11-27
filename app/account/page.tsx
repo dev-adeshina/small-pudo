@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -22,6 +21,13 @@ import {
 
 import { auth } from "@/lib/firebase";
 import { signOutCustomer } from "@/lib/customer-auth";
+import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
+import { customerWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
+import { PageHeader } from "@/components/design-system/PageHeader";
+import { StatusBadge } from "@/components/design-system/StatusBadge";
+import { Button } from "@/components/design-system/Button";
+import { FeedbackState } from "@/components/design-system/FeedbackState";
+import { Pagination } from "@/components/design-system/Pagination";
 
 interface ShipmentDraft {
   id: string;
@@ -39,6 +45,11 @@ interface CustomerOrderItem {
   quantity: number;
   price: number;
   subtotal: number;
+}
+
+interface CustomerQuote {
+  quoteId: string;
+  status: string;
 }
 
 interface CustomerOrder {
@@ -124,11 +135,18 @@ export default function CustomerAccountPage() {
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [ordersError, setOrdersError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
+  const [ordersPage, setOrdersPage] = useState(1);
+  const [draftsPage, setDraftsPage] = useState(1);
 
   const [drafts, setDrafts] = useState<ShipmentDraft[]>([]);
   const [draftsLoading, setDraftsLoading] = useState(true);
   const [draftsError, setDraftsError] = useState("");
   const [draftReloadKey, setDraftReloadKey] = useState(0);
+
+  const [quotes, setQuotes] = useState<CustomerQuote[]>([]);
+  const [quotesLoading, setQuotesLoading] = useState(true);
+  const [quotesError, setQuotesError] = useState("");
+  const [quoteReloadKey, setQuoteReloadKey] = useState(0);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
@@ -266,6 +284,54 @@ export default function CustomerAccountPage() {
     };
   }, [user, draftReloadKey]);
 
+  useEffect(() => {
+    if (!user) return;
+
+    let active = true;
+
+    async function fetchQuotes() {
+      setQuotesLoading(true);
+      setQuotesError("");
+
+      try {
+        const idToken = await user!.getIdToken();
+        const response = await fetch("/api/account/shipment-quotes", {
+          headers: { Authorization: `Bearer ${idToken}` },
+          cache: "no-store",
+        });
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok || !data?.success) {
+          throw new Error(
+            typeof data?.error === "string"
+              ? data.error
+              : "Unable to load your quotations."
+          );
+        }
+
+        if (active) {
+          setQuotes(Array.isArray(data.quotes) ? data.quotes : []);
+        }
+      } catch (loadError) {
+        if (active) {
+          setQuotesError(
+            loadError instanceof Error
+              ? loadError.message
+              : "Unable to load your quotations. Please try again."
+          );
+        }
+      } finally {
+        if (active) setQuotesLoading(false);
+      }
+    }
+
+    void fetchQuotes();
+
+    return () => {
+      active = false;
+    };
+  }, [user, quoteReloadKey]);
+
   async function handleSignOut() {
     setError("");
     setSigningOut(true);
@@ -283,14 +349,23 @@ export default function CustomerAccountPage() {
 
   if (checkingAuth || !user) {
     return (
-      <main className="customer-loading">
-        <span>Checking your account...</span>
+      <main className="vl-workspace">
+        <div className="vl-workspace__content">
+          <FeedbackState
+            variant="loading"
+            title="Checking your customer account"
+            description="Verifying your sign-in before opening your workspace."
+          />
+        </div>
       </main>
     );
   }
 
   const completedOrders = orders.filter(
     (order) => order.orderStatus.toLowerCase() === "delivered"
+  ).length;
+  const quotationsAwaitingDecision = quotes.filter(
+    (quote) => quote.status === "issued"
   ).length;
 
   const pendingOrders = orders.filter((order) =>
@@ -303,84 +378,63 @@ export default function CustomerAccountPage() {
     user.displayName?.trim().split(/\s+/)[0] ||
     user.email?.split("@")[0] ||
     "there";
+  const pageSize = 5;
+  const currentOrdersPage = Math.min(ordersPage, Math.max(1, Math.ceil(orders.length / pageSize)));
+  const currentDraftsPage = Math.min(draftsPage, Math.max(1, Math.ceil(drafts.length / pageSize)));
+  const visibleOrders = orders.slice((currentOrdersPage - 1) * pageSize, currentOrdersPage * pageSize);
+  const visibleDrafts = drafts.slice((currentDraftsPage - 1) * pageSize, currentDraftsPage * pageSize);
 
   return (
-    <main className="customer-page">
-      <header className="customer-header">
-        <Link href="/" className="customer-logo" aria-label="VeriLyft home">
-          <Image
-            src="/logo.svg"
-            alt="VeriLyft"
-            width={150}
-            height={40}
-            priority
-            style={{ width: "auto", height: "auto" }}
-          />
-        </Link>
-
-        <div className="customer-header-right">
-          <div className="customer-identity">
-            <span className="customer-avatar">
-              <UserRound size={17} />
-            </span>
-
+    <WorkspaceShell
+      workspaceName="VeriLyft"
+      workspaceLabel="Customer workspace"
+      navigation={customerWorkspaceNavigation}
+      breadcrumbs={[
+        { label: "Home", href: "/" },
+        { label: "Customer account", href: "/account" },
+        { label: "Overview" },
+      ]}
+      topbarContent={
+        <div className="vl-customer-topbar">
+          <span className="vl-customer-identity">
+            <span className="customer-avatar"><UserRound size={16} /></span>
             <span className="customer-email">{user.email}</span>
-          </div>
-
-          <button
-            type="button"
-            className="customer-logout"
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            leadingIcon={<LogOut size={16} />}
             onClick={handleSignOut}
-            disabled={signingOut}
+            loading={signingOut}
             aria-label="Sign out"
-            title="Sign out"
           >
-            <LogOut size={17} />
-          </button>
+            Sign out
+          </Button>
         </div>
-      </header>
-
-      <div className="customer-shell">
-        <section className="customer-welcome">
-          <div>
-            <span className="eyebrow">VERILYFT / MY ACCOUNT</span>
-
-            <h1>
-              Welcome back,
-              <br />
-              <em>{firstName}.</em>
-            </h1>
-
-            <p>
-              Your orders, deliveries, and account details—all in one place.
-            </p>
-
-            <Link href="/account/shipments" className="customer-primary-action">
-              <Package size={17} />
-              Prepare a shipment
-              <ArrowUpRight size={16} />
-            </Link>
-            <Link href="/account/quotes" className="customer-primary-action" style={{ marginTop: 10 }}>
-              <FileText size={17} />
-              View quotations
-              <ArrowUpRight size={16} />
-            </Link>
+      }
+    >
+      <div className="customer-page vl-customer-dashboard">
+        <div className="customer-shell">
+          <PageHeader
+            eyebrow="CUSTOMER ACCOUNT"
+            title={`Welcome back, ${firstName}.`}
+            description="Your shipments, quotations, orders and account details—all in one place."
+            actions={
+              <>
+                <Link href="/account/shipments" className="vl-button vl-button--primary">
+                  <Package size={16} /> Send an item
+                </Link>
+                <Link href="/account/quotes" className="vl-button vl-button--secondary">
+                  <FileText size={16} /> View quotations
+                </Link>
+              </>
+            }
+          />
+          <div className="vl-customer-account-state">
+            <ShieldCheck size={17} />
+            <span>Your account is verified</span>
+            <StatusBadge label="Verified" tone="success" />
           </div>
-
-          <aside className="customer-welcome-note">
-            <span className="customer-note-icon">
-              <ShieldCheck size={23} />
-            </span>
-            <strong>Your account is verified</strong>
-            <p>
-              You are signed in with your verified email address.
-            </p>
-            <span className="customer-verified-label">
-              <CheckCircle2 size={15} />
-              VERIFIED ACCOUNT
-            </span>
-          </aside>
-        </section>
 
         {error && (
           <p className="customer-error" role="alert">
@@ -420,6 +474,25 @@ export default function CustomerAccountPage() {
             <strong>{ordersLoading ? "—" : completedOrders}</strong>
 
             <small>Successfully delivered orders</small>
+          </article>
+          <article className="customer-stat-card">
+            <div className="customer-stat-top">
+              <span>QUOTATIONS AWAITING ACTION</span>
+              <FileText size={19} />
+            </div>
+            <strong>{quotesLoading ? "—" : quotesError ? "—" : quotationsAwaitingDecision}</strong>
+            <small>
+              {quotesError ? "Quotation summary unavailable" : "Issued quotations to review"}
+            </small>
+            {quotesError ? (
+              <button
+                type="button"
+                className="vl-customer-inline-retry"
+                onClick={() => setQuoteReloadKey((key) => key + 1)}
+              >
+                Retry
+              </button>
+            ) : null}
           </article>
         </section>
 
@@ -475,13 +548,13 @@ export default function CustomerAccountPage() {
                 Saving a draft does not create a booking or payment obligation.
               </p>
               <Link href="/account/shipments" className="customer-secondary-action">
-                Prepare a shipment <ArrowRight size={16} />
+                Send an item <ArrowRight size={16} />
               </Link>
             </div>
           ) : (
             <>
               <div className="shipment-draft-list">
-                {drafts.slice(0, 3).map((draft) => (
+                {visibleDrafts.map((draft) => (
                   <article className="shipment-draft-row" key={draft.id}>
                     <div>
                       <span className="shipment-draft-status">DRAFT · NOT CONFIRMED</span>
@@ -499,12 +572,8 @@ export default function CustomerAccountPage() {
                 <Link href="/account/shipments" className="customer-secondary-action">
                   View and manage drafts <ArrowRight size={16} />
                 </Link>
-                {drafts.length > 3 && (
-                  <span className="customer-panel-description">
-                    Showing 3 of your {drafts.length === 50 ? "50 latest" : drafts.length} saved drafts.
-                  </span>
-                )}
               </div>
+              <Pagination page={currentDraftsPage} totalItems={drafts.length} pageSize={pageSize} onPageChange={setDraftsPage} />
             </>
           )}
         </section>
@@ -564,7 +633,7 @@ export default function CustomerAccountPage() {
               </div>
             ) : (
               <div className="customer-orders-list">
-                {orders.map((order) => (
+                {visibleOrders.map((order) => (
                   <article className="customer-order-row" key={order.id}>
                     <div className="customer-order-main">
                       <span className="customer-order-icon">
@@ -668,6 +737,7 @@ export default function CustomerAccountPage() {
                     </div>
                   </article>
                 ))}
+                <Pagination page={currentOrdersPage} totalItems={orders.length} pageSize={pageSize} onPageChange={setOrdersPage} />
               </div>
             )}
           </div>
@@ -691,7 +761,7 @@ export default function CustomerAccountPage() {
               <Link href="/account/shipments" className="customer-action">
                 <span>
                   <Package size={18} />
-                  Prepare a shipment
+                  Send an item
                 </span>
                 <ArrowUpRight size={17} />
               </Link>
@@ -754,7 +824,8 @@ export default function CustomerAccountPage() {
           <span>VERILyFT — BEYOND BORDERS</span>
           <Link href="/">Return to store <ArrowRight size={14} /></Link>
         </footer>
+        </div>
       </div>
-    </main>
+    </WorkspaceShell>
   );
 }

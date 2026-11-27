@@ -13,6 +13,10 @@ import {
 
 import { auth } from "@/lib/firebase";
 import { signOutCustomer } from "@/lib/customer-auth";
+import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
+import { customerWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
+import { Button } from "@/components/design-system/Button";
+import { FeedbackState } from "@/components/design-system/FeedbackState";
 
 import Image from "next/image";
 
@@ -180,12 +184,19 @@ export default function CustomerProfilePage() {
         }
     }
 
+  async function handleWorkspaceSignOut() {
+    await signOutCustomer();
+    router.replace("/account/sign-in");
+  }
+
     if (checkingAuth || !user) {
         return (
-            <main className="customer-loading">
-                <span>Checking your account...</span>
-            </main>
-        );
+      <main className="vl-workspace">
+        <div className="vl-workspace__content">
+          <FeedbackState variant="loading" title="Checking your customer account" description="Verifying your sign-in before opening your workspace." />
+        </div>
+      </main>
+    );
     }
 
     //   return (
@@ -308,7 +319,19 @@ export default function CustomerProfilePage() {
     //   );
 
     return (
-        <main className="customer-page">
+        <WorkspaceShell
+      workspaceName="VeriLyft"
+      workspaceLabel="Customer"
+      navigation={customerWorkspaceNavigation}
+      breadcrumbs={[{ label: "Customer", href: "/account" }, { label: "My profile" }]}
+      topbarContent={
+        <div className="vl-workspace__account-actions">
+          <span>{user.email}</span>
+          <Button variant="outline" size="sm" onClick={handleWorkspaceSignOut}>Sign out</Button>
+        </div>
+      }
+    >
+      <div className="customer-page">
             <header className="customer-header">
                 <Link href="/" className="customer-logo" aria-label="VeriLyft home">
                     <Image
@@ -494,6 +517,7 @@ export default function CustomerProfilePage() {
                     )}
                 </section>
             </div>
-        </main>
+        </div>
+    </WorkspaceShell>
     );
 }
