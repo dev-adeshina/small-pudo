@@ -49,6 +49,7 @@ export default function PudoPartnerDashboard() {
   const [profile, setProfile] = useState<PartnerProfile | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reloadKey, setReloadKey] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [locationName, setLocationName] = useState("");
@@ -65,6 +66,8 @@ export default function PudoPartnerDashboard() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
+    setLoading(true);
+    setError("");
     (async () => {
       try {
         const token = await user.getIdToken();
@@ -83,7 +86,7 @@ export default function PudoPartnerDashboard() {
       } finally { if (!cancelled) setLoading(false); }
     })();
     return () => { cancelled = true; };
-  }, [user]);
+  }, [user, reloadKey]);
 
   const awaitingReview = useMemo(() => applications.filter(item =>
     ["submitted", "pending_inspection", "inspection_recorded", "clarification_required"].includes(item.status)
@@ -117,7 +120,29 @@ export default function PudoPartnerDashboard() {
   }
 
   if (loading) return <main className="vl-workspace"><div className="vl-workspace__content"><FeedbackState variant="loading" title="Loading your PUDO workspace" description="Checking your partner account and location applications." /></div></main>;
-  if (!user || !profile) return <main className="vl-workspace"><div className="vl-workspace__content"><FeedbackState variant="error" title="Partner workspace unavailable" description={error || "Sign in with your verified PUDO partner account to continue."} action={<Link href="/pudo-partner/sign-in" className="vl-button vl-button--primary">Partner sign in</Link>} /></div></main>;
+  if (!user || !profile) return (
+    <main className="vl-workspace">
+      <div className="vl-workspace__content">
+        <FeedbackState
+          variant="error"
+          title="Partner workspace unavailable"
+          description={error || "Sign in with your verified PUDO partner account to continue."}
+          action={
+            <div className="vl-pudo-feedback-actions">
+              {user && (
+                <Button variant="secondary" size="sm" onClick={() => setReloadKey((key) => key + 1)}>
+                  Try again
+                </Button>
+              )}
+              <Link href="/pudo-partner/sign-in" className="vl-button vl-button--primary vl-button--sm">
+                Partner sign in
+              </Link>
+            </div>
+          }
+        />
+      </div>
+    </main>
+  );
 
   return (
     <WorkspaceShell
