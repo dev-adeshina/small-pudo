@@ -1,4 +1,4 @@
-# VeriLyft Final Minimal Firestore Schema — Decision Draft
+## VeriLyft Final Minimal Firestore Schema
 
 **Version:** 0.1  
 **Date:** 27 November 2026  
@@ -6,7 +6,7 @@
 
 > Governing rule: Build the simplest data structure that fully supports the approved VeriLyft workflows. Do not carry forward complexity simply because it already exists.
 
-This document translates the product-owner's answers into a field-level schema proposal. It deliberately records unresolved business decisions instead of silently choosing behaviour. Collection names are logical proposals; nothing in this document creates a database or authorises data, rules, index or Storage changes.
+This document consolidates confirmed product decisions, the current repository audit and the remaining business decisions that materially affect implementation. Collection names are logical targets, not evidence that collections exist. This document finalises the logical model; it does not create a database or authorise data, rules, index or Storage changes.
 
 ## 1. Confirmed product decisions
 
@@ -28,7 +28,7 @@ This document translates the product-owner's answers into a field-level schema p
 - Each shipment has one quote lineage with revisions. Automated system and authorised Admin can generate quotes; Admin approves/overrides them. Accepted quote is an immutable snapshot.
 - Payment is through Paystack and must be verified server-side before shipment confirmation. Retry is allowed only after a failed payment attempt. Refund requests use an authorised manual process initially.
 - PUDO locations share the same default capabilities. One location record holds current identity, address, lifecycle, capability and operational summary. Registration, verification, approval and activation are stages of one lifecycle.
-- PUDO partner identity is separate from Admin identity. One PUDO partner account is planned for a location; the interpretation of worker records/login is unresolved in section 10.
+- PUDO partner identity is separate from Admin identity. A partner account manages its location roster. Named personnel records contain a person's name and operational role; they are roster-only records with no individual Firebase login or Admin permissions.
 - Physical intake is a separate shipment-linked record. It requires a photograph, time, PUDO, receiving person, condition, measured weight/dimensions and discrepancy notes. Intake evidence is immutable; corrections append to the original record.
 - Assignments and custody are distinct. Assignments identify who is responsible for an activity and when; custody events prove physical possession/handover.
 - PUDO transfers are supported. Failed collection, failed delivery and returns have event records and reasons.
@@ -51,7 +51,7 @@ The following is the proposed starting point. Use subcollections only where reco
 | `customers` | Minimal customer profile linked to Auth UID; saved contacts/addresses may be held as customer-owned subcollections if required. |
 | `admins` | Admin profile and active access state; permissions are enforced server-side. |
 | `pudoPartners` | PUDO partner login/profile, separate from Admin identity. |
-| `pudoLocations` | One current location record: identity, address, lifecycle, shared default capabilities, schedule, availability and capacity summary. |
+| `pudoLocations` | One current location record: identity, address, lifecycle, shared default capabilities, schedule, availability and capacity summary. Each location owns a small `personnel` subcollection for named roster entries. |
 | `shipments` | The single authoritative shipment aggregate across all three creation channels. |
 | `shipmentQuotes` | One quote lineage per shipment with current quote and necessary revisions/snapshots. |
 | `payments` | Payment attempts/provider transactions linked to shipment; retries create attempts only after failure. |
@@ -132,7 +132,7 @@ One quote lineage per shipment:
 - customer decision and acceptedAt;
 - immutable accepted snapshot.
 
-An expired unpaid quote is not payable. The system must obtain a fresh quote before payment. Whether this means a new quote revision on the same shipment or a new shipment is an open decision in section 10; do not create duplicate shipments automatically.
+An expired unpaid quote is not payable. Obtain a new revision in the same shipment's quote lineage; retain the shipment reference and prior quote revision. Do not create a duplicate shipment solely because a quote expired.
 
 ### Payments
 Each provider transaction/attempt is recorded with:
@@ -205,7 +205,7 @@ Keep only important lifecycle/approval changes in an attributable history. Routi
 ### PUDO partner
 Separate login/profile linked to Auth UID and the PUDO location(s) it is authorised to operate. PUDO partner is not an Admin and cannot approve commercial pricing.
 
-The exact model for named workers (for example, John — bike man; Cynthia — station staff), whether they have individual logins, and how shift periods are recorded remains open. Do not create individual worker authentication or a complex workforce module until clarified.
+Named workers are roster-only entries stored at `pudoLocations/{locationId}/personnel/{personnelId}`. Each record contains `name`, `role`, `status`, `createdAt`, `createdBy`, `updatedAt` and `updatedBy`; deactivation is retained rather than deletion. The authenticated PUDO partner account creates and maintains the roster. Workers do not receive individual logins in the initial release. Shift schedules and assignment periods are Phase 6 concerns and are not part of this roster record.
 
 ## 7. Intake, custody, assignments and delivery
 
@@ -261,25 +261,22 @@ Initial notification events: payment outcome, shipment progress at meaningful mi
 - Record material actions with actor, action, affected record, timestamp and reason.
 - PUDO partner access is limited to its own location and operational records; customer and recipient access is limited to their own authorised shipment information.
 
-## 10. Decisions still requiring clarification
+## 10. Remaining business decisions
 
-These points are deliberately not silently resolved:
+The following are the only material workflow decisions still left open in the current baseline. They must be resolved before implementing the affected transition or workflow:
 
-1. **Walk-in customer account:** You require a registered customer before shipment submission, but also say a PUDO operator represents a walk-in customer in good authority. Should the PUDO operator create a customer profile/account on the customer's behalf (without giving that customer login access until they complete sign-up), or must the customer complete registration before the PUDO can submit?
-2. **PUDO workers:** You specified one PUDO partner account, but also said every person working at a PUDO should be registered with a name and role (e.g. bike man, station staff). Should these be roster-only worker records under the location, with no individual login, while the partner account performs the system actions? Or did you intend only Admins to be recorded as personnel?
-3. **Expired quotation:** Does “start a new booking” mean issue a new quote revision for the same submitted shipment, or create a completely new shipment reference?
-4. **Cancellation:** You retained Cancelled as an exception status but said cancellation after confirmation or payment is not allowed. Is cancellation allowed before payment/confirmation only, or should cancellation be unavailable to customers and Admins in the first release?
-5. **Rejection:** A submitted shipment cannot be rejected before quotation. Can Admin reject it after issuing a quote but before customer acceptance/payment, and what happens to the quote?
-6. **Measurement lock:** At what exact point does the Admin/PUDO review close and parcel weight/dimensions become permanently locked: when Admin issues the final quote, when customer accepts it, or when the parcel is physically received?
-7. **Recipient account:** Must the recipient already have a registered account when the shipment is submitted, or can the sender enter recipient details and the recipient register later before accessing tracking?
-8. **PUDO personnel wording:** The earlier statement that “we only have Admin as PUDO personnel” conflicts with the examples of PUDO workers. The proposed interpretation is a single PUDO partner login plus simple named worker roster entries, not individual worker accounts. Confirm or correct this.
-9. **PUDO-to-PUDO collection:** Confirm whether “Awaiting Collection” means awaiting sender drop-off at the origin PUDO, while “Collected” means the parcel has physically been picked up/received by the responsible operator. Status labels may need service-specific event meanings while remaining in one lifecycle.
+1. **Walk-in customer provisioning:** A PUDO partner may submit on behalf of a walk-in customer, but every shipment must have a customer identity. Decide whether the partner may create a customer profile on the customer's behalf (with account access activated only after the customer completes registration) or whether customer registration must occur before submission. Until decided, do not create anonymous shipments or silently create Auth accounts.
+2. **Cancellation before confirmation:** Customer cancellation after payment/booking confirmation is outside initial scope. Decide whether a customer or Admin may cancel a submitted/quoted shipment before payment, and the exact permitted statuses and audit reason. Until decided, expose no customer cancellation action.
+3. **Rejection after quotation:** A shipment must not be rejected before a quotation is issued. Decide whether Admin may reject after quotation but before acceptance/payment, and whether the quote is marked withdrawn/void with a reason.
+4. **Measurement review completion:** Customer-declared measurements may be corrected only during the authorised Admin/PUDO review. The implementation should use an explicit review-completed action as the lock point. Confirm which role may close that review. Physical measurements recorded at intake are a separate immutable observation and must not overwrite the original customer-declared values.
+5. **Service-specific handover status semantics:** `Awaiting Collection` means the shipment is awaiting physical handover from the sender. For PUDO-origin services, that may mean sender drop-off at the origin PUDO; for door-pickup services it means waiting for the assigned pickup. `Collected` is recorded only when a door-pickup operator physically collects the parcel. A PUDO drop-off proceeds to `Received at PUDO` after photo-evidenced intake. Confirm these labels and transitions against the four service types before coding the state machine.
+6. **Database target details:** Confirm the separately named shipment database ID and Firestore location, and the exact environment configuration. The current instruction is that no separate Stage Firestore database is to be created. Do not create a database, deploy rules/indexes or write production shipment data until this infrastructure decision is explicitly approved.
 
 ## 11. Explicitly outside initial scope
 
 - Customer cancellation after confirmed/paid booking.
 - Automated refunds; refund requests go through an authorised process.
-- Individual PUDO worker authentication unless confirmed.
+- Individual PUDO worker authentication; named roster records do not create accounts.
 - Complex staff management and delegation.
 - Multi-stop/multi-destination shipments.
 - Advanced workforce scheduling and automated route optimisation.
@@ -288,6 +285,16 @@ These points are deliberately not silently resolved:
 - Anonymous recipient tracking.
 - New database creation, rules/index deployment or production data changes without separate approval.
 
-## 12. Approval and implementation gate
+## 12. Final architecture and implementation gates
 
-This is a schema decision draft, not an implementation authorisation. Once the nine questions in section 10 are answered, update this proposal to a final version and align the PRD, business workflows, permissions and page map. Only after the final schema and infrastructure boundary are approved should implementation begin. Creating the separate Firestore database and deploying rules/indexes remains a separate explicit approval.
+The logical shipment schema in this document is the Phase 3 implementation baseline. The following boundaries remain mandatory:
+
+- Existing default Firestore database and existing store collections remain untouched by the new shipment implementation.
+- The intended shipment data boundary is a separately named Firestore database in the existing Firebase project `verilyft-4e691`; its database ID, location and deployment configuration are not yet approved or created.
+- Do not create a separate Stage Firestore database. Do not infer that a staging branch authorises a staging database.
+- Do not point new shipment writes at the existing default database as a workaround for the pending infrastructure decision.
+- Firebase Authentication may use the existing project-level UID namespace. Role profiles and authorization remain logically distinct in the target database and all privileged writes remain server-side.
+- Existing store data remains authoritative in the existing database. Any store read-through must use a deliberate server-side boundary; no copying or dual writes are implied.
+- Phase 3 code may be developed against an injected database interface and test doubles. It must not initialize or write to production Firestore until the target database details and deployment are explicitly approved.
+
+This schema baseline authorises planning and code preparation only. It does not authorise database creation, Firestore rules/index deployment, Storage changes, migrations or production data writes.
