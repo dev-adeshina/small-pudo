@@ -19,7 +19,7 @@ This document translates the product-owner's answers into a field-level schema p
 - Address structure: country, state, city, street/address description, coordinates when available, and PUDO/operational-location reference where applicable.
 - Initial services: PUDO-to-PUDO, door-to-PUDO, PUDO-to-door and door-to-door.
 - One shipment may contain multiple parcels, but all parcels in that shipment share one origin and one destination. Different destinations require separate shipments/intakes.
-- Parcel data includes description, quantity, actual weight, dimensions, volumetric weight, declared value, special handling, and item images.
+- Parcel data includes description, quantity, actual weight, dimensions, volumetric weight, declared value, special handling, and item images. VeriLyft does not accept goods prohibited by applicable law; the initial release needs a clear customer declaration/confirmation and an Admin/PUDO escalation path, not a complex prohibited-goods catalogue.
 - Submitted parcel measurements may be amended only during Admin/PUDO review; after that review is completed they are locked. The exact review lock point must be enforced server-side.
 - The shipment lifecycle begins at **Submitted**. There is no customer-facing Draft shipment status.
 - Main shipment status includes the agreed statuses and exception states in section 5. Quotation and payment are reflected in the shipment's overall status.
@@ -97,6 +97,7 @@ Use a shipment-owned parcel list/subcollection because a shipment can contain mu
 - volumetricWeight and calculation basis;
 - declaredValue and currency;
 - specialHandlingInstructions;
+- prohibitedGoodsDeclarationAccepted (customer/authorised submitting actor and timestamp);
 - itemImage metadata/storage references;
 - measurement status/lockedAt and amendment references.
 
