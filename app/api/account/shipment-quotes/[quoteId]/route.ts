@@ -13,7 +13,7 @@ interface RouteContext {
 export async function GET(request: Request, context: RouteContext) {
   const customer = await authenticateVerifiedCustomer(
     request.headers.get("authorization"),
-    (token) => adminAuth.verifyIdToken(token),
+    (token, checkRevoked) => adminAuth.verifyIdToken(token, checkRevoked),
   );
   if (!customer.success) return NextResponse.json({ error: customer.error }, { status: customer.status });
 
@@ -33,7 +33,7 @@ export async function GET(request: Request, context: RouteContext) {
 export async function POST(request: Request, context: RouteContext) {
   const customer = await authenticateVerifiedCustomer(
     request.headers.get("authorization"),
-    (token) => adminAuth.verifyIdToken(token),
+    (token, checkRevoked) => adminAuth.verifyIdToken(token, checkRevoked),
   );
   if (!customer.success) return NextResponse.json({ error: customer.error }, { status: customer.status });
 
