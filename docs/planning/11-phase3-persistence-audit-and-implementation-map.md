@@ -9,7 +9,7 @@
 
 This document reconciles the Phase 3 domain/repository implementation with the approved minimal VeriLyft data model and the Firestore-backed structures already present in the application. It is an implementation map, not permission to provision a database, deploy rules/indexes, change Storage, migrate records, or write production data.
 
-Preserve the existing store and operational records. Do not copy legacy shipment drafts or quotes wholesale into the new authoritative shipment model. Do not create a separate *staging* Firestore database. The target database ID, location and runtime selection must be explicit before any adapter can connect to Firestore; a Git branch is not a database environment.
+Preserve the existing store and operational records. Do not copy legacy shipment drafts or quotes wholesale into the new authoritative shipment model. Staging and production use separate Firebase projects (approved 27 November 2026); the target project, Firestore database ID, location and runtime selection must be explicit before any adapter can connect to Firestore. A Git branch is not a database environment.
 
 ## 2. Existing implementation audit
 
@@ -143,7 +143,7 @@ Firestore transactions require all reads before writes. Adapter methods must be 
 
 ## 7. Known inconsistencies and decisions to resolve
 
-1. **Database boundary:** Documents 02, 06 and 08 currently say the shipment model targets a separately named Firestore database, while the project operating instruction says no separate Stage database and dev/testing use the existing Firestore database. These statements do not yet identify the actual target database ID/location/runtime. Do not infer the answer. Before Step 2, explicitly settle whether the approved shipment target is the existing `(default)` database with a collision-safe namespace or a separately named non-staging database in the same Firebase project. No database has been created or changed by this audit.
+1. **Database boundary — resolved:** The 27 November 2026 decision selects separate Firebase projects for staging and production. Staging has a dedicated project; production remains `verilyft-4e691`. Exact staging project ID, project ownership/billing, database ID/location and runtime credentials remain infrastructure prerequisites for live connection.
 2. **Existing quote collection collision:** The current default database code already persists legacy quote lineages in `shipmentQuotes`. Reusing that collection for the new quote contract would mix two different shipment authorities. A separate database or an approved namespace is required; never dual-write or silently repurpose the legacy collection.
 3. **Record nesting:** Document 02 shows events, assignments and documents as shipment subcollections; document 08 lists their logical collection names at the top level. This map recommends shipment subcollections for these shipment-owned records, with collection-group queries only for demonstrated cross-shipment needs.
 4. **Identity naming:** The logical schema says `pudoPartners`, but the current partner identity collection is `pudoPartnerAccounts`. Keep the existing account as the identity authority unless a reviewed database boundary requires a reference/projection. Likewise, existing customer and Admin authority records are `users` and `adminAccess`, not the logical names in the schema table.
@@ -203,3 +203,61 @@ The legacy `shipmentQuotes` collision is isolated by the separate Firebase proje
 - [ ] Staging project ID, ownership/billing and resource configuration reviewed before provisioning.
 - [ ] Exact Firestore database ID/location and runtime binding confirmed for each environment before adapter connection.
 - [ ] Collection/path ownership checked against legacy records within the staging project before writes.
+
+
+## 11. Step 2 implementation baseline — Firestore adapter (code only)
+
+The first persistence implementation is now on the Phase 3 feature branch. It is deliberately not connected to a live Firebase project.
+
+### Explicit namespace
+
+The adapter uses the versioned namespace `verilyftShipmentData/v1` to isolate the new authoritative shipment model from legacy records. The namespace is shared by the same application architecture in each Firebase project; the project itself provides the environment boundary.
+
+- Shipments: `verilyftShipmentData/v1/shipments/{shipmentId}`
+- Parcels: `verilyftShipmentData/v1/parcels/{parcelId}`, with `shipmentId` for shipment-scoped queries. This root parcel collection preserves the current repository-port signature, which updates a parcel by globally unique parcel ID without requiring the parent shipment ID.
+- Shipment events: `verilyftShipmentData/v1/shipments/{shipmentId}/events/{eventId}`
+- Quote lineages/revisions: `verilyftShipmentData/v1/quoteLineages/{quoteId}/revisions/{revisionId}`
+- Payments: `verilyftShipmentData/v1/payments/{paymentId}`
+- Walk-in customer profiles: `verilyftShipmentData/v1/walkInCustomers/{customerId}`
+- Idempotency records: `verilyftShipmentData/v1/idempotency/{sha256Key}`
+- Shipment reference reservations: `verilyftShipmentData/v1/shipmentReferenceReservations/{sha256Reference}`
+- Payment provider-reference index: `verilyftShipmentData/v1/paymentProviderReferences/{sha256ProviderReference}`
+
+Registered customer profiles continue to be read from the existing `users/{uid}` authority. The adapter does not create a second registered-customer identity system. Existing Admin access, PUDO partner accounts, PUDO locations and their evidence remain outside the shipment namespace and must be resolved by trusted application services.
+
+### Implemented repository adapters
+
+- Transaction runner using the explicitly injected Firestore instance.
+- Customer lookup against existing registered profiles and namespaced PUDO walk-in profiles; create-only walk-in profile writes.
+- Shipment create/read/reference lookup/update.
+- Parcel create/list/read/update.
+- Quote lineage creation, immutable revision append, current revision lookup and lineage withdrawal.
+- Payment attempt creation, provider-reference uniqueness index, lookup and restricted mutable status/verification fields.
+- Append-only shipment event create/list.
+- Actor-scoped idempotency storage using deterministic SHA-256 document IDs.
+- Unique shipment-reference reservation using transaction reads and create-only reservation documents.
+
+### Transaction ordering
+
+Firestore requires transaction reads to occur before writes. Shipment submission was adjusted so registered-customer lookup and unique-reference reservation happen before the first write. Subsequent aggregate writes and the idempotency result use the same transaction. Other current commands were reviewed for read-before-write ordering; adapter-level transaction tests guard this contract.
+
+### Environment runtime guard
+
+`lib/shipment/firestore-runtime.mjs` is separate from the application's existing `lib/firebase-admin.ts`. It requires:
+
+- `SHIPMENT_ENVIRONMENT` (`staging` or `production`)
+- `STAGING_FIREBASE_PROJECT_ID`
+- `PRODUCTION_FIREBASE_PROJECT_ID` (must remain `verilyft-4e691`)
+- `SHIPMENT_FIREBASE_PROJECT_ID` (must match the selected environment)
+- `SHIPMENT_FIRESTORE_DATABASE_ID` (explicit, including when using `(default)`)
+- `SHIPMENT_FIREBASE_CLIENT_EMAIL`
+- `SHIPMENT_FIREBASE_PRIVATE_KEY`
+
+It uses a separately named Firebase Admin app per environment and refuses a project mismatch. The runtime function has not been invoked; no credentials or project IDs have been added to source control.
+
+### Current limitations
+
+- This adapter implements the repository ports that currently exist. Full intake, assignment, shipment-document and notification ports/records remain Step 3 work.
+- This is code-level adapter coverage using a fake Firestore transaction harness. It is not evidence of live Firestore transaction isolation or concurrency under contention.
+- The staging Firebase project has not been provisioned or connected. No Firestore documents, rules, indexes, Storage configuration, migration or production data have been changed.
+- The adapter is not yet wired into application routes. No customer, Admin or PUDO UI/API is connected to it.
