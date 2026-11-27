@@ -80,6 +80,24 @@ Each payment should reference its business subject (shipment booking or store or
 ### Store
 Preserve existing store collections in the existing database unless the selected integration decision explicitly calls for a controlled copy or migration.
 
+## 3A. Minimal implementation rule
+
+The groups and names above describe business concepts, not a requirement to create a separate top-level collection for every item. The first implementation must use the smallest number of authoritative records that supports the PRD and workflows.
+
+Apply these constraints when finalising the schema:
+
+- A shipment draft, submitted request and confirmed booking are lifecycle states of one authoritative `shipments` record, not separate copies of the same shipment.
+- A quote and its revisions remain a single quote lineage. Do not create separate permanent records for every temporary calculation step unless a real workflow requires it.
+- Current PUDO registration, approval/activation, standard capabilities and operating state should be represented by one PUDO location record. Keep only the event/evidence history needed to preserve decision authority and auditability.
+- All physical intake details belong to one intake record per physical intake. Photo metadata may be stored with that intake or in a directly related child collection; do not create redundant evidence registries.
+- Material shipment status changes belong in one shipment event timeline. Do not duplicate the same event across tracking, delivery, custody and portal-specific histories.
+- Use one payment record per actual provider transaction/business payment. Webhook callbacks are evidence for that payment, not separate payment transactions.
+- Use child collections for genuinely repeating or append-only records (for example quote revisions, shipment events, intake photos or document delivery attempts) where that is simpler and safer than large embedded arrays.
+- Do not create separate customer, staff or PUDO copies of the same shipment. Portals are role-specific views of the same authoritative business records.
+- Preserve independent review, approval attribution, validity and evidence requirements even when legacy approval collections are consolidated.
+
+The [Existing Data Adaptation and Replacement Matrix](./07-existing-data-adaptation-and-replacement-matrix.md) defines how legacy structures map to this minimal direction. If a proposed collection does not support a specific approved workflow, do not create it in the initial release.
+
 ## 4. Core entities and relationships
 
 - **Customer:** one account may act as shopper, sender and recipient. Shipment ownership is a customer reference where known; recipient contact details may be stored on the shipment snapshot to preserve the details used at booking.
