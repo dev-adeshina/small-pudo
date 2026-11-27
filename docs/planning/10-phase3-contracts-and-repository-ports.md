@@ -21,7 +21,7 @@ Money is stored as integer minor units (for NGN, kobo). Display formatting belon
 
 ## 3. Repository ports
 
-`assertRepositoryPorts` defines required injected ports for shipments, parcels, quote lineages, payment attempts, events, idempotency records and unique references. A transaction runner is mandatory. The port definitions intentionally contain no Firebase imports and make no assumption about the selected database SDK.
+`assertRepositoryPorts` defines required injected ports for customers, shipments, parcels, quote lineages, payment attempts, events, idempotency records and unique references. A transaction runner is mandatory. The port definitions intentionally contain no Firebase imports and make no assumption about the selected database SDK.
 
 ## 4. Transaction and idempotency boundaries
 
@@ -57,7 +57,7 @@ No Firestore SDK, Admin SDK, repository adapter, Firebase configuration, databas
 - PUDO walk-in submissions create a minimal pending-registration customer profile in the same transaction, with `authUid: null`; sender name, phone and email are taken from that profile so the shipment identity is consistent.
 - The command reserves a unique shipment reference, creates the shipment in `Submitted`, creates all parcel records, appends the initial event and records the actor-scoped idempotency result in one transaction.
 - Every repository operation receives the same transaction handle. The reference repository must reserve candidates atomically in that transaction. The transaction adapter and idempotency repository must enforce atomic read-before-create and unique-key behavior.
-- The customer repository port exposes `create(tx, customerId, profile)` and `getById(tx, customerId)`. Other required repository methods are listed in `SHIPMENT_REPOSITORY_PORTS`.
+- The customer repository port exposes `create(tx, customerId, profile)` and `getById(tx, customerId)`. The shipment port exposes `create(tx, shipmentId, shipment)`; parcels expose `createMany(tx, shipmentId, parcelRecords)`; events expose `append(tx, event)`. The reference port exposes `reserveUnique(tx, candidate)` and must enforce uniqueness inside the transaction. Other required method names are listed in `SHIPMENT_REPOSITORY_PORTS`.
 - The command does not create Auth users, issue quotes, initialise payments, select a Firestore database, or write to any live database. It is not yet wired to HTTP routes or a persistence adapter.
 
 The command tests use in-memory injected ports to verify channel derivation, ownership binding, walk-in profile behavior, transaction-handle propagation and idempotent replay. These are unit tests, not evidence of database transaction isolation; the eventual adapter must separately prove those guarantees.
