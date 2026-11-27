@@ -13,6 +13,7 @@ import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
 import { adminWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
 import { Button } from "@/components/design-system/Button";
 import { FeedbackState } from "@/components/design-system/FeedbackState";
+import { Pagination } from "@/components/design-system/Pagination";
 
 type Location = {
   locationId: string;
@@ -83,6 +84,7 @@ export default function CommercialRouteDistancePage() {
   const [supportingReference, setSupportingReference] = useState("");
   const [evidence, setEvidence] = useState<Evidence[]>([]);
   const [evidenceSearch, setEvidenceSearch] = useState("");
+  const [evidencePage, setEvidencePage] = useState(1);
   const [viewEvidenceId, setViewEvidenceId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -224,6 +226,11 @@ export default function CommercialRouteDistancePage() {
     await logoutAdmin();
     router.replace("/admin/sign-in");
   }
+
+  const filteredEvidence = evidence.filter((item) => [item.evidenceId, item.source, item.recordedBy, item.method, item.reviewStatus, item.supportingReference ?? ""].join(" ").toLowerCase().includes(evidenceSearch.toLowerCase()));
+  const evidencePageSize = 10;
+  const currentEvidencePage = Math.min(evidencePage, Math.max(1, Math.ceil(filteredEvidence.length / evidencePageSize)));
+  const visibleEvidence = filteredEvidence.slice((currentEvidencePage - 1) * evidencePageSize, currentEvidencePage * evidencePageSize);
 
   if (checking) {
     return (
@@ -397,7 +404,7 @@ export default function CommercialRouteDistancePage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {evidence.filter((item) => [item.evidenceId, item.source, item.recordedBy, item.method, item.reviewStatus, item.supportingReference ?? ""].join(" ").toLowerCase().includes(evidenceSearch.toLowerCase())).map((item) => (
+                      {visibleEvidence.map((item) => (
                         <tr key={item.evidenceId}>
                           <td className="px-3 py-3"><span className="font-medium">{selectedOrigin?.name ?? item.originOperationalPointRef} → {selectedDestination?.name ?? item.destinationOperationalPointRef}</span><span className="block text-xs text-gray-500">{item.evidenceId}</span></td>
                           <td className="whitespace-nowrap px-3 py-3 font-semibold">{formatDistance(item.distance.value, item.distance.unit)}</td>
@@ -412,6 +419,7 @@ export default function CommercialRouteDistancePage() {
                     </tbody>
                   </table>
                 </div>
+                <Pagination page={currentEvidencePage} totalItems={filteredEvidence.length} pageSize={evidencePageSize} onPageChange={setEvidencePage} />
                 {viewEvidenceId && evidence.some((item) => item.evidenceId === viewEvidenceId) && (() => {
                   const item = evidence.find((candidate) => candidate.evidenceId === viewEvidenceId)!;
                   return <div className="rounded-lg border bg-gray-50 p-4 text-sm">

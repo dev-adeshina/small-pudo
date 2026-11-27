@@ -13,6 +13,7 @@ import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
 import { adminWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
 import { Button } from "@/components/design-system/Button";
 import { FeedbackState } from "@/components/design-system/FeedbackState";
+import { Pagination } from "@/components/design-system/Pagination";
 
 type InputType = "string" | "number" | "boolean" | "date";
 type InputDefinition = { key: string; label: string; description?: string; valueType: InputType; required: boolean; source?: string; unit?: string; precision?: number; conversion?: string };
@@ -121,6 +122,7 @@ export default function OperationalCostDefinitionsPage() {
   const [adminEmail, setAdminEmail] = useState("");
   const [token, setToken] = useState("");
   const [definitions, setDefinitions] = useState<DefinitionSummary[]>([]);
+  const [definitionsPage, setDefinitionsPage] = useState(1);
   const [selected, setSelected] = useState<DefinitionDetail | null>(null);
   const [form, setForm] = useState<DefinitionPayload>(emptyForm);
   const [editing, setEditing] = useState(false);
@@ -403,6 +405,10 @@ export default function OperationalCostDefinitionsPage() {
     router.replace("/admin/sign-in");
   }
 
+  const definitionsPageSize = 10;
+  const currentDefinitionsPage = Math.min(definitionsPage, Math.max(1, Math.ceil(definitions.length / definitionsPageSize)));
+  const visibleDefinitions = definitions.slice((currentDefinitionsPage - 1) * definitionsPageSize, currentDefinitionsPage * definitionsPageSize);
+
   if (checkingAuth) {
     return (
       <main className="vl-workspace">
@@ -468,7 +474,7 @@ export default function OperationalCostDefinitionsPage() {
                 listError ? <div className="cost-empty"><AlertCircle size={25} /><strong>Unable to load definitions</strong><p>{listError}</p></div> :
                   definitions.length === 0 ? <div className="cost-empty"><ClipboardList size={28} /><strong>No definitions yet</strong><p>Start with an evidence-backed draft. No activities or costs are preconfigured.</p></div> :
                     <div className="cost-definition-list">
-                      {definitions.map((item) => {
+                      {visibleDefinitions.map((item) => {
                         const itemState = item.workflow?.state ?? "draft";
                         return <button type="button" key={item.definitionId} className={"cost-definition-item" + (selected?.definitionId === item.definitionId ? " is-selected" : "")}
                           onClick={() => { setEditing(false); setCreating(false); void loadDetail(item.definitionId, token); }}>
@@ -478,6 +484,7 @@ export default function OperationalCostDefinitionsPage() {
                         </button>;
                       })}
                     </div>}
+              {!loading && !listError && definitions.length > 0 && <Pagination page={currentDefinitionsPage} totalItems={definitions.length} pageSize={definitionsPageSize} onPageChange={setDefinitionsPage} />}
             </section>
 
             <section className="cost-panel cost-detail-panel">
