@@ -75,8 +75,7 @@ The partner authorizer requires:
 4. An active partner account.
 5. Server-side partner ownership checks for each location/application.
 
-Change in this branch:
-- PUDO partner registration now rejects an unverified email before creating the partner profile. Previously, registration could create a profile for an unverified token even though the workspace authorizer later denied access.
+Registration intentionally creates the partner's own profile immediately after Firebase account creation so the verification email can be sent without losing the submitted business details. This profile-creation endpoint does not grant workspace access; the partner workspace authorizer still requires a verified, non-revoked token and an active partner account.
 
 The partner is not an Admin. Partner access does not grant commercial pricing approval, Admin operations or access to unrelated partner locations.
 
