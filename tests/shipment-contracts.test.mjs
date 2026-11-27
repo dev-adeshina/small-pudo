@@ -114,9 +114,9 @@ test("reference reservation retries collisions through an injected unique constr
 });
 
 test("repository ports require transaction boundary and all aggregate repositories", () => {
-  const ports = Object.fromEntries(["shipments", "parcels", "quotes", "payments", "events", "idempotency", "references"].map(name => [name, {}]));
+  const ports = Object.fromEntries(["customers", "shipments", "parcels", "quotes", "payments", "events", "idempotency", "references"].map(name => [name, {}]));
   for (const [name, methods] of Object.entries({
-    shipments: ["create", "getById", "getByReference", "update"], parcels: ["createMany", "listByShipment", "getById"],
+    customers: ["create", "getById"], shipments: ["create", "getById", "getByReference", "update"], parcels: ["createMany", "listByShipment", "getById"],
     quotes: ["createLineage", "appendRevision", "getCurrent", "withdraw"], payments: ["createAttempt", "getByProviderReference", "updateAttempt"],
     events: ["append", "listByShipment"], idempotency: ["get", "create"], references: ["reserveUnique"],
   })) for (const method of methods) ports[name][method] = async () => {};
