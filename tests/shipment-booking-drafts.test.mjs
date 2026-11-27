@@ -70,6 +70,7 @@ describe("shipment booking draft validation", () => {
       {
         success: true,
         data: {
+          serviceCode: "standard",
           origin: "Lagos",
           destination: "Abuja",
           parcelDescription: "Documents",
