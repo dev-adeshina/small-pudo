@@ -1,6 +1,6 @@
 # VeriLyft Data Architecture
 
-**Proposed logical model for the new Firestore database | v1.0 | 26 November 2026**
+**Proposed logical model for the new Firestore database | v1.1 | 27 November 2026**
 
 > WORKING BASELINE — collection names below are proposed logical names, not confirmation that collections have been created. Inventory the actual databases and schemas before implementation.
 
@@ -82,7 +82,7 @@ Preserve existing store collections in the existing database unless the selected
 
 ## 3A. Minimal implementation rule
 
-The groups and names above describe business concepts, not a requirement to create a separate top-level collection for every item. The first implementation must use the smallest number of authoritative records that supports the PRD and workflows.
+The groups and names above describe business concepts, not a requirement to create a separate top-level collection for every item. The governing principle is to build the simplest data structure that fully supports the approved VeriLyft workflows. The first implementation must use the smallest number of authoritative records that supports the PRD and workflows.
 
 Apply these constraints when finalising the schema:
 
