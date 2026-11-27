@@ -8,6 +8,7 @@ import {
   MapPin, MapPinned, Users, UserRoundCheck, CalendarClock, Compass, Network,
 } from "lucide-react";
 import { StaffActivationProvider, useStaffActivation } from "@/components/staff/StaffActivationProvider";
+import { Breadcrumbs, type BreadcrumbItem } from "@/components/design-system/Breadcrumbs";
 
 const navigation = [
   { label: "Overview", href: "/staff", icon: LayoutDashboard, section: "WORKSPACE" },
@@ -36,6 +37,14 @@ function StaffWorkspaceShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { status } = useStaffActivation();
   const sections = [...new Set(navigation.map((item) => item.section))];
+  const breadcrumbItems: BreadcrumbItem[] = [{ label: "Dashboard", href: "/staff" }];
+  let breadcrumbPath = "/staff";
+  for (const segment of pathname.split("/").filter(Boolean).slice(1)) {
+    breadcrumbPath += `/${segment}`;
+    const match = navigation.find((item) => item.href === breadcrumbPath);
+    const label = match?.label ?? segment.replace(/[-_]+/g, " ").replace(/\\b\\w/g, (letter) => letter.toUpperCase());
+    breadcrumbItems.push({ label, href: match ? breadcrumbPath : undefined });
+  }
 
   return (
     <div className="staff-workspace-layout">
@@ -71,7 +80,10 @@ function StaffWorkspaceShell({ children }: { children: ReactNode }) {
         </nav>
         <p className="staff-sidebar-note">Account activation confirms staff onboarding only. Operational permissions are assigned separately by an authorised administrator. Workspace visibility does not grant action permissions.</p>
       </aside>
-      <div className="staff-workspace-content">{children}</div>
+      <div className="staff-workspace-content">
+        <div className="staff-workspace-breadcrumbs"><Breadcrumbs items={breadcrumbItems} /></div>
+        {children}
+      </div>
     </div>
   );
 }
