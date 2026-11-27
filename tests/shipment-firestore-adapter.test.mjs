@@ -104,6 +104,9 @@ function portsFor(db) {
 test("shipment Firestore paths are isolated from legacy root collections", () => {
   assert.equal(SHIPMENT_FIRESTORE_PATHS.shipments, "verilyftShipmentData/v1/shipments");
   assert.equal(SHIPMENT_FIRESTORE_PATHS.quotes, "verilyftShipmentData/v1/quoteLineages");
+  assert.equal(SHIPMENT_FIRESTORE_PATHS.intakes, "verilyftShipmentData/v1/parcelIntakes");
+  assert.equal(SHIPMENT_FIRESTORE_PATHS.notifications, "verilyftShipmentData/v1/notifications");
+  assert.equal(SHIPMENT_FIRESTORE_PATHS.authorities.pudoPartners, "pudoPartnerAccounts");
   assert.notEqual(SHIPMENT_FIRESTORE_PATHS.quotes, "shipmentQuotes");
 });
 
