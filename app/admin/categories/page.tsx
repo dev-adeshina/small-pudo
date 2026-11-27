@@ -270,7 +270,6 @@ export default function CategoriesPage() {
         </div>
       </main>
     );
-    );
   }
 
   return (
