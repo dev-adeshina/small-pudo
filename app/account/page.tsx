@@ -472,7 +472,7 @@ export default function CustomerAccountPage() {
               <span>QUOTATIONS AWAITING ACTION</span>
               <FileText size={19} />
             </div>
-            <strong>{quotesLoading ? "—" : quotesError ? "!" : quotationsAwaitingDecision}</strong>
+            <strong>{quotesLoading ? "—" : quotesError ? "—" : quotationsAwaitingDecision}</strong>
             <small>
               {quotesError ? "Quotation summary unavailable" : "Issued quotations to review"}
             </small>
