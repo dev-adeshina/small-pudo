@@ -34,7 +34,7 @@ This document consolidates confirmed product decisions, the current repository a
 - PUDO transfers are supported. Failed collection, failed delivery and returns have event records and reasons.
 - Delivery confirmation captures recipient name/phone, photo, signature or confirmation, GPS and timestamp.
 - One chronological shipment event history powers tracking and Admin monitoring. Sender/recipient visibility is restricted by role and privacy.
-- Recipient must have an account to access tracking and delivery information.
+- Recipient must have an account to access tracking and delivery information, but need not already be registered when the sender submits the shipment. The recipient may register later; access is granted only after the authenticated account is verified against the recipient identity on the shipment.
 - Required shipment documents: quotation, payment receipt, shipment confirmation, waybill, PUDO intake receipt and delivery confirmation. Documents are shipment-linked and versioned; relevant documents are emailed to sender and recipient.
 - Shared authentication infrastructure is retained, with separate role-aware workspaces and access boundaries. Current internal operating model is Admin responsibility; do not assume a general staff management system is required.
 - Explicit Admin authority is required for reviewing shipments, issuing quotations, approving pricing, confirming payments, managing PUDO locations, recording intake, assigning shipments, confirming delivery and cancellation. Staff management is out of initial scope.
