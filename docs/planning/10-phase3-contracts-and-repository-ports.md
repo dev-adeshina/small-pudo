@@ -72,3 +72,18 @@ The command tests use in-memory injected ports to verify channel derivation, own
 - Both commands use actor/command-scoped idempotency. The repository adapter must implement `quotes.getCurrent(tx, quoteId)` as the current immutable revision and enforce transaction/concurrency guarantees.
 - Acceptance does not initialise payment or confirm a booking. Payment initiation and verified provider confirmation remain separate commands.
 - Focused unit tests cover issuance, role/ownership boundaries, stale revisions, expiry and lifecycle transitions. These tests use injected in-memory ports and do not prove database isolation.
+
+## 9. Payment attempt and verified confirmation commands
+
+`lib/shipment/payment-commands.mjs` adds database-independent payment attempt creation and verified-payment confirmation.
+
+- Only the owning customer may create an attempt, and only after accepting the current quote while the shipment is in `Awaiting Payment`.
+- Each attempt is tied to the exact accepted quote revision and copies its integer minor-unit amount and currency. A Paystack reference is generated server-side; retries are new attempts and are permitted only after the previous attempt is failed or abandoned.
+- An active attempt blocks another attempt. The shipment points to the currently active attempt, and the payment attempt plus shipment update and event are written in one transaction.
+- The command creates the payment attempt and returns the provider reference and amount for a later server-side Paystack initialization adapter. It does not call Paystack or create a checkout session.
+- Booking confirmation requires an injected trusted server-side verifier to confirm the provider reference, successful status, amount and currency. A browser redirect or client-supplied success flag is not accepted as proof.
+- After verification, the command transactionally marks the attempt successful, marks the shipment payment successful, moves the shipment to `Confirmed`, records the confirmation time and appends an event. A stale/non-current attempt cannot confirm the shipment.
+- The payment repository exposes `getById`, `getByProviderReference`, `createAttempt` and `updateAttempt`. Its adapter and the transaction runner must enforce atomicity and concurrency guarantees.
+- Focused tests cover owner and lifecycle boundaries, retry behavior, amount/currency reconciliation, provider verification and confirmation. These in-memory tests do not prove Paystack integration or database isolation.
+
+Paystack initialization, webhook signature verification, provider API credentials, HTTP routes and persistence adapters remain separate integration work. No live provider request or database write is performed by these commands.
