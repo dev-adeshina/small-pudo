@@ -14,4 +14,7 @@ export const adminWorkspaceNavigation: WorkspaceNavigationItem[] = [
   { label: "Store orders", href: "/admin/orders", section: "STORE" },
   { label: "Products", href: "/admin/products", section: "STORE" },
   { label: "Categories", href: "/admin/categories", section: "STORE" },
+  { label: "Pricing definitions", href: "/admin/commercial-pricing-definitions", section: "COMMERCIAL" },
+  { label: "Operational costs", href: "/admin/operational-cost-definitions", section: "COMMERCIAL" },
+  { label: "Route distance evidence", href: "/admin/commercial-route-distance", section: "COMMERCIAL" },
 ];
