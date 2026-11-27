@@ -392,7 +392,7 @@ export default function AdminOrdersPage() {
         </div>
       }
     >
-      <main className="admin-page admin-orders-page">
+      <div className="admin-page admin-orders-page">
       <header className="admin-header">
         <Link href="/" className="admin-logo">
           <Image src="/logo.svg" width={60} height={20} alt="VeriLyft" priority />
@@ -512,7 +512,7 @@ export default function AdminOrdersPage() {
 
         <p className="orders-page-footnote">Status updates are restricted to paid orders and must follow the fulfilment sequence. Payment status is managed by the payment verification and webhook flow.</p>
       </div>
-    </main>
+    </div>
     </WorkspaceShell>
   );
 }
