@@ -202,7 +202,7 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
     const locationId = await createCandidate();
 
     await assert.rejects(
-      activationStore.activateLocation(activatorUid, locationId),
+      activationStore.activateLocation(activatorUid, locationId, "Synthetic activation test"),
       /verification approval is required/,
     );
 
@@ -257,7 +257,7 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
     assert.equal(event.verificationStatus, "approved_to_activate");
 
     await assert.rejects(
-      activationStore.activateLocation(activatorUid, locationId),
+      activationStore.activateLocation(activatorUid, locationId, "Synthetic activation test"),
       /already been activated/,
     );
   });
@@ -272,7 +272,7 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
     locationIds.push(created.locationId);
 
     await assert.rejects(
-      activationStore.activateLocation(activatorUid, created.locationId),
+      activationStore.activateLocation(activatorUid, created.locationId, "Synthetic activation test"),
       /Only submitted PUDO candidates/,
     );
   });
