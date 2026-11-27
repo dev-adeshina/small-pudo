@@ -63,7 +63,7 @@ export async function GET(
   let decodedToken;
 
   try {
-    decodedToken = await adminAuth.verifyIdToken(idToken);
+    decodedToken = await adminAuth.verifyIdToken(idToken, true);
   } catch {
     return NextResponse.json(
       {
