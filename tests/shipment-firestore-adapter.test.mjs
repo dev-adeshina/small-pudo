@@ -193,6 +193,19 @@ test("quote lineage pointer advances while quote revisions remain separate docum
     assert.equal(current.revisionId, "revision-1");
     assert.equal(current.totalMinor, 150000);
   });
+  await ports.transaction.run(tx => ports.quotes.appendRevision(tx, "quote-1", {
+    revisionId: "revision-2",
+    revisionNumber: 2,
+    shipmentId: "shipment-1",
+    issuedAt: "2026-11-27T11:00:00.000Z",
+    totalMinor: 175000,
+    currency: "NGN",
+  }));
+  await ports.transaction.run(async tx => {
+    const current = await ports.quotes.getCurrent(tx, "quote-1");
+    assert.equal(current.revisionId, "revision-2");
+    assert.equal(current.totalMinor, 175000);
+  });
 });
 
 test("payment provider references resolve to one immutable attempt identity", async () => {
@@ -212,6 +225,17 @@ test("payment provider references resolve to one immutable attempt identity", as
     const payment = await ports.payments.getByProviderReference(tx, "paystack-ref-1");
     assert.equal(payment.paymentId, "payment-1");
     assert.equal(payment.amountMinor, 150000);
+  });
+  await ports.transaction.run(tx => ports.payments.updateAttempt(tx, "payment-1", {
+    status: "successful",
+    amountMinor: 1,
+    providerReference: "replacement-reference",
+  }));
+  await ports.transaction.run(async tx => {
+    const payment = await ports.payments.getById(tx, "payment-1");
+    assert.equal(payment.status, "successful");
+    assert.equal(payment.amountMinor, 150000);
+    assert.equal(payment.providerReference, "paystack-ref-1");
   });
 });
 
