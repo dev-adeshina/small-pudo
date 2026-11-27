@@ -80,7 +80,8 @@ The companion utility is `scripts/firestore-inventory.mjs`.
 
 It:
 - Requires an explicit project ID and database ID.
-- Uses Application Default Credentials; no service-account key is stored in the repository.
+- Prefers the existing local Firebase Admin service-account variables (`FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`) loaded from an untracked `.env.local`; falls back to Application Default Credentials only when no service-account variables are configured.
+- Never prints, serialises or writes credential material to the report; no service-account key is stored in the repository.
 - Requires an explicit `--read-only` acknowledgement.
 - Uses Firestore reads and count aggregation only.
 - Enumerates top-level and nested subcollections.
@@ -100,7 +101,7 @@ GOOGLE_APPLICATION_CREDENTIALS=/secure/path/to/read-only-service-account.json \
   --out ./firestore-inventory-report.json
 ```
 
-Prefer an authorised read-only identity. If the operator uses Application Default Credentials from a local login, verify the active account and project before execution. Never copy credentials into the repository or report.
+The utility loads `.env.local` from the current working directory using Node's built-in environment-file loader. Keep that file out of Git and never paste or print its values. Before running, confirm that the service account has only the Firestore read permissions needed for collection listing, document reads and count aggregation; the utility's read-only code path does not reduce IAM permissions held by the key. If no service-account variables are configured, Application Default Credentials remain supported. Never copy credentials into the repository or report.
 
 For a bounded scan, add `--max-docs-per-collection 500`. The report will identify schema inspection and nested-subcollection discovery as incomplete where parent documents were not traversed, while preserving the separate count aggregation result. A complete scan may read every document and recursively enumerate each document's subcollections; assess cost and operational impact first.
 
