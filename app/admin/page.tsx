@@ -18,6 +18,9 @@ import {
   LogOut,
   MapPinned,
   Package,
+  Route,
+  Settings2,
+  Wallet,
   ShieldCheck,
   ShoppingBag,
   Tags,
@@ -343,6 +346,20 @@ export default function AdminDashboard() {
               </div>
             </SurfaceCard>
 
+            <SurfaceCard>
+              <div className="vl-admin-section-heading">
+                <div>
+                  <span className="vl-admin-section-label">COMMERCIAL CONTROLS</span>
+                  <h2>Pricing &amp; evidence</h2>
+                </div>
+              </div>
+              <div className="vl-admin-quick-links">
+                <Link href="/admin/commercial-pricing-definitions"><Wallet size={17} /><span>Pricing definitions</span><ArrowUpRight size={15} /></Link>
+                <Link href="/admin/operational-cost-definitions"><Settings2 size={17} /><span>Operational costs</span><ArrowUpRight size={15} /></Link>
+                <Link href="/admin/commercial-route-distance"><Route size={17} /><span>Route distance evidence</span><ArrowUpRight size={15} /></Link>
+              </div>
+            </SurfaceCard>
+
           </aside>
         </section>
 
@@ -370,7 +387,7 @@ export default function AdminDashboard() {
         </section>
 
         <p className="vl-admin-boundary-note">
-          Commercial pricing, operational cost definitions and route-distance evidence remain on their existing permission-protected legacy screens while their migration into the Admin workspace is planned. No records or permissions have been changed.
+          Commercial configuration is available within the Admin workspace. Individual actions remain subject to their existing server-side commercial and operational-cost permissions.
         </p>
         <p className="vl-admin-boundary-note">
           Store management shown here continues to use the existing store data. Shipment bookings, PUDO operations and store orders are separate workflows and will not be combined into one record type.
