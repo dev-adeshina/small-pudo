@@ -261,16 +261,16 @@ Initial notification events: payment outcome, shipment progress at meaningful mi
 - Record material actions with actor, action, affected record, timestamp and reason.
 - PUDO partner access is limited to its own location and operational records; customer and recipient access is limited to their own authorised shipment information.
 
-## 10. Remaining business decisions
+## 10. Resolved business decisions and remaining infrastructure gate
 
-The following are the only material workflow decisions still left open in the current baseline. They must be resolved before implementing the affected transition or workflow:
+The following workflow decisions are resolved and are the implementation baseline:
 
-1. **Walk-in customer provisioning:** A PUDO partner may submit on behalf of a walk-in customer, but every shipment must have a customer identity. Decide whether the partner may create a customer profile on the customer's behalf (with account access activated only after the customer completes registration) or whether customer registration must occur before submission. Until decided, do not create anonymous shipments or silently create Auth accounts.
-2. **Cancellation before confirmation:** Customer cancellation after payment/booking confirmation is outside initial scope. Decide whether a customer or Admin may cancel a submitted/quoted shipment before payment, and the exact permitted statuses and audit reason. Until decided, expose no customer cancellation action.
-3. **Rejection after quotation:** A shipment must not be rejected before a quotation is issued. Decide whether Admin may reject after quotation but before acceptance/payment, and whether the quote is marked withdrawn/void with a reason.
-4. **Measurement review completion:** Customer-declared measurements may be corrected only during the authorised Admin/PUDO review. The implementation should use an explicit review-completed action as the lock point. Confirm which role may close that review. Physical measurements recorded at intake are a separate immutable observation and must not overwrite the original customer-declared values.
-5. **Service-specific handover status semantics:** `Awaiting Collection` means the shipment is awaiting physical handover from the sender. For PUDO-origin services, that may mean sender drop-off at the origin PUDO; for door-pickup services it means waiting for the assigned pickup. `Collected` is recorded only when a door-pickup operator physically collects the parcel. A PUDO drop-off proceeds to `Received at PUDO` after photo-evidenced intake. Confirm these labels and transitions against the four service types before coding the state machine.
-6. **Database target details:** Confirm the separately named shipment database ID and Firestore location, and the exact environment configuration. The current instruction is that no separate Stage Firestore database is to be created. Do not create a database, deploy rules/indexes or write production shipment data until this infrastructure decision is explicitly approved.
+1. **Walk-in customer provisioning:** An authenticated PUDO partner may create a minimal pending-registration customer profile on behalf of a walk-in customer. This does not create a Firebase Auth user. The profile remains pending until the customer completes normal registration and identity verification.
+2. **Cancellation before confirmation:** The owning customer or Admin may cancel in `Submitted`, `Under Review`, `Quoted` or `Awaiting Payment`, with a mandatory reason and attributable event. Cancellation after successful payment/confirmation is outside initial scope.
+3. **Rejection after quotation:** Admin may reject only after quotation and before customer acceptance/payment. Rejection requires a reason, withdraws the current quote and appends an event.
+4. **Measurement review completion:** Only Admin may amend declared measurements while the server-opened review is open and close the review. Closure locks declared values. Physical intake measurements remain separate immutable observations.
+5. **Service-specific handover semantics:** PUDO-origin services move from `Awaiting Collection` to `Received at PUDO` only after completed origin-PUDO intake with photo evidence. Door-origin services move to `Collected` only after actual physical pickup by the assigned operator. Assignment or attempted pickup alone is not custody.
+6. **Environment boundary:** Staging and production use separate Firebase projects. Existing `verilyft-4e691` remains production. Staging must use a dedicated Firebase project; no separate staging database is created inside the production project. The staging project ID, ownership/billing, selected Firestore database ID/location and runtime credentials remain to be provisioned/confirmed before live connection.
 
 ## 11. Explicitly outside initial scope
 
@@ -289,12 +289,13 @@ The following are the only material workflow decisions still left open in the cu
 
 The logical shipment schema in this document is the Phase 3 implementation baseline. The following boundaries remain mandatory:
 
-- Existing default Firestore database and existing store collections remain untouched by the new shipment implementation.
-- The intended shipment data boundary is a separately named Firestore database in the existing Firebase project `verilyft-4e691`; its database ID, location and deployment configuration are not yet approved or created.
-- Do not create a separate Stage Firestore database. Do not infer that a staging branch authorises a staging database.
-- Do not point new shipment writes at the existing default database as a workaround for the pending infrastructure decision.
-- Firebase Authentication may use the existing project-level UID namespace. Role profiles and authorization remain logically distinct in the target database and all privileged writes remain server-side.
-- Existing store data remains authoritative in the existing database. Any store read-through must use a deliberate server-side boundary; no copying or dual writes are implied.
-- Phase 3 code may be developed against an injected database interface and test doubles. It must not initialize or write to production Firestore until the target database details and deployment are explicitly approved.
+- Staging and production are separate Firebase projects. `verilyft-4e691` remains production; staging receives its own dedicated project.
+- The new shipment records use the versioned `verilyftShipmentData/v1` namespace within the explicitly selected Firestore database in each environment. The database ID (including an explicit `(default)` choice) and location must be confirmed for each project before runtime connection.
+- Do not create a staging Firestore database inside the production Firebase project, and do not infer that a Git branch selects a Firebase project.
+- Existing store collections, customer drafts, legacy `shipmentQuotes`, Admin access, PUDO partner accounts, PUDO locations and PUDO operational evidence remain authoritative and are not overwritten or dual-written by the shipment model.
+- Existing customer/Admin/PUDO partner/PUDO location authorities are read-only references in the same environment-specific Firestore database transaction boundary. Firestore transactions cannot span database instances.
+- Firebase Authentication may use the project-local UID namespace. Customer, Admin and PUDO partner identities remain logically distinct; all privileged shipment writes are server-side.
+- The adapter receives an explicitly selected Firestore instance and does not fall back to the application's default Firebase Admin app. Runtime project/database selection is explicit and environment-guarded.
+- Phase 3 code does not authorise database provisioning, Firestore rules/index deployment, Storage bucket or access-policy changes, migrations, backfills, production data writes or PR merge. Those remain separate approval gates.
 
-This schema baseline authorises planning and code preparation only. It does not authorise database creation, Firestore rules/index deployment, Storage changes, migrations or production data writes.
+The code-level data model and injected persistence adapter may be developed and tested without connecting to production. Live staging verification begins only after the separate staging project and its database/runtime configuration are confirmed.
