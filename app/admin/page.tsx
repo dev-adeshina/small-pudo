@@ -6,6 +6,11 @@ import { onAuthStateChanged, type User } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import {
   Activity,
+  Bell,
+  CalendarCheck,
+  FileStack,
+  Headset,
+  Receipt,
   ArrowUpRight,
   CheckCircle2,
   Clock3,
@@ -60,10 +65,13 @@ const commercialNavigation = [
 const plannedAreas = [
   { title: "Customers", description: "Customer profiles, shipment history and authorised account details.", icon: Users },
   { title: "Shipments", description: "Review and manage shipment requests across all approved channels.", icon: Package },
-  { title: "Bookings & transactions", description: "Confirmed shipment bookings, payment attempts and transaction records.", icon: Wallet },
+  { title: "Bookings", description: "Confirmed shipment bookings and their payment and fulfilment state.", icon: CalendarCheck },
+  { title: "Transactions", description: "Store and shipment payment records, provider references and outcomes.", icon: Receipt },
   { title: "PUDO network", description: "Partner locations, verification, station personnel and operational readiness.", icon: MapPinned },
   { title: "Routing & delivery", description: "Collection, delivery and transfer assignments with operational progress.", icon: Truck },
-  { title: "Messages & documents", description: "Shipment conversations, quotations, receipts and delivery documents.", icon: FileText },
+  { title: "Messages & support", description: "Shipment conversations and basic customer enquiry or complaint cases.", icon: Headset },
+  { title: "Documents", description: "Quotations, receipts, waybills, intake receipts and delivery confirmations.", icon: FileStack },
+  { title: "Notifications", description: "Payment and delivery notifications, delivery state and failures.", icon: Bell },
 ];
 
 function formatMoney(amount: number, currency = "NGN") {
