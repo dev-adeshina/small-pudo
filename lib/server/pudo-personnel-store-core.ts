@@ -1,4 +1,4 @@
-import type { FieldValue, Firestore } from "firebase-admin/firestore";
+import type { DocumentData, FieldValue, Firestore } from "firebase-admin/firestore";
 
 export interface PudoPersonnelInput {
   name: string;
@@ -64,7 +64,7 @@ export function createPudoPersonnelStore({
     return locations.doc(locationId);
   }
 
-  function mapPersonnel(id: string, data: FirebaseFirestore.DocumentData) {
+  function mapPersonnel(id: string, data: DocumentData) {
     return {
       personnelId: id,
       name: data.name,
