@@ -87,3 +87,17 @@ The command tests use in-memory injected ports to verify channel derivation, own
 - Focused tests cover owner and lifecycle boundaries, retry behavior, amount/currency reconciliation, provider verification and confirmation. These in-memory tests do not prove Paystack integration or database isolation.
 
 Paystack initialization, webhook signature verification, provider API credentials, HTTP routes and persistence adapters remain separate integration work. No live provider request or database write is performed by these commands.
+
+## 10. Shipment lifecycle and measurement-review commands
+
+`lib/shipment/lifecycle-commands.mjs` adds transaction-scoped commands for pre-confirmation cancellation, Admin rejection and declared-measurement review.
+
+- Cancellation is limited by the domain rules to the owning customer or Admin and the approved pre-confirmation statuses. A mandatory reason is recorded, an existing quote is withdrawn, shipment status and attribution are updated, and an append-only event is added in the same transaction.
+- If a linked payment attempt is still initialised or pending, cancellation marks that attempt abandoned locally. This prevents that attempt from confirming the cancelled shipment. A late provider success must be handled by a future payment-reconciliation/refund workflow; this command does not claim to cancel a transaction at Paystack.
+- Rejection is Admin-only, requires a reason and an existing quote, withdraws the quote and records the rejection. An active payment attempt blocks rejection.
+- Declared measurement amendments are Admin-only and allowed only while the parcel review remains open. Values are revalidated through the canonical parcel contract; physical intake observations remain separate and are not modified.
+- Closing measurement review locks every parcel's declared measurements and records the reviewer/time on the shipment and an immutable event. Inconsistent or already-closed parcel reviews fail closed.
+- The parcel repository port now includes `update(tx, parcelId, patch)`. Its adapter must preserve immutable intake observations and enforce transaction semantics.
+- Focused tests cover ownership, roles, quote withdrawal, active-payment restrictions, measurement edits and review locking. They use in-memory ports and do not prove persistence isolation.
+
+The complete command layer still requires a final cross-command review and adapter-level concurrency tests before it can be connected to a database.
