@@ -1,182 +1,142 @@
 # VeriLyft Data Architecture
 
-**Proposed logical model for the new Firestore database | v1.1 | 27 November 2026**
-
-> WORKING BASELINE — collection names below are proposed logical names, not confirmation that collections have been created. Inventory the actual databases and schemas before implementation.
+**Version:** 1.2  
+**Date:** 27 November 2026  
+**Status:** Aligned to the Phase 3 minimal schema baseline in [document 08](./08-final-minimal-firestore-schema.md).
 
 ## 1. Architecture principles
 
-- Use a separate Firestore database for the new implementation while leaving the existing main-version database unchanged.
-- Use one authoritative shipment record across customer, PUDO and Admin workflows. Portals are access surfaces, not separate copies of business data.
-- Keep customer, internal staff and PUDO partner identities logically distinct. Apply least-privilege access and server-side authorisation.
-- Preserve existing store data and relationships. Do not rename, delete or restructure existing collections as part of this work.
-- Treat the collection names below as proposed logical names only. Inventory the actual databases and existing schemas before creating collections.
+- One VeriLyft application with three role-aware experiences: Customer, Admin and PUDO Partner.
+- One authoritative shipment record across all creation channels.
+- Customer ownership, request creator, assigned operator and physical custodian are distinct facts.
+- Use the smallest set of authoritative records that supports the approved workflows.
+- Keep the existing storefront and its records independent from shipment booking.
+- All privileged data changes are performed through authenticated server-side APIs.
+- Preserve attributable review, approval, payment and custody evidence even when the logical model is simplified.
 
-## 2. Database and application boundary
+## 2. Firebase and database boundary
 
-- Firebase project currently discussed: `verilyft-4e691`.
-- Proposed arrangement: existing default Firestore database remains for the main version; a separately named Firestore database is created for the new implementation.
-- Do not create or deploy the new database until its ID, location, rules and environment strategy are approved.
-- Firebase Authentication can be shared at project level if that is the chosen identity design, but user identity mapping, database rules and application permissions must be explicit for each database.
-- Store integration is unresolved: the new app may read selected store data from the existing database through a trusted server-side boundary, use a controlled data copy, or later migrate selected data. Avoid dual writes until consistency and ownership are designed.
+- Firebase project: `verilyft-4e691`.
+- Existing default Firestore database: remains the current legacy/store data boundary and must not be modified by the new shipment implementation.
+- New shipment data: intended for a separately named Firestore database within the existing Firebase project. Its database ID, location and runtime configuration remain pending explicit approval.
+- Do not create a separate Stage Firestore database. A Git branch named `staging` does not imply a separate database.
+- Do not write new shipment data into the existing default database as a temporary workaround.
+- Do not create the new database, deploy rules/indexes, change Storage configuration or write production data without explicit approval.
+- Firebase Authentication may continue to use the existing project-level UID namespace. A shared UID does not imply shared permissions: Customer, Admin and PUDO Partner profiles and authorization are separate.
+- Existing store records remain authoritative in the existing database. The new shipment application may access selected store information only through an approved server-side read boundary. No copying or dual-writing is implied.
 
-## 3. Logical collection groups
+## 3. Minimal logical model
 
-### Identity and access
-- `customers`
-- `staff`
-- `adminAccess`
-- `pudoPartners`
-- `pudoPersonnel`
+The following are logical records for the new shipment database. Nested records are used where they have one clear owner.
 
-### PUDO network
-- `pudoLocations`
-- `pudoVerifications`
-- `pudoActivations`
-- `pudoCapabilities` (or a versioned shared capability definition)
-- `pudoAssignments`
-- `pudoOperations`
-- `custodyRecords`
+| Record | Location | Purpose |
+|---|---|---|
+| Customer | `customers/{customerId}` | Customer profile linked to Firebase Auth UID. |
+| Admin | `admins/{adminId}` | Admin identity/access profile; privileged permissions are enforced server-side. |
+| PUDO Partner | `pudoPartners/{partnerId}` | Partner account/profile, separate from Admin. |
+| PUDO Location | `pudoLocations/{locationId}` | Current station identity, address, lifecycle, shared default capabilities and operational summary. |
+| PUDO Personnel | `pudoLocations/{locationId}/personnel/{personnelId}` | Roster-only named worker record with role and active/inactive state. No individual login in the initial release. |
+| Shipment | `shipments/{shipmentId}` | Single authoritative shipment across Customer, Admin-assisted and PUDO walk-in channels. |
+| Shipment Parcels | `shipments/{shipmentId}/parcels/{parcelId}` | Repeating parcel records belonging to one shipment. |
+| Shipment Events | `shipments/{shipmentId}/events/{eventId}` | One append-only chronological shipment timeline, including material operational/custody events. |
+| Shipment Quote | `shipmentQuotes/{quoteId}` | One quote lineage per shipment, with revisions nested beneath it. |
+| Payment | `payments/{paymentId}` | One provider transaction/attempt, linked to its shipment and quote snapshot. |
+| Parcel Intake | `parcelIntakes/{intakeId}` | One record per actual physical intake, linked to shipment, parcel and PUDO. Photo metadata may be nested beneath it. |
+| Shipment Assignment | `shipments/{shipmentId}/assignments/{assignmentId}` | Repeating assignment responsibility records; not proof of physical custody. |
+| Shipment Document | `shipments/{shipmentId}/documents/{documentId}` | Generated document metadata and protected Storage reference. |
+| Notification | `notifications/{notificationId}` | Minimum recipient-specific delivery state and retry evidence. |
 
-### Shipment core
-- `shipments`
-- `shipmentPriceRequests`
-- `shipmentPriceCalculations`
-- `shipmentQuotes`
-- `shipmentBookings`
-- `shipmentEvents`
-- `shipmentTrackingAccess`
-- `shipmentDeliveryConfirmations`
+Do not introduce standalone collections for quote calculations, booking copies, custody ledgers, photo registries, assignment calendars, worker accounts or delivery personnel unless a demonstrated query/security requirement justifies them. The collection list is a minimum logical model, not an instruction to create every collection at once.
 
-### Pricing
-- `transportationRateCards`
-- `pricingRules`
-- `commercialPricingDefinitions` (reconcile with existing domain naming before creation)
+## 4. Authoritative shipment and relationships
 
-### Payments
-- `payments`
-- `refunds`
+- `shipments/{shipmentId}` is the only authoritative shipment record.
+- The shipment contains customer ownership, creator attribution, channel, unique shipment reference, sender/recipient snapshots, service type, origin/destination snapshots, current status, and references/summaries for quote, payment and current assignment.
+- A shipment has one origin and one destination. Multiple parcel records share those endpoints; a multi-stop route requires separate shipments.
+- Customer draft data is a client-side preparation state, not a persisted customer-facing shipment Draft status. Final submission creates the authoritative shipment at `Submitted`.
+- Booking confirmation is a state/time/reference on the shipment after the approved quote and verified payment conditions. Do not create a second `shipmentBookings` authority.
+- Quote revisions remain in one quote lineage for the shipment. An accepted revision is immutable.
+- Each Paystack transaction attempt has its own payment record. A retry after a failed attempt creates a new attempt; it does not overwrite the failed attempt. Provider webhooks are verification evidence, not duplicate payments.
+- Parcel intake records describe actual physical receipt. Intake requires confirmed photo evidence before completion.
+- Assignments describe responsibility for an activity and time period. They do not prove collection, dispatch or custody.
+- Actual physical custody/handover is recorded as a specific event in the shipment's single timeline, with the actor, location, time and evidence. Do not infer custody from assignment or shipment status.
+- Shipment events are the single chronological source for customer tracking and Admin monitoring. Visibility is classified for Customer, Recipient, PUDO and Admin.
+- Documents are stored in Firebase Storage; Firestore stores metadata, version and protected object reference. Sender and recipient delivery attempts are recorded separately where needed.
 
-Each payment should reference its business subject (shipment booking or store order) and identify transaction type. Do not create duplicate payment records for the same provider transaction.
+## 5. Shipment lifecycle
 
-### Routing and delivery
-- `deliveryPersonnel`
-- `vehicles`
-- `deliveryAssignments`
-- `transportTransfers`
+The customer-facing lifecycle begins at `Submitted`, never at Draft:
 
-### Communication and support
-- `chatSessions`
-- `chatMessages`
-- `chatParticipants`
-- `supportCases`
+1. Submitted
+2. Under Review
+3. Quoted
+4. Awaiting Payment
+5. Confirmed
+6. Awaiting Collection
+7. Collected
+8. Received at PUDO
+9. In Transit
+10. Out for Delivery
+11. Delivered
 
-### Documents and notifications
-- `shipmentDocuments`
-- `shipmentDocumentDeliveries`
-- `notifications`
-- `emailDeliveryLogs`
+Exceptions: Rejected, Cancelled, Payment Failed, Collection Failed, Delivery Failed and Returned.
 
-### Store
-Preserve existing store collections in the existing database unless the selected integration decision explicitly calls for a controlled copy or migration.
+The lifecycle is a set of permitted transitions, not a requirement that every shipment passes through every state. Service type determines which operational events apply. `Awaiting Collection` means waiting for physical handover from the sender. For a PUDO-origin service, sender drop-off and photo-evidenced intake move the shipment to `Received at PUDO`; for door-pickup services, `Collected` is recorded only after the operator physically collects the parcel. The detailed transition table must be approved before the state machine is implemented.
 
-## 3A. Minimal implementation rule
+## 6. PUDO identity and access
 
-The groups and names above describe business concepts, not a requirement to create a separate top-level collection for every item. The governing principle is to build the simplest data structure that fully supports the approved VeriLyft workflows. The first implementation must use the smallest number of authoritative records that supports the PRD and workflows.
+- A PUDO Partner account authenticates through Firebase Authentication and is linked to the partner profile.
+- The partner may access only locations whose partner relationship matches the authenticated UID.
+- The partner manages named roster entries under its own location. A roster entry has name, operational role and status only. It is not an Auth user and does not grant access.
+- Actions made through the PUDO portal are attributed to the authenticated partner UID. When a named worker physically receives or handles a parcel, the worker may be selected as the operational person in the intake/assignment record, while the authenticated partner remains the system actor.
+- Admin identities and commercial/operational authorities are not inherited by a PUDO Partner or roster entry.
+- PUDO partners cannot approve commercial pricing, alter shipment payment state, or access unrelated shipments or private Customer–Admin pricing conversations.
 
-Apply these constraints when finalising the schema:
+## 7. Authorization model
 
-- A shipment draft, submitted request and confirmed booking are lifecycle states of one authoritative `shipments` record, not separate copies of the same shipment.
-- A quote and its revisions remain a single quote lineage. Do not create separate permanent records for every temporary calculation step unless a real workflow requires it.
-- Current PUDO registration, approval/activation, standard capabilities and operating state should be represented by one PUDO location record. Keep only the event/evidence history needed to preserve decision authority and auditability.
-- All physical intake details belong to one intake record per physical intake. Photo metadata may be stored with that intake or in a directly related child collection; do not create redundant evidence registries.
-- Material shipment status changes belong in one shipment event timeline. Do not duplicate the same event across tracking, delivery, custody and portal-specific histories.
-- Use one payment record per actual provider transaction/business payment. Webhook callbacks are evidence for that payment, not separate payment transactions.
-- Use child collections for genuinely repeating or append-only records (for example quote revisions, shipment events, intake photos or document delivery attempts) where that is simpler and safer than large embedded arrays.
-- Do not create separate customer, staff or PUDO copies of the same shipment. Portals are role-specific views of the same authoritative business records.
-- Preserve independent review, approval attribution, validity and evidence requirements even when legacy approval collections are consolidated.
+**Customer**
+- Authenticated, verified and non-revoked customer may access their own profile, shipments, quote decisions, payment summaries and permitted documents.
+- Ownership is derived from the verified Firebase UID, never a client-supplied customer ID.
+- Customer cannot set authoritative prices, payment success, custody, assignment completion or delivery completion.
 
-The [Existing Data Adaptation and Replacement Matrix](./07-existing-data-adaptation-and-replacement-matrix.md) defines how legacy structures map to this minimal direction. If a proposed collection does not support a specific approved workflow, do not create it in the initial release.
+**Admin**
+- Admin access requires a verified, non-revoked token, configured allowlisted email, Admin custom claim, active Admin access record and server-side authorization.
+- Admin-only actions include shipment review, authoritative quotation, pricing decisions, payment exception handling, PUDO approval/management, intake review, assignment, delivery confirmation and permitted cancellation.
+- Role/permission checks must be enforced by server APIs, not merely hidden navigation.
 
-## 4. Core entities and relationships
+**PUDO Partner**
+- Partner access requires a verified, non-revoked token and active partner account.
+- Each location operation revalidates partner ownership server-side.
+- Partner access is restricted to its own locations, roster and station-relevant operations.
 
-- **Customer:** one account may act as shopper, sender and recipient. Shipment ownership is a customer reference where known; recipient contact details may be stored on the shipment snapshot to preserve the details used at booking.
-- **Shipment:** central aggregate linking owner/customer, createdBy actor, request channel, sender/recipient snapshots, origin/destination, parcel details, pickup mode, pricing/quote, booking, payment references, PUDO references, assignments, documents and status summary.
-- **Created-by attribution:** record whether the request was created by the customer or on behalf of the customer by a PUDO operator. Keep customer ownership separate from the actor who entered the request.
-- **Shipment events:** append-only timeline entries with event type, occurredAt, recordedAt, actor identity/type, relevant location, evidence references and source operation. A current status field on shipment may be maintained as a derived summary.
-- **Quotation:** reference shipment, calculation inputs, pricing configuration version, road distance evidence/source, weight basis, line items, totals, currency, validity, issuer and issue time. Accepted/declined state should be traceable.
-- **Booking:** references accepted quotation and shipment. Booking confirmation is not proof of physical collection or custody.
-- **PUDO intake:** `parcelIntakeRecords` should reference shipment, PUDO location, receiving actor, time, measured parcel details and evidence. Require photo evidence before marking physical receipt complete.
-- **Parcel photos:** store binary images in Firebase Storage. Store metadata and secure object references in `parcelIntakePhotos` or as evidence metadata attached to `parcelIntakeRecords`. Avoid public object URLs; use authorised access or short-lived signed access patterns.
-- **Payments:** reference the shipment booking or store order; include provider transaction reference, amount, currency, status, timestamps and verification source. Payment success must be confirmed server-side, not trusted solely from browser state.
-- **Documents:** `shipmentDocuments` references shipment and document type, version, storage path, generatedAt, generatedBy and content snapshot/version. Delivery records separately capture sender/recipient destination, attempt status and timestamps.
+**Recipient**
+- Recipient access is limited to the recipient's own shipment and permitted tracking/documents. Registration may occur after shipment submission; account access must be verified before revealing shipment data.
+- Recipient does not receive sender payment details, private Admin notes or unrelated personal data.
 
-## 5. Mandatory parcel intake evidence
+## 8. Existing application and migration boundary
 
-Add these proposed logical entities:
+- Existing store collections (including categories, products, orders and historical payment/webhook evidence) remain untouched.
+- Legacy shipment drafts and quote stores are not the new authoritative shipment schema. Reuse business logic selectively through reviewed adapters; do not copy legacy collections wholesale.
+- The prior `shipmentBookings` implementation is not a second source of truth. Booking becomes a shipment lifecycle fact.
+- Existing PUDO network verification/activation/capability and commercial evidence workflows remain governed by their existing decisions until a separate migration/replacement is approved.
+- No migration, dual write or backfill is part of Phase 3 foundation work.
 
-### `parcelIntakeRecords`
-One record per physical intake event. Suggested fields:
-- `shipmentId`
-- `pudoLocationId`
-- `receivedBy` (actor type and ID)
-- `receivedAt`
-- `recordedAt`
-- `intakeChannel` (walk_in, door_pickup_arrival, or another approved value)
-- parcel condition/notes
-- measured weight and dimensions
-- `photoEvidenceIds`
-- status
+## 9. Storage, indexes and deployment
 
-### `parcelIntakePhotos`
-One metadata record per captured photo. Suggested fields:
-- `intakeRecordId`
-- `shipmentId`
-- `storagePath`
-- `contentType`
-- `fileSize`
-- `capturedAt`
-- `uploadedAt`
-- `capturedBy`
-- `photoPurpose`
-- checksum if supported
-- access classification
+- Parcel/intake images and generated PDFs live in Firebase Storage; Firestore stores protected metadata and object paths.
+- Never use public object URLs for sensitive parcel or customer documents.
+- Add composite indexes only for validated query patterns.
+- New database rules must default-deny direct client writes to authoritative shipment, quote, payment, intake, assignment, event and approval records.
+- Test Customer, Admin, PUDO Partner, Recipient and unauthorised access boundaries before enabling live workflows.
+- Database creation, rules/index deployment and Storage configuration remain explicit approval gates.
 
-**Validation:** a physical intake cannot transition to received/complete unless the required photo evidence is present and the upload is confirmed. The exact minimum number of photos and photo angles can be specified in the PUDO workflow.
+## 10. Implementation order
 
-A door-pickup assignment is not an intake. A door pickup collection event and arrival/intake at the station may be separate physical events, each with its own evidence requirements if the business requires it.
+1. Complete Phase 2 access gaps and audit.
+2. Confirm the remaining business decisions in document 08.
+3. Implement the shipment data contracts, validation and pure business transition logic without binding to a production database.
+4. Obtain explicit approval for database ID/location and infrastructure setup.
+5. Wire the approved database adapter and server-side transactions.
+6. Build customer, Admin and PUDO workflows in their roadmap phases.
 
-## 6. Status and data integrity
-
-- Use explicit status enums and validated transitions; do not let arbitrary client writes change authoritative shipment, payment, custody or approval status.
-- Distinguish `occurredAt` (when an event happened) from `recordedAt` (when the system recorded it).
-- Keep evidence and financial records auditable. Prefer append-only events and compensating records over destructive edits.
-- Use server-side transactions or idempotent operations for booking creation, payment processing and event recording where appropriate.
-- Use stable document IDs and explicit references. Avoid storing large duplicated nested histories in a single Firestore document.
-- Define retention, deletion, correction and privacy handling for sensitive identity data and parcel images before production.
-
-## 7. Access model
-
-- **Customer:** read own profile, own shipments and orders, own permitted messages, documents and payment summaries; create allowed requests; cannot set authoritative price, payment success, custody or delivery completion.
-- **Admin/staff:** access according to role and permission. Pricing authority, refunds, PUDO approval and sensitive identity evidence should be restricted to designated roles.
-- **PUDO partner:** access only its own partner/location, authorised personnel and operational records associated with its location. It must not automatically see customer–Admin private pricing conversations or unrelated shipments.
-- **PUDO personnel:** if individual login is enabled, access only assigned tasks and the minimum information needed to perform them.
-- **Recipient:** access a limited recipient view through a verified account or secure tracking access mechanism. Do not expose sender payment details, internal chat or unrelated personal information.
-
-## 8. Indexes, storage and deployment
-
-- Create composite indexes only after query patterns are specified and validated. Likely query dimensions include customerId + createdAt, pudoLocationId + status + createdAt, shipmentId + event time, and transaction subject + createdAt.
-- Use Firebase Storage for parcel photos and generated PDFs; Firestore stores metadata and references.
-- Maintain separate configuration for database ID, Storage paths, environment and service credentials. Never commit secrets.
-- Deploy rules and indexes deliberately to the new database; do not alter existing main-version rules or data without explicit approval.
-- Test access rules against customer, Admin, PUDO partner and unauthorised identities before enabling live workflows.
-
-## 9. Open schema decisions
-
-- Confirm final collection names after inventorying existing structures and avoiding duplicate concepts.
-- Choose whether customer/staff/PUDO authentication maps to one Firebase Auth UID namespace or separate sign-in flows with distinct profile documents.
-- Choose where store customer/order/payment data is authoritative and how the new database accesses it.
-- Confirm PUDO personnel individual accounts, assignment model and role scope.
-- Confirm pricing line-item schema, weight basis, route evidence reference and pricing version format.
-- Confirm payment provider and whether payment records live in the new database, existing store database, or a defined shared financial service.
-- Confirm shipment status transitions, intake evidence requirements, photo retention and document retention.
+The [Final Minimal Firestore Schema](./08-final-minimal-firestore-schema.md) is the field-level baseline. If a feature cannot be traced to an approved workflow, do not add it to the initial schema.
