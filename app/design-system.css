@@ -688,3 +688,46 @@
     justify-content: center;
   }
 }
+
+
+/* Route-level workspaces: keep legacy page content inside the shared shell */
+.vl-workspace .customer-page,
+.vl-workspace .admin-page {
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+}
+.vl-workspace .customer-header,
+.vl-workspace .admin-header {
+  display: none;
+}
+.vl-workspace .customer-shell,
+.vl-workspace .admin-shell {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+.vl-workspace__account-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: 0;
+}
+.vl-workspace__account-actions > span {
+  overflow: hidden;
+  max-width: min(34vw, 320px);
+  color: var(--vl-text-muted);
+  font-size: .82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 520px) {
+  .vl-workspace__account-actions {
+    gap: 8px;
+  }
+  .vl-workspace__account-actions > span {
+    max-width: 42vw;
+    font-size: .74rem;
+  }
+}
