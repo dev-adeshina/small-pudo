@@ -46,3 +46,18 @@ Quote issuance/withdrawal, quote acceptance, payment-attempt creation and verifi
 ## 6. Explicitly deferred
 
 No Firestore SDK, Admin SDK, repository adapter, Firebase configuration, database ID/location, rules, indexes, Storage configuration, migration, backfill, or live shipment write is introduced by these contracts. Infrastructure requires separate explicit approval.
+
+## 7. Submission command orchestration
+
+`lib/shipment/commands.mjs` provides a database-independent `createShipmentCommands({ ports, idFactory, clock })` factory and a `submitShipment` command.
+
+- The server must authenticate the request and construct the actor context from verified credentials. Client-supplied actor/channel values are not authoritative; the command derives the channel from the verified actor type.
+- Customer submissions are bound to the authenticated customer's own ID, ignoring any client-supplied customer ID.
+- Admin-assisted submissions require an existing customer profile.
+- PUDO walk-in submissions create a minimal pending-registration customer profile in the same transaction, with `authUid: null`; sender name, phone and email are taken from that profile so the shipment identity is consistent.
+- The command reserves a unique shipment reference, creates the shipment in `Submitted`, creates all parcel records, appends the initial event and records the actor-scoped idempotency result in one transaction.
+- Every repository operation receives the same transaction handle. The reference repository must reserve candidates atomically in that transaction. The transaction adapter and idempotency repository must enforce atomic read-before-create and unique-key behavior.
+- The customer repository port exposes `create(tx, customerId, profile)` and `getById(tx, customerId)`. Other required repository methods are listed in `SHIPMENT_REPOSITORY_PORTS`.
+- The command does not create Auth users, issue quotes, initialise payments, select a Firestore database, or write to any live database. It is not yet wired to HTTP routes or a persistence adapter.
+
+The command tests use in-memory injected ports to verify channel derivation, ownership binding, walk-in profile behavior, transaction-handle propagation and idempotent replay. These are unit tests, not evidence of database transaction isolation; the eventual adapter must separately prove those guarantees.
