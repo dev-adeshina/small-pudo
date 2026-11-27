@@ -471,6 +471,9 @@ test("record commands persist photo-evidenced intake, assignment, document and n
     },
   });
   assert.ok(assignment.assignmentId);
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.shipments.getById(tx, "shipment-records")).currentAssignmentId, assignment.assignmentId);
+  });
 
   const document = await commands.createShipmentDocument({
     actor: { type: "admin", id: "admin-1" }, idempotencyKey: "document-command-1",
