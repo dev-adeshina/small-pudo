@@ -13,14 +13,14 @@ This document consolidates confirmed product decisions, the current repository a
 - A shipment is created through exactly three channels: registered customer, Admin on behalf of a customer, or PUDO partner on behalf of a walk-in customer.
 - All channels create the same authoritative shipment record.
 - Each shipment records its customer/sender, creator/actor and creation channel separately.
-- A shipment cannot be submitted without a customer identity. Customer-facing submission requires sign-up/sign-in before final submission. PUDO walk-in representation requires the customer to be represented by the PUDO operator; the precise account-provisioning rule remains open in section 10.
+- A shipment cannot be submitted without a customer identity. Customer-facing submission requires sign-up/sign-in before final submission. PUDO walk-in representation creates a minimal pending-registration customer profile; it does not create a Firebase Auth account. The customer gains account access only after normal registration and identity verification.
 - Every submitted shipment receives a unique shipment reference.
 - Sender and recipient information is stored side by side as shipment snapshots. A signed-in customer may select saved contacts/addresses or enter new ones.
 - Address structure: country, state, city, street/address description, coordinates when available, and PUDO/operational-location reference where applicable.
 - Initial services: PUDO-to-PUDO, door-to-PUDO, PUDO-to-door and door-to-door.
 - One shipment may contain multiple parcels, but all parcels in that shipment share one origin and one destination. Different destinations require separate shipments/intakes.
 - Parcel data includes description, quantity, actual weight, dimensions, volumetric weight, declared value, special handling, and item images. VeriLyft does not accept goods prohibited by applicable law; the initial release needs a clear customer declaration/confirmation and an Admin/PUDO escalation path, not a complex prohibited-goods catalogue.
-- Submitted parcel measurements may be amended only during Admin/PUDO review; after that review is completed they are locked. The exact review lock point must be enforced server-side.
+- Submitted parcel measurements may be amended only by Admin while the server-opened review is open; Admin closes the review and locks declared values. Physical intake measurements remain separate immutable observations.
 - The shipment lifecycle begins at **Submitted**. There is no customer-facing Draft shipment status.
 - Main shipment status includes the agreed statuses and exception states in section 5. Quotation and payment are reflected in the shipment's overall status.
 - Status/event history records previous and new state, actor, timestamp and reason. Some internal events/status details are Admin-only.
@@ -39,27 +39,29 @@ This document consolidates confirmed product decisions, the current repository a
 - Shared authentication infrastructure is retained, with separate role-aware workspaces and access boundaries. Current internal operating model is Admin responsibility; do not assume a general staff management system is required.
 - Explicit Admin authority is required for reviewing shipments, issuing quotations, approving pricing, confirming payments, managing PUDO locations, recording intake, assigning shipments, confirming delivery and cancellation. Staff management is out of initial scope.
 - Existing store collections remain independent and untouched. Store orders are not shipment bookings.
-- New shipment implementation uses a separately identified Firestore database. Existing main-version database and store records remain untouched. Database creation/deployment requires separate approval.
+- Staging and production use separate Firebase projects; `verilyft-4e691` remains production. Shipment records use the versioned `verilyftShipmentData/v1` namespace in the explicitly selected database in each project. Existing legacy collections remain untouched. Staging project/database provisioning and deployment require separate approval.
 - Avoid unnecessary collections, deep subcollections, duplicated records and excessive version histories.
 
 ## 2. Minimal logical collection model
 
 The following is the proposed starting point. Use subcollections only where records genuinely repeat or must be append-only.
 
-| Logical collection | Responsibility |
-|---|---|
-| `customers` | Minimal customer profile linked to Auth UID; saved contacts/addresses may be held as customer-owned subcollections if required. |
-| `admins` | Admin profile and active access state; permissions are enforced server-side. |
-| `pudoPartners` | PUDO partner login/profile, separate from Admin identity. |
-| `pudoLocations` | One current location record: identity, address, lifecycle, shared default capabilities, schedule, availability and capacity summary. Each location owns a small `personnel` subcollection for named roster entries. |
-| `shipments` | The single authoritative shipment aggregate across all three creation channels. |
-| `shipmentQuotes` | One quote lineage per shipment with current quote and necessary revisions/snapshots. |
-| `payments` | Payment attempts/provider transactions linked to shipment; retries create attempts only after failure. |
-| `shipmentEvents` | Append-only timeline for shipment lifecycle and operational events; may be a subcollection under shipment. |
-| `parcelIntakes` | One record per physical intake, linked to shipment and affected parcel(s), with mandatory photo evidence. |
-| `shipmentAssignments` | Current and historical operational responsibility for pickup, PUDO handling, transfer or delivery. |
-| `shipmentDocuments` | Shipment-linked generated document metadata, version and Storage path. |
-| `notifications` | Minimum notification/delivery attempts needed for payment, progress and delivery communication. |
+| Logical structure | Authoritative source/path | Responsibility |
+|---|---|---|
+| Customers | Existing `users/{uid}`; walk-ins at `verilyftShipmentData/v1/walkInCustomers/{customerId}` | Existing registered profile authority; minimal pending walk-in profile only. |
+| Admins | Existing `adminAccess/{uid}` | Existing active Admin access authority; no duplicate Admin collection. |
+| PUDO partners | Existing `pudoPartnerAccounts/{uid}` | Existing partner identity; distinct from Admin and roster personnel. |
+| PUDO locations | Existing `pudoLocations/{locationId}` and PUDO evidence collections | Existing location and verification/activation/capability/operations authorities. |
+| Shipments | `verilyftShipmentData/v1/shipments/{shipmentId}` | One authoritative shipment aggregate. |
+| Shipment quotes | `verilyftShipmentData/v1/quoteLineages/{quoteId}/revisions/{revisionId}` | One quote lineage per shipment; immutable revisions. Legacy `shipmentQuotes` remains separate. |
+| Payments | `verilyftShipmentData/v1/payments/{paymentId}` | Provider payment attempts linked to shipment and accepted quote revision. |
+| Shipment events | `verilyftShipmentData/v1/shipments/{shipmentId}/events/{eventId}` | Append-only timeline, including material custody events. |
+| Parcel intakes | `verilyftShipmentData/v1/parcelIntakes/{intakeId}` | Completed physical intake linked to shipment/parcels, with mandatory photo evidence. |
+| Shipment assignments | `verilyftShipmentData/v1/shipments/{shipmentId}/assignments/{assignmentId}` | Responsibility history, distinct from custody. |
+| Shipment documents | `verilyftShipmentData/v1/shipments/{shipmentId}/documents/{documentId}` | Immutable versioned metadata and protected Storage path; binaries remain in Storage. |
+| Notifications | `verilyftShipmentData/v1/notifications/{notificationId}` | Recipient-specific deduplicated intent and append-only delivery attempts. |
+
+Parcels are separately modelled at `verilyftShipmentData/v1/parcels/{parcelId}` with a required `shipmentId` relationship. PUDO personnel remain roster entries under the existing PUDO location record.
 
 Worker roster records, saved customer address/contact records, quote revisions, intake corrections and notification attempts should be embedded or nested under their owning record where that is sufficient. Do not create standalone top-level collections for them without a demonstrated query/security requirement.
 
