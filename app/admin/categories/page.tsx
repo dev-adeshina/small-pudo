@@ -286,7 +286,7 @@ export default function CategoriesPage() {
         </div>
       }
     >
-      <main className="admin-page">
+      <div className="admin-page">
       {/* =====================================================
           ADMIN HEADER
           ===================================================== */}
@@ -545,7 +545,7 @@ export default function CategoriesPage() {
           onCancel={() => setDeletingCategory(null)}
         />
       )}
-    </main>
+    </div>
     </WorkspaceShell>
   );
 }
