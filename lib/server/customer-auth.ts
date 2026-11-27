@@ -11,7 +11,7 @@ type TokenVerifier = (token: string, checkRevoked: boolean) => Promise<VerifiedC
 
 /**
  * Verify a Firebase bearer token and require a verified customer email.
- * This helper deliberately does not apply administrator revocation policy.
+ * Revoked sessions are rejected before customer data is accessed.
  */
 export async function authenticateVerifiedCustomer(
   authorization: string | null,
