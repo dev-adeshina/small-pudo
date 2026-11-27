@@ -85,7 +85,7 @@ It:
 - Uses Firestore reads and count aggregation only.
 - Enumerates top-level and nested subcollections.
 - Scans field names/types, not field values.
-- Supports a per-collection schema scan cap; when used, exact document counts remain separate from the number inspected for schema.
+- Supports a per-collection traversal cap; when used, exact document counts remain separate from the number inspected. Schema and nested-subcollection discovery are marked incomplete when the cap prevents inspection of every parent document.
 - Writes a sanitised structural report to stdout or a local path supplied by the operator.
 - Does not alter Firestore data, rules, indexes or database configuration.
 
@@ -102,7 +102,7 @@ GOOGLE_APPLICATION_CREDENTIALS=/secure/path/to/read-only-service-account.json \
 
 Prefer an authorised read-only identity. If the operator uses Application Default Credentials from a local login, verify the active account and project before execution. Never copy credentials into the repository or report.
 
-For a bounded schema scan, add `--max-docs-per-collection 500`. The report will identify schema inspection as partial while preserving the count aggregation result. A complete scan may read every document and recursively enumerate each document's subcollections; assess cost and operational impact first.
+For a bounded scan, add `--max-docs-per-collection 500`. The report will identify schema inspection and nested-subcollection discovery as incomplete where parent documents were not traversed, while preserving the separate count aggregation result. A complete scan may read every document and recursively enumerate each document's subcollections; assess cost and operational impact first.
 
 ## 8. Review and migration decision workflow
 
