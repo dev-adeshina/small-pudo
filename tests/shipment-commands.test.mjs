@@ -82,6 +82,7 @@ test("customer submission derives actor/channel, creates shipment, parcels and i
   assert.equal(result.status, "Submitted");
   assert.equal(state.shipments.get(result.shipmentId).createdVia, "customer_portal");
   assert.equal(state.shipments.get(result.shipmentId).createdBy.id, "customer-1");
+  assert.equal(state.shipments.get(result.shipmentId).measurementReviewStatus, "open");
   assert.equal(state.parcels.get(result.shipmentId).length, 1);
   assert.equal(state.events.length, 1);
   assert.ok(state.transactionTokens.every(token => token.id === 1));
