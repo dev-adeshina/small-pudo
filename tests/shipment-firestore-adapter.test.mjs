@@ -443,7 +443,7 @@ test("record commands persist photo-evidenced intake, assignment, document and n
     ports,
     idFactory: prefix => `${prefix}-${++sequence}`,
     clock: () => new Date("2026-11-27T12:00:00.000Z"),
-    authorizePudoLocation: async (partnerId, locationId) => partnerId === "partner-1" && locationId === "pudo-origin",
+    authorizePudoLocation: async (partnerId, target) => partnerId === "partner-1" && (target === "pudo-origin" || target?.id === "pudo-origin"),
   });
   const actor = { type: "pudo_partner", id: "partner-1" };
   const intake = await commands.recordParcelIntake({
