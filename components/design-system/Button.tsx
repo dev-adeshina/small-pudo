@@ -20,6 +20,7 @@ export function Button({
   disabled,
   children,
   className = "",
+  type = "button",
   ...props
 }: ButtonProps) {
   const classes = ["vl-button", `vl-button--${variant}`, size === "md" ? "" : `vl-button--${size}`, className]
@@ -27,7 +28,7 @@ export function Button({
     .join(" ");
 
   return (
-    <button {...props} className={classes} disabled={disabled || loading} aria-busy={loading || undefined}>
+    <button {...props} type={type} className={classes} disabled={disabled || loading} aria-busy={loading || undefined}>
       {loading ? <span aria-hidden="true">…</span> : leadingIcon}
       <span>{children}</span>
       {!loading && trailingIcon}
