@@ -375,7 +375,6 @@ export default function ShipmentDraftsPage() {
         </div>
       </main>
     );
-    );
   }
 
   return (
