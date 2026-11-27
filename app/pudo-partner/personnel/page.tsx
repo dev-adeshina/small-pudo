@@ -155,7 +155,7 @@ export default function PudoPersonnelPage() {
           description="Register the people who work at your PUDO location and maintain their operational roles."
         />
         {error && <div className="vl-pudo-alert"><FeedbackState variant="error" title="Something needs attention" description={error} /></div>}
-        {notice && <div className="vl-pudo-alert"><FeedbackState variant="success" title="Saved" description={notice} /></div>}
+        {notice && <p className="vl-pudo-footnote" role="status">{notice}</p>}
         {applications.length === 0 ? (
           <SurfaceCard><FeedbackState variant="empty" title="No PUDO location registered" description="Register a station before adding its personnel." action={<Link className="vl-button vl-button--primary" href="/pudo-partner#locations">Register a location</Link>} /></SurfaceCard>
         ) : (
