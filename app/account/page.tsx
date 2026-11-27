@@ -27,6 +27,7 @@ import { PageHeader } from "@/components/design-system/PageHeader";
 import { StatusBadge } from "@/components/design-system/StatusBadge";
 import { Button } from "@/components/design-system/Button";
 import { FeedbackState } from "@/components/design-system/FeedbackState";
+import { Pagination } from "@/components/design-system/Pagination";
 
 interface ShipmentDraft {
   id: string;
@@ -134,6 +135,8 @@ export default function CustomerAccountPage() {
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [ordersError, setOrdersError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
+  const [ordersPage, setOrdersPage] = useState(1);
+  const [draftsPage, setDraftsPage] = useState(1);
 
   const [drafts, setDrafts] = useState<ShipmentDraft[]>([]);
   const [draftsLoading, setDraftsLoading] = useState(true);
@@ -375,6 +378,9 @@ export default function CustomerAccountPage() {
     user.displayName?.trim().split(/\s+/)[0] ||
     user.email?.split("@")[0] ||
     "there";
+  const pageSize = 10;
+  const visibleOrders = orders.slice((ordersPage - 1) * pageSize, ordersPage * pageSize);
+  const visibleDrafts = drafts.slice((draftsPage - 1) * pageSize, draftsPage * pageSize);
 
   return (
     <WorkspaceShell
@@ -414,7 +420,7 @@ export default function CustomerAccountPage() {
             actions={
               <>
                 <Link href="/account/shipments" className="vl-button vl-button--primary">
-                  <Package size={16} /> Prepare a shipment
+                  <Package size={16} /> Send an item
                 </Link>
                 <Link href="/account/quotes" className="vl-button vl-button--secondary">
                   <FileText size={16} /> View quotations
@@ -540,13 +546,13 @@ export default function CustomerAccountPage() {
                 Saving a draft does not create a booking or payment obligation.
               </p>
               <Link href="/account/shipments" className="customer-secondary-action">
-                Prepare a shipment <ArrowRight size={16} />
+                Send an item <ArrowRight size={16} />
               </Link>
             </div>
           ) : (
             <>
               <div className="shipment-draft-list">
-                {drafts.slice(0, 3).map((draft) => (
+                {visibleDrafts.map((draft) => (
                   <article className="shipment-draft-row" key={draft.id}>
                     <div>
                       <span className="shipment-draft-status">DRAFT · NOT CONFIRMED</span>
@@ -564,12 +570,8 @@ export default function CustomerAccountPage() {
                 <Link href="/account/shipments" className="customer-secondary-action">
                   View and manage drafts <ArrowRight size={16} />
                 </Link>
-                {drafts.length > 3 && (
-                  <span className="customer-panel-description">
-                    Showing 3 of your {drafts.length === 50 ? "50 latest" : drafts.length} saved drafts.
-                  </span>
-                )}
               </div>
+              <Pagination page={Math.min(draftsPage, Math.max(1, Math.ceil(drafts.length / pageSize)))} totalItems={drafts.length} pageSize={pageSize} onPageChange={setDraftsPage} />
             </>
           )}
         </section>
@@ -629,7 +631,7 @@ export default function CustomerAccountPage() {
               </div>
             ) : (
               <div className="customer-orders-list">
-                {orders.map((order) => (
+                {visibleOrders.map((order) => (
                   <article className="customer-order-row" key={order.id}>
                     <div className="customer-order-main">
                       <span className="customer-order-icon">
@@ -734,6 +736,7 @@ export default function CustomerAccountPage() {
                   </article>
                 ))}
               </div>
+              <Pagination page={Math.min(ordersPage, Math.max(1, Math.ceil(orders.length / pageSize)))} totalItems={orders.length} pageSize={pageSize} onPageChange={setOrdersPage} />
             )}
           </div>
 

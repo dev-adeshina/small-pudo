@@ -22,6 +22,7 @@ import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
 import { customerWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
 import { Button } from "@/components/design-system/Button";
 import { FeedbackState } from "@/components/design-system/FeedbackState";
+import { Pagination } from "@/components/design-system/Pagination";
 
 interface PudoLocationOption {
   locationId: string;
@@ -418,7 +419,7 @@ export default function ShipmentDraftsPage() {
       <div className="customer-shell shipment-shell">
         <div className="shipment-heading">
           <span className="eyebrow">VERILYFT / SHIPMENT BOOKING</span>
-          <h1>Prepare a <em>shipment.</em></h1>
+          <h1>Send an <em>item.</em></h1>
           <p>
             Save your shipment details first. A saved draft is not a confirmed
             booking, a quotation, a payment request, or proof that a parcel has
@@ -427,7 +428,7 @@ export default function ShipmentDraftsPage() {
         </div>
 
         <div className="shipment-policy-note" role="note">
-          <strong>Prepare first, request a quotation when available</strong>
+          <strong>Add item details first, request a quotation when available</strong>
           <p>
             Saving a draft does not create a booking, payment obligation or custody record.
             Quotation requests are checked against current service eligibility, route evidence

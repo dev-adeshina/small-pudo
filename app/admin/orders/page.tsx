@@ -11,6 +11,7 @@ import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
 import { adminWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
 import { Button } from "@/components/design-system/Button";
 import { FeedbackState } from "@/components/design-system/FeedbackState";
+import { Pagination } from "@/components/design-system/Pagination";
 
 import {
   ArrowLeft,
@@ -129,6 +130,8 @@ export default function AdminOrdersPage() {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const [savingShipping, setSavingShipping] = useState<string | null>(null);
+  const [ordersPage, setOrdersPage] = useState(1);
+  const ordersPageSize = 10;
 
   // useEffect(() => {
   //   const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -365,6 +368,7 @@ export default function AdminOrdersPage() {
     });
   }, [orders, search, statusFilter]);
 
+  const visibleOrders = filteredOrders.slice((ordersPage - 1) * ordersPageSize, ordersPage * ordersPageSize);
   const paidCount = orders.filter((order) => order.paymentStatus === "paid").length;
   const fulfilmentCount = orders.filter((order) => ["processing", "ready_for_shipping", "shipped"].includes(order.orderStatus)).length;
 
@@ -449,7 +453,7 @@ export default function AdminOrdersPage() {
               <table className="orders-table">
                 <thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Payment</th><th>Fulfilment</th><th><span className="sr-only">Actions</span></th></tr></thead>
                 <tbody>
-                  {filteredOrders.map((order) => {
+                  {visibleOrders.map((order) => {
                     const next = nextStatus(order.orderStatus);
                     const isExpanded = expandedOrder === order.id;
                     return (
@@ -506,6 +510,9 @@ export default function AdminOrdersPage() {
                 </tbody>
               </table>
             </div>
+          )}
+          {!loading && !error && filteredOrders.length > 0 && (
+            <Pagination page={Math.min(ordersPage, Math.max(1, Math.ceil(filteredOrders.length / ordersPageSize)))} totalItems={filteredOrders.length} pageSize={ordersPageSize} onPageChange={setOrdersPage} />
           )}
         </section>
 

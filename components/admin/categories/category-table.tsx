@@ -2,6 +2,8 @@
 "use client"
 
 import Image from "next/image"
+import { useState } from "react"
+import { Pagination } from "@/components/design-system/Pagination"
 
 import {
   Edit,
@@ -27,6 +29,12 @@ export function CategoryTable({
   onDelete,
   onStatusChanged,
 }: Props) {
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const pageCount = Math.max(1, Math.ceil(categories.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const visibleCategories = categories.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
   if (categories.length === 0) {
     return (
       <div className="category-empty">
@@ -62,7 +70,7 @@ export function CategoryTable({
           </thead>
 
           <tbody>
-            {categories.map((category) => (
+            {visibleCategories.map((category) => (
               <tr key={category.id}>
                 <td>
                   <div className="category-table-image">
@@ -145,6 +153,7 @@ export function CategoryTable({
           </tbody>
         </table>
       </div>
+      <Pagination page={currentPage} totalItems={categories.length} pageSize={pageSize} onPageChange={setPage} />
     </div>
   )
 }
