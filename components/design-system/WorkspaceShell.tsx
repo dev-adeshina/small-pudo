@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Breadcrumbs, type BreadcrumbItem } from "@/components/design-system/Breadcrumbs";
 
@@ -29,7 +29,19 @@ export function WorkspaceShell({
   breadcrumbs?: BreadcrumbItem[];
 }) {
   const pathname = usePathname();
+  const [currentHash, setCurrentHash] = useState("");
+
+  useEffect(() => {
+    const syncHash = () => setCurrentHash(window.location.hash);
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, [pathname]);
+
   const sections = [...new Set(navigation.map((item) => item.section))];
+  const firstItemForPath = navigation.find(
+    (item) => item.href.split("#")[0] === pathname
+  );
 
   return (
     <div className="vl-workspace">
@@ -38,13 +50,19 @@ export function WorkspaceShell({
           <span className="vl-workspace__brand-mark" aria-hidden="true">V</span>
           <span>{workspaceName}<small>{workspaceLabel}</small></span>
         </Link>
-        <nav className="vl-workspace-nav">
+        <nav className="vl-workspace-nav" aria-label="Workspace sections">
           {sections.map((section) => (
             <div className="vl-workspace-nav__group" key={section}>
               <span className="vl-workspace-nav__label">{section}</span>
               {navigation.filter((item) => item.section === section).map((item) => {
                 const Icon = item.icon;
-                const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href + "/"));
+                const [itemPath, itemHash] = item.href.split("#");
+                const active = itemHash
+                  ? pathname === itemPath &&
+                    (currentHash === `#${itemHash}` ||
+                      (!currentHash && firstItemForPath === item))
+                  : pathname === itemPath ||
+                    (itemPath !== "/" && pathname.startsWith(itemPath + "/"));
                 return (
                   <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}>
                     {Icon && <Icon size={17} aria-hidden="true" />}
