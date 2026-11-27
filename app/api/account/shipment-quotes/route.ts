@@ -41,7 +41,7 @@ function roundCommercialTotal(value: number, mode: unknown, decimalPlaces: unkno
 }
 
 export async function GET(request: Request) {
-  const customer = await authenticateVerifiedCustomer(request.headers.get("authorization"), (token) => adminAuth.verifyIdToken(token));
+  const customer = await authenticateVerifiedCustomer(request.headers.get("authorization"), (token, checkRevoked) => adminAuth.verifyIdToken(token, checkRevoked));
   if (!customer.success) return NextResponse.json({ error: customer.error }, { status: customer.status });
   try {
     const quotes = await shipmentQuoteStore.listCustomerQuotes(customer.uid);
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const customer = await authenticateVerifiedCustomer(request.headers.get("authorization"), (token) => adminAuth.verifyIdToken(token));
+  const customer = await authenticateVerifiedCustomer(request.headers.get("authorization"), (token, checkRevoked) => adminAuth.verifyIdToken(token, checkRevoked));
   if (!customer.success) return NextResponse.json({ error: customer.error }, { status: customer.status });
 
   let body: unknown;
