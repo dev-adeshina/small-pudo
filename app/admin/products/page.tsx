@@ -365,7 +365,7 @@ export default function ProductsPage() {
         </div>
       }
     >
-      <main className="admin-page">
+      <div className="admin-page">
       <header className="admin-header">
         <Link
           href="/"
@@ -670,7 +670,7 @@ export default function ProductsPage() {
           }
         />
       )}
-    </main>
+    </div>
     </WorkspaceShell>
   )
 }
