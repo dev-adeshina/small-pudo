@@ -82,7 +82,7 @@ The command tests use in-memory injected ports to verify channel derivation, own
 - An active attempt blocks another attempt. The shipment points to the currently active attempt, and the payment attempt plus shipment update and event are written in one transaction.
 - The command creates the payment attempt and returns the provider reference and amount for a later server-side Paystack initialization adapter. It does not call Paystack or create a checkout session.
 - Booking confirmation requires an injected trusted server-side verifier to confirm the provider reference, successful status, amount and currency. A browser redirect or client-supplied success flag is not accepted as proof.
-- After verification, the command transactionally marks the attempt successful, marks the shipment payment successful, moves the shipment to `Confirmed`, records the confirmation time and appends an event. A stale/non-current attempt cannot confirm the shipment.
+- After verification, only an `initialised` or `pending` attempt may be confirmed. The command transactionally marks the attempt successful, marks the shipment payment successful, moves the shipment to `Confirmed`, records the confirmation time and appends an event. Failed, abandoned, refunded or otherwise non-active attempts cannot confirm the shipment.
 - The payment repository exposes `getById`, `getByProviderReference`, `createAttempt` and `updateAttempt`. Its adapter and the transaction runner must enforce atomicity and concurrency guarantees.
 - Focused tests cover owner and lifecycle boundaries, retry behavior, amount/currency reconciliation, provider verification and confirmation. These in-memory tests do not prove Paystack integration or database isolation.
 
