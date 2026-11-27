@@ -90,9 +90,15 @@ test("customer submission derives actor/channel, creates shipment, parcels and i
 test("PUDO walk-in submission creates a pending profile without an Auth UID", async () => {
   const { state, commands } = fixture();
   const result = await commands.submitShipment({
-    actor: { type: "pudo_partner", id: "partner-1" },
+    actor: { type: "pudo_partner", id: "partner-1", pudoLocationId: "pudo-1" },
     idempotencyKey: "walkin-001",
-    shipment: { ...shipmentInput, walkInCustomer: { fullName: "Walk-in Customer", phone: "+2348000000001" } },
+    shipment: {
+      ...shipmentInput,
+      serviceType: "pudo_to_pudo",
+      origin: { type: "pudo", pudoLocationId: "pudo-1" },
+      destination: { type: "pudo", pudoLocationId: "pudo-2" },
+      walkInCustomer: { fullName: "Walk-in Customer", phone: "+2348000000001" },
+    },
     parcels: [parcelInput],
   });
   const customer = state.customers.get(result.customerId);
@@ -100,6 +106,26 @@ test("PUDO walk-in submission creates a pending profile without an Auth UID", as
   assert.equal(customer.authUid, null);
   assert.equal(customer.createdBy.id, "partner-1");
   assert.equal(state.shipments.get(result.shipmentId).createdVia, "pudo_walk_in");
+});
+
+
+test("PUDO walk-in submission cannot originate from another location", async () => {
+  const { commands } = fixture();
+  await assert.rejects(
+    commands.submitShipment({
+      actor: { type: "pudo_partner", id: "partner-1", pudoLocationId: "pudo-1" },
+      idempotencyKey: "walkin-wrong-location",
+      shipment: {
+        ...shipmentInput,
+        serviceType: "pudo_to_pudo",
+        origin: { type: "pudo", pudoLocationId: "pudo-foreign" },
+        destination: { type: "pudo", pudoLocationId: "pudo-2" },
+        walkInCustomer: { fullName: "Walk-in Customer", phone: "+2348000000001" },
+      },
+      parcels: [parcelInput],
+    }),
+    error => error.code === "PUDO_ORIGIN_MISMATCH"
+  );
 });
 
 test("Admin-assisted submission requires an existing customer", async () => {
