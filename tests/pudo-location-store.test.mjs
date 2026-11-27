@@ -91,6 +91,7 @@ describe("PUDO candidate registration store", { skip: !enabled }, () => {
   it("creates, reopens, updates and submits a candidate with an append-only audit trail", async () => {
     const created = await store.saveCandidate(staffUid, {
       name: "Test collection point",
+      partnerBusinessName: "Synthetic Partner Business",
       address: "12 Example Street, Test District",
       registrationNote: "Synthetic registration test",
       geo: {
@@ -226,6 +227,7 @@ describe("PUDO candidate registration store", { skip: !enabled }, () => {
   it("rejects incomplete submissions and invalid coordinates", async () => {
     const created = await store.saveCandidate(staffUid, {
       name: "Incomplete candidate",
+      partnerBusinessName: "Synthetic Partner Business",
     });
 
     locationIds.push(created.locationId);
