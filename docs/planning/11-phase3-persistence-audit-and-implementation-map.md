@@ -261,3 +261,30 @@ It uses a separately named Firebase Admin app per environment and refuses a proj
 - This is code-level adapter coverage using a fake Firestore transaction harness. It is not evidence of live Firestore transaction isolation or concurrency under contention.
 - The staging Firebase project has not been provisioned or connected. No Firestore documents, rules, indexes, Storage configuration, migration or production data have been changed.
 - The adapter is not yet wired into application routes. No customer, Admin or PUDO UI/API is connected to it.
+
+
+## 10. Completion implementation update — 27 November 2026
+
+The initial persistence gap list has now been addressed at the code-contract/repository layer:
+
+| Foundational area | Implementation |
+|---|---|
+| Existing customer/Admin/PUDO partner/PUDO location authorities | Read-only `authorities` repository; preserves the existing `users`, `adminAccess`, `pudoPartnerAccounts` and `pudoLocations` authorities |
+| Parcel intake | Canonical completed intake contract; mandatory photo references; immutable root intake records; corrections append a linked new record |
+| Shipment assignment | Canonical responsibility-period contract; shipment subcollection; retained history; status-only updates |
+| Shipment documents | Canonical versioned metadata; immutable shipment subcollection records; protected Storage path and checksum; binary data excluded |
+| Notifications | Recipient-specific intent; deterministic deduplication index; bounded status updates; append-only delivery attempts |
+| Command orchestration | Transaction-scoped commands for intake, assignment, document metadata, notification intent and delivery attempts |
+| Verification | Complete repository-port assertion and fake-Firestore tests for relationships, immutable records, deduplication and command orchestration |
+
+PUDO partner location authorisation is injected and evaluated before entering retryable Firestore transaction callbacks; no external resolver/network work is run from inside a transaction callback. Physical intake timestamps and generated record IDs are server-derived. PUDO-origin station drop-off updates the shipment to `Received at PUDO` only after a completed photo-evidenced intake and matching origin PUDO. Assignment remains separate from custody.
+
+## 11. Data model relationship and authority checks
+
+The canonical shipment remains the aggregate root. Parcels, quotes, payments and events retain explicit shipment links; intakes link a shipment and one or more of its parcel IDs; assignments and documents are nested under their shipment; notifications link both shipment and a recipient identity. Notification attempts are nested under their notification. Existing identity and PUDO location records remain external authorities referenced by IDs, not copied into shipment records.
+
+The Firestore adapter uses the `verilyftShipmentData/v1` namespace. The identity authority collections must exist in the same environment-specific Firestore database as the shipment namespace because Firestore transactions cannot span database instances. The adapter rejects a separately injected identity database to prevent false assumptions about cross-database atomicity.
+
+## 12. Remaining verification and deployment boundary
+
+Code-level implementation does not complete live staging verification. The fake Firestore harness cannot prove actual Firestore transaction contention, retries, create preconditions, composite-index behavior, Storage object existence, Storage access controls or production security rules. Live verification still requires staging project provisioning/configuration and a separate explicit approval for any resource deployment. No production data, rules, indexes, Storage resources, migrations or backfills have been changed. The PR remains draft until local test/build verification and the staging integration gate are resolved.
