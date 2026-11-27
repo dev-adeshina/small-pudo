@@ -181,7 +181,7 @@ Quotation/payment states are reflected in the shipment's overall status. A shipm
 - evidence/document references;
 - visibility classification (customer, recipient, Admin-only).
 
-A submitted shipment cannot be rejected before quotation. The exact point and authority for rejection after quotation must be settled. Cancellation after confirmation/payment is not supported initially; the Cancelled exception state is retained only if a permitted pre-confirmation cancellation path is approved.
+A shipment cannot be rejected before quotation. After quotation and before customer acceptance/payment, Admin may reject it with a mandatory reason; the current quote is marked withdrawn/void and the rejection is appended to the shipment timeline. A customer or Admin may cancel while the shipment is in `Submitted`, `Under Review`, `Quoted` or `Awaiting Payment`, provided no successful payment/confirmation exists. Cancellation requires an attributable actor and mandatory reason; any active quote is withdrawn. Cancellation after successful payment/confirmation is outside initial scope.
 
 Custody and assignment events must not be inferred from main shipment status. Record actual physical receipt/handover separately.
 
