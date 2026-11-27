@@ -1,8 +1,8 @@
-## VeriLyft Final Minimal Firestore Schema
+# VeriLyft Final Minimal Firestore Schema
 
-**Version:** 0.1  
+**Version:** 1.0  
 **Date:** 27 November 2026  
-**Status:** Decision draft based on product-owner answers; not implementation authorisation.
+**Status:** Final logical architecture baseline for Phase 3 planning. Database provisioning and deployment remain separately approval-gated.
 
 > Governing rule: Build the simplest data structure that fully supports the approved VeriLyft workflows. Do not carry forward complexity simply because it already exists.
 
