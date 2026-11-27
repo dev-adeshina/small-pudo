@@ -22,6 +22,7 @@ const baseShipment = {
 test("shipment contract enforces channel attribution and Submitted initial state", () => {
   assert.equal(createShipmentContract(baseShipment).status, "Submitted");
   assert.throws(() => createShipmentContract({ ...baseShipment, status: "Draft" }), /status must begin at Submitted/);
+  assert.throws(() => createShipmentContract({ ...baseShipment, origin: { type: "pudo", pudoLocationId: "p1" } }), /must match the door_to_pudo service endpoints/);
   assert.throws(() => createShipmentContract({ ...baseShipment, createdBy: { type: "pudo_partner", id: "p1" } }), /createdBy must be a customer/);
 });
 
