@@ -12,7 +12,6 @@ import {
   Clock3,
   FileText,
   LogOut,
-  Home,
   Package,
   ShieldCheck,
   ShoppingBag,
