@@ -310,3 +310,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+.vl-customer-inline-retry {
+  width: fit-content;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--vl-info);
+  font: inherit;
+  font-size: .74rem;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
