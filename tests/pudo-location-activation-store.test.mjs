@@ -144,6 +144,7 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
   async function createCandidate(name = "Activation test PUDO") {
     const created = await registrationStore.saveCandidate(registerUid, {
       name,
+      partnerBusinessName: "Synthetic Activation Partner",
       address: "12 Example Street, Test District",
       registrationNote: "Synthetic activation test",
       geo: {
@@ -187,12 +188,12 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
     const locationId = await createCandidate();
 
     await assert.rejects(
-      activationStore.activateLocation(verifierUid, locationId),
+      activationStore.activateLocation(verifierUid, locationId, "Synthetic activation test"),
       /not authorised to activate PUDO locations/,
     );
 
     await assert.rejects(
-      activationStore.activateLocation(deniedUid, locationId),
+      activationStore.activateLocation(deniedUid, locationId, "Synthetic activation test"),
       /not authorised to activate PUDO locations/,
     );
   });
@@ -219,6 +220,7 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
     const result = await activationStore.activateLocation(
       activatorUid,
       locationId,
+      "Synthetic activation test",
     );
 
     assert.deepEqual(result, {
@@ -263,6 +265,7 @@ describe("PUDO location activation store", { skip: !enabled }, () => {
   it("rejects activation of a draft candidate", async () => {
     const created = await registrationStore.saveCandidate(registerUid, {
       name: "Draft candidate",
+      partnerBusinessName: "Synthetic Activation Partner",
       address: "12 Example Street, Test District",
     });
 
