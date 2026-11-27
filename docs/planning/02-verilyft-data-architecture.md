@@ -81,7 +81,7 @@ The customer-facing lifecycle begins at `Submitted`, never at Draft:
 
 Exceptions: Rejected, Cancelled, Payment Failed, Collection Failed, Delivery Failed and Returned.
 
-The lifecycle is a set of permitted transitions, not a requirement that every shipment passes through every state. Service type determines which operational events apply. `Awaiting Collection` means waiting for physical handover from the sender. For a PUDO-origin service, sender drop-off and photo-evidenced intake move the shipment to `Received at PUDO`; for door-pickup services, `Collected` is recorded only after the operator physically collects the parcel. The detailed transition table must be approved before the state machine is implemented.
+The lifecycle is a set of permitted transitions, not a requirement that every shipment passes through every state. The following service-specific handover rules are approved: `Awaiting Collection` means waiting for physical handover from the sender. For PUDO-origin services (`pudo_to_pudo`, `pudo_to_door`), sender drop-off and completion of photo-evidenced origin intake move the shipment to `Received at PUDO`; `Collected` is not used for a PUDO drop-off. For door-origin services (`door_to_pudo`, `door_to_door`), `Collected` is recorded only after actual physical pickup by the assigned operator. Domain transitions must enforce the relevant evidence gates.
 
 ## 6. PUDO identity and access
 
