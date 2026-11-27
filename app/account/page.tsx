@@ -23,6 +23,7 @@ import {
 import { auth } from "@/lib/firebase";
 import { signOutCustomer } from "@/lib/customer-auth";
 import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
+import { customerWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
 import { PageHeader } from "@/components/design-system/PageHeader";
 import { StatusBadge } from "@/components/design-system/StatusBadge";
 import { Button } from "@/components/design-system/Button";
@@ -380,14 +381,7 @@ export default function CustomerAccountPage() {
     <WorkspaceShell
       workspaceName="VeriLyft"
       workspaceLabel="Customer workspace"
-      navigation={[
-        { label: "Overview", href: "/account", section: "HOME", icon: Home },
-        { label: "Shipments", href: "/account/shipments", section: "SHIPPING", icon: Package },
-        { label: "Quotations", href: "/account/quotes", section: "SHIPPING", icon: FileText },
-        { label: "My orders", href: "/account#orders", section: "STORE", icon: ShoppingBag },
-        { label: "My profile", href: "/account/profile", section: "ACCOUNT", icon: UserRound },
-        { label: "Browse store", href: "/products", section: "STORE", icon: ArrowUpRight },
-      ]}
+      navigation={customerWorkspaceNavigation}
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: "Customer account", href: "/account" },
