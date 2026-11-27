@@ -19,7 +19,8 @@
  */
 
 import { writeFile } from "node:fs/promises";
-import { initializeApp, applicationDefault } from "firebase-admin/app";
+import { existsSync } from "node:fs";
+import { initializeApp, applicationDefault, cert } from "firebase-admin/app";
 import { FieldPath, getFirestore } from "firebase-admin/firestore";
 
 function parseArgs(argv) {
@@ -144,13 +145,35 @@ async function main() {
     throw new Error(`Both --project and --database are required.\n${usage()}`);
   }
 
+  // Load the local environment file when present. It is never read into the report
+  // and must remain untracked. Shell-provided variables take precedence.
+  if (existsSync(".env.local")) process.loadEnvFile(".env.local");
+
+  const configuredProjectId = process.env.FIREBASE_PROJECT_ID;
+  if (configuredProjectId && configuredProjectId !== options.project) {
+    throw new Error("FIREBASE_PROJECT_ID does not match the explicitly requested --project.");
+  }
+
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\\\n/g, "\\n").replace(/^["']|["']$/g, "");
+  const hasAnyServiceAccountSetting = Boolean(configuredProjectId || clientEmail || process.env.FIREBASE_PRIVATE_KEY);
+  const hasCompleteServiceAccount = Boolean(clientEmail && privateKey);
+
+  if (hasAnyServiceAccountSetting && !hasCompleteServiceAccount) {
+    throw new Error("Firebase service-account credentials are incomplete; refusing to fall back to another identity.");
+  }
+
+  const credential = hasCompleteServiceAccount
+    ? cert({ projectId: options.project, clientEmail, privateKey })
+    : applicationDefault();
+
   const maxDocs = options["max-docs-per-collection"] === undefined
     ? Infinity
     : positiveInteger(options["max-docs-per-collection"], 0, "max-docs-per-collection");
   const pageSize = Math.min(1000, positiveInteger(options["page-size"], 200, "page-size"));
 
   const app = initializeApp({
-    credential: applicationDefault(),
+    credential,
     projectId: options.project,
   }, `firestore-inventory-${options.project}-${options.database}`);
   const db = getFirestore(app, options.database);
