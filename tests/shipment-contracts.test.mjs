@@ -117,7 +117,7 @@ test("repository ports require transaction boundary and all aggregate repositori
   const ports = Object.fromEntries(["customers", "shipments", "parcels", "quotes", "payments", "events", "idempotency", "references"].map(name => [name, {}]));
   for (const [name, methods] of Object.entries({
     customers: ["create", "getById"], shipments: ["create", "getById", "getByReference", "update"], parcels: ["createMany", "listByShipment", "getById"],
-    quotes: ["createLineage", "appendRevision", "getCurrent", "withdraw"], payments: ["createAttempt", "getByProviderReference", "updateAttempt"],
+    quotes: ["createLineage", "appendRevision", "getCurrent", "withdraw"], payments: ["createAttempt", "getById", "getByProviderReference", "updateAttempt"],
     events: ["append", "listByShipment"], idempotency: ["get", "create"], references: ["reserveUnique"],
   })) for (const method of methods) ports[name][method] = async () => {};
   ports.transaction = { run: async callback => callback({}) };
