@@ -675,3 +675,16 @@
     font-size: .84rem;
   }
 }
+
+.vl-pudo-feedback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+@media (max-width: 420px) {
+  .vl-pudo-feedback-actions > * {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
