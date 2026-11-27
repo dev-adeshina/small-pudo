@@ -26,6 +26,7 @@ import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
 import { PageHeader } from "@/components/design-system/PageHeader";
 import { StatusBadge } from "@/components/design-system/StatusBadge";
 import { Button } from "@/components/design-system/Button";
+import { FeedbackState } from "@/components/design-system/FeedbackState";
 
 interface ShipmentDraft {
   id: string;
@@ -345,8 +346,14 @@ export default function CustomerAccountPage() {
 
   if (checkingAuth || !user) {
     return (
-      <main className="customer-loading">
-        <span>Checking your account...</span>
+      <main className="vl-workspace">
+        <div className="vl-workspace__content">
+          <FeedbackState
+            variant="loading"
+            title="Checking your customer account"
+            description="Verifying your sign-in before opening your workspace."
+          />
+        </div>
       </main>
     );
   }
