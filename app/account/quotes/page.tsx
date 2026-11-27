@@ -211,14 +211,12 @@ export default function CustomerQuotesPage() {
 
   if (checking || !user) {
     return (
-      <WorkspaceShell
-        workspaceName="VeriLyft"
-        workspaceLabel="Customer"
-        navigation={customerWorkspaceNavigation}
-        breadcrumbs={[{ label: "Customer", href: "/account" }, { label: "Quotations" }]}
-      >
-        <FeedbackState variant="loading" title="Checking your customer account" description="Verifying your sign-in before opening your workspace." />
-      </WorkspaceShell>
+      <main className="vl-workspace">
+        <div className="vl-workspace__content">
+          <FeedbackState variant="loading" title="Checking your customer account" description="Verifying your sign-in before opening your workspace." />
+        </div>
+      </main>
+    );
     );
   }
 
