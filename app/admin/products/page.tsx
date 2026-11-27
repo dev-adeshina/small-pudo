@@ -46,6 +46,10 @@ import { DeleteProductDialog } from "@/components/admin/products/delete-product-
 
 
 import { verifyAdminAccess } from "@/lib/admin-auth";
+import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
+import { adminWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
+import { Button } from "@/components/design-system/Button";
+import { FeedbackState } from "@/components/design-system/FeedbackState";
 
 export default function ProductsPage() {
   const router = useRouter()
@@ -339,16 +343,31 @@ export default function ProductsPage() {
 
   if (checkingAuth) {
     return (
-      <main className="admin-loading">
-        <span>
-          Loading workspace...
-        </span>
-      </main>
-    )
+      <WorkspaceShell
+      workspaceName="VeriLyft"
+      workspaceLabel="Admin"
+      navigation={adminWorkspaceNavigation}
+      breadcrumbs={[{ label: "Admin", href: "/admin" }]}
+    >
+      <FeedbackState variant="loading" title="Verifying administrator access" description="Confirming your Admin session and permissions." />
+    </WorkspaceShell>
+    );
   }
 
   return (
-    <main className="admin-page">
+    <WorkspaceShell
+      workspaceName="VeriLyft"
+      workspaceLabel="Admin"
+      navigation={adminWorkspaceNavigation}
+      breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Products" }]}
+      topbarContent={
+        <div className="vl-workspace__account-actions">
+          <span>{adminEmail}</span>
+          <Button variant="outline" size="sm" onClick={handleLogout}>Sign out</Button>
+        </div>
+      }
+    >
+      <main className="admin-page">
       <header className="admin-header">
         <Link
           href="/"
@@ -654,5 +673,6 @@ export default function ProductsPage() {
         />
       )}
     </main>
+    </WorkspaceShell>
   )
 }
