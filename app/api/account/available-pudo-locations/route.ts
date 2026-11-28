@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 
 import { adminAuth } from "@/lib/firebase-admin";
-// @ts-ignore Shipment runtime selects the configured Firebase environment.
+// @ts-expect-error -- Shipment runtime selects the configured Firebase environment.
 import { createShipmentFirestoreRuntime } from "@/lib/shipment/firestore-runtime.mjs";
 import { authenticateVerifiedCustomer } from "@/lib/server/customer-auth";
 
