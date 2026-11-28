@@ -92,12 +92,12 @@ export async function GET(request: Request, context: Context) {
           const record = item.data();
           return { eventId: item.id, eventType: record.eventType, occurredAt: record.occurredAt, summary: record.summary, visibility: record.visibility };
         }).filter((item: Record<string, unknown>) => Array.isArray(item.visibility) && item.visibility.includes("customer"))
-          .map(({ visibility: _visibility, ...item }: Record<string, unknown>) => item),
+          .map((item: Record<string, unknown>) => { const customerEvent = { ...item }; delete customerEvent.visibility; return customerEvent; }),
         documents: documents.docs.map((item: { id: string; data(): Record<string, unknown> }) => {
           const record = item.data();
           return { documentId: item.id, documentType: record.documentType, version: record.version, contentType: record.contentType, sizeBytes: record.sizeBytes, generatedAt: record.generatedAt, access: record.access };
         }).filter((item: Record<string, unknown>) => Array.isArray(item.access) && item.access.includes("customer"))
-          .map(({ access: _access, ...item }: Record<string, unknown>) => item),
+          .map((item: Record<string, unknown>) => { const customerDocument = { ...item }; delete customerDocument.access; return customerDocument; }),
       },
     }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
