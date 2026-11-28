@@ -159,7 +159,7 @@ export function createCommercialQuotationReadinessStore({
   }
 
   function operationalEvidenceMatches(
-    item: { evidence: Record<string, any> },
+    item: { evidence: Record<string, unknown> },
     kind: OperationalEvidenceKind,
     serviceCode: CommercialServiceCode,
     originId: string,
