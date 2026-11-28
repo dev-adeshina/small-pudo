@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     const runtime = createShipmentFirestoreRuntime();
     const shipments = await runtime.db.collection("verilyftShipmentData").doc("v1").collection("shipments")
       .where("customerId", "==", customer.uid).limit(100).get();
-    const quotes = await Promise.all(shipments.docs.map(async (shipment: { id: string; data(): Record<string, any> }) => {
+    const quotes = await Promise.all(shipments.docs.map(async (shipment: { id: string; data(): Record<string, unknown> }) => {
       const data = shipment.data();
       if (typeof data.quoteId !== "string" || !data.quoteId) return null;
       const lineageRef = runtime.db.collection("verilyftShipmentData").doc("v1").collection("quoteLineages").doc(data.quoteId);
@@ -50,7 +50,7 @@ export async function GET(request: Request) {
     }));
     return NextResponse.json({
       success: true,
-      quotes: quotes.filter(Boolean).sort((a: any, b: any) => String(b.revision.issuedAt).localeCompare(String(a.revision.issuedAt))),
+      quotes: quotes.filter((quote): quote is NonNullable<typeof quote> => quote !== null).sort((a, b) => String(b.revision.issuedAt).localeCompare(String(a.revision.issuedAt))),
     }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     console.error("Customer canonical quote retrieval failed:", error);
