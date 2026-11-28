@@ -30,7 +30,7 @@ export async function POST(request: Request, context: Context) {
   try {
     const shipmentRuntime = createShipmentFirestoreRuntime();
     runtime = shipmentRuntime;
-    const existing = await shipmentRuntime.ports.transaction.run(async (tx) => {
+    const existing = await shipmentRuntime.ports.transaction.run(async (tx: unknown) => {
       const shipment = await shipmentRuntime.ports.shipments.getById(tx, shipmentId);
       if (!shipment || shipment.customerId !== customer.uid) return null;
       const payment = shipment.paymentId ? await shipmentRuntime.ports.payments.getById(tx, shipment.paymentId) : null;
@@ -71,7 +71,7 @@ export async function POST(request: Request, context: Context) {
       shipmentId,
     });
     attempt = createdAttempt;
-    const existingPayment = await shipmentRuntime.ports.transaction.run((tx) =>
+    const existingPayment = await shipmentRuntime.ports.transaction.run((tx: unknown) =>
       shipmentRuntime.ports.payments.getById(tx, createdAttempt.paymentId)
     );
     if (typeof existingPayment?.authorizationUrl === "string") {
@@ -111,7 +111,7 @@ export async function POST(request: Request, context: Context) {
     if (checkout.protocol !== "https:" || checkout.hostname !== "checkout.paystack.com") {
       throw new Error("Paystack returned an invalid checkout destination.");
     }
-    await shipmentRuntime.ports.transaction.run((tx) =>
+    await shipmentRuntime.ports.transaction.run((tx: unknown) =>
       shipmentRuntime.ports.payments.updateAttempt(tx, createdAttempt.paymentId, {
         authorizationUrl: checkout.toString(),
         providerStatus: "initialized",
@@ -130,7 +130,7 @@ export async function POST(request: Request, context: Context) {
     const failedAttempt = attempt;
     if (failedRuntime && failedAttempt) {
       try {
-        await failedRuntime.ports.transaction.run(async (tx) => {
+        await failedRuntime.ports.transaction.run(async (tx: unknown) => {
           await failedRuntime.ports.payments.updateAttempt(tx, failedAttempt.paymentId, {
             status: "failed",
             failedAt: new Date().toISOString(),
