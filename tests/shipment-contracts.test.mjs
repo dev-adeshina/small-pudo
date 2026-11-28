@@ -56,13 +56,13 @@ test("quote revision requires increasing validity and reconciled integer minor-u
   const quote = createQuoteRevisionContract({
     revisionId: "rev-1", revisionNumber: 1, shipmentId: "s-1", currency: "NGN",
     lineItems: [{ code: "base", description: "Base", amountMinor: 50000 }, { code: "fuel", description: "Fuel", amountMinor: 10000 }],
-    totalMinor: 60000, pricingVersion: "DEC-048-v1", issuedBy: { type: "admin", id: "a1" },
+    totalMinor: 60000, distanceKm: 620, pricingInputs: { ratePerKmMinor: 5000, fuelAdjustmentMinor: 2500 }, pricingVersion: "DEC-048-v1", issuedBy: { type: "admin", id: "a1" },
     issuedAt: "2026-11-27T10:00:00Z", validUntil: "2026-11-27T11:00:00Z",
   });
   assert.equal(quote.totalMinor, 60000);
   assert.throws(() => createQuoteRevisionContract({
     revisionId: "r", revisionNumber: 1, shipmentId: "s", lineItems: [{ code: "x", description: "X", amountMinor: 1 }],
-    totalMinor: 2, pricingVersion: "v1", issuedBy: { type: "admin", id: "a" },
+    totalMinor: 2, distanceKm: 10, pricingInputs: { ratePerKmMinor: 100 }, pricingVersion: "v1", issuedBy: { type: "admin", id: "a" },
     issuedAt: "2026-11-27T10:00:00Z", validUntil: "2026-11-27T11:00:00Z",
   }), /totalMinor must equal/);
 });
