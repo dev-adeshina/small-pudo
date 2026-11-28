@@ -39,7 +39,7 @@ export async function GET(request: Request, context: Context) {
         ? runtime.db.collection("pudoLocations").doc(shipmentData.destination.pudoLocationId).get()
         : Promise.resolve(null),
     ]);
-    const displayEndpoint = (endpoint: Record<string, any>, location: any) => endpoint.type === "pudo" && location?.exists
+    const displayEndpoint = (endpoint: Record<string, unknown>, location: { exists: boolean; data(): Record<string, unknown> | undefined } | null) => endpoint.type === "pudo" && location?.exists
       ? {
           ...endpoint,
           locationName: typeof location.data()?.name === "string" ? location.data().name : "PUDO location",
@@ -88,16 +88,16 @@ export async function GET(request: Request, context: Context) {
         bookingConfirmedAt: shipmentData.bookingConfirmedAt,
         currentQuote,
         parcels: parcels.docs.map((item: { id: string; data(): Record<string, unknown> }) => ({ ...item.data(), parcelId: item.id })),
-        events: events.docs.map((item: { id: string; data(): Record<string, any> }) => {
+        events: events.docs.map((item: { id: string; data(): Record<string, unknown> }) => {
           const record = item.data();
           return { eventId: item.id, eventType: record.eventType, occurredAt: record.occurredAt, summary: record.summary, visibility: record.visibility };
-        }).filter((item: Record<string, any>) => Array.isArray(item.visibility) && item.visibility.includes("customer"))
-          .map(({ visibility: _visibility, ...item }: Record<string, any>) => item),
-        documents: documents.docs.map((item: { id: string; data(): Record<string, any> }) => {
+        }).filter((item: Record<string, unknown>) => Array.isArray(item.visibility) && item.visibility.includes("customer"))
+          .map(({ visibility: _visibility, ...item }: Record<string, unknown>) => item),
+        documents: documents.docs.map((item: { id: string; data(): Record<string, unknown> }) => {
           const record = item.data();
           return { documentId: item.id, documentType: record.documentType, version: record.version, contentType: record.contentType, sizeBytes: record.sizeBytes, generatedAt: record.generatedAt, access: record.access };
-        }).filter((item: Record<string, any>) => Array.isArray(item.access) && item.access.includes("customer"))
-          .map(({ access: _access, ...item }: Record<string, any>) => item),
+        }).filter((item: Record<string, unknown>) => Array.isArray(item.access) && item.access.includes("customer"))
+          .map(({ access: _access, ...item }: Record<string, unknown>) => item),
       },
     }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
