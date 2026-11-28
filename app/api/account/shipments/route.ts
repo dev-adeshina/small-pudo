@@ -111,12 +111,12 @@ export async function GET(request: Request) {
     const runtime = createShipmentFirestoreRuntime();
     const snapshot = await runtime.db.collection("verilyftShipmentData").doc("v1")
       .collection("shipments").where("customerId", "==", customer.uid).limit(100).get();
-    const shipments = await Promise.all(snapshot.docs.map(async (document: { id: string; data(): Record<string, unknown>; ref }) => {
+    const shipments = await Promise.all(snapshot.docs.map(async (document: { id: string; data(): Record<string, unknown> }) => {
       const data = document.data();
       const [parcels, events] = await Promise.all([
         runtime.db.collection("verilyftShipmentData").doc("v1").collection("parcels")
           .where("shipmentId", "==", document.id).get(),
-        document.ref.collection("events").orderBy("occurredAt", "asc").get(),
+        runtime.db.collection("verilyftShipmentData").doc("v1").collection("shipments").doc(document.id).collection("events").orderBy("occurredAt", "asc").get(),
       ]);
       return {
         shipmentId: document.id,
