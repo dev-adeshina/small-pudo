@@ -1,6 +1,6 @@
 # Phase 3 — Persistence Audit and Implementation Map
 
-**Status:** Step 1 audit deliverable; no database connection or writes authorised  
+**Status:** Phase 3 implementation and staging integration in progress; staging read-only connectivity verified  
 **Branch:** `feat/phase3-shipment-data-foundation`  
 **Audited baseline:** `562f4c8f0eae103b13f51b4050f45c147f5cb99a`  
 **Date:** 27 November 2026
@@ -207,7 +207,7 @@ The legacy `shipmentQuotes` collision is isolated by the separate Firebase proje
 
 ## 11. Step 2 implementation baseline — Firestore adapter (code only)
 
-The first persistence implementation is now on the Phase 3 feature branch. It is deliberately not connected to a live Firebase project.
+The Firestore persistence implementation is on the Phase 3 feature branch. The explicit staging runtime has been initialized and a read-only Firestore connection to `verilyft-minimal` `(default)` has been verified. No shipment records have been written during that connection check.
 
 ### Explicit namespace
 
@@ -223,7 +223,7 @@ The adapter uses the versioned namespace `verilyftShipmentData/v1` to isolate th
 - Shipment reference reservations: `verilyftShipmentData/v1/shipmentReferenceReservations/{sha256Reference}`
 - Payment provider-reference index: `verilyftShipmentData/v1/paymentProviderReferences/{sha256ProviderReference}`
 
-Registered customer profiles continue to be read from the existing `users/{uid}` authority. The adapter does not create a second registered-customer identity system. Existing Admin access, PUDO partner accounts and PUDO locations remain outside the shipment namespace and are exposed through read-only authority lookups. Their verification, activation, capability and operations evidence remain in their existing workflows.
+Registered customer profiles continue to be read from the environment-local `users/{uid}` authority. The adapter does not create a second registered-customer identity system. Admin access, PUDO partner accounts and PUDO locations are environment-local authorities exposed through read-only lookups. For the new shipment operating model, city serviceability is derived from having at least one registered PUDO in that city; each registered PUDO receives default operational capabilities automatically. Individual location operating availability and capacity are separate operational facts. The shipment quotation model must not require legacy capability approvals or individual route-evidence approvals. Existing production workflows and records are not migrated or modified by this Phase 3 work.
 
 ### Implemented repository adapters
 
@@ -253,14 +253,16 @@ Firestore requires transaction reads to occur before writes. Shipment submission
 - `SHIPMENT_FIREBASE_CLIENT_EMAIL`
 - `SHIPMENT_FIREBASE_PRIVATE_KEY`
 
-It uses a separately named Firebase Admin app per environment and refuses a project mismatch. The runtime function has not been invoked; no credentials or project IDs have been added to source control.
+It uses a separately named Firebase Admin app per environment and refuses a project mismatch. The runtime has been invoked successfully for staging read-only connectivity. Credentials remain in local/deployment environment configuration and are not committed to source control.
 
 ### Current limitations
 
 - Full intake, assignment, shipment-document and notification contracts, repositories and transaction-scoped commands are now implemented; see the completion update below.
 - Adapter and command coverage uses a fake Firestore transaction harness. It is not evidence of live Firestore transaction isolation or concurrency under contention.
-- The staging Firebase project has not been provisioned or connected. No Firestore documents, rules, indexes, Storage configuration, migration or production data have been changed.
-- The adapter is not yet wired into application routes. No customer, Admin or PUDO UI/API is connected to it.
+- The staging Firebase project `verilyft-minimal` is provisioned and its `(default)` Firestore database is reachable through the explicit shipment runtime. The initial connection check found no top-level collections and performed no writes.
+- Staging Firestore rules were deployed to `verilyft-minimal` only after explicit approval; production rules were not changed.
+- No shipment persistence commands have yet been exercised against live staging Firestore. The adapter is not yet wired into customer, Admin or PUDO application routes; that integration belongs to the subsequent workflow phases unless needed for the Phase 3 verification harness.
+- Cloudinary is the binary asset provider. Firestore stores protected Cloudinary asset metadata/references only; Firebase Storage is not part of the shipment asset architecture.
 
 
 ## 12. Completion implementation update — 27 November 2026
@@ -272,12 +274,12 @@ The initial persistence gap list has now been addressed at the code-contract/rep
 | Existing customer/Admin/PUDO partner/PUDO location authorities | Read-only `authorities` repository; preserves the existing `users`, `adminAccess`, `pudoPartnerAccounts` and `pudoLocations` authorities |
 | Parcel intake | Canonical completed intake contract; mandatory photo references; immutable root intake records; corrections append a linked new record |
 | Shipment assignment | Canonical responsibility-period contract; shipment subcollection; retained history; status-only updates |
-| Shipment documents | Canonical versioned metadata; immutable shipment subcollection records; protected Storage path and checksum; binary data excluded |
+| Shipment documents | Canonical versioned metadata; immutable shipment subcollection records; Cloudinary asset identifier and integrity metadata; binary data excluded |
 | Notifications | Recipient-specific intent; deterministic deduplication index; bounded status updates; append-only delivery attempts |
 | Command orchestration | Transaction-scoped commands for intake, assignment, document metadata, notification intent and delivery attempts |
 | Verification | Complete repository-port assertion and fake-Firestore tests for relationships, immutable records, deduplication and command orchestration |
 
-PUDO partner location authorisation and protected Storage object verification are injected and evaluated before entering retryable Firestore transaction callbacks; no external resolver/network work is run from inside a transaction callback. Intake photos and document objects must be verified by a trusted Storage adapter; absent those verifiers, commands fail closed. Physical intake timestamps and generated record IDs are server-derived. PUDO-origin station drop-off updates the shipment to `Received at PUDO` only after a completed photo-evidenced intake and matching origin PUDO. Assignment remains separate from custody.
+PUDO partner location authorisation and Cloudinary asset verification are injected and evaluated before entering retryable Firestore transaction callbacks; no external resolver/network work is run from inside a transaction callback. Intake photos and document assets must be verified by a trusted Cloudinary adapter; absent those verifiers, commands fail closed. Physical intake timestamps and generated record IDs are server-derived. PUDO-origin station drop-off updates the shipment to `Received at PUDO` only after a completed photo-evidenced intake and matching origin PUDO. Assignment remains separate from custody.
 
 ## 13. Data model relationship and authority checks
 
@@ -287,4 +289,4 @@ The Firestore adapter uses the `verilyftShipmentData/v1` namespace. The identity
 
 ## 14. Remaining verification and deployment boundary
 
-Code-level implementation does not complete live staging verification. The fake Firestore harness cannot prove actual Firestore transaction contention, retries, create preconditions, composite-index behavior, Storage object existence, Storage access controls or production security rules. Live verification still requires staging project provisioning/configuration and a separate explicit approval for any resource deployment. No production data, rules, indexes, Storage resources, migrations or backfills have been changed. The PR remains draft until local test/build verification and the staging integration gate are resolved.
+Code-level implementation does not complete live staging verification. The fake Firestore harness cannot prove actual Firestore transaction contention, retries, create preconditions, composite-index behavior, Storage object existence, Storage access controls or production security rules. Remaining verification requires exercising the adapter against staging Firestore using disposable staging-only test records, including create preconditions, transaction retries, idempotency and relationship integrity. Cloudinary object verification must be supplied before intake-photo/document commands can complete. No production data, rules, indexes, resources, migrations or backfills have been changed. The PR remains draft until lint, tests, build and staging persistence verification are complete.
