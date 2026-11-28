@@ -42,11 +42,10 @@ export async function PATCH(request: Request, context: Context) {
     const address = parseAddress(body);
     const runtime = createShipmentFirestoreRuntime();
     const ref = runtime.db.collection("users").doc(customer.uid).collection("shipmentAddressBook").doc(addressId);
-    const snapshot = await ref.get();
-    if (!snapshot.exists) return NextResponse.json({ error: "Saved address not found." }, { status: 404 });
     const updatedAt = new Date().toISOString();
+    // A single write avoids an extra Firestore round trip on every address edit.
     await ref.update({ ...address, updatedAt });
-    return NextResponse.json({ success: true, address: { ...address, addressId, createdAt: snapshot.data()?.createdAt ?? null, updatedAt } });
+    return NextResponse.json({ success: true, address: { ...address, addressId, updatedAt } });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unable to update this address.";
     return NextResponse.json({ error: message }, { status: error instanceof TypeError ? 400 : 500 });
