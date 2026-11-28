@@ -247,6 +247,10 @@ export default function CommercialQuotationReadinessPage() {
       try {
         const currentToken = await auth.currentUser?.getIdToken();
         if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
+        if (active) {
+          setRouteEvidenceQueueLoading(true);
+          setRouteEvidenceQueueError("");
+        }
         const response = await fetch("/api/staff/commercial-quotation-readiness/route-evidence/queue", {
           headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
         });
@@ -289,6 +293,7 @@ export default function CommercialQuotationReadinessPage() {
       try {
         const currentToken = await auth.currentUser?.getIdToken();
         if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
+        if (active) setOperationalEvidenceLoading(true);
         const response = await fetch("/api/staff/commercial-quotation-readiness/operational-evidence", {
           headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
         });
