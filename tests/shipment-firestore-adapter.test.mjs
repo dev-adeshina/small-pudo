@@ -365,18 +365,18 @@ test("assignments are shipment-scoped, status-limited and distinct from custody"
   });
 });
 
-test("shipment document metadata is immutable and contains protected storage references", async () => {
+test("shipment document metadata is immutable and contains Cloudinary asset references", async () => {
   const ports = portsFor(new FakeFirestore());
   const record = {
     documentId: "document-1", shipmentId: "shipment-1", documentType: "waybill", version: 1,
-    storagePath: "private/shipments/shipment-1/waybill.pdf", contentType: "application/pdf",
+    cloudinaryPublicId: "verilyft/shipments/shipment-1/waybill-v1", resourceType: "raw", contentType: "application/pdf",
     sizeBytes: 1024, checksum: "sha256:abc", generatedAt: "2026-11-27T10:00:00.000Z",
     generatedBy: { type: "admin", id: "admin-1" }, access: ["customer", "admin"],
   };
   await ports.transaction.run(tx => ports.documents.create(tx, "shipment-1", record));
   await assert.rejects(ports.transaction.run(tx => ports.documents.create(tx, "shipment-1", record)), /ALREADY_EXISTS/);
   await ports.transaction.run(async tx => {
-    assert.equal((await ports.documents.getById(tx, "shipment-1", "document-1")).storagePath, record.storagePath);
+    assert.equal((await ports.documents.getById(tx, "shipment-1", "document-1")).cloudinaryPublicId, record.cloudinaryPublicId);
     assert.equal((await ports.documents.listByShipment(tx, "shipment-1")).length, 1);
   });
 });
