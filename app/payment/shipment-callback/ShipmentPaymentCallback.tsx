@@ -10,12 +10,12 @@ type Result = { success?: boolean; error?: string; status?: string; shipmentId?:
 function CallbackContent() {
   const search = useSearchParams();
   const reference = search.get("reference") || search.get("trxref");
-  const [state, setState] = useState<"checking" | "verifying" | "success" | "failed">("checking");
-  const [message, setMessage] = useState("Checking your customer session.");
+  const [state, setState] = useState<"checking" | "verifying" | "success" | "failed">(() => reference ? "checking" : "failed");
+  const [message, setMessage] = useState(() => reference ? "Checking your customer session." : "No payment reference was provided.");
   const [shipmentId, setShipmentId] = useState("");
 
   useEffect(() => {
-    if (!reference) { setState("failed"); setMessage("No payment reference was provided."); return; }
+    if (!reference) return;
     let cancelled = false;
     const unsubscribe = auth.onAuthStateChanged(async user => {
       if (!user) {
