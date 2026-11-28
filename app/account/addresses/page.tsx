@@ -13,6 +13,7 @@ import { WorkspaceShell } from "@/components/design-system/WorkspaceShell";
 import { customerWorkspaceNavigation } from "@/components/design-system/workspace-navigation";
 import { Button } from "@/components/design-system/Button";
 import { FeedbackState } from "@/components/design-system/FeedbackState";
+import NigerianLocationField from "@/components/nigerian-location-field";
 
 type Address = {
   addressId: string;
@@ -40,6 +41,7 @@ export default function CustomerAddressBookPage() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState("");
   const [editingId, setEditingId] = useState("");
+  const [locationFieldVersion, setLocationFieldVersion] = useState(0);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -91,6 +93,7 @@ export default function CustomerAddressBookPage() {
   function reset() {
     setEditingId("");
     setForm(EMPTY);
+    setLocationFieldVersion(version => version + 1);
   }
 
   async function save(event: FormEvent<HTMLFormElement>) {
@@ -167,9 +170,15 @@ export default function CustomerAddressBookPage() {
               <label><span>Contact name</span><input required maxLength={160} value={form.fullName} onChange={e => setForm({...form,fullName:e.target.value})} /></label>
               <label><span>Phone number</span><input required maxLength={40} value={form.phone} onChange={e => setForm({...form,phone:e.target.value})} /></label>
               <label><span>Email (optional)</span><input type="email" maxLength={254} value={form.email} onChange={e => setForm({...form,email:e.target.value})} /></label>
-              <label><span>Country</span><input required maxLength={100} value={form.country} onChange={e => setForm({...form,country:e.target.value})} /></label>
-              <label><span>State</span><input required maxLength={100} value={form.state} onChange={e => setForm({...form,state:e.target.value})} /></label>
-              <label><span>City</span><input required maxLength={100} value={form.city} onChange={e => setForm({...form,city:e.target.value})} /></label>
+              <div className="shipment-form-wide">
+                <NigerianLocationField
+                  key={`${editingId || "new-address"}-${locationFieldVersion}`}
+                  label="Address location"
+                  placeholder="Start typing a Nigerian city..."
+                  initialValue={form.city && form.state ? { city: form.city, state: form.state, country: "Nigeria" } : null}
+                  onChange={location => setForm(current => ({ ...current, city: location.city, state: location.state, country: location.country }))}
+                />
+              </div>
               <label className="shipment-form-wide"><span>Street address and directions</span><textarea required maxLength={500} rows={3} value={form.addressDescription} onChange={e => setForm({...form,addressDescription:e.target.value})} /></label>
               <div className="shipment-form-actions shipment-form-wide">
                 <Button type="submit" loading={saving} leadingIcon={<Plus size={16} />}>{editingId ? "Save changes" : "Save address"}</Button>
