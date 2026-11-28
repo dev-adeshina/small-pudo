@@ -81,7 +81,7 @@ export default function PudoNetworkConnectionsPage() {
     const initialOrigin = origin || nextLocations.find(item => item.capabilities.includes("parcel_handover"))?.locationId || "";
     setOrigin(current => current || initialOrigin);
     setDestination(current => current || nextLocations.find(item => item.capabilities.includes("custody_acceptance") && item.locationId !== initialOrigin)?.locationId || "");
-  }, []);
+  }, [origin]);
 
   useEffect(() => {
     let active = true;
