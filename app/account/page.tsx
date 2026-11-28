@@ -29,16 +29,6 @@ import { Button } from "@/components/design-system/Button";
 import { FeedbackState } from "@/components/design-system/FeedbackState";
 import { Pagination } from "@/components/design-system/Pagination";
 
-interface ShipmentDraft {
-  id: string;
-  origin: string;
-  destination: string;
-  parcelDescription: string;
-  status: "draft";
-  createdAt?: string | null;
-  updatedAt?: string | null;
-}
-
 interface CustomerOrderItem {
   productId: string;
   name: string;
@@ -50,6 +40,14 @@ interface CustomerOrderItem {
 interface CustomerQuote {
   quoteId: string;
   status: string;
+}
+
+interface CustomerShipment {
+  shipmentId: string;
+  shipmentReference: string;
+  serviceType: string;
+  status: string;
+  createdAt: string;
 }
 
 interface CustomerOrder {
@@ -136,17 +134,16 @@ export default function CustomerAccountPage() {
   const [ordersError, setOrdersError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const [ordersPage, setOrdersPage] = useState(1);
-  const [draftsPage, setDraftsPage] = useState(1);
 
-  const [drafts, setDrafts] = useState<ShipmentDraft[]>([]);
-  const [draftsLoading, setDraftsLoading] = useState(true);
-  const [draftsError, setDraftsError] = useState("");
-  const [draftReloadKey, setDraftReloadKey] = useState(0);
 
   const [quotes, setQuotes] = useState<CustomerQuote[]>([]);
   const [quotesLoading, setQuotesLoading] = useState(true);
   const [quotesError, setQuotesError] = useState("");
   const [quoteReloadKey, setQuoteReloadKey] = useState(0);
+  const [shipments, setShipments] = useState<CustomerShipment[]>([]);
+  const [shipmentsLoading, setShipmentsLoading] = useState(true);
+  const [shipmentsError, setShipmentsError] = useState("");
+  const [shipmentReloadKey, setShipmentReloadKey] = useState(0);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
@@ -236,66 +233,13 @@ export default function CustomerAccountPage() {
 
     let active = true;
 
-    async function fetchShipmentDrafts() {
-      setDraftsLoading(true);
-      setDraftsError("");
-
-      try {
-        const idToken = await user!.getIdToken();
-        const response = await fetch("/api/account/shipment-booking-drafts", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-          cache: "no-store",
-        });
-        const data = await response.json().catch(() => null);
-
-        if (!response.ok || !data?.success) {
-          throw new Error(
-            typeof data?.error === "string"
-              ? data.error
-              : "Unable to load your shipment drafts."
-          );
-        }
-
-        if (active) {
-          setDrafts(Array.isArray(data.drafts) ? data.drafts : []);
-        }
-      } catch (loadError) {
-        if (active) {
-          setDraftsError(
-            loadError instanceof Error
-              ? loadError.message
-              : "Unable to load your shipment drafts. Please try again."
-          );
-        }
-      } finally {
-        if (active) {
-          setDraftsLoading(false);
-        }
-      }
-    }
-
-    void fetchShipmentDrafts();
-
-    return () => {
-      active = false;
-    };
-  }, [user, draftReloadKey]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    let active = true;
-
     async function fetchQuotes() {
       setQuotesLoading(true);
       setQuotesError("");
 
       try {
         const idToken = await user!.getIdToken();
-        const response = await fetch("/api/account/shipment-quotes", {
+        const response = await fetch("/api/account/quotes", {
           headers: { Authorization: `Bearer ${idToken}` },
           cache: "no-store",
         });
@@ -310,7 +254,10 @@ export default function CustomerAccountPage() {
         }
 
         if (active) {
-          setQuotes(Array.isArray(data.quotes) ? data.quotes : []);
+          setQuotes(Array.isArray(data.quotes) ? data.quotes.map((quote: { quoteId: string; accepted?: boolean; shipmentStatus?: string }) => ({
+            quoteId: quote.quoteId,
+            status: quote.accepted ? "accepted" : quote.shipmentStatus === "Quoted" ? "issued" : quote.shipmentStatus ?? "unknown",
+          })) : []);
         }
       } catch (loadError) {
         if (active) {
@@ -331,6 +278,31 @@ export default function CustomerAccountPage() {
       active = false;
     };
   }, [user, quoteReloadKey]);
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    async function fetchCanonicalShipments() {
+      setShipmentsLoading(true);
+      setShipmentsError("");
+      try {
+        const token = await user!.getIdToken();
+        const response = await fetch("/api/account/shipments", {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) throw new Error(data.error ?? "Unable to load shipment activity.");
+        if (active) setShipments(Array.isArray(data.shipments) ? data.shipments : []);
+      } catch (cause) {
+        if (active) setShipmentsError(cause instanceof Error ? cause.message : "Unable to load shipment activity.");
+      } finally {
+        if (active) setShipmentsLoading(false);
+      }
+    }
+    void fetchCanonicalShipments();
+    return () => { active = false; };
+  }, [user, shipmentReloadKey]);
 
   async function handleSignOut() {
     setError("");
@@ -380,9 +352,7 @@ export default function CustomerAccountPage() {
     "there";
   const pageSize = 5;
   const currentOrdersPage = Math.min(ordersPage, Math.max(1, Math.ceil(orders.length / pageSize)));
-  const currentDraftsPage = Math.min(draftsPage, Math.max(1, Math.ceil(drafts.length / pageSize)));
   const visibleOrders = orders.slice((currentOrdersPage - 1) * pageSize, currentOrdersPage * pageSize);
-  const visibleDrafts = drafts.slice((currentDraftsPage - 1) * pageSize, currentDraftsPage * pageSize);
 
   return (
     <WorkspaceShell
@@ -418,14 +388,17 @@ export default function CustomerAccountPage() {
           <PageHeader
             eyebrow="CUSTOMER ACCOUNT"
             title={`Welcome back, ${firstName}.`}
-            description="Your shipments, quotations, orders and account details—all in one place."
+            description="Your shipments, saved addresses, quotations, orders and account details—all in one place."
             actions={
               <>
-                <Link href="/account/shipments" className="vl-button vl-button--primary">
+                <Link href="/account/shipments/new" className="vl-button vl-button--primary">
                   <Package size={16} /> Send an item
                 </Link>
                 <Link href="/account/quotes" className="vl-button vl-button--secondary">
                   <FileText size={16} /> View quotations
+                </Link>
+                <Link href="/account/shipment-history" className="vl-button vl-button--secondary">
+                  <Truck size={16} /> Track shipments
                 </Link>
               </>
             }
@@ -477,6 +450,15 @@ export default function CustomerAccountPage() {
           </article>
           <article className="customer-stat-card">
             <div className="customer-stat-top">
+              <span>SHIPMENTS</span>
+              <Truck size={19} />
+            </div>
+            <strong>{shipmentsLoading ? "—" : shipments.length}</strong>
+            <small>{shipmentsError ? "Shipment summary unavailable" : "Submitted shipment records"}</small>
+            {shipmentsError ? <button type="button" className="vl-customer-inline-retry" onClick={() => setShipmentReloadKey(key => key + 1)}>Retry</button> : null}
+          </article>
+          <article className="customer-stat-card">
+            <div className="customer-stat-top">
               <span>QUOTATIONS AWAITING ACTION</span>
               <FileText size={19} />
             </div>
@@ -499,83 +481,16 @@ export default function CustomerAccountPage() {
 
 
 
-        <section className="customer-panel shipment-drafts-panel" aria-labelledby="shipment-drafts-heading">
+        <section className="customer-panel" aria-labelledby="customer-shipments-heading">
           <div className="customer-panel-heading">
-            <div>
-              <span className="section-label">01 / SHIPMENT PREPARATION</span>
-              <h2 id="shipment-drafts-heading">My shipment drafts</h2>
-              <p className="customer-panel-description">
-                Review the shipment details you have saved and continue preparing them.
-                Drafts are not confirmed bookings.
-              </p>
-            </div>
-
-            <span className="customer-order-count">
-              {draftsLoading
-                ? "Loading"
-                : draftsError
-                  ? "Unavailable"
-                  : drafts.length === 50
-                    ? "50 latest"
-                    : `${drafts.length} drafts`}
-            </span>
+            <div><span className="section-label">01 / SHIPMENT ACTIVITY</span><h2 id="customer-shipments-heading">My shipments</h2><p className="customer-panel-description">Follow the shipments submitted through your customer account.</p></div>
+            <span className="customer-order-count">{shipmentsLoading ? "Loading" : `${shipments.length} shipments`}</span>
           </div>
-
-          {draftsLoading ? (
-            <div className="customer-state" aria-live="polite">
-              <Package size={25} />
-              <p>Loading your shipment drafts...</p>
-            </div>
-          ) : draftsError ? (
-            <div className="customer-state" role="alert">
-              <Package size={27} />
-              <h3>We couldn&apos;t load your shipment drafts</h3>
-              <p>{draftsError}</p>
-              <button
-                type="button"
-                className="customer-secondary-action"
-                onClick={() => setDraftReloadKey((key) => key + 1)}
-              >
-                Retry loading drafts <ArrowRight size={16} />
-              </button>
-            </div>
-          ) : drafts.length === 0 ? (
-            <div className="customer-state">
-              <Package size={26} />
-              <h3>No shipment drafts yet.</h3>
-              <p>
-                Save your shipment details to prepare them and return later.
-                Saving a draft does not create a booking or payment obligation.
-              </p>
-              <Link href="/account/shipments" className="customer-secondary-action">
-                Send an item <ArrowRight size={16} />
-              </Link>
-            </div>
-          ) : (
-            <>
-              <div className="shipment-draft-list">
-                {visibleDrafts.map((draft) => (
-                  <article className="shipment-draft-row" key={draft.id}>
-                    <div>
-                      <span className="shipment-draft-status">DRAFT · NOT CONFIRMED</span>
-                      <strong>
-                        {draft.origin} <ArrowRight size={14} /> {draft.destination}
-                      </strong>
-                      <p>{draft.parcelDescription}</p>
-                      <small>Updated {formatDate(draft.updatedAt ?? draft.createdAt ?? null)}</small>
-                    </div>
-                  </article>
-                ))}
-              </div>
-
-              <div className="shipment-form-actions">
-                <Link href="/account/shipments" className="customer-secondary-action">
-                  View and manage drafts <ArrowRight size={16} />
-                </Link>
-              </div>
-              <Pagination page={currentDraftsPage} totalItems={drafts.length} pageSize={pageSize} onPageChange={setDraftsPage} />
-            </>
-          )}
+          {shipmentsLoading ? <div className="customer-state"><Package size={24}/><p>Loading your shipment activity...</p></div>
+            : shipmentsError ? <div className="customer-state" role="alert"><p>{shipmentsError}</p><button type="button" className="customer-secondary-action" onClick={() => setShipmentReloadKey(key => key + 1)}>Retry</button></div>
+            : shipments.length === 0 ? <div className="customer-state"><Package size={24}/><h3>No submitted shipments yet</h3><p>Create a shipment to start following its progress.</p><Link href="/account/shipments/new" className="customer-secondary-action">Create a shipment <ArrowRight size={16}/></Link></div>
+            : <div className="shipment-draft-list">{shipments.slice(0, 5).map(shipment => <article className="shipment-draft-row" key={shipment.shipmentId}><div><span className="shipment-draft-status">{shipment.shipmentReference}</span><strong>{formatStatus(shipment.serviceType)} · {shipment.status}</strong><small>Submitted {formatDate(shipment.createdAt)}</small></div><Link href={`/account/shipments/${encodeURIComponent(shipment.shipmentId)}`} className="customer-secondary-action">Track <ArrowRight size={15}/></Link></article>)}</div>}
+          <div className="shipment-form-actions"><Link href="/account/shipment-history" className="customer-secondary-action">View all shipment history <ArrowRight size={16}/></Link></div>
         </section>
 
         <section className="customer-content-grid">

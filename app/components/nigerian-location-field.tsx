@@ -8,13 +8,17 @@ type NigerianLocation = { city: string; state: string; country: 'Nigeria' };
 export default function NigerianLocationField({
   label,
   placeholder,
+  initialValue,
+  onChange,
 }: {
   label: string;
   placeholder: string;
+  initialValue?: NigerianLocation | null;
+  onChange?: (location: NigerianLocation) => void;
 }) {
   const [locations, setLocations] = useState<NigerianLocation[]>([]);
-  const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState<NigerianLocation | null>(null);
+  const [query, setQuery] = useState(initialValue?.city ?? '');
+  const [selected, setSelected] = useState<NigerianLocation | null>(initialValue ?? null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -63,6 +67,7 @@ export default function NigerianLocationField({
     setSelected(location);
     setQuery(location.city);
     setOpen(false);
+    onChange?.(location);
     if (inputRef.current) {
       inputRef.current.dataset.locationValid = 'true';
       inputRef.current.setCustomValidity('');
