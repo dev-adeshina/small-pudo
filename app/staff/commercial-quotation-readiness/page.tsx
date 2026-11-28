@@ -188,17 +188,19 @@ export default function CommercialQuotationReadinessPage() {
   }, [router]);
 
   useEffect(() => {
-    if (!token || !routeEvidenceId.trim()) {
-      setRouteEvidenceDetails(null);
-      setRouteEvidenceError("");
-      setRouteEvidenceLoading(false);
-      return;
-    }
     let active = true;
-    setRouteEvidenceLoading(true);
-    setRouteEvidenceError("");
-    setRouteEvidenceDetails(null);
     void (async () => {
+      await Promise.resolve();
+      if (!active) return;
+      if (!token || !routeEvidenceId.trim()) {
+        setRouteEvidenceDetails(null);
+        setRouteEvidenceError("");
+        setRouteEvidenceLoading(false);
+        return;
+      }
+      setRouteEvidenceLoading(true);
+      setRouteEvidenceError("");
+      setRouteEvidenceDetails(null);
       try {
         const currentToken = await auth.currentUser?.getIdToken();
         if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
@@ -220,10 +222,10 @@ export default function CommercialQuotationReadinessPage() {
 
   const refreshRouteEvidenceQueue = useCallback(async () => {
     if (!token) return;
-    setRouteEvidenceQueueLoading(true);
-    setRouteEvidenceQueueError("");
     try {
       const currentToken = await auth.currentUser?.getIdToken();
+      setRouteEvidenceQueueLoading(true);
+      setRouteEvidenceQueueError("");
       if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
       const response = await fetch("/api/staff/commercial-quotation-readiness/route-evidence/queue", {
         headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
@@ -240,13 +242,13 @@ export default function CommercialQuotationReadinessPage() {
 
   useEffect(() => {
     if (token) void refreshRouteEvidenceQueue();
-  }, [refreshRouteEvidenceQueue]);
+  }, [token, refreshRouteEvidenceQueue]);
 
   const refreshOperationalEvidence = useCallback(async () => {
     if (!token) return;
-    setOperationalEvidenceLoading(true);
     try {
       const currentToken = await auth.currentUser?.getIdToken();
+      setOperationalEvidenceLoading(true);
       if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
       const response = await fetch("/api/staff/commercial-quotation-readiness/operational-evidence", {
         headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
@@ -264,7 +266,7 @@ export default function CommercialQuotationReadinessPage() {
 
   useEffect(() => {
     if (token) void refreshOperationalEvidence();
-  }, [refreshOperationalEvidence]);
+  }, [token, refreshOperationalEvidence]);
 
   async function post(path: string, body: Record<string, unknown>, successMessage: string) {
     if (!token || busy) return;
