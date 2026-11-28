@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAuth } from "firebase-admin/auth";
 import { FieldValue } from "firebase-admin/firestore";
-import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { createShipmentFirestoreRuntime } from "@/lib/shipment/firestore-runtime.mjs";
 
 export const runtime = "nodejs";
 
 async function authenticateCustomer(request: NextRequest) {
+  const runtime = createShipmentFirestoreRuntime();
+  const auth = getAuth(runtime.app);
   const authorization = request.headers.get("authorization");
 
   if (!authorization?.startsWith("Bearer ")) {
@@ -18,7 +21,7 @@ async function authenticateCustomer(request: NextRequest) {
 
   try {
     const idToken = authorization.slice("Bearer ".length);
-    const decodedToken = await adminAuth.verifyIdToken(idToken, true);
+    const decodedToken = await auth.verifyIdToken(idToken, true);
 
     if (decodedToken.email_verified !== true) {
       return {
@@ -33,6 +36,7 @@ async function authenticateCustomer(request: NextRequest) {
       uid: decodedToken.uid,
       email: decodedToken.email ?? "",
       displayName: decodedToken.name ?? "",
+      db: runtime.db,
     };
   } catch {
     return {
@@ -57,7 +61,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const userRef = adminDb.collection("users").doc(customer.uid);
+    const userRef = customer.db.collection("users").doc(customer.uid);
     const snapshot = await userRef.get();
 
     if (!snapshot.exists) {
@@ -159,7 +163,7 @@ export async function PATCH(request: NextRequest) {
   }
 
   try {
-    const userRef = adminDb.collection("users").doc(customer.uid);
+    const userRef = customer.db.collection("users").doc(customer.uid);
     const snapshot = await userRef.get();
 
     const profileData = {
@@ -214,11 +218,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const runtime = createShipmentFirestoreRuntime();
+  const auth = getAuth(runtime.app);
   let decodedToken;
 
   try {
     const idToken = authorization.slice("Bearer ".length);
-    decodedToken = await adminAuth.verifyIdToken(idToken, true);
+    decodedToken = await auth.verifyIdToken(idToken, true);
   } catch {
     return NextResponse.json(
       { error: "Your registration session is invalid or expired." },
@@ -280,7 +286,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const userRef = adminDb.collection("users").doc(decodedToken.uid);
+    const userRef = runtime.db.collection("users").doc(decodedToken.uid);
     const snapshot = await userRef.get();
 
     await userRef.set(
