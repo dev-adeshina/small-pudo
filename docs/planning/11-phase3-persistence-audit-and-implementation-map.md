@@ -257,11 +257,11 @@ It uses a separately named Firebase Admin app per environment and refuses a proj
 
 ### Current limitations
 
-- Full intake, assignment, shipment-document and notification contracts, repositories and transaction-scoped commands are now implemented; see the completion update below.
+- Full intake, assignment, shipment-document and notification contracts, repositories and transaction-scoped commands are implemented. Quote revisions also preserve the distance in kilometres and configurable pricing inputs used for each immutable quote.
 - Adapter and command coverage uses a fake Firestore transaction harness. It is not evidence of live Firestore transaction isolation or concurrency under contention.
 - The staging Firebase project `verilyft-minimal` is provisioned and its `(default)` Firestore database is reachable through the explicit shipment runtime. The initial connection check found no top-level collections and performed no writes.
 - Staging Firestore rules were deployed to `verilyft-minimal` only after explicit approval; production rules were not changed.
-- No shipment persistence commands have yet been exercised against live staging Firestore. The adapter is not yet wired into customer, Admin or PUDO application routes; that integration belongs to the subsequent workflow phases unless needed for the Phase 3 verification harness.
+- No shipment persistence commands have yet been exercised against live staging Firestore. The adapter is not yet wired into customer, Admin or PUDO application routes; that workflow integration belongs to Phases 4–6. A disposable staging persistence verification script is included for Phase 3.
 - Cloudinary is the binary asset provider. Firestore stores protected Cloudinary asset metadata/references only; Firebase Storage is not part of the shipment asset architecture.
 
 
