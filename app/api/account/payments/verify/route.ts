@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
   try {
     const runtime = createShipmentFirestoreRuntime();
-    const ownership = await runtime.ports.transaction.run(async (tx) => {
+    const ownership = await runtime.ports.transaction.run(async (tx: unknown) => {
       const payment = await runtime.ports.payments.getByProviderReference(tx, reference.trim());
       if (!payment) return null;
       const shipment = await runtime.ports.shipments.getById(tx, payment.shipmentId);
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
       if (!nextStatus) {
         return NextResponse.json({ success: false, error: "Paystack has not reported a completed payment. Check again shortly." }, { status: 409 });
       }
-      await runtime.ports.transaction.run(async (tx) => {
+      await runtime.ports.transaction.run(async (tx: unknown) => {
         const payment = await runtime.ports.payments.getByProviderReference(tx, reference.trim());
         if (!payment || payment.paymentId !== ownership.paymentId) throw new Error("PAYMENT_ATTEMPT_CHANGED");
         const shipment = await runtime.ports.shipments.getById(tx, ownership.shipmentId);
