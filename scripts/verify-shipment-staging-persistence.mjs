@@ -113,6 +113,8 @@ try {
     const quote = await ports.quotes.getCurrent(tx, ids.quote);
     assert.equal(quote.revisionId, ids.revision);
     assert.equal(quote.totalMinor, 25000);
+    assert.equal(quote.distanceKm, 18.5);
+    assert.deepEqual(quote.pricingInputs, { ratePerKmMinor: 1000, fuelAdjustmentMinor: 500 });
   });
   checks.push("quote lineage and immutable revision pointer");
 
