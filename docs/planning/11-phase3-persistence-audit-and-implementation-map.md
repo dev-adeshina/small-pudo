@@ -32,7 +32,7 @@ Missing explicit ports/contracts include:
 
 - Full parcel-intake record and intake evidence lifecycle (the current contract covers a measurement observation, not the complete intake record).
 - Shipment assignments.
-- Shipment documents and protected Storage metadata references.
+- Shipment documents and protected Cloudinary asset metadata references.
 - Notifications and delivery attempts.
 - Explicit customer/Admin/PUDO identity-reference resolution at the persistence boundary.
 
