@@ -28,11 +28,12 @@ export async function POST(request: Request, context: Context) {
   let runtime: ReturnType<typeof createShipmentFirestoreRuntime> | null = null;
   let attempt: { paymentId: string; providerReference: string; amountMinor: number; currency: string } | null = null;
   try {
-    runtime = createShipmentFirestoreRuntime();
-    const existing = await runtime.ports.transaction.run(async (tx: any) => {
-      const shipment = await runtime!.ports.shipments.getById(tx, shipmentId);
+    const shipmentRuntime = createShipmentFirestoreRuntime();
+    runtime = shipmentRuntime;
+    const existing = await shipmentRuntime.ports.transaction.run(async (tx: any) => {
+      const shipment = await shipmentRuntime.ports.shipments.getById(tx, shipmentId);
       if (!shipment || shipment.customerId !== customer.uid) return null;
-      const payment = shipment.paymentId ? await runtime!.ports.payments.getById(tx, shipment.paymentId) : null;
+      const payment = shipment.paymentId ? await shipmentRuntime.ports.payments.getById(tx, shipment.paymentId) : null;
       return { shipment, payment };
     });
     if (!existing) return NextResponse.json({ error: "Shipment not found." }, { status: 404 });
@@ -60,26 +61,27 @@ export async function POST(request: Request, context: Context) {
     if (!authUser.email) return NextResponse.json({ error: "Your customer account needs an email address before payment can be initialized." }, { status: 400 });
 
     const commands = createPaymentCommands({
-      ports: runtime.ports,
+      ports: shipmentRuntime.ports,
       idFactory: (prefix: string) => `${prefix}_${randomUUID()}`,
       paymentVerifier: async () => ({ verified: false }),
     });
-    attempt = await commands.createPaymentAttempt({
+    const createdAttempt = await commands.createPaymentAttempt({
       actor: { type: "customer", id: customer.uid },
       idempotencyKey: request.headers.get("idempotency-key")?.trim() || randomUUID(),
       shipmentId,
     });
-    const existingPayment = await runtime.ports.transaction.run((tx: any) =>
-      runtime!.ports.payments.getById(tx, attempt!.paymentId)
+    attempt = createdAttempt;
+    const existingPayment = await shipmentRuntime.ports.transaction.run((tx: any) =>
+      shipmentRuntime.ports.payments.getById(tx, createdAttempt.paymentId)
     );
     if (typeof existingPayment?.authorizationUrl === "string") {
       return NextResponse.json({
         success: true,
-        paymentId: attempt.paymentId,
-        reference: attempt.providerReference,
+        paymentId: createdAttempt.paymentId,
+        reference: createdAttempt.providerReference,
         authorizationUrl: existingPayment.authorizationUrl,
-        amountMinor: attempt.amountMinor,
-        currency: attempt.currency,
+        amountMinor: createdAttempt.amountMinor,
+        currency: createdAttempt.currency,
       }, { status: 200 });
     }
 
@@ -90,18 +92,18 @@ export async function POST(request: Request, context: Context) {
       headers: { Authorization: `Bearer ${secretKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         email: authUser.email,
-        amount: String(attempt.amountMinor),
-        currency: attempt.currency,
-        reference: attempt.providerReference,
+        amount: String(createdAttempt.amountMinor),
+        currency: createdAttempt.currency,
+        reference: createdAttempt.providerReference,
         callback_url: new URL("/payment/shipment-callback", baseUrl).toString(),
-        metadata: { shipmentId, paymentId: attempt.paymentId, purpose: "verilyft_shipment" },
+        metadata: { shipmentId, paymentId: createdAttempt.paymentId, purpose: "verilyft_shipment" },
       }),
       cache: "no-store",
     });
     const provider = await providerResponse.json().catch(() => null);
     const authorizationUrl = provider?.data?.authorization_url;
     if (!providerResponse.ok || provider?.status !== true ||
-        provider?.data?.reference !== attempt.providerReference ||
+        provider?.data?.reference !== createdAttempt.providerReference ||
         typeof authorizationUrl !== "string") {
       throw new Error("Paystack could not initialize this payment.");
     }
@@ -109,25 +111,27 @@ export async function POST(request: Request, context: Context) {
     if (checkout.protocol !== "https:" || checkout.hostname !== "checkout.paystack.com") {
       throw new Error("Paystack returned an invalid checkout destination.");
     }
-    await runtime.ports.transaction.run((tx: any) =>
-      runtime!.ports.payments.updateAttempt(tx, attempt!.paymentId, {
+    await shipmentRuntime.ports.transaction.run((tx: any) =>
+      shipmentRuntime.ports.payments.updateAttempt(tx, createdAttempt.paymentId, {
         authorizationUrl: checkout.toString(),
         providerStatus: "initialized",
       })
     );
     return NextResponse.json({
       success: true,
-      paymentId: attempt.paymentId,
-      reference: attempt.providerReference,
+      paymentId: createdAttempt.paymentId,
+      reference: createdAttempt.providerReference,
       authorizationUrl: checkout.toString(),
-      amountMinor: attempt.amountMinor,
-      currency: attempt.currency,
+      amountMinor: createdAttempt.amountMinor,
+      currency: createdAttempt.currency,
     }, { status: 201 });
   } catch (error) {
-    if (runtime && attempt) {
+    const failedRuntime = runtime;
+    const failedAttempt = attempt;
+    if (failedRuntime && failedAttempt) {
       try {
-        await runtime.ports.transaction.run(async (tx: any) => {
-          await runtime.ports.payments.updateAttempt(tx, attempt!.paymentId, {
+        await failedRuntime.ports.transaction.run(async (tx: any) => {
+          await failedRuntime.ports.payments.updateAttempt(tx, failedAttempt.paymentId, {
             status: "failed",
             failedAt: new Date().toISOString(),
             providerStatus: "initialization_failed",
