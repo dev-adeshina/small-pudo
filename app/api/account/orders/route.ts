@@ -61,14 +61,27 @@ export async function GET(request: Request) {
       .collection("users")
       .doc(decodedToken.uid);
 
+    // Keep this legacy storefront query usable without requiring a composite
+    // index in every environment. Sort the customer's matching records here.
     const snapshot = await adminDb
       .collection("orders")
       .where("userId", "==", userRef)
-      .orderBy("createdAt", "desc")
-      .limit(50)
       .get();
+    const latestDocuments = [...snapshot.docs]
+      .sort((left, right) => {
+        const leftValue = left.data().createdAt;
+        const rightValue = right.data().createdAt;
+        const leftTime = leftValue && typeof leftValue.toMillis === "function"
+          ? leftValue.toMillis()
+          : new Date(leftValue ?? 0).getTime();
+        const rightTime = rightValue && typeof rightValue.toMillis === "function"
+          ? rightValue.toMillis()
+          : new Date(rightValue ?? 0).getTime();
+        return rightTime - leftTime;
+      })
+      .slice(0, 50);
 
-    const orders = snapshot.docs.map((document) => {
+    const orders = latestDocuments.map((document) => {
       const data = document.data();
 
       const shipping = data.shipping
