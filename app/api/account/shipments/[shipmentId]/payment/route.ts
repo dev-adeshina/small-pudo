@@ -3,9 +3,9 @@ import { randomUUID } from "node:crypto";
 
 import { adminAuth } from "@/lib/firebase-admin";
 import { authenticateVerifiedCustomer } from "@/lib/server/customer-auth";
-// @ts-ignore Payment commands are runtime-neutral ESM.
+// @ts-expect-error -- Payment commands are runtime-neutral ESM.
 import { createPaymentCommands } from "@/lib/shipment/payment-commands.mjs";
-// @ts-ignore Shipment runtime selects the environment-specific database.
+// @ts-expect-error -- Shipment runtime selects the environment-specific database.
 import { createShipmentFirestoreRuntime } from "@/lib/shipment/firestore-runtime.mjs";
 
 export const runtime = "nodejs";
