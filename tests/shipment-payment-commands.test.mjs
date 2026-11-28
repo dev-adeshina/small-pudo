@@ -186,6 +186,28 @@ test("browser/client claims alone are not accepted as payment verification", asy
   }), error => error.code === "PAYMENT_NOT_VERIFIED");
 });
 
+test("a verified payment remains idempotently confirmed across callback and webhook deliveries", async () => {
+  const { state, commands } = fixture();
+  const attempt = await commands.createPaymentAttempt({
+    actor: { type: "customer", id: "customer-1" },
+    idempotencyKey: "create-for-repeat-confirm",
+    shipmentId: "shipment-1",
+  });
+  const first = await commands.confirmVerifiedPayment({
+    providerReference: attempt.providerReference,
+    idempotencyKey: "callback-confirmation",
+  });
+  const eventCount = state.events.length;
+  const repeated = await commands.confirmVerifiedPayment({
+    providerReference: attempt.providerReference,
+    idempotencyKey: "webhook-confirmation",
+  });
+  assert.equal(first.status, "Confirmed");
+  assert.equal(repeated.status, "Confirmed");
+  assert.equal(repeated.alreadyConfirmed, true);
+  assert.equal(state.events.length, eventCount);
+});
+
 test("failed or abandoned attempts cannot later confirm a booking through a stale success response", async () => {
   const { state, commands } = fixture();
   const attempt = await commands.createPaymentAttempt({

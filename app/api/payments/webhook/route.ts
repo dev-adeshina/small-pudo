@@ -3,10 +3,15 @@ import {
   createHash,
   createHmac,
   timingSafeEqual,
+  randomUUID,
 } from "node:crypto";
 import { FieldValue } from "firebase-admin/firestore";
 
 import { adminDb } from "@/lib/firebase-admin";
+// @ts-ignore Shipment payment command is runtime-neutral ESM.
+import { createPaymentCommands } from "@/lib/shipment/payment-commands.mjs";
+// @ts-ignore Shipment runtime selects the environment-specific database.
+import { createShipmentFirestoreRuntime } from "@/lib/shipment/firestore-runtime.mjs";
 
 export const runtime = "nodejs";
 
@@ -112,14 +117,45 @@ export async function POST(request: Request) {
       .get();
 
     if (orders.empty) {
-      // Do not retry indefinitely for an unrecognized reference.
-      // Investigate this event in server logs.
-      console.error(
-        "Successful Paystack payment has no matching order:",
-        reference
+      // Shipment payments use the canonical Phase 3 payment repository rather
+      // than the storefront orders collection. Verify with Paystack again
+      // before allowing the shipment command to confirm booking.
+      const shipmentRuntime = createShipmentFirestoreRuntime();
+      const shipmentPayment = await shipmentRuntime.ports.transaction.run(async (tx: any) =>
+        shipmentRuntime.ports.payments.getByProviderReference(tx, reference)
       );
-
-      return NextResponse.json({ received: true });
+      if (!shipmentPayment) {
+        console.error("Successful Paystack payment has no matching order or shipment payment:", reference);
+        return NextResponse.json({ received: true });
+      }
+      const commands = createPaymentCommands({
+        ports: shipmentRuntime.ports,
+        idFactory: (prefix: string) => `${prefix}_${randomUUID()}`,
+        paymentVerifier: async ({ providerReference }: { provider: string; providerReference: string }) => {
+          const verifyResponse = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(providerReference)}`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${secretKey}`, Accept: "application/json" },
+            cache: "no-store",
+          });
+          const verified = await verifyResponse.json().catch(() => null);
+          const verifiedPayment = verified?.data;
+          return {
+            verified: verifyResponse.ok && verified?.status === true && verifiedPayment?.reference === providerReference,
+            provider: "paystack",
+            providerReference: verifiedPayment?.reference,
+            status: verifiedPayment?.status === "success" ? "successful" : verifiedPayment?.status,
+            amountMinor: verifiedPayment?.amount,
+            currency: verifiedPayment?.currency,
+            verifiedAt: verifiedPayment?.paid_at,
+          };
+        },
+      });
+      const shipmentEventKey = createHash("sha256").update(`charge.success:${reference}:${String(payment.id)}`).digest("hex");
+      const shipmentResult = await commands.confirmVerifiedPayment({
+        providerReference: reference,
+        idempotencyKey: `paystack_webhook_${shipmentEventKey}`,
+      });
+      return NextResponse.json({ received: true, shipmentStatus: shipmentResult.status });
     }
 
     const orderRef = orders.docs[0].ref;

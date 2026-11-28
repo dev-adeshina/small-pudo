@@ -2,7 +2,9 @@ import type { WorkspaceNavigationItem } from "@/components/design-system/Workspa
 
 export const customerWorkspaceNavigation: WorkspaceNavigationItem[] = [
   { label: "Overview", href: "/account", section: "ACCOUNT" },
-  { label: "Shipments", href: "/account/shipments", section: "ACCOUNT" },
+  { label: "New shipment", href: "/account/shipments/new", section: "ACCOUNT" },
+  { label: "Shipment history", href: "/account/shipment-history", section: "ACCOUNT" },
+  { label: "Address book", href: "/account/addresses", section: "ACCOUNT" },
   { label: "Quotations", href: "/account/quotes", section: "ACCOUNT" },
   { label: "My orders", href: "/account#orders", section: "ACCOUNT" },
   { label: "My profile", href: "/account/profile", section: "ACCOUNT" },
