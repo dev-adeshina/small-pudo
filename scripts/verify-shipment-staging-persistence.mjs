@@ -105,7 +105,8 @@ try {
     });
     ports.quotes.appendRevision(tx, ids.quote, {
       revisionId: ids.revision, revisionNumber: 1, shipmentId: ids.shipment,
-      issuedAt: now, totalMinor: 25000, currency: "NGN",
+      issuedAt: now, totalMinor: 25000, distanceKm: 18.5,
+      pricingInputs: { ratePerKmMinor: 1000, fuelAdjustmentMinor: 500 }, currency: "NGN",
     });
   });
   await ports.transaction.run(async tx => {
