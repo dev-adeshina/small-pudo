@@ -96,7 +96,6 @@ export default function PudoOperationsDetailPage() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    setLoading(true); setError("");
     load(user).catch((err) => { if (!cancelled) setError(err instanceof Error ? err.message : "Unable to load PUDO operations."); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
@@ -167,7 +166,7 @@ export default function PudoOperationsDetailPage() {
           <>
             <section className="cost-panel">
               <h2>Availability schedule</h2>
-              <p>Set the location's local time zone, normal weekly opening hours and dated exceptions. A temporary unavailable status overrides the weekly schedule.</p>
+              <p>Set the location&apos;s local time zone, normal weekly opening hours and dated exceptions. A temporary unavailable status overrides the weekly schedule.</p>
               <div className="cost-form-grid">
                 <div className="cost-field"><label htmlFor="pudo-timezone">Location time zone (IANA)</label>
                   <input id="pudo-timezone" value={availability.timezone} onChange={(e) => setAvailability((v) => ({ ...v, timezone: e.target.value }))} placeholder="e.g. Africa/Lagos" />
