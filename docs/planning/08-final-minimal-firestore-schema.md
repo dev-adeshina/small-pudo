@@ -58,7 +58,7 @@ The following is the proposed starting point. Use subcollections only where reco
 | Shipment events | `verilyftShipmentData/v1/shipments/{shipmentId}/events/{eventId}` | Append-only timeline, including material custody events. |
 | Parcel intakes | `verilyftShipmentData/v1/parcelIntakes/{intakeId}` | Completed physical intake linked to shipment/parcels, with mandatory photo evidence. |
 | Shipment assignments | `verilyftShipmentData/v1/shipments/{shipmentId}/assignments/{assignmentId}` | Responsibility history, distinct from custody. |
-| Shipment documents | `verilyftShipmentData/v1/shipments/{shipmentId}/documents/{documentId}` | Immutable versioned metadata and protected Storage path; binaries remain in Storage. |
+| Shipment documents | `verilyftShipmentData/v1/shipments/{shipmentId}/documents/{documentId}` | Immutable versioned metadata and Cloudinary asset identifier; binaries remain in Cloudinary. |
 | Notifications | `verilyftShipmentData/v1/notifications/{notificationId}` | Recipient-specific deduplicated intent and append-only delivery attempts. |
 
 Parcels are separately modelled at `verilyftShipmentData/v1/parcels/{parcelId}` with a required `shipmentId` relationship. PUDO personnel remain roster entries under the existing PUDO location record.
