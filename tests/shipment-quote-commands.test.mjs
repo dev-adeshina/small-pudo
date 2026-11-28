@@ -58,6 +58,8 @@ test("Admin issues first quote and atomically records lineage, revision, shipmen
   assert.equal(state.revisions.length, 1);
   assert.equal(state.shipment.status, "Quoted");
   assert.equal(state.events[0].eventType, "quote_issued");
+  assert.equal(state.revisions[0].distanceKm, quoteInput.distanceKm);
+  assert.deepEqual(state.revisions[0].pricingInputs, quoteInput.pricingInputs);
 });
 
 test("non-Admin cannot issue a quote", async () => {
