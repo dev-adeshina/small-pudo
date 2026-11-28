@@ -39,13 +39,16 @@ export async function GET(request: Request, context: Context) {
         : Promise.resolve(null),
     ]);
     const displayEndpoint = (endpoint: Record<string, unknown>, location: { exists: boolean; data(): Record<string, unknown> | undefined } | null) => endpoint.type === "pudo" && location?.exists
-      ? {
-          ...endpoint,
-          locationName: typeof location.data()?.name === "string" ? location.data().name : "PUDO location",
-          address: typeof location.data()?.address === "string" ? location.data().address : "",
-          city: typeof location.data()?.city === "string" ? location.data().city : "",
-          state: typeof location.data()?.state === "string" ? location.data().state : "",
-        }
+      ? (() => {
+          const locationData = location.data() ?? {};
+          return {
+            ...endpoint,
+            locationName: typeof locationData.name === "string" ? locationData.name : "PUDO location",
+            address: typeof locationData.address === "string" ? locationData.address : "",
+            city: typeof locationData.city === "string" ? locationData.city : "",
+            state: typeof locationData.state === "string" ? locationData.state : "",
+          };
+        })()
       : endpoint;
     let currentQuote: Record<string, unknown> | null = null;
     if (typeof shipmentData.quoteId === "string") {
