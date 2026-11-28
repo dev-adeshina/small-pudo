@@ -117,20 +117,6 @@ export default function NewShipmentPage() {
     return () => unsubscribe();
   }, [router]);
 
-  useEffect(() => {
-    const sender = addresses.find(item => item.addressId === senderAddressId);
-    if (sender) {
-      setSenderName(sender.fullName); setSenderPhone(sender.phone); setSenderEmail(sender.email ?? "");
-    }
-  }, [addresses, senderAddressId]);
-
-  useEffect(() => {
-    const recipient = addresses.find(item => item.addressId === recipientAddressId);
-    if (recipient) {
-      setRecipientName(recipient.fullName); setRecipientPhone(recipient.phone); setRecipientEmail(recipient.email ?? "");
-    }
-  }, [addresses, recipientAddressId]);
-
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user || submitting) return;
@@ -201,11 +187,11 @@ export default function NewShipmentPage() {
           <label><span>Sender contact name</span><input required maxLength={160} value={senderName} onChange={e => setSenderName(e.target.value)}/></label>
           <label><span>Sender phone</span><input required maxLength={40} value={senderPhone} onChange={e => setSenderPhone(e.target.value)}/></label>
           <label><span>Sender email (optional)</span><input type="email" value={senderEmail} onChange={e => setSenderEmail(e.target.value)}/></label>
-          <label><span>Prefill sender from address book</span><select value={senderAddressId} onChange={e => setSenderAddressId(e.target.value)}><option value="">Choose saved contact</option>{addresses.map(a => <option key={a.addressId} value={a.addressId}>{a.label} — {a.fullName}</option>)}</select></label>
+          <label><span>Prefill sender from address book</span><select value={senderAddressId} onChange={e => { const id = e.target.value; setSenderAddressId(id); const address = addresses.find(item => item.addressId === id); if (address) { setSenderName(address.fullName); setSenderPhone(address.phone); setSenderEmail(address.email ?? ""); } }}><option value="">Choose saved contact</option>{addresses.map(a => <option key={a.addressId} value={a.addressId}>{a.label} — {a.fullName}</option>)}</select></label>
           <label><span>Recipient contact name</span><input required maxLength={160} value={recipientName} onChange={e => setRecipientName(e.target.value)}/></label>
           <label><span>Recipient phone</span><input required maxLength={40} value={recipientPhone} onChange={e => setRecipientPhone(e.target.value)}/></label>
           <label><span>Recipient email (optional)</span><input type="email" value={recipientEmail} onChange={e => setRecipientEmail(e.target.value)}/></label>
-          <label><span>Prefill recipient from address book</span><select value={recipientAddressId} onChange={e => setRecipientAddressId(e.target.value)}><option value="">Choose saved contact</option>{addresses.map(a => <option key={a.addressId} value={a.addressId}>{a.label} — {a.fullName}</option>)}</select></label>
+          <label><span>Prefill recipient from address book</span><select value={recipientAddressId} onChange={e => { const id = e.target.value; setRecipientAddressId(id); const address = addresses.find(item => item.addressId === id); if (address) { setRecipientName(address.fullName); setRecipientPhone(address.phone); setRecipientEmail(address.email ?? ""); } }}><option value="">Choose saved contact</option>{addresses.map(a => <option key={a.addressId} value={a.addressId}>{a.label} — {a.fullName}</option>)}</select></label>
           <div className="customer-panel-heading shipment-form-wide"><div><span className="section-label">03 / COLLECTION AND DESTINATION</span><h2>Shipment endpoints</h2></div></div>
           {kinds.origin === "pudo" ? <label><span>Origin PUDO</span><select required value={originPudoId} onChange={e => setOriginPudoId(e.target.value)}><option value="">Select origin PUDO</option>{pudos.map(p => <option key={p.locationId} value={p.locationId}>{p.name} — {p.address}{p.city ? `, ${p.city}` : ""}{p.state ? `, ${p.state}` : ""}</option>)}</select></label> :
             <label><span>Sender collection address</span><select required value={senderAddressId} onChange={e => setSenderAddressId(e.target.value)}><option value="">Select sender address</option>{addresses.map(a => <option key={a.addressId} value={a.addressId}>{a.label} — {a.city}, {a.state}</option>)}</select></label>}
