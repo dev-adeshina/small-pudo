@@ -150,7 +150,7 @@ Each provider transaction/attempt is recorded with:
 
 A retry after a failed attempt creates a new attempt; it must not overwrite the failed attempt. A browser return alone never establishes payment success. If payment succeeds but the customer does not return, send a transactional email with a secure link back to the application/tracking.
 
-## 5A. Transportation arrangement and pricing
+### Transportation pricing and manual arrangement
 
 Transportation is manually arranged and managed by Admin in the initial operating model. PUDO locations receive, inspect, ascertain, hold and dispatch parcels according to Admin's instructions; they do not independently approve or allocate road routes.
 
