@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AlertTriangle, X } from "lucide-react";
 
 type StaffActionDialogProps = {
@@ -25,10 +25,10 @@ export function StaffActionDialog({
   const dialogRef = useRef<HTMLElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  const cancel = () => {
+  const cancel = useCallback(() => {
     setReason("");
     onCancel();
-  };
+  }, [onCancel]);
 
   useEffect(() => {
     if (!open) return;
@@ -62,7 +62,7 @@ export function StaffActionDialog({
       window.removeEventListener("keydown", handleKeyDown);
       previousFocusRef.current?.focus();
     };
-  }, [open, busy, onCancel]);
+  }, [open, busy, cancel]);
 
   if (!open) return null;
 
