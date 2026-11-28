@@ -133,7 +133,7 @@ export async function GET(request: Request) {
           const record = event.data();
           return { eventId: event.id, eventType: record.eventType, occurredAt: record.occurredAt, summary: record.summary, visibility: record.visibility };
         }).filter((event: Record<string, unknown>) => Array.isArray(event.visibility) && event.visibility.includes("customer"))
-          .map(({ visibility: _visibility, ...event }: Record<string, unknown>) => event),
+          .map((event: Record<string, unknown>) => { const customerEvent = { ...event }; delete customerEvent.visibility; return customerEvent; }),
       };
     }));
     shipments.sort((a, b) => String(b.createdAt ?? "").localeCompare(String(a.createdAt ?? "")));
