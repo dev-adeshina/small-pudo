@@ -225,7 +225,7 @@ async function main() {
       const countSnapshot = await collectionRef.count().get();
       entry.documentCount = countSnapshot.data().count;
       report.summary.documentCountTotal += entry.documentCount;
-    } catch (error) {
+    } catch {
       entry.warnings.push("Count aggregation failed; inspect access and query permissions.");
       report.warnings.push("A collection count was unavailable; see the affected collection entry.");
     }
@@ -274,7 +274,7 @@ async function main() {
             if (!entry.subcollections.includes(safeChildPath)) entry.subcollections.push(safeChildPath);
             await inspectCollection(child, depth + 1);
           }
-        } catch (error) {
+        } catch {
           entry.warnings.push("Could not enumerate a nested collection for one or more documents.");
         }
       }
