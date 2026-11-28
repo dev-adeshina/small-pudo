@@ -89,7 +89,7 @@ function validateAvailability(value: unknown): Availability {
   if (!Array.isArray(value.weeklySchedule) || value.weeklySchedule.length !== 7) {
     throw new TypeError("Provide one weekly schedule entry for every day of the week.");
   }
-  const days = value.weeklySchedule.map((item, index) => {
+  const days = value.weeklySchedule.map((item) => {
     if (!isRecord(item) || !Number.isInteger(item.dayOfWeek) ||
       Number(item.dayOfWeek) < 0 || Number(item.dayOfWeek) > 6) {
       throw new TypeError("Weekly schedule days must use weekday numbers from 0 (Sunday) to 6 (Saturday).");
