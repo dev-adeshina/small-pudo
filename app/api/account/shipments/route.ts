@@ -111,7 +111,7 @@ export async function GET(request: Request) {
     const runtime = createShipmentFirestoreRuntime();
     const snapshot = await runtime.db.collection("verilyftShipmentData").doc("v1")
       .collection("shipments").where("customerId", "==", customer.uid).limit(100).get();
-    const shipments = await Promise.all(snapshot.docs.map(async (document: { id: string; data(): Record<string, unknown>; ref: any }) => {
+    const shipments = await Promise.all(snapshot.docs.map(async (document: { id: string; data(): Record<string, unknown>; ref }) => {
       const data = document.data();
       const [parcels, events] = await Promise.all([
         runtime.db.collection("verilyftShipmentData").doc("v1").collection("parcels")
@@ -129,14 +129,14 @@ export async function GET(request: Request) {
         origin: data.origin,
         destination: data.destination,
         parcels: parcels.docs.map((parcel: { id: string; data(): Record<string, unknown> }) => ({ ...parcel.data(), parcelId: parcel.id })),
-        events: events.docs.map((event: { id: string; data(): Record<string, any> }) => {
+        events: events.docs.map((event: { id: string; data(): Record<string, unknown> }) => {
           const record = event.data();
           return { eventId: event.id, eventType: record.eventType, occurredAt: record.occurredAt, summary: record.summary, visibility: record.visibility };
-        }).filter((event: Record<string, any>) => Array.isArray(event.visibility) && event.visibility.includes("customer"))
-          .map(({ visibility: _visibility, ...event }: Record<string, any>) => event),
+        }).filter((event: Record<string, unknown>) => Array.isArray(event.visibility) && event.visibility.includes("customer"))
+          .map(({ visibility: _visibility, ...event }: Record<string, unknown>) => event),
       };
     }));
-    shipments.sort((a: any, b: any) => String(b.createdAt ?? "").localeCompare(String(a.createdAt ?? "")));
+    shipments.sort((a, b) => String(b.createdAt ?? "").localeCompare(String(a.createdAt ?? "")));
     return NextResponse.json({ success: true, shipments }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     console.error("Customer shipment history retrieval failed:", error);
