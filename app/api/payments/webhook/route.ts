@@ -121,7 +121,7 @@ export async function POST(request: Request) {
       // than the storefront orders collection. Verify with Paystack again
       // before allowing the shipment command to confirm booking.
       const shipmentRuntime = createShipmentFirestoreRuntime();
-      const shipmentPayment = await shipmentRuntime.ports.transaction.run(async (tx) =>
+      const shipmentPayment = await shipmentRuntime.ports.transaction.run(async (tx: unknown) =>
         shipmentRuntime.ports.payments.getByProviderReference(tx, reference)
       );
       if (!shipmentPayment) {
