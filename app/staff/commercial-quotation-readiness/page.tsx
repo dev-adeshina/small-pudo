@@ -241,8 +241,26 @@ export default function CommercialQuotationReadinessPage() {
   }, [token]);
 
   useEffect(() => {
-    if (token) void refreshRouteEvidenceQueue();
-  }, [token, refreshRouteEvidenceQueue]);
+    if (!token) return;
+    let active = true;
+    void (async () => {
+      try {
+        const currentToken = await auth.currentUser?.getIdToken();
+        if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
+        const response = await fetch("/api/staff/commercial-quotation-readiness/route-evidence/queue", {
+          headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
+        });
+        const data = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(data?.error || "Unable to load route evidence.");
+        if (active) setRouteEvidenceQueue(Array.isArray(data?.result?.items) ? data.result.items as RouteEvidenceQueueItem[] : []);
+      } catch (cause) {
+        if (active) setRouteEvidenceQueueError(cause instanceof Error ? cause.message : "Unable to load route evidence.");
+      } finally {
+        if (active) setRouteEvidenceQueueLoading(false);
+      }
+    })();
+    return () => { active = false; };
+  }, [token]);
 
   const refreshOperationalEvidence = useCallback(async () => {
     if (!token) return;
@@ -265,8 +283,29 @@ export default function CommercialQuotationReadinessPage() {
   }, [token]);
 
   useEffect(() => {
-    if (token) void refreshOperationalEvidence();
-  }, [token, refreshOperationalEvidence]);
+    if (!token) return;
+    let active = true;
+    void (async () => {
+      try {
+        const currentToken = await auth.currentUser?.getIdToken();
+        if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
+        const response = await fetch("/api/staff/commercial-quotation-readiness/operational-evidence", {
+          headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
+        });
+        const data = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(data?.error || "Unable to load operational evidence.");
+        if (active) {
+          setOperationalEvidenceRows(Array.isArray(data?.result?.items) ? data.result.items as OperationalEvidenceRow[] : []);
+          setOperationalEvidencePermissions(data?.result?.permissions ?? { record: false, review: false, revoke: false });
+        }
+      } catch (cause) {
+        if (active) setError(cause instanceof Error ? cause.message : "Unable to load operational evidence.");
+      } finally {
+        if (active) setOperationalEvidenceLoading(false);
+      }
+    })();
+    return () => { active = false; };
+  }, [token]);
 
   async function post(path: string, body: Record<string, unknown>, successMessage: string) {
     if (!token || busy) return;
