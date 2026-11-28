@@ -11,8 +11,9 @@
  */
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { loadEnvConfig } from "@next/env";
+import nextEnv from "@next/env";
 
+const { loadEnvConfig } = nextEnv;
 loadEnvConfig(process.cwd());
 
 const expectedStagingProject = "verilyft-minimal";
