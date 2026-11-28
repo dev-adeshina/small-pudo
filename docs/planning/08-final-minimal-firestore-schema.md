@@ -206,7 +206,7 @@ Custody and assignment events must not be inferred from main shipment status. Re
 One current-state document should hold:
 - partnerId;
 - location name and contact;
-- structured address and optional coordinates;
+- structured address including city/state and optional coordinates;
 - registration state and registeredAt;
 - default operational capabilities assigned automatically at registration;
 - operating days and opening/closing periods;
@@ -215,7 +215,9 @@ One current-state document should hold:
 - active/inactive state;
 - createdAt/updatedAt and lifecycle event references.
 
-Keep only important lifecycle/approval changes in an attributable history. Routine current operating state is updated on the location record.
+City-level serviceability is derived from the registered PUDO locations: a city is serviceable when at least one PUDO is registered there. Do not maintain a second manually activated city-availability record. Customer PUDO selection should return suitable registered locations in the requested city and, when coordinates are available, help the customer identify the closest location. A location's temporary operating unavailability affects whether that location can be selected now; it does not erase the underlying registered network location.
+
+Keep only important lifecycle changes in an attributable history. Routine current operating state is updated on the location record.
 
 ### PUDO partner
 Separate login/profile linked to Auth UID and the PUDO location(s) it is authorised to operate. PUDO partner is not an Admin and cannot approve commercial pricing.
