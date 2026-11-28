@@ -40,6 +40,8 @@ const quoteInput = {
   currency: "NGN",
   lineItems: [{ code: "base", description: "Base delivery", amountMinor: 50000 }],
   totalMinor: 50000,
+  distanceKm: 18.5,
+  pricingInputs: { ratePerKmMinor: 2500, fuelAdjustmentMinor: 5000 },
   pricingVersion: "DEC-048-v1",
   validUntil: "2026-11-27T11:00:00.000Z",
 };
