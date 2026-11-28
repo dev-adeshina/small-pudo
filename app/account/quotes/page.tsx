@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { User } from "firebase/auth";
-import { CheckCircle2, Clock3, FileText, UserRound } from "lucide-react";
+import { CheckCircle2, FileText, UserRound } from "lucide-react";
 
 import { auth } from "@/lib/firebase";
 import { signOutCustomer } from "@/lib/customer-auth";
@@ -42,6 +42,12 @@ export default function CustomerQuotesPage() {
   const [busyId, setBusyId] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [now, setNow] = useState<number | null>(null);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setNow(Date.now()), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const load = useCallback(async (currentUser: User) => {
     setLoading(true); setError("");
@@ -100,7 +106,7 @@ export default function CustomerQuotesPage() {
           <div className="customer-panel-heading"><div><span className="section-label">QUOTE HISTORY</span><h2>Available quotations</h2></div><span className="customer-order-count">{quotes.length} quotations</span></div>
           {loading ? <p>Loading quotations...</p> : quotes.length === 0 ? <div className="customer-state"><FileText size={26}/><h3>No quotations yet</h3><p>When Admin reviews a submitted shipment and issues a quotation, it will appear here.</p><Link href="/account/shipment-history" className="customer-secondary-action">View shipment history</Link></div> :
             <div className="shipment-draft-list">{quotes.map(quote => {
-              const expired = Date.parse(quote.revision.validUntil) <= Date.now();
+              const expired = now !== null && Date.parse(quote.revision.validUntil) <= now;
               const accepted = quote.accepted || quote.shipmentStatus === "Awaiting Payment" || quote.shipmentStatus === "Confirmed";
               return <article className="shipment-draft-row" key={quote.quoteId}>
                 <div><span className="shipment-draft-status">{quote.shipmentReference} · Revision {quote.revision.revisionNumber}</span>
