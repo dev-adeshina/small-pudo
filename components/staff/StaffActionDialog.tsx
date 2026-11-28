@@ -25,8 +25,13 @@ export function StaffActionDialog({
   const dialogRef = useRef<HTMLElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
+  const cancel = () => {
+    setReason("");
+    onCancel();
+  };
+
   useEffect(() => {
-    if (!open) { setReason(""); return; }
+    if (!open) return;
     previousFocusRef.current = document.activeElement instanceof HTMLElement
       ? document.activeElement
       : null;
@@ -34,7 +39,7 @@ export function StaffActionDialog({
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape" && !busy) {
         event.preventDefault();
-        onCancel();
+        cancel();
         return;
       }
       if (event.key !== "Tab") return;
@@ -64,7 +69,7 @@ export function StaffActionDialog({
   return (
     <div
       className="fixed inset-0 z-[100] grid place-items-center bg-slate-950/55 p-4 backdrop-blur-sm"
-      onMouseDown={(event) => { if (event.target === event.currentTarget && !busy) onCancel(); }}
+      onMouseDown={(event) => { if (event.target === event.currentTarget && !busy) cancel(); }}
     >
       <section
         ref={dialogRef}
@@ -82,7 +87,7 @@ export function StaffActionDialog({
             <h2 id="staff-action-dialog-title" className="text-lg font-semibold text-slate-900">{title}</h2>
             <p id="staff-action-dialog-description" className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
           </div>
-          <button type="button" onClick={onCancel} disabled={busy} aria-label="Close dialog" className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 disabled:opacity-50"><X size={18} /></button>
+          <button type="button" onClick={cancel} disabled={busy} aria-label="Close dialog" className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 disabled:opacity-50"><X size={18} /></button>
         </div>
         {reasonLabel && (
           <label className="mt-5 block text-sm font-medium text-slate-800">
@@ -105,7 +110,7 @@ export function StaffActionDialog({
             type="button"
             className={danger ? "cost-danger-button" : "cost-primary-button"}
             disabled={busy || (reasonRequired && !reason.trim())}
-            onClick={() => void onConfirm(reason.trim())}
+            onClick={() => { setReason(""); void onConfirm(reason.trim()); }}
           >
             {busy ? "Please wait..." : confirmLabel}
           </button>
