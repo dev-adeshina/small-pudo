@@ -17,7 +17,7 @@ export default function NigerianLocationField({
   onChange?: (location: NigerianLocation) => void;
 }) {
   const [locations, setLocations] = useState<NigerianLocation[]>([]);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialValue?.city ?? '');
   const [selected, setSelected] = useState<NigerianLocation | null>(initialValue ?? null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
