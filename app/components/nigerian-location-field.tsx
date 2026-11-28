@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { MapPin, LoaderCircle } from 'lucide-react';
 
 type NigerianLocation = { city: string; state: string; country: 'Nigeria' };
@@ -20,6 +20,7 @@ export default function NigerianLocationField({
   const [loadError, setLoadError] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const listboxId = useId();
 
   useEffect(() => {
     let active = true;
@@ -101,13 +102,14 @@ export default function NigerianLocationField({
             }}
             role="combobox"
             aria-expanded={open && suggestions.length > 0}
+            aria-controls={listboxId}
             aria-autocomplete="list"
           />
           {loading && <LoaderCircle className="vl-location-spinner" size={15} aria-label="Loading locations" />}
         </span>
       </label>
       {open && query.trim().length >= 2 && (
-        <div className="vl-location-suggestions" role="listbox" aria-label={`${label} city suggestions`}>
+        <div id={listboxId} className="vl-location-suggestions" role="listbox" aria-label={`${label} city suggestions`}>
           {suggestions.length ? suggestions.map((item) => (
             <button
               type="button"
