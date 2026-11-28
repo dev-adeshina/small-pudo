@@ -27,7 +27,7 @@ This document consolidates confirmed product decisions, the current repository a
 - Shipment status and physical custody are separate facts.
 - Each shipment has one quote lineage with revisions. Automated system and authorised Admin can generate quotes; Admin approves/overrides them. Accepted quote is an immutable snapshot.
 - Payment is through Paystack and must be verified server-side before shipment confirmation. Retry is allowed only after a failed payment attempt. Refund requests use an authorised manual process initially.
-- PUDO locations share the same default capabilities. One location record holds current identity, address, lifecycle, capability and operational summary. Registration, verification, approval and activation are stages of one lifecycle.
+- Every registered PUDO location receives the standard default operational capabilities automatically; a separate capability approval is not a prerequisite for ordinary parcel handling or quotation readiness. A city is serviceable when VeriLyft has at least one registered PUDO in that city. Do not create a separate city-activation approval workflow. Customers may choose the PUDO most convenient to them, including the nearest suitable location. A location's temporary operating availability and capacity are separate from city-level serviceability.
 - PUDO partner identity is separate from Admin identity. A partner account manages its location roster. Named personnel records contain a person's name and operational role; they are roster-only records with no individual Firebase login or Admin permissions.
 - Physical intake is a separate shipment-linked record. It requires a photograph, time, PUDO, receiving person, condition, measured weight/dimensions and discrepancy notes. Intake evidence is immutable; corrections append to the original record.
 - Assignments and custody are distinct. Assignments identify who is responsible for an activity and when; custody events prove physical possession/handover.
@@ -87,7 +87,7 @@ These snapshots preserve the exact details used for this shipment even if a save
 ### Service and route
 - `serviceType`: pudo_to_pudo, door_to_pudo, pudo_to_door, door_to_door.
 - `origin` and `destination`: structured endpoint snapshots and endpoint type (PUDO or address).
-- `routeDistance`: approved distance value/unit and evidence reference when available; do not treat straight-line distance as road-route evidence.
+- `routeDistanceKm`: the distance value used by the configurable transportation-pricing calculation, together with its measurement/source basis where available. Distance is a pricing input, not a route-approval prerequisite. The system does not require individually approved route evidence before issuing a quotation.
 
 ### Parcels
 Use a shipment-owned parcel list/subcollection because a shipment can contain multiple independently measured parcels. Each parcel has:
@@ -124,7 +124,7 @@ One quote lineage per shipment:
 - `shipmentId`;
 - current revision and revision history;
 - origin/destination and service snapshot;
-- distance and road-route evidence reference;
+- distance in kilometres and the applicable configurable pricing inputs/version;
 - parcel weights/dimensions and pricing basis;
 - line items/additional charges;
 - subtotal, total, currency;
@@ -149,6 +149,19 @@ Each provider transaction/attempt is recorded with:
 - refund request/status and authorised action metadata.
 
 A retry after a failed attempt creates a new attempt; it must not overwrite the failed attempt. A browser return alone never establishes payment success. If payment succeeds but the customer does not return, send a transactional email with a secure link back to the application/tracking.
+
+## 5A. Transportation arrangement and pricing
+
+Transportation is manually arranged and managed by Admin in the initial operating model. PUDO locations receive, inspect, ascertain, hold and dispatch parcels according to Admin's instructions; they do not independently approve or allocate road routes.
+
+Distance in kilometres and other configurable commercial variables determine the transportation charge. Rates and related pricing variables must be versioned/configurable so Admin can respond to fuel-price increases or decreases and other cost changes. A quotation stores the exact pricing configuration/version and calculation inputs used when it was issued.
+
+The data model must distinguish:
+- transportation price calculation (commercial inputs and calculated charges);
+- Admin's manual transportation arrangement (operational instruction/assignment);
+- physical dispatch and custody (events proving the parcel was released/received).
+
+A route-distance approval record is not a prerequisite for quotation readiness. The manual arrangement may capture transporter, vehicle, distance, instructions and operational references when known; optional details must not block the initial quote or booking.
 
 ## 5. Shipment lifecycle and events
 
@@ -194,11 +207,11 @@ One current-state document should hold:
 - partnerId;
 - location name and contact;
 - structured address and optional coordinates;
-- registration/verification/approval/activation lifecycle state;
-- shared default capability reference/value;
+- registration state and registeredAt;
+- default operational capabilities assigned automatically at registration;
 - operating days and opening/closing periods;
-- current availability;
-- capacity values;
+- current location operating availability (including temporary unavailability);
+- capacity values where configured;
 - active/inactive state;
 - createdAt/updatedAt and lifecycle event references.
 
@@ -225,7 +238,7 @@ One intake record per physical intake event:
 - status/completion time;
 - correction/addendum references.
 
-The intake cannot complete until photo upload is confirmed. Store image binaries in Firebase Storage and protected metadata/references in Firestore. Submitted evidence is immutable; a correction is appended and linked to the original submission.
+The intake cannot complete until photo upload is confirmed. Store image binaries in Cloudinary and protected asset metadata/references in Firestore; do not use Firebase Storage for shipment images. Store a Cloudinary asset identifier and integrity/access metadata rather than trusting arbitrary client URLs. Submitted evidence is immutable; a correction is appended and linked to the original submission.
 
 ### Custody and transfers
 Custody means actual physical possession only. Each physical handover/transfer creates a progressive custody event recording releasing party, receiving party, time, location, condition and evidence. An assignment, route dispatch or attempted collection is not custody.
@@ -247,7 +260,7 @@ Record recipient name and phone, delivery photo, signature/confirmation, GPS (wh
 
 ## 8. Documents, tracking and notifications
 
-Documents are stored in Firebase Storage; Firestore holds shipmentId, document type, version, storage path, generatedAt, generatedBy, content snapshot/reference and access classification.
+Document binaries are stored in Cloudinary; Firestore holds shipmentId, document type, version, Cloudinary asset identifier, resource type, format, size/checksum, generatedAt, generatedBy, content snapshot/reference and access classification. Do not treat a public URL as the authoritative document reference.
 
 Required document types: quotation, payment receipt, shipment confirmation, waybill, PUDO intake receipt and delivery confirmation.
 
