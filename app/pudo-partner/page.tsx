@@ -67,11 +67,10 @@ export default function PudoPartnerDashboard() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    setLoading(true);
-    setError("");
     (async () => {
       try {
         const token = await user.getIdToken();
+        setError("");
         const headers = { Authorization: `Bearer ${token}` };
         const [accountResponse, applicationsResponse] = await Promise.all([
           fetch("/api/pudo-partner/account", { headers, cache: "no-store" }),
@@ -195,7 +194,7 @@ export default function PudoPartnerDashboard() {
           )}
         </SurfaceCard>
 
-        <div className="vl-pudo-section-heading" id="shipments"><div><span className="vl-page-header__eyebrow">DAILY OPERATIONS</span><h2>Station activity</h2><p>These operational views will populate from the station's shipment and assignment records.</p></div></div>
+        <div className="vl-pudo-section-heading" id="shipments"><div><span className="vl-page-header__eyebrow">DAILY OPERATIONS</span><h2>Station activity</h2><p>These operational views will populate from the station&apos;s shipment and assignment records.</p></div></div>
         <section className="vl-pudo-operations-grid">
           <article className="vl-pudo-operation-card"><span className="vl-pudo-operation-icon"><Package size={19} /></span><div><h3>Shipments</h3><p>View only shipments assigned to your authorised station.</p><span className="vl-pudo-coming">Operational module upcoming</span></div></article>
           <article className="vl-pudo-operation-card" id="intake"><span className="vl-pudo-operation-icon"><Camera size={19} /></span><div><h3>Parcel intake</h3><p>Receive and record parcels with mandatory photo evidence, condition and measurements.</p><span className="vl-pudo-coming">Operational module upcoming</span></div></article>
