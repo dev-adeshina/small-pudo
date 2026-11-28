@@ -369,7 +369,7 @@ test("shipment document metadata is immutable and contains Cloudinary asset refe
   const ports = portsFor(new FakeFirestore());
   const record = {
     documentId: "document-1", shipmentId: "shipment-1", documentType: "waybill", version: 1,
-    cloudinaryPublicId: "verilyft/shipments/shipment-1/waybill-v1", resourceType: "raw", contentType: "application/pdf",
+    assetProvider: "cloudinary", cloudinaryPublicId: "verilyft/shipments/shipment-1/waybill-v1", resourceType: "raw", contentType: "application/pdf",
     sizeBytes: 1024, checksum: "sha256:abc", generatedAt: "2026-11-27T10:00:00.000Z",
     generatedBy: { type: "admin", id: "admin-1" }, access: ["customer", "admin"],
   };
