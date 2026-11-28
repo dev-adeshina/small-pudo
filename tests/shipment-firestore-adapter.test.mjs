@@ -448,7 +448,7 @@ test("record commands persist photo-evidenced intake, assignment, document and n
     clock: () => new Date("2026-11-27T12:00:00.000Z"),
     authorizePudoLocation: async (partnerId, target) => partnerId === "partner-1" && (target === "pudo-origin" || target?.id === "pudo-origin"),
     verifyIntakePhotoEvidence: async ({ intake }) => intake.photoEvidenceRefs.every(ref => ref.startsWith("private/")),
-    verifyDocumentStorageObject: async ({ document }) => document.storagePath.startsWith("private/") && Boolean(document.checksum),
+    verifyDocumentCloudinaryAsset: async ({ document }) => document.cloudinaryPublicId.startsWith("verilyft/shipments/") && document.resourceType === "raw" && Boolean(document.checksum),
   });
   const actor = { type: "pudo_partner", id: "partner-1" };
   const intake = await commands.recordParcelIntake({
@@ -484,7 +484,8 @@ test("record commands persist photo-evidenced intake, assignment, document and n
     actor: { type: "admin", id: "admin-1" }, idempotencyKey: "document-command-1",
     document: {
       shipmentId: "shipment-records", documentType: "intake_receipt", version: 1,
-      storagePath: "private/shipments/shipment-records/intake.pdf",
+      cloudinaryPublicId: "verilyft/shipments/shipment-records/intake-receipt-v1",
+      resourceType: "raw",
       contentType: "application/pdf", sizeBytes: 100, checksum: "sha256:receipt",
       access: ["customer", "admin"],
     },
