@@ -8,7 +8,7 @@
 The domain modules in `lib/shipment/` define normalised contracts for:
 - **Shipment:** one authoritative record, one sender/recipient snapshot, one origin and destination, channel/actor attribution, and initial status `Submitted`.
 - **Parcel:** declared weight, dimensions, quantity, declared value and a review lock. Physical intake measurements are separate observations and never overwrite declared values.
-- **Quote revision:** immutable revision identity, pricing version, integer minor-unit line items/total, issuer and validity window. The total must reconcile to the line items.
+- **Quote revision:** immutable revision identity, distance in kilometres, the exact configurable pricing inputs and pricing version, integer minor-unit line items/total, issuer and validity window. The total must reconcile to the line items.
 - **Payment attempt:** one Paystack transaction reference per attempt, linked to a shipment and exact quote revision. Retries create new attempts; successful state must come from verified provider evidence in a later application service.
 - **Shipment event:** actor, timestamp, audience visibility, evidence references and idempotency key. Events are append-only; corrections require a compensating event.
 - **Intake measurement observation:** independently attributed physical measurements with photo evidence references.
