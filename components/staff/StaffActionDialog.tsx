@@ -110,7 +110,7 @@ export function StaffActionDialog({
             type="button"
             className={danger ? "cost-danger-button" : "cost-primary-button"}
             disabled={busy || (reasonRequired && !reason.trim())}
-            onClick={() => { setReason(""); void onConfirm(reason.trim()); }}
+            onClick={async () => { await onConfirm(reason.trim()); setReason(""); }}
           >
             {busy ? "Please wait..." : confirmLabel}
           </button>
