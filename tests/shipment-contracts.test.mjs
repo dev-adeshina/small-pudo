@@ -173,7 +173,7 @@ test("assignment contract captures bounded responsibility periods without custod
 test("document metadata requires protected storage path, checksum and access classification", () => {
   const document = createShipmentDocumentContract({
     documentId: "document-1", shipmentId: "shipment-1", documentType: "waybill", version: 1,
-    storagePath: "private/shipments/s1/waybill.pdf", contentType: "application/pdf",
+    cloudinaryPublicId: "verilyft/shipments/s1/waybill-v1", resourceType: "raw", contentType: "application/pdf",
     sizeBytes: 100, checksum: "sha256:abc", generatedAt: "2026-11-27T10:00:00Z",
     generatedBy: { type: "admin", id: "admin-1" }, access: ["customer", "admin"],
   });
