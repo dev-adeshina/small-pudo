@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 
 import { adminAuth } from "@/lib/firebase-admin";
 import { authenticateVerifiedCustomer } from "@/lib/server/customer-auth";
-// @ts-ignore Shipment Firestore runtime is an ESM domain module.
+// @ts-expect-error -- Shipment Firestore runtime is an ESM domain module.
 import { createShipmentFirestoreRuntime } from "@/lib/shipment/firestore-runtime.mjs";
 
 export const runtime = "nodejs";
