@@ -3,9 +3,7 @@ import { randomUUID } from "node:crypto";
 
 import { adminAuth } from "@/lib/firebase-admin";
 import { authenticateVerifiedCustomer } from "@/lib/server/customer-auth";
-// @ts-expect-error -- The shipment domain is intentionally authored as runtime-neutral ESM.
 import { createShipmentCommands } from "@/lib/shipment/commands.mjs";
-// @ts-expect-error -- The shipment runtime selects the explicitly configured staging/production project.
 import { createShipmentFirestoreRuntime } from "@/lib/shipment/firestore-runtime.mjs";
 
 export const runtime = "nodejs";
