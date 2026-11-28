@@ -1,6 +1,6 @@
 # Phase 3 — Canonical Shipment Contracts and Repository Ports
 
-**Status:** Database-independent implementation baseline  
+**Status:** Domain contracts, command layer and Firestore repository adapter implemented; staging persistence verification pending  
 **Scope:** Phase 3B only. This document does not approve database provisioning, connection, deployment or production writes.
 
 ## 1. Canonical record contracts
@@ -45,7 +45,7 @@ Quote issuance/withdrawal, quote acceptance, payment-attempt creation and verifi
 
 ## 6. Explicitly deferred
 
-No Firestore SDK, Admin SDK, repository adapter, Firebase configuration, database ID/location, rules, indexes, Storage configuration, migration, backfill, or live shipment write is introduced by these contracts. Infrastructure requires separate explicit approval.
+This contract document does not itself provision Firebase resources, deploy rules or indexes, migrate/backfill data, or perform live shipment writes. The separately implemented Firestore adapter receives an explicitly selected Firestore instance from `lib/shipment/firestore-runtime.mjs`; environment configuration and any infrastructure mutation remain subject to the applicable approval boundary.
 
 ## 7. Submission command orchestration
 
@@ -58,7 +58,7 @@ No Firestore SDK, Admin SDK, repository adapter, Firebase configuration, databas
 - The command reserves a unique shipment reference, creates the shipment in `Submitted`, creates all parcel records, appends the initial event and records the actor-scoped idempotency result in one transaction.
 - Every repository operation receives the same transaction handle. The reference repository must reserve candidates atomically in that transaction. The transaction adapter and idempotency repository must enforce atomic read-before-create and unique-key behavior.
 - The customer repository port exposes `create(tx, customerId, profile)` and `getById(tx, customerId)`. The shipment port exposes `create(tx, shipmentId, shipment)`; parcels expose `createMany(tx, shipmentId, parcelRecords)`; events expose `append(tx, event)`. The reference port exposes `reserveUnique(tx, candidate)` and must enforce uniqueness inside the transaction. Other required method names are listed in `SHIPMENT_REPOSITORY_PORTS`.
-- The command does not create Auth users, issue quotes, initialise payments, select a Firestore database, or write to any live database. It is not yet wired to HTTP routes or a persistence adapter.
+- The command does not create Auth users, issue quotes or initialise payments. It remains a domain command and is not yet wired to customer/Admin/PUDO HTTP routes. The Firestore adapter is implemented separately and is supplied through injected repository ports.
 
 The command tests use in-memory injected ports to verify channel derivation, ownership binding, walk-in profile behavior, transaction-handle propagation and idempotent replay. These are unit tests, not evidence of database transaction isolation; the eventual adapter must separately prove those guarantees.
 
@@ -109,15 +109,15 @@ The complete command layer still requires a final cross-command review and adapt
 
 - **Parcel intake:** shipment and parcel links, intake type, receiving location, authenticated actor, optional named PUDO roster person, physical condition, separate measured observations, discrepancies, timestamps and mandatory photo evidence references. Only a completed intake record is persisted; a correction is a new record linked to the original.
 - **Shipment assignment:** shipment link, activity, assignee type/ID, assigning actor, bounded responsibility period and lifecycle status. Assignment status cannot represent custody.
-- **Shipment document:** immutable metadata, document type/version, protected Storage path, content type, byte size, checksum, generator and explicit access classification. Firestore does not store binary contents or public download URLs.
+- **Shipment document:** immutable metadata, document type/version, Cloudinary asset public ID, resource type, content type, byte size, checksum, generator and explicit access classification. Firestore does not store binary contents or public download URLs.
 - **Notification intent:** shipment and recipient-specific target, channel, template, deduplication key, payload and minimal delivery state.
 - **Notification attempt:** immutable attempt identity/time, delivered/failed result and provider/error metadata.
 
-The adapter exposes `intakes`, `assignments`, `documents` and `notifications` repositories. Intake/document records and notification attempts are create-only. Assignment updates are limited to status. Notification intent is protected by a deterministic deduplication index; only delivery-state fields can be updated. The record commands require injected trusted Storage verifiers to confirm intake photos and generated document objects before entering retryable Firestore transactions; absent a verifier, they fail closed.
+The adapter exposes `intakes`, `assignments`, `documents` and `notifications` repositories. Intake/document records and notification attempts are create-only. Assignment updates are limited to status. Notification intent is protected by a deterministic deduplication index; only delivery-state fields can be updated. The record commands require injected trusted Cloudinary verifiers to confirm intake photos and generated document assets before entering retryable Firestore transactions; absent a verifier, they fail closed.
 
 ## 12. Existing identity and operational authorities
 
-The adapter exposes read-only `authorities` lookups for the existing `users`, `adminAccess`, `pudoPartnerAccounts` and `pudoLocations` collections. These records are not copied into duplicate shipment-owned identity authorities. The existing PUDO verification, activation, capability and operations evidence remain separate authoritative workflows and are referenced by location ID/evidence references where required.
+The adapter exposes read-only `authorities` lookups for the existing `users`, `adminAccess`, `pudoPartnerAccounts` and `pudoLocations` collections. These records are not copied into duplicate shipment-owned identity authorities. For the new shipment operating model, a city is serviceable when at least one PUDO is registered in that city. Registration assigns the default operational capabilities automatically; no separate capability approval or individual route-evidence approval is required for quotation readiness. A location's current operating availability and capacity remain separate operational facts. Existing production records/workflows are left untouched.
 
 All authority reads and shipment writes participating in one Firestore transaction must use the same Firestore database instance. Firestore transactions cannot span database instances. Each environment therefore needs its own project-local identity authorities and shipment namespace in the same selected database. The adapter rejects a separately injected identity database rather than implying cross-database atomicity.
 
@@ -127,4 +127,4 @@ All authority reads and shipment writes participating in one Firestore transacti
 
 ## 14. Remaining infrastructure and live-verification gate
 
-The complete adapter remains dependency-injected and is not invoked by application routes. Unit tests use a fake Firestore implementation. They verify path boundaries, create-only evidence records, deduplication, protected field updates, read-before-write ordering and repository relationships, but do not prove production Firestore isolation or contention behavior. Live verification requires the separately provisioned staging Firebase project and its project-local identity records, approved database ID/location and credentials. No Storage bucket configuration, Firestore rules/index deployment, migration, production data change or PR merge is included.
+The complete adapter remains dependency-injected and is not invoked by application routes. Unit tests use a fake Firestore implementation. They verify path boundaries, create-only evidence records, deduplication, protected field updates, read-before-write ordering and repository relationships, but do not prove production Firestore isolation or contention behavior. Staging project `verilyft-minimal` and its `(default)` Firestore database are provisioned; the explicit shipment runtime has passed a read-only connectivity check and staging Firestore rules were deployed to staging only after approval. No shipment writes have yet been run against live staging. Remaining verification must use disposable staging-only records to prove create preconditions, transaction behavior, idempotency and data relationships. Production resources/data remain untouched; Cloudinary asset verification is an injected integration boundary, not a Firebase Storage dependency.
