@@ -99,6 +99,7 @@ export default function NigerianLocationField({
                 inputRef.current?.setCustomValidity('Select a city from the suggestions.');
               }
             }}
+            role="combobox"
             aria-expanded={open && suggestions.length > 0}
             aria-autocomplete="list"
           />
