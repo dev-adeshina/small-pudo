@@ -14,7 +14,6 @@ import {
   ArrowUpRight,
   CheckCircle2,
   Clock3,
-  FileText,
   LogOut,
   MapPinned,
   Package,

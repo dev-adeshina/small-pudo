@@ -188,17 +188,19 @@ export default function CommercialQuotationReadinessPage() {
   }, [router]);
 
   useEffect(() => {
-    if (!token || !routeEvidenceId.trim()) {
-      setRouteEvidenceDetails(null);
-      setRouteEvidenceError("");
-      setRouteEvidenceLoading(false);
-      return;
-    }
     let active = true;
-    setRouteEvidenceLoading(true);
-    setRouteEvidenceError("");
-    setRouteEvidenceDetails(null);
     void (async () => {
+      await Promise.resolve();
+      if (!active) return;
+      if (!token || !routeEvidenceId.trim()) {
+        setRouteEvidenceDetails(null);
+        setRouteEvidenceError("");
+        setRouteEvidenceLoading(false);
+        return;
+      }
+      setRouteEvidenceLoading(true);
+      setRouteEvidenceError("");
+      setRouteEvidenceDetails(null);
       try {
         const currentToken = await auth.currentUser?.getIdToken();
         if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
@@ -220,10 +222,10 @@ export default function CommercialQuotationReadinessPage() {
 
   const refreshRouteEvidenceQueue = useCallback(async () => {
     if (!token) return;
-    setRouteEvidenceQueueLoading(true);
-    setRouteEvidenceQueueError("");
     try {
       const currentToken = await auth.currentUser?.getIdToken();
+      setRouteEvidenceQueueLoading(true);
+      setRouteEvidenceQueueError("");
       if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
       const response = await fetch("/api/staff/commercial-quotation-readiness/route-evidence/queue", {
         headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
@@ -239,14 +241,36 @@ export default function CommercialQuotationReadinessPage() {
   }, [token]);
 
   useEffect(() => {
-    if (token) void refreshRouteEvidenceQueue();
-  }, [refreshRouteEvidenceQueue]);
+    if (!token) return;
+    let active = true;
+    void (async () => {
+      try {
+        const currentToken = await auth.currentUser?.getIdToken();
+        if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
+        if (active) {
+          setRouteEvidenceQueueLoading(true);
+          setRouteEvidenceQueueError("");
+        }
+        const response = await fetch("/api/staff/commercial-quotation-readiness/route-evidence/queue", {
+          headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
+        });
+        const data = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(data?.error || "Unable to load route evidence.");
+        if (active) setRouteEvidenceQueue(Array.isArray(data?.result?.items) ? data.result.items as RouteEvidenceQueueItem[] : []);
+      } catch (cause) {
+        if (active) setRouteEvidenceQueueError(cause instanceof Error ? cause.message : "Unable to load route evidence.");
+      } finally {
+        if (active) setRouteEvidenceQueueLoading(false);
+      }
+    })();
+    return () => { active = false; };
+  }, [token]);
 
   const refreshOperationalEvidence = useCallback(async () => {
     if (!token) return;
-    setOperationalEvidenceLoading(true);
     try {
       const currentToken = await auth.currentUser?.getIdToken();
+      setOperationalEvidenceLoading(true);
       if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
       const response = await fetch("/api/staff/commercial-quotation-readiness/operational-evidence", {
         headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
@@ -263,8 +287,30 @@ export default function CommercialQuotationReadinessPage() {
   }, [token]);
 
   useEffect(() => {
-    if (token) void refreshOperationalEvidence();
-  }, [refreshOperationalEvidence]);
+    if (!token) return;
+    let active = true;
+    void (async () => {
+      try {
+        const currentToken = await auth.currentUser?.getIdToken();
+        if (!currentToken) throw new Error("Your staff session has expired. Sign in again.");
+        if (active) setOperationalEvidenceLoading(true);
+        const response = await fetch("/api/staff/commercial-quotation-readiness/operational-evidence", {
+          headers: { Authorization: "Bearer " + currentToken }, cache: "no-store",
+        });
+        const data = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(data?.error || "Unable to load operational evidence.");
+        if (active) {
+          setOperationalEvidenceRows(Array.isArray(data?.result?.items) ? data.result.items as OperationalEvidenceRow[] : []);
+          setOperationalEvidencePermissions(data?.result?.permissions ?? { record: false, review: false, revoke: false });
+        }
+      } catch (cause) {
+        if (active) setError(cause instanceof Error ? cause.message : "Unable to load operational evidence.");
+      } finally {
+        if (active) setOperationalEvidenceLoading(false);
+      }
+    })();
+    return () => { active = false; };
+  }, [token]);
 
   async function post(path: string, body: Record<string, unknown>, successMessage: string) {
     if (!token || busy) return;

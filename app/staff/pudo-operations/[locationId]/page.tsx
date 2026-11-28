@@ -68,25 +68,14 @@ export default function PudoOperationsDetailPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const load = useCallback(async (currentUser: User) => {
+  const load = useCallback(async (currentUser: User): Promise<Data> => {
     const token = await currentUser.getIdToken();
     const response = await fetch(`/api/staff/pudo-operations/${encodeURIComponent(locationId)}`, {
       headers: { Authorization: `Bearer ${token}` }, cache: "no-store",
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Unable to load PUDO operations.");
-    const next = result as Data;
-    setData(next);
-    const nextAvailability = next.availability ?? defaultAvailability();
-    setAvailability(nextAvailability);
-    setExceptionsText(nextAvailability.exceptions.map((item) => item.status === "closed"
-      ? `${item.date} | closed`
-      : `${item.date} | ${item.intervals.map((range) => `${range.start}-${range.end}`).join(", ")}`).join("\n"));
-    const mapped: Record<string, { maximum: string; unit: string; basis: Capacity["basis"] }> = {};
-    for (const item of next.capacity ?? []) mapped[item.capabilityId] = {
-      maximum: String(item.maximum), unit: item.unit, basis: item.basis,
-    };
-    setCapacity(mapped);
+    return result as Data;
   }, [locationId]);
 
   useEffect(() => onAuthStateChanged(auth, (current) => {
@@ -96,9 +85,27 @@ export default function PudoOperationsDetailPage() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    setLoading(true); setError("");
-    load(user).catch((err) => { if (!cancelled) setError(err instanceof Error ? err.message : "Unable to load PUDO operations."); })
-      .finally(() => { if (!cancelled) setLoading(false); });
+    void (async () => {
+      try {
+        const next = await load(user);
+        if (cancelled) return;
+        setData(next);
+        const nextAvailability = next.availability ?? defaultAvailability();
+        setAvailability(nextAvailability);
+        setExceptionsText(nextAvailability.exceptions.map((item) => item.status === "closed"
+          ? `${item.date} | closed`
+          : `${item.date} | ${item.intervals.map((range) => `${range.start}-${range.end}`).join(", ")}`).join("\n"));
+        const mapped: Record<string, { maximum: string; unit: string; basis: Capacity["basis"] }> = {};
+        for (const item of next.capacity ?? []) mapped[item.capabilityId] = {
+          maximum: String(item.maximum), unit: item.unit, basis: item.basis,
+        };
+        setCapacity(mapped);
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : "Unable to load PUDO operations.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
     return () => { cancelled = true; };
   }, [user, load]);
 
@@ -138,7 +145,18 @@ export default function PudoOperationsDetailPage() {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Unable to save PUDO operations.");
-      await load(user);
+      const next = await load(user);
+      setData(next);
+      const nextAvailability = next.availability ?? defaultAvailability();
+      setAvailability(nextAvailability);
+      setExceptionsText(nextAvailability.exceptions.map((item) => item.status === "closed"
+        ? `${item.date} | closed`
+        : `${item.date} | ${item.intervals.map((range) => `${range.start}-${range.end}`).join(", ")}`).join("\n"));
+      const mapped: Record<string, { maximum: string; unit: string; basis: Capacity["basis"] }> = {};
+      for (const item of next.capacity ?? []) mapped[item.capabilityId] = {
+        maximum: String(item.maximum), unit: item.unit, basis: item.basis,
+      };
+      setCapacity(mapped);
       setReason("");
       setMessage(`Availability and capacity configuration saved as version ${result.version}.`);
     } catch (err) {
@@ -167,7 +185,7 @@ export default function PudoOperationsDetailPage() {
           <>
             <section className="cost-panel">
               <h2>Availability schedule</h2>
-              <p>Set the location's local time zone, normal weekly opening hours and dated exceptions. A temporary unavailable status overrides the weekly schedule.</p>
+              <p>Set the location&apos;s local time zone, normal weekly opening hours and dated exceptions. A temporary unavailable status overrides the weekly schedule.</p>
               <div className="cost-form-grid">
                 <div className="cost-field"><label htmlFor="pudo-timezone">Location time zone (IANA)</label>
                   <input id="pudo-timezone" value={availability.timezone} onChange={(e) => setAvailability((v) => ({ ...v, timezone: e.target.value }))} placeholder="e.g. Africa/Lagos" />

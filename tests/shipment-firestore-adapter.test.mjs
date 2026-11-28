@@ -1,0 +1,511 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { createShipmentFirestorePorts, SHIPMENT_FIRESTORE_PATHS } from "../lib/shipment/firestore-adapter.mjs";
+import { resolveShipmentFirebaseConfig } from "../lib/shipment/firestore-runtime.mjs";
+import { createShipmentCommands } from "../lib/shipment/commands.mjs";
+import { assertCompleteShipmentRepositoryPorts } from "../lib/shipment/repositories.mjs";
+import { createShipmentRecordCommands } from "../lib/shipment/record-commands.mjs";
+
+class FakeSnapshot {
+  constructor(id, value) {
+    this.id = id;
+    this.value = value;
+    this.exists = value !== undefined;
+  }
+  data() { return this.value === undefined ? undefined : structuredClone(this.value); }
+}
+
+class FakeQuery {
+  constructor(path, filters = [], sort = null, max = null) {
+    this.path = path;
+    this.filters = filters;
+    this.sort = sort;
+    this.max = max;
+  }
+  where(field, operator, value) {
+    return new FakeQuery(this.path, [...this.filters, [field, operator, value]], this.sort, this.max);
+  }
+  orderBy(field, direction = "asc") {
+    return new FakeQuery(this.path, this.filters, [field, direction], this.max);
+  }
+  limit(max) { return new FakeQuery(this.path, this.filters, this.sort, max); }
+}
+
+class FakeDocumentReference {
+  constructor(db, path) {
+    this.db = db;
+    this.path = path;
+    this.id = path.split("/").at(-1);
+  }
+  collection(name) { return new FakeCollectionReference(this.db, `${this.path}/${name}`); }
+}
+
+class FakeCollectionReference extends FakeQuery {
+  constructor(db, path) {
+    super(path);
+    this.db = db;
+  }
+  doc(id) { return new FakeDocumentReference(this.db, `${this.path}/${id}`); }
+}
+
+class FakeTransaction {
+  constructor(db) {
+    this.db = db;
+    this.writes = [];
+  }
+  async get(target) {
+    if (this.writes.length) throw new Error("Firestore transactions must perform reads before writes.");
+    if (target instanceof FakeDocumentReference) {
+      return new FakeSnapshot(target.id, this.db.records.get(target.path));
+    }
+    const prefix = `${target.path}/`;
+    let docs = [...this.db.records.entries()]
+      .filter(([path]) => path.startsWith(prefix) && !path.slice(prefix.length).includes("/"))
+      .map(([path, value]) => new FakeSnapshot(path.split("/").at(-1), value));
+    for (const [field, operator, value] of target.filters) {
+      if (operator !== "==") throw new Error("Unsupported fake query operator");
+      docs = docs.filter(snapshot => snapshot.data()?.[field] === value);
+    }
+    if (target.sort) {
+      const [field, direction] = target.sort;
+      docs.sort((a, b) => String(a.data()?.[field] ?? "").localeCompare(String(b.data()?.[field] ?? "")) * (direction === "desc" ? -1 : 1));
+    }
+    if (target.max != null) docs = docs.slice(0, target.max);
+    return { docs, empty: docs.length === 0 };
+  }
+  create(ref, data) { this.writes.push({ type: "create", ref, data: structuredClone(data) }); }
+  update(ref, patch) { this.writes.push({ type: "update", ref, patch: structuredClone(patch) }); }
+}
+
+class FakeFirestore {
+  constructor() { this.records = new Map(); }
+  collection(name) { return new FakeCollectionReference(this, name); }
+  async runTransaction(handler) {
+    const tx = new FakeTransaction(this);
+    const result = await handler(tx);
+    for (const write of tx.writes) {
+      if (write.type === "create") {
+        if (this.records.has(write.ref.path)) throw new Error("ALREADY_EXISTS");
+        this.records.set(write.ref.path, write.data);
+      } else {
+        const existing = this.records.get(write.ref.path);
+        if (!existing) throw new Error("NOT_FOUND");
+        this.records.set(write.ref.path, { ...existing, ...write.patch });
+      }
+    }
+    return result;
+  }
+}
+
+function portsFor(db) {
+  return createShipmentFirestorePorts({ db });
+}
+
+test("shipment Firestore paths are isolated from legacy root collections", () => {
+  assert.equal(SHIPMENT_FIRESTORE_PATHS.shipments, "verilyftShipmentData/v1/shipments");
+  assert.equal(SHIPMENT_FIRESTORE_PATHS.quotes, "verilyftShipmentData/v1/quoteLineages");
+  assert.equal(SHIPMENT_FIRESTORE_PATHS.intakes, "verilyftShipmentData/v1/parcelIntakes");
+  assert.equal(SHIPMENT_FIRESTORE_PATHS.notifications, "verilyftShipmentData/v1/notifications");
+  assert.equal(SHIPMENT_FIRESTORE_PATHS.authorities.pudoPartners, "pudoPartnerAccounts");
+  assert.notEqual(SHIPMENT_FIRESTORE_PATHS.quotes, "shipmentQuotes");
+});
+
+test("shipment, parcel and event repositories persist and retrieve their records", async () => {
+  const db = new FakeFirestore();
+  const ports = portsFor(db);
+  await ports.transaction.run(async tx => {
+    await ports.shipments.create(tx, "shipment-1", {
+      shipmentReference: "VLY-20261127-ABC234",
+      status: "Submitted",
+      customerId: "customer-1",
+    });
+    await ports.parcels.createMany(tx, "shipment-1", [{
+      parcelId: "parcel-1",
+      shipmentId: "shipment-1",
+      description: "Documents",
+      createdAt: "2026-11-27T10:00:00.000Z",
+    }]);
+    await ports.events.append(tx, {
+      eventId: "event-1",
+      shipmentId: "shipment-1",
+      eventType: "shipment_submitted",
+      occurredAt: "2026-11-27T10:00:00.000Z",
+    });
+  });
+
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.shipments.getById(tx, "shipment-1")).status, "Submitted");
+    assert.equal((await ports.shipments.getByReference(tx, "VLY-20261127-ABC234")).shipmentId, "shipment-1");
+    assert.equal((await ports.parcels.getById(tx, "parcel-1")).shipmentId, "shipment-1");
+    assert.equal((await ports.parcels.listByShipment(tx, "shipment-1")).length, 1);
+    assert.equal((await ports.events.listByShipment(tx, "shipment-1"))[0].eventId, "event-1");
+  });
+});
+
+test("event repository is append-only and reference reservations are unique", async () => {
+  const ports = portsFor(new FakeFirestore());
+  await ports.transaction.run(tx => ports.events.append(tx, {
+    eventId: "event-immutable",
+    shipmentId: "shipment-immutable",
+    eventType: "submitted",
+    occurredAt: "2026-11-27T10:00:00.000Z",
+  }));
+  await assert.rejects(
+    ports.transaction.run(tx => ports.events.append(tx, {
+      eventId: "event-immutable",
+      shipmentId: "shipment-immutable",
+      eventType: "changed",
+      occurredAt: "2026-11-27T11:00:00.000Z",
+    })),
+    /ALREADY_EXISTS/
+  );
+
+  assert.equal(await ports.transaction.run(tx => ports.references.reserveUnique(tx, "VLY-ONE")), true);
+  assert.equal(await ports.transaction.run(tx => ports.references.reserveUnique(tx, "VLY-ONE")), false);
+});
+
+test("idempotency repository returns the stored result for an actor-scoped key", async () => {
+  const ports = portsFor(new FakeFirestore());
+  await ports.transaction.run(tx => ports.idempotency.create(tx, "customer:c1:submit:k1", {
+    command: "submit_shipment",
+    result: { shipmentId: "s1" },
+  }));
+  await ports.transaction.run(async tx => {
+    const result = await ports.idempotency.get(tx, "customer:c1:submit:k1");
+    assert.deepEqual(result.result, { shipmentId: "s1" });
+  });
+});
+
+test("quote lineage pointer advances while quote revisions remain separate documents", async () => {
+  const ports = portsFor(new FakeFirestore());
+  await ports.transaction.run(async tx => {
+    await ports.quotes.createLineage(tx, "quote-1", {
+      quoteId: "quote-1",
+      shipmentId: "shipment-1",
+      createdAt: "2026-11-27T10:00:00.000Z",
+    });
+    await ports.quotes.appendRevision(tx, "quote-1", {
+      revisionId: "revision-1",
+      revisionNumber: 1,
+      shipmentId: "shipment-1",
+      issuedAt: "2026-11-27T10:00:00.000Z",
+      totalMinor: 150000,
+      currency: "NGN",
+    });
+  });
+  await ports.transaction.run(async tx => {
+    const current = await ports.quotes.getCurrent(tx, "quote-1");
+    assert.equal(current.revisionId, "revision-1");
+    assert.equal(current.totalMinor, 150000);
+  });
+  await ports.transaction.run(tx => ports.quotes.appendRevision(tx, "quote-1", {
+    revisionId: "revision-2",
+    revisionNumber: 2,
+    shipmentId: "shipment-1",
+    issuedAt: "2026-11-27T11:00:00.000Z",
+    totalMinor: 175000,
+    currency: "NGN",
+  }));
+  await ports.transaction.run(async tx => {
+    const current = await ports.quotes.getCurrent(tx, "quote-1");
+    assert.equal(current.revisionId, "revision-2");
+    assert.equal(current.totalMinor, 175000);
+  });
+});
+
+test("payment provider references resolve to one immutable attempt identity", async () => {
+  const ports = portsFor(new FakeFirestore());
+  await ports.transaction.run(tx => ports.payments.createAttempt(tx, "payment-1", {
+    paymentId: "payment-1",
+    shipmentId: "shipment-1",
+    quoteRevisionId: "revision-1",
+    provider: "paystack",
+    providerReference: "paystack-ref-1",
+    amountMinor: 150000,
+    currency: "NGN",
+    status: "initialised",
+    createdAt: "2026-11-27T10:00:00.000Z",
+  }));
+  await ports.transaction.run(async tx => {
+    const payment = await ports.payments.getByProviderReference(tx, "paystack-ref-1");
+    assert.equal(payment.paymentId, "payment-1");
+    assert.equal(payment.amountMinor, 150000);
+  });
+  await ports.transaction.run(tx => ports.payments.updateAttempt(tx, "payment-1", {
+    status: "successful",
+    amountMinor: 1,
+    providerReference: "replacement-reference",
+  }));
+  await ports.transaction.run(async tx => {
+    const payment = await ports.payments.getById(tx, "payment-1");
+    assert.equal(payment.status, "successful");
+    assert.equal(payment.amountMinor, 150000);
+    assert.equal(payment.providerReference, "paystack-ref-1");
+  });
+});
+
+test("Firebase runtime configuration requires distinct explicit staging and production targets", () => {
+  const base = {
+    SHIPMENT_ENVIRONMENT: "staging",
+    STAGING_FIREBASE_PROJECT_ID: "verilyft-stage-example",
+    PRODUCTION_FIREBASE_PROJECT_ID: "verilyft-4e691",
+    SHIPMENT_FIREBASE_PROJECT_ID: "verilyft-stage-example",
+    SHIPMENT_FIRESTORE_DATABASE_ID: "(default)",
+    SHIPMENT_FIREBASE_CLIENT_EMAIL: "shipment-admin@example.iam.gserviceaccount.com",
+    SHIPMENT_FIREBASE_PRIVATE_KEY: "private\\nkey",
+  };
+  const config = resolveShipmentFirebaseConfig(base);
+  assert.equal(config.environment, "staging");
+  assert.equal(config.projectId, "verilyft-stage-example");
+  assert.equal(config.databaseId, "(default)");
+  assert.equal(config.privateKey, "private\nkey");
+
+  assert.throws(
+    () => resolveShipmentFirebaseConfig({ ...base, SHIPMENT_FIREBASE_PROJECT_ID: "verilyft-4e691" }),
+    /project mismatch/
+  );
+  assert.throws(
+    () => resolveShipmentFirebaseConfig({ ...base, STAGING_FIREBASE_PROJECT_ID: "verilyft-4e691" }),
+    /must be different/
+  );
+});
+
+test("shipment submission uses Firestore transaction reads before writes and replays idempotently", async () => {
+  const db = new FakeFirestore();
+  db.records.set("users/customer-1", { displayName: "Test Customer" });
+  const ports = portsFor(db);
+  let sequence = 0;
+  const commands = createShipmentCommands({
+    ports,
+    idFactory: prefix => `${prefix}-${++sequence}`,
+    clock: () => new Date("2026-11-27T12:00:00.000Z"),
+  });
+  const input = {
+    actor: { type: "customer", id: "customer-1" },
+    idempotencyKey: "submit-once",
+    shipment: {
+      serviceType: "door_to_door",
+      sender: { fullName: "Sender", phone: "+2348000000001" },
+      recipient: { fullName: "Recipient", phone: "+2348000000002" },
+      origin: {
+        type: "address",
+        country: "Nigeria",
+        state: "Lagos",
+        city: "Lagos",
+        addressDescription: "Origin address",
+      },
+      destination: {
+        type: "address",
+        country: "Nigeria",
+        state: "Oyo",
+        city: "Ibadan",
+        addressDescription: "Destination address",
+      },
+    },
+    parcels: [{
+      description: "Documents",
+      declaredWeight: 1,
+      measurements: { length: 20, width: 15, height: 2 },
+      declaredValueMinor: 0,
+      currency: "NGN",
+    }],
+  };
+
+  const first = await commands.submitShipment(input);
+  const replay = await commands.submitShipment(input);
+  assert.deepEqual(replay, first);
+  assert.equal(first.status, "Submitted");
+  assert.equal((await ports.transaction.run(tx => ports.shipments.getById(tx, first.shipmentId))).shipmentReference, first.shipmentReference);
+  assert.equal((await ports.transaction.run(tx => ports.parcels.listByShipment(tx, first.shipmentId))).length, 1);
+  assert.equal((await ports.transaction.run(tx => ports.events.listByShipment(tx, first.shipmentId))).length, 1);
+});
+
+test("complete Phase 3 adapter exposes all foundational repositories", () => {
+  const ports = portsFor(new FakeFirestore());
+  assert.equal(assertCompleteShipmentRepositoryPorts(ports), ports);
+  for (const name of ["intakes", "assignments", "documents", "notifications"]) assert.ok(ports[name]);
+});
+
+test("completed parcel intakes require photos and remain immutable with linked corrections", async () => {
+  const ports = portsFor(new FakeFirestore());
+  const record = {
+    intakeId: "intake-1", shipmentId: "shipment-1", parcelIds: ["parcel-1"],
+    intakeType: "station_drop_off", receivingLocationType: "pudo", pudoLocationId: "pudo-1",
+    receivedBy: { type: "pudo_partner", id: "partner-1" }, receivedAt: "2026-11-27T10:00:00.000Z",
+    recordedAt: "2026-11-27T10:00:00.000Z", condition: "Good", measurements: [],
+    discrepancies: [], photoEvidenceRefs: ["storage/intake-1.jpg"], status: "completed",
+    completedAt: "2026-11-27T10:00:00.000Z",
+  };
+  await ports.transaction.run(tx => ports.intakes.create(tx, record));
+  await assert.rejects(ports.transaction.run(tx => ports.intakes.create(tx, { ...record, photoEvidenceRefs: [] })), /photo evidence/);
+  await ports.transaction.run(tx => ports.intakes.appendCorrection(tx, "intake-1", {
+    ...record, intakeId: "intake-2", correctionOfIntakeId: "intake-1", notes: "Corrected condition note",
+  }));
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.intakes.listByShipment(tx, "shipment-1")).length, 2);
+    assert.equal((await ports.intakes.getById(tx, "intake-1")).notes, undefined);
+  });
+});
+
+test("assignments are shipment-scoped, status-limited and distinct from custody", async () => {
+  const ports = portsFor(new FakeFirestore());
+  const record = {
+    assignmentId: "assignment-1", shipmentId: "shipment-1", activityType: "origin_intake",
+    assignee: { type: "pudo_location", id: "pudo-1" },
+    assignedBy: { type: "admin", id: "admin-1" },
+    startsAt: "2026-11-27T10:00:00.000Z", endsAt: null, status: "active",
+    createdAt: "2026-11-27T10:00:00.000Z",
+  };
+  await ports.transaction.run(tx => ports.assignments.create(tx, "shipment-1", record));
+  await ports.transaction.run(tx => ports.assignments.updateStatus(tx, "shipment-1", "assignment-1", "completed", "2026-11-27T11:00:00.000Z"));
+  await assert.rejects(ports.transaction.run(tx => ports.assignments.updateStatus(tx, "shipment-1", "assignment-1", "custody_received", "2026-11-27T11:00:00.000Z")), /Unsupported assignment status/);
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.assignments.getById(tx, "shipment-1", "assignment-1")).status, "completed");
+    assert.equal((await ports.assignments.listByShipment(tx, "shipment-1")).length, 1);
+  });
+});
+
+test("shipment document metadata is immutable and contains Cloudinary asset references", async () => {
+  const ports = portsFor(new FakeFirestore());
+  const record = {
+    documentId: "document-1", shipmentId: "shipment-1", documentType: "waybill", version: 1,
+    assetProvider: "cloudinary", cloudinaryPublicId: "verilyft/shipments/shipment-1/waybill-v1", resourceType: "raw", contentType: "application/pdf",
+    sizeBytes: 1024, checksum: "sha256:abc", generatedAt: "2026-11-27T10:00:00.000Z",
+    generatedBy: { type: "admin", id: "admin-1" }, access: ["customer", "admin"],
+  };
+  await ports.transaction.run(tx => ports.documents.create(tx, "shipment-1", record));
+  await assert.rejects(ports.transaction.run(tx => ports.documents.create(tx, "shipment-1", record)), /ALREADY_EXISTS/);
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.documents.getById(tx, "shipment-1", "document-1")).cloudinaryPublicId, record.cloudinaryPublicId);
+    assert.equal((await ports.documents.listByShipment(tx, "shipment-1")).length, 1);
+  });
+});
+
+test("notification intents deduplicate and delivery attempts are append-only", async () => {
+  const ports = portsFor(new FakeFirestore());
+  const record = {
+    notificationId: "notification-1", shipmentId: "shipment-1", recipientType: "customer",
+    recipientId: "customer-1", channel: "email", templateKey: "shipment_submitted",
+    deduplicationKey: "shipment-1:shipment_submitted:customer-1", payload: { reference: "VLY-1" },
+    status: "pending", createdAt: "2026-11-27T10:00:00.000Z", updatedAt: "2026-11-27T10:00:00.000Z",
+  };
+  await ports.transaction.run(tx => ports.notifications.create(tx, record));
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.notifications.findByDeduplicationKey(tx, record.deduplicationKey)).notificationId, "notification-1");
+  });
+  await assert.rejects(ports.transaction.run(tx => ports.notifications.create(tx, {
+    ...record, notificationId: "notification-2",
+  })), /ALREADY_EXISTS/);
+  const attempt = {
+    attemptId: "attempt-1", notificationId: "notification-1",
+    attemptedAt: "2026-11-27T10:01:00.000Z", status: "failed",
+    provider: "email-provider", errorCode: "TEMPORARY", errorMessage: "Retry later",
+  };
+  await ports.transaction.run(tx => ports.notifications.appendAttempt(tx, "notification-1", attempt));
+  await ports.transaction.run(tx => ports.notifications.updateStatus(tx, "notification-1", {
+    status: "failed", updatedAt: "2026-11-27T10:01:00.000Z", payload: { tampered: true },
+  }));
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.notifications.getById(tx, "notification-1")).payload.reference, "VLY-1");
+    assert.equal((await ports.notifications.listAttempts(tx, "notification-1")).length, 1);
+  });
+});
+
+test("existing customer, Admin, PUDO partner and location authorities are read without duplicate writes", async () => {
+  const shipmentDb = new FakeFirestore();
+  shipmentDb.records.set("users/customer-1", { displayName: "Customer" });
+  shipmentDb.records.set("adminAccess/admin-1", { active: true, permissions: ["shipment.quote"] });
+  shipmentDb.records.set("pudoPartnerAccounts/partner-1", { status: "active", locationIds: ["pudo-1"] });
+  shipmentDb.records.set("pudoLocations/pudo-1", { status: "active", partnerId: "partner-1" });
+  const before = shipmentDb.records.size;
+  const ports = createShipmentFirestorePorts({ db: shipmentDb });
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.authorities.getCustomerByAuthUid(tx, "customer-1")).displayName, "Customer");
+    assert.equal((await ports.authorities.getAdminAccessByAuthUid(tx, "admin-1")).active, true);
+    assert.equal((await ports.authorities.getPudoPartnerByAuthUid(tx, "partner-1")).status, "active");
+    assert.equal((await ports.authorities.getPudoLocationById(tx, "pudo-1")).partnerId, "partner-1");
+  });
+  assert.equal(shipmentDb.records.size, before);
+});
+
+test("record commands persist photo-evidenced intake, assignment, document and notification history", async () => {
+  const db = new FakeFirestore();
+  const ports = portsFor(db);
+  await ports.transaction.run(async tx => {
+    await ports.shipments.create(tx, "shipment-records", {
+      shipmentId: "shipment-records", customerId: "customer-1", status: "Awaiting Collection",
+      serviceType: "pudo_to_pudo", origin: { type: "pudo", pudoLocationId: "pudo-origin" },
+      destination: { type: "pudo", pudoLocationId: "pudo-destination" },
+    });
+    await ports.parcels.createMany(tx, "shipment-records", [{
+      parcelId: "parcel-records", shipmentId: "shipment-records", description: "Box",
+    }]);
+  });
+  let sequence = 0;
+  const commands = createShipmentRecordCommands({
+    ports,
+    idFactory: prefix => `${prefix}-${++sequence}`,
+    clock: () => new Date("2026-11-27T12:00:00.000Z"),
+    authorizePudoLocation: async (partnerId, target) => partnerId === "partner-1" && (target === "pudo-origin" || target?.id === "pudo-origin"),
+    verifyIntakePhotoEvidence: async ({ intake }) => intake.photoEvidenceRefs.every(ref => ref.startsWith("private/")),
+    verifyDocumentCloudinaryAsset: async ({ document }) => document.cloudinaryPublicId.startsWith("verilyft/shipments/") && document.resourceType === "raw" && Boolean(document.checksum),
+  });
+  const actor = { type: "pudo_partner", id: "partner-1" };
+  const intake = await commands.recordParcelIntake({
+    actor, idempotencyKey: "intake-command-1",
+    intake: {
+      shipmentId: "shipment-records", parcelIds: ["parcel-records"],
+      intakeType: "station_drop_off", receivingLocationType: "pudo",
+      pudoLocationId: "pudo-origin", condition: "Good", measurements: [],
+      discrepancies: [], photoEvidenceRefs: ["private/intake/photo-1.jpg"],
+    },
+  });
+  assert.equal(intake.status, "Received at PUDO");
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.shipments.getById(tx, "shipment-records")).status, "Received at PUDO");
+    assert.equal((await ports.intakes.getById(tx, intake.intakeId)).photoEvidenceRefs.length, 1);
+    assert.equal((await ports.events.listByShipment(tx, "shipment-records")).length, 1);
+  });
+
+  const assignment = await commands.createAssignment({
+    actor, idempotencyKey: "assignment-command-1",
+    assignment: {
+      shipmentId: "shipment-records", activityType: "origin_handling",
+      assignee: { type: "pudo_location", id: "pudo-origin" },
+      startsAt: "2026-11-27T12:00:00.000Z", status: "active", endsAt: null,
+    },
+  });
+  assert.ok(assignment.assignmentId);
+  await ports.transaction.run(async tx => {
+    assert.equal((await ports.shipments.getById(tx, "shipment-records")).currentAssignmentId, assignment.assignmentId);
+  });
+
+  const document = await commands.createShipmentDocument({
+    actor: { type: "admin", id: "admin-1" }, idempotencyKey: "document-command-1",
+    document: {
+      shipmentId: "shipment-records", documentType: "intake_receipt", version: 1,
+      cloudinaryPublicId: "verilyft/shipments/shipment-records/intake-receipt-v1",
+      resourceType: "raw",
+      contentType: "application/pdf", sizeBytes: 100, checksum: "sha256:receipt",
+      access: ["customer", "admin"],
+    },
+  });
+  assert.ok(document.documentId);
+
+  const notification = await commands.queueShipmentNotification({
+    actor: { type: "system", id: "notification-service" }, idempotencyKey: "notification-command-1",
+    notification: {
+      shipmentId: "shipment-records", recipientType: "customer", recipientId: "customer-1",
+      channel: "email", templateKey: "intake_completed",
+      deduplicationKey: "shipment-records:intake_completed:customer-1",
+      payload: { shipmentReference: "VLY-RECORDS" },
+    },
+  });
+  assert.equal(notification.deduplicated, false);
+  const attempt = await commands.recordNotificationAttempt({
+    actor: { type: "system", id: "notification-service" }, idempotencyKey: "notification-attempt-1",
+    notificationId: notification.notificationId,
+    attempt: { status: "delivered", provider: "test-provider", providerMessageId: "msg-1" },
+  });
+  assert.equal(attempt.status, "delivered");
+});

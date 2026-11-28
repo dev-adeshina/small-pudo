@@ -13,21 +13,21 @@ This document consolidates confirmed product decisions, the current repository a
 - A shipment is created through exactly three channels: registered customer, Admin on behalf of a customer, or PUDO partner on behalf of a walk-in customer.
 - All channels create the same authoritative shipment record.
 - Each shipment records its customer/sender, creator/actor and creation channel separately.
-- A shipment cannot be submitted without a customer identity. Customer-facing submission requires sign-up/sign-in before final submission. PUDO walk-in representation requires the customer to be represented by the PUDO operator; the precise account-provisioning rule remains open in section 10.
+- A shipment cannot be submitted without a customer identity. Customer-facing submission requires sign-up/sign-in before final submission. PUDO walk-in representation creates a minimal pending-registration customer profile; it does not create a Firebase Auth account. The customer gains account access only after normal registration and identity verification.
 - Every submitted shipment receives a unique shipment reference.
 - Sender and recipient information is stored side by side as shipment snapshots. A signed-in customer may select saved contacts/addresses or enter new ones.
 - Address structure: country, state, city, street/address description, coordinates when available, and PUDO/operational-location reference where applicable.
 - Initial services: PUDO-to-PUDO, door-to-PUDO, PUDO-to-door and door-to-door.
 - One shipment may contain multiple parcels, but all parcels in that shipment share one origin and one destination. Different destinations require separate shipments/intakes.
 - Parcel data includes description, quantity, actual weight, dimensions, volumetric weight, declared value, special handling, and item images. VeriLyft does not accept goods prohibited by applicable law; the initial release needs a clear customer declaration/confirmation and an Admin/PUDO escalation path, not a complex prohibited-goods catalogue.
-- Submitted parcel measurements may be amended only during Admin/PUDO review; after that review is completed they are locked. The exact review lock point must be enforced server-side.
+- Submitted parcel measurements may be amended only by Admin while the server-opened review is open; Admin closes the review and locks declared values. Physical intake measurements remain separate immutable observations.
 - The shipment lifecycle begins at **Submitted**. There is no customer-facing Draft shipment status.
 - Main shipment status includes the agreed statuses and exception states in section 5. Quotation and payment are reflected in the shipment's overall status.
 - Status/event history records previous and new state, actor, timestamp and reason. Some internal events/status details are Admin-only.
 - Shipment status and physical custody are separate facts.
 - Each shipment has one quote lineage with revisions. Automated system and authorised Admin can generate quotes; Admin approves/overrides them. Accepted quote is an immutable snapshot.
 - Payment is through Paystack and must be verified server-side before shipment confirmation. Retry is allowed only after a failed payment attempt. Refund requests use an authorised manual process initially.
-- PUDO locations share the same default capabilities. One location record holds current identity, address, lifecycle, capability and operational summary. Registration, verification, approval and activation are stages of one lifecycle.
+- Every registered PUDO location receives the standard default operational capabilities automatically; a separate capability approval is not a prerequisite for ordinary parcel handling or quotation readiness. A city is serviceable when VeriLyft has at least one registered PUDO in that city. Do not create a separate city-activation approval workflow. Customers may choose the PUDO most convenient to them, including the nearest suitable location. A location's temporary operating availability and capacity are separate from city-level serviceability.
 - PUDO partner identity is separate from Admin identity. A partner account manages its location roster. Named personnel records contain a person's name and operational role; they are roster-only records with no individual Firebase login or Admin permissions.
 - Physical intake is a separate shipment-linked record. It requires a photograph, time, PUDO, receiving person, condition, measured weight/dimensions and discrepancy notes. Intake evidence is immutable; corrections append to the original record.
 - Assignments and custody are distinct. Assignments identify who is responsible for an activity and when; custody events prove physical possession/handover.
@@ -39,27 +39,29 @@ This document consolidates confirmed product decisions, the current repository a
 - Shared authentication infrastructure is retained, with separate role-aware workspaces and access boundaries. Current internal operating model is Admin responsibility; do not assume a general staff management system is required.
 - Explicit Admin authority is required for reviewing shipments, issuing quotations, approving pricing, confirming payments, managing PUDO locations, recording intake, assigning shipments, confirming delivery and cancellation. Staff management is out of initial scope.
 - Existing store collections remain independent and untouched. Store orders are not shipment bookings.
-- New shipment implementation uses a separately identified Firestore database. Existing main-version database and store records remain untouched. Database creation/deployment requires separate approval.
+- Staging and production use separate Firebase projects; `verilyft-4e691` remains production. Shipment records use the versioned `verilyftShipmentData/v1` namespace in the explicitly selected database in each project. Existing legacy collections remain untouched. Staging project/database provisioning and deployment require separate approval.
 - Avoid unnecessary collections, deep subcollections, duplicated records and excessive version histories.
 
 ## 2. Minimal logical collection model
 
 The following is the proposed starting point. Use subcollections only where records genuinely repeat or must be append-only.
 
-| Logical collection | Responsibility |
-|---|---|
-| `customers` | Minimal customer profile linked to Auth UID; saved contacts/addresses may be held as customer-owned subcollections if required. |
-| `admins` | Admin profile and active access state; permissions are enforced server-side. |
-| `pudoPartners` | PUDO partner login/profile, separate from Admin identity. |
-| `pudoLocations` | One current location record: identity, address, lifecycle, shared default capabilities, schedule, availability and capacity summary. Each location owns a small `personnel` subcollection for named roster entries. |
-| `shipments` | The single authoritative shipment aggregate across all three creation channels. |
-| `shipmentQuotes` | One quote lineage per shipment with current quote and necessary revisions/snapshots. |
-| `payments` | Payment attempts/provider transactions linked to shipment; retries create attempts only after failure. |
-| `shipmentEvents` | Append-only timeline for shipment lifecycle and operational events; may be a subcollection under shipment. |
-| `parcelIntakes` | One record per physical intake, linked to shipment and affected parcel(s), with mandatory photo evidence. |
-| `shipmentAssignments` | Current and historical operational responsibility for pickup, PUDO handling, transfer or delivery. |
-| `shipmentDocuments` | Shipment-linked generated document metadata, version and Storage path. |
-| `notifications` | Minimum notification/delivery attempts needed for payment, progress and delivery communication. |
+| Logical structure | Authoritative source/path | Responsibility |
+|---|---|---|
+| Customers | Existing `users/{uid}`; walk-ins at `verilyftShipmentData/v1/walkInCustomers/{customerId}` | Existing registered profile authority; minimal pending walk-in profile only. |
+| Admins | Existing `adminAccess/{uid}` | Existing active Admin access authority; no duplicate Admin collection. |
+| PUDO partners | Existing `pudoPartnerAccounts/{uid}` | Existing partner identity; distinct from Admin and roster personnel. |
+| PUDO locations | Existing `pudoLocations/{locationId}` and PUDO evidence collections | Existing location and verification/activation/capability/operations authorities. |
+| Shipments | `verilyftShipmentData/v1/shipments/{shipmentId}` | One authoritative shipment aggregate. |
+| Shipment quotes | `verilyftShipmentData/v1/quoteLineages/{quoteId}/revisions/{revisionId}` | One quote lineage per shipment; immutable revisions. Legacy `shipmentQuotes` remains separate. |
+| Payments | `verilyftShipmentData/v1/payments/{paymentId}` | Provider payment attempts linked to shipment and accepted quote revision. |
+| Shipment events | `verilyftShipmentData/v1/shipments/{shipmentId}/events/{eventId}` | Append-only timeline, including material custody events. |
+| Parcel intakes | `verilyftShipmentData/v1/parcelIntakes/{intakeId}` | Completed physical intake linked to shipment/parcels, with mandatory photo evidence. |
+| Shipment assignments | `verilyftShipmentData/v1/shipments/{shipmentId}/assignments/{assignmentId}` | Responsibility history, distinct from custody. |
+| Shipment documents | `verilyftShipmentData/v1/shipments/{shipmentId}/documents/{documentId}` | Immutable versioned metadata and Cloudinary asset identifier; binaries remain in Cloudinary. |
+| Notifications | `verilyftShipmentData/v1/notifications/{notificationId}` | Recipient-specific deduplicated intent and append-only delivery attempts. |
+
+Parcels are separately modelled at `verilyftShipmentData/v1/parcels/{parcelId}` with a required `shipmentId` relationship. PUDO personnel remain roster entries under the existing PUDO location record.
 
 Worker roster records, saved customer address/contact records, quote revisions, intake corrections and notification attempts should be embedded or nested under their owning record where that is sufficient. Do not create standalone top-level collections for them without a demonstrated query/security requirement.
 
@@ -85,7 +87,7 @@ These snapshots preserve the exact details used for this shipment even if a save
 ### Service and route
 - `serviceType`: pudo_to_pudo, door_to_pudo, pudo_to_door, door_to_door.
 - `origin` and `destination`: structured endpoint snapshots and endpoint type (PUDO or address).
-- `routeDistance`: approved distance value/unit and evidence reference when available; do not treat straight-line distance as road-route evidence.
+- `routeDistanceKm`: the distance value used by the configurable transportation-pricing calculation, together with its measurement/source basis where available. Distance is a pricing input, not a route-approval prerequisite. The system does not require individually approved route evidence before issuing a quotation.
 
 ### Parcels
 Use a shipment-owned parcel list/subcollection because a shipment can contain multiple independently measured parcels. Each parcel has:
@@ -122,7 +124,7 @@ One quote lineage per shipment:
 - `shipmentId`;
 - current revision and revision history;
 - origin/destination and service snapshot;
-- distance and road-route evidence reference;
+- distance in kilometres and the applicable configurable pricing inputs/version;
 - parcel weights/dimensions and pricing basis;
 - line items/additional charges;
 - subtotal, total, currency;
@@ -147,6 +149,19 @@ Each provider transaction/attempt is recorded with:
 - refund request/status and authorised action metadata.
 
 A retry after a failed attempt creates a new attempt; it must not overwrite the failed attempt. A browser return alone never establishes payment success. If payment succeeds but the customer does not return, send a transactional email with a secure link back to the application/tracking.
+
+### Transportation pricing and manual arrangement
+
+Transportation is manually arranged and managed by Admin in the initial operating model. PUDO locations receive, inspect, ascertain, hold and dispatch parcels according to Admin's instructions; they do not independently approve or allocate road routes.
+
+Distance in kilometres and other configurable commercial variables determine the transportation charge. Rates and related pricing variables must be versioned/configurable so Admin can respond to fuel-price increases or decreases and other cost changes. A quotation stores the exact pricing configuration/version and calculation inputs used when it was issued.
+
+The data model must distinguish:
+- transportation price calculation (commercial inputs and calculated charges);
+- Admin's manual transportation arrangement (operational instruction/assignment);
+- physical dispatch and custody (events proving the parcel was released/received).
+
+A route-distance approval record is not a prerequisite for quotation readiness. The manual arrangement may capture transporter, vehicle, distance, instructions and operational references when known; optional details must not block the initial quote or booking.
 
 ## 5. Shipment lifecycle and events
 
@@ -181,7 +196,7 @@ Quotation/payment states are reflected in the shipment's overall status. A shipm
 - evidence/document references;
 - visibility classification (customer, recipient, Admin-only).
 
-A submitted shipment cannot be rejected before quotation. The exact point and authority for rejection after quotation must be settled. Cancellation after confirmation/payment is not supported initially; the Cancelled exception state is retained only if a permitted pre-confirmation cancellation path is approved.
+A shipment cannot be rejected before quotation. After quotation and before customer acceptance/payment, Admin may reject it with a mandatory reason; the current quote is marked withdrawn/void and the rejection is appended to the shipment timeline. A customer or Admin may cancel while the shipment is in `Submitted`, `Under Review`, `Quoted` or `Awaiting Payment`, provided no successful payment/confirmation exists. Cancellation requires an attributable actor and mandatory reason; any active quote is withdrawn. Cancellation after successful payment/confirmation is outside initial scope.
 
 Custody and assignment events must not be inferred from main shipment status. Record actual physical receipt/handover separately.
 
@@ -191,16 +206,18 @@ Custody and assignment events must not be inferred from main shipment status. Re
 One current-state document should hold:
 - partnerId;
 - location name and contact;
-- structured address and optional coordinates;
-- registration/verification/approval/activation lifecycle state;
-- shared default capability reference/value;
+- structured address including city/state and optional coordinates;
+- registration state and registeredAt;
+- default operational capabilities assigned automatically at registration;
 - operating days and opening/closing periods;
-- current availability;
-- capacity values;
+- current location operating availability (including temporary unavailability);
+- capacity values where configured;
 - active/inactive state;
 - createdAt/updatedAt and lifecycle event references.
 
-Keep only important lifecycle/approval changes in an attributable history. Routine current operating state is updated on the location record.
+City-level serviceability is derived from the registered PUDO locations: a city is serviceable when at least one PUDO is registered there. Do not maintain a second manually activated city-availability record. Customer PUDO selection should return suitable registered locations in the requested city and, when coordinates are available, help the customer identify the closest location. A location's temporary operating unavailability affects whether that location can be selected now; it does not erase the underlying registered network location.
+
+Keep only important lifecycle changes in an attributable history. Routine current operating state is updated on the location record.
 
 ### PUDO partner
 Separate login/profile linked to Auth UID and the PUDO location(s) it is authorised to operate. PUDO partner is not an Admin and cannot approve commercial pricing.
@@ -223,7 +240,7 @@ One intake record per physical intake event:
 - status/completion time;
 - correction/addendum references.
 
-The intake cannot complete until photo upload is confirmed. Store image binaries in Firebase Storage and protected metadata/references in Firestore. Submitted evidence is immutable; a correction is appended and linked to the original submission.
+The intake cannot complete until photo upload is confirmed. Store image binaries in Cloudinary and protected asset metadata/references in Firestore; do not use Firebase Storage for shipment images. Store a Cloudinary asset identifier and integrity/access metadata rather than trusting arbitrary client URLs. Submitted evidence is immutable; a correction is appended and linked to the original submission.
 
 ### Custody and transfers
 Custody means actual physical possession only. Each physical handover/transfer creates a progressive custody event recording releasing party, receiving party, time, location, condition and evidence. An assignment, route dispatch or attempted collection is not custody.
@@ -245,7 +262,7 @@ Record recipient name and phone, delivery photo, signature/confirmation, GPS (wh
 
 ## 8. Documents, tracking and notifications
 
-Documents are stored in Firebase Storage; Firestore holds shipmentId, document type, version, storage path, generatedAt, generatedBy, content snapshot/reference and access classification.
+Document binaries are stored in Cloudinary; Firestore holds shipmentId, document type, version, Cloudinary asset identifier, resource type, format, size/checksum, generatedAt, generatedBy, content snapshot/reference and access classification. Do not treat a public URL as the authoritative document reference.
 
 Required document types: quotation, payment receipt, shipment confirmation, waybill, PUDO intake receipt and delivery confirmation.
 
@@ -261,16 +278,16 @@ Initial notification events: payment outcome, shipment progress at meaningful mi
 - Record material actions with actor, action, affected record, timestamp and reason.
 - PUDO partner access is limited to its own location and operational records; customer and recipient access is limited to their own authorised shipment information.
 
-## 10. Remaining business decisions
+## 10. Resolved business decisions and remaining infrastructure gate
 
-The following are the only material workflow decisions still left open in the current baseline. They must be resolved before implementing the affected transition or workflow:
+The following workflow decisions are resolved and are the implementation baseline:
 
-1. **Walk-in customer provisioning:** A PUDO partner may submit on behalf of a walk-in customer, but every shipment must have a customer identity. Decide whether the partner may create a customer profile on the customer's behalf (with account access activated only after the customer completes registration) or whether customer registration must occur before submission. Until decided, do not create anonymous shipments or silently create Auth accounts.
-2. **Cancellation before confirmation:** Customer cancellation after payment/booking confirmation is outside initial scope. Decide whether a customer or Admin may cancel a submitted/quoted shipment before payment, and the exact permitted statuses and audit reason. Until decided, expose no customer cancellation action.
-3. **Rejection after quotation:** A shipment must not be rejected before a quotation is issued. Decide whether Admin may reject after quotation but before acceptance/payment, and whether the quote is marked withdrawn/void with a reason.
-4. **Measurement review completion:** Customer-declared measurements may be corrected only during the authorised Admin/PUDO review. The implementation should use an explicit review-completed action as the lock point. Confirm which role may close that review. Physical measurements recorded at intake are a separate immutable observation and must not overwrite the original customer-declared values.
-5. **Service-specific handover status semantics:** `Awaiting Collection` means the shipment is awaiting physical handover from the sender. For PUDO-origin services, that may mean sender drop-off at the origin PUDO; for door-pickup services it means waiting for the assigned pickup. `Collected` is recorded only when a door-pickup operator physically collects the parcel. A PUDO drop-off proceeds to `Received at PUDO` after photo-evidenced intake. Confirm these labels and transitions against the four service types before coding the state machine.
-6. **Database target details:** Confirm the separately named shipment database ID and Firestore location, and the exact environment configuration. The current instruction is that no separate Stage Firestore database is to be created. Do not create a database, deploy rules/indexes or write production shipment data until this infrastructure decision is explicitly approved.
+1. **Walk-in customer provisioning:** An authenticated PUDO partner may create a minimal pending-registration customer profile on behalf of a walk-in customer. This does not create a Firebase Auth user. The profile remains pending until the customer completes normal registration and identity verification.
+2. **Cancellation before confirmation:** The owning customer or Admin may cancel in `Submitted`, `Under Review`, `Quoted` or `Awaiting Payment`, with a mandatory reason and attributable event. Cancellation after successful payment/confirmation is outside initial scope.
+3. **Rejection after quotation:** Admin may reject only after quotation and before customer acceptance/payment. Rejection requires a reason, withdraws the current quote and appends an event.
+4. **Measurement review completion:** Only Admin may amend declared measurements while the server-opened review is open and close the review. Closure locks declared values. Physical intake measurements remain separate immutable observations.
+5. **Service-specific handover semantics:** PUDO-origin services move from `Awaiting Collection` to `Received at PUDO` only after completed origin-PUDO intake with photo evidence. Door-origin services move to `Collected` only after actual physical pickup by the assigned operator. Assignment or attempted pickup alone is not custody.
+6. **Environment boundary:** Staging and production use separate Firebase projects. Existing `verilyft-4e691` remains production. Staging must use a dedicated Firebase project; no separate staging database is created inside the production project. The staging project ID, ownership/billing, selected Firestore database ID/location and runtime credentials remain to be provisioned/confirmed before live connection.
 
 ## 11. Explicitly outside initial scope
 
@@ -289,12 +306,13 @@ The following are the only material workflow decisions still left open in the cu
 
 The logical shipment schema in this document is the Phase 3 implementation baseline. The following boundaries remain mandatory:
 
-- Existing default Firestore database and existing store collections remain untouched by the new shipment implementation.
-- The intended shipment data boundary is a separately named Firestore database in the existing Firebase project `verilyft-4e691`; its database ID, location and deployment configuration are not yet approved or created.
-- Do not create a separate Stage Firestore database. Do not infer that a staging branch authorises a staging database.
-- Do not point new shipment writes at the existing default database as a workaround for the pending infrastructure decision.
-- Firebase Authentication may use the existing project-level UID namespace. Role profiles and authorization remain logically distinct in the target database and all privileged writes remain server-side.
-- Existing store data remains authoritative in the existing database. Any store read-through must use a deliberate server-side boundary; no copying or dual writes are implied.
-- Phase 3 code may be developed against an injected database interface and test doubles. It must not initialize or write to production Firestore until the target database details and deployment are explicitly approved.
+- Staging and production are separate Firebase projects. `verilyft-4e691` remains production; staging receives its own dedicated project.
+- The new shipment records use the versioned `verilyftShipmentData/v1` namespace within the explicitly selected Firestore database in each environment. The database ID (including an explicit `(default)` choice) and location must be confirmed for each project before runtime connection.
+- Do not create a staging Firestore database inside the production Firebase project, and do not infer that a Git branch selects a Firebase project.
+- Existing store collections, customer drafts, legacy `shipmentQuotes`, Admin access, PUDO partner accounts, PUDO locations and PUDO operational evidence remain authoritative and are not overwritten or dual-written by the shipment model.
+- Existing customer/Admin/PUDO partner/PUDO location authorities are read-only references in the same environment-specific Firestore database transaction boundary. Firestore transactions cannot span database instances.
+- Firebase Authentication may use the project-local UID namespace. Customer, Admin and PUDO partner identities remain logically distinct; all privileged shipment writes are server-side.
+- The adapter receives an explicitly selected Firestore instance and does not fall back to the application's default Firebase Admin app. Runtime project/database selection is explicit and environment-guarded.
+- Phase 3 code does not authorise database provisioning, Firestore rules/index deployment, Storage bucket or access-policy changes, migrations, backfills, production data writes or PR merge. Those remain separate approval gates.
 
-This schema baseline authorises planning and code preparation only. It does not authorise database creation, Firestore rules/index deployment, Storage changes, migrations or production data writes.
+The code-level data model and injected persistence adapter may be developed and tested without connecting to production. Live staging verification begins only after the separate staging project and its database/runtime configuration are confirmed.

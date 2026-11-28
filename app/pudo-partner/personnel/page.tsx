@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { Activity, LayoutDashboard, LogOut, MapPin, Pencil, Plus, UserRound, UserX } from "lucide-react";
+import { Activity, LayoutDashboard, LogOut, Pencil, Plus, UserRound, UserX } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { WorkspaceShell, type WorkspaceNavigationItem } from "@/components/design-system/WorkspaceShell";
 import { PageHeader } from "@/components/design-system/PageHeader";
@@ -172,7 +172,7 @@ export default function PudoPersonnelPage() {
               </div>
             </SurfaceCard>
 
-            <div className="vl-pudo-section-heading"><div><span className="vl-page-header__eyebrow">PERSONNEL REGISTER</span><h2>{editingId ? "Update personnel" : "Register personnel"}</h2><p>Use the person's name and the role they perform at this station, such as Station staff or Bike man.</p></div></div>
+            <div className="vl-pudo-section-heading"><div><span className="vl-page-header__eyebrow">PERSONNEL REGISTER</span><h2>{editingId ? "Update personnel" : "Register personnel"}</h2><p>Use the person&apos;s name and the role they perform at this station, such as Station staff or Bike man.</p></div></div>
             <SurfaceCard>
               <form className="vl-pudo-form" onSubmit={savePersonnel}>
                 <label className="vl-field"><span className="vl-field__label">Full name</span><input className="vl-field__input" value={name} onChange={event => setName(event.target.value)} required maxLength={120} disabled={busy} /></label>
